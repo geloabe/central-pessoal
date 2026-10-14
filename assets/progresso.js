@@ -49,16 +49,8 @@
     };
   }
 
-  /* ---------- Hábitos: sequência com "pausa" (1 dia ruim a cada 7 não quebra) ---------- */
-  function habitosDiarios(cfg) { return ((cfg && cfg.habits) || []).filter(function (h) { return h.freq === 'day'; }); }
-  function bateu(h, v) { return h.kind === 'boolean' ? !!v : num(v) >= h.target; }
-  function habitos(d, hoje) {
-    var cfg = (d.habitos && d.habitos.config) || null, rec = (d.habitos && d.habitos.records) || {};
-    if (!cfg) return { ativo: false, feitosHoje: 0, totalHoje: 0, sequencia: 0, pausas: 0, melhor: 0, emRisco: false, semana: [] };
-    var diarios = habitosDiarios(cfg);
-    function feitos(dia) { var r = rec[dia] || {}; return diarios.filter(function (h) { return bateu(h, r[h.id]); }).length; }
-    function bom(dia) { return diarios.length ? feitos(dia) >= Math.ceil(diarios.length / 2) : false; }
-    // sequência que termina em `fim` (um dia bom). Uma falha isolada vira "pausa"; duas falhas em menos de 7 dias quebram.
+  /* ---------- Sequência com "pausa": uma falha isolada não quebra; duas em menos de 7 dias quebram ---------- */
+  function sequencia(bom, datas, hoje) {
     function corrida(fim) {
       var dt = new Date(fim.getFullYear(), fim.getMonth(), fim.getDate()), seq = 0, pausas = 0, ultima = null, set = {}, guarda = 0;
       while (guarda++ < 800) {
@@ -71,10 +63,22 @@
     }
     var h0 = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
     var fim = bom(iso(h0)) ? h0 : addDias(h0, -1); // hoje ainda pode virar: não zera a sequência durante o dia
-    var atual = corrida(fim);
-    // melhor sequência já alcançada: o maior valor entre todos os dias bons do histórico
-    var melhor = atual.seq, datas = Object.keys(rec).sort();
+    var atual = corrida(fim), melhor = atual.seq;
     datas.forEach(function (k) { if (bom(k)) { var c = corrida(parse(k)).seq; if (c > melhor) melhor = c; } });
+    return { seq: atual.seq, pausas: atual.pausas, set: atual.set, melhor: melhor, emRisco: !bom(iso(h0)) && atual.seq > 0 };
+  }
+
+  /* ---------- Hábitos: sequência com "pausa" (1 dia ruim a cada 7 não quebra) ---------- */
+  function habitosDiarios(cfg) { return ((cfg && cfg.habits) || []).filter(function (h) { return h.freq === 'day'; }); }
+  function bateu(h, v) { return h.kind === 'boolean' ? !!v : num(v) >= h.target; }
+  function habitos(d, hoje) {
+    var cfg = (d.habitos && d.habitos.config) || null, rec = (d.habitos && d.habitos.records) || {};
+    if (!cfg) return { ativo: false, feitosHoje: 0, totalHoje: 0, sequencia: 0, pausas: 0, melhor: 0, emRisco: false, semana: [] };
+    var diarios = habitosDiarios(cfg);
+    function feitos(dia) { var r = rec[dia] || {}; return diarios.filter(function (h) { return bateu(h, r[h.id]); }).length; }
+    function bom(dia) { return diarios.length ? feitos(dia) >= Math.ceil(diarios.length / 2) : false; }
+    var sq = sequencia(bom, Object.keys(rec).sort(), hoje), atual = { seq: sq.seq, pausas: sq.pausas, set: sq.set }, melhor = sq.melhor;
+    var h0 = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
     var semana = [], ini = segunda(hoje);
     for (var i = 0; i < 7; i++) { var dia = addDias(ini, i), k = iso(dia); semana.push({ dia: k, feito: bom(k), pausa: !!atual.set[k], futuro: dia > hoje, hoje: k === iso(hoje) }); }
     return { ativo: true, feitosHoje: feitos(iso(hoje)), totalHoje: diarios.length, sequencia: atual.seq, pausas: atual.pausas,
@@ -96,6 +100,32 @@
     var ini = segunda(hoje), ant = addDias(ini, -7), fim = addDias(ini, 7);
     return { semana: na(apps, 'appliedAt', ini, fim), anterior: na(apps, 'appliedAt', ant, ini), meta: meta, total: apps.length,
       hoje: apps.filter(function (a) { return a.appliedAt === iso(hoje); }).length };
+  }
+
+  /* ---------- Plano alimentar: refeições marcadas por dia ---------- */
+  var REF_N = 6, BOM_MIN = 4, PROT_META = 130; // 6 refeições no plano; "dia bom" = 4 ou mais; proteína mínima ≈ 1,9 g/kg
+  function refDia(r) {
+    var f = (r && r.feitas) || {}, ks = Object.keys(f), k = 0, pr = 0, c = 0, g = 0, ek = 0, bebida = 0;
+    ks.forEach(function (x) { k += num(f[x].kcal); pr += num(f[x].p); c += num(f[x].c); g += num(f[x].g); });
+    ((r && r.extras) || []).forEach(function (e) { ek += num(e.kcal); if (e.tipo === 'alcool') bebida += num(e.kcal); });
+    return { n: ks.length, kcal: k, p: pr, c: c, g: g, extras: ek, bebida: bebida, bom: ks.length >= BOM_MIN, completo: ks.length >= REF_N, proteina: pr >= PROT_META };
+  }
+  function refeicoes(d, hoje) {
+    var mapa = {}; (d.refeicoes || []).forEach(function (r) { if (r && r.date) mapa[r.date] = r; });
+    function dia(k) { return refDia(mapa[k]); }
+    var datas = Object.keys(mapa).sort(), sq = sequencia(function (k) { return dia(k).bom; }, datas, hoje);
+    var semana = [], ini = segunda(hoje), bons = 0, kc = 0, pr = 0, nreg = 0;
+    for (var i = 0; i < 7; i++) {
+      var dt = addDias(ini, i), k = iso(dt), x = dia(k);
+      semana.push({ dia: k, feito: x.bom, pausa: !!sq.set[k], futuro: dt > hoje, hoje: k === iso(hoje), n: x.n });
+      if (x.bom) bons++;
+      if (x.n > 0) { nreg++; kc += x.kcal + x.extras; pr += x.p; }
+    }
+    var h = dia(iso(hoje));
+    return { hoje: h.n, hojeInfo: h, sequencia: sq.seq, pausas: sq.pausas, melhor: sq.melhor, emRisco: sq.emRisco, semana: semana,
+      diasBons: datas.filter(function (k) { return dia(k).bom; }).length, completos: datas.filter(function (k) { return dia(k).completo; }).length,
+      diasProteina: datas.filter(function (k) { return dia(k).proteina; }).length, bonsSemana: bons,
+      mediaKcal: nreg ? Math.round(kc / nreg) : 0, mediaProt: nreg ? Math.round(pr / nreg) : 0, regSemana: nreg, total: datas.length };
   }
 
   /* ---------- Plano alimentar: medidas ---------- */
@@ -162,6 +192,11 @@
     add('m1', '1º imóvel anotado', p.mudanca.imoveis >= 1);
     add('m3', '3 orçamentos de mudança', p.mudanca.cotacoes >= 3);
     add('m50', 'Metade do checklist da mudança', p.mudanca.pct >= 50);
+    add('a1', '1º dia bom na alimentação', p.refeicoes.diasBons >= 1);
+    add('a3', '3 dias seguidos na alimentação', p.refeicoes.sequencia >= 3);
+    add('a7', '7 dias seguidos na alimentação', p.refeicoes.sequencia >= 7);
+    add('ac', '1º dia completo na alimentação', p.refeicoes.completos >= 1);
+    add('ap', 'Meta de proteína batida', p.refeicoes.diasProteina >= 1);
     add('d1', '1º desafio concluído', p.desafios.concluidos >= 1);
     add('d3', '3 desafios concluídos', p.desafios.concluidos >= 3);
     add('p1', '1ª medição do plano alimentar', p.plano.total >= 1);
@@ -169,15 +204,15 @@
   }
 
   function coisasHoje(p) {
-    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje;
+    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0);
   }
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje) };
     p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
-  var api = { calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
+  var api = { refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_PROG = api;
 })(typeof window !== 'undefined' ? window : globalThis);

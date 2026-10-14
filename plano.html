@@ -109,6 +109,67 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 .cform button{font:600 16px var(--f-texto);min-height:48px;border:0;background:var(--t-accent);color:var(--t-accent-ink);cursor:pointer;border-radius:var(--raio)}
 .row-c{display:flex;gap:8px;margin-bottom:12px}
 .b-sec{flex:1;font:600 15px var(--f-texto);min-height:48px;border:1px solid var(--t-accent);background:transparent;color:var(--t-accent);cursor:pointer;border-radius:var(--raio)}
+
+/* ---- registro do dia ---- */
+.dnav{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:8px;margin-bottom:12px}
+.dnav button{min-height:48px;font-size:24px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.dnav button:disabled{opacity:.35;cursor:default}
+#dLabel{text-align:center;font-size:17px}
+.sec-t{font:600 17px var(--f-titulo);margin:16px 0 8px}
+.sec-t small{font:400 13px var(--f-texto);color:var(--t-muted)}
+.seudia,.seq{background:var(--t-surface);border:1px solid var(--t-line);padding:14px 16px;margin-bottom:12px}
+.topo-c{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.topo-c b{font:600 20px var(--f-titulo)}
+.topo-c b small{font:400 14px var(--f-texto);color:var(--t-muted)}
+.pts{display:flex;gap:6px;margin:10px 0}
+.pt{flex:1;height:10px;background:var(--t-line);border-radius:2px}
+.pt.on{background:var(--t-ok)}
+.pt.lv{background:var(--t-accent2)}
+.meter{margin-top:8px}
+.mrow{display:flex;justify-content:space-between;font-size:14px}
+.mrow small{color:var(--t-muted);font-weight:400}
+.barra-c{height:8px;background:var(--t-line);overflow:hidden;margin-top:4px}
+.barra-c i{display:block;height:100%;background:var(--t-ok);transition:width .3s}
+.sem{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.sem div{display:grid;place-items:center;min-height:36px;font:600 13px var(--f-mono);border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-muted)}
+.sem div.f{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.sem div.p{background:var(--t-realce);color:var(--t-ink)}
+.sem div.h{border:2px solid var(--t-accent);color:var(--t-ink)}
+.sem div.f.h{color:#fff}
+.cab{flex-wrap:wrap;align-items:center;row-gap:2px}
+.cab h3{flex:1 1 auto;min-width:0}
+.cab .tag{order:3;flex:0 0 auto;margin:0}
+.cab .sp{display:none}
+.fiz{flex:none;margin-left:auto;order:2}
+.fiz{font:600 15px var(--f-texto);min-height:44px;min-width:92px;border:2px solid var(--t-ok);background:var(--t-bg);color:var(--t-ok);cursor:pointer;border-radius:var(--raio);padding:0 14px}
+.fiz[aria-pressed="true"]{background:var(--t-ok);color:#fff}
+.ref .card.feita{border-left:4px solid var(--t-ok);background:color-mix(in srgb,var(--t-ok) 9%,var(--t-surface))}
+.livre-tag{margin-top:8px;font-size:15px;font-weight:600}
+.exrow{display:grid;grid-template-columns:1fr auto 36px;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--t-line);font-size:15px}
+.acoes-ex{display:flex;gap:6px;margin-top:10px}
+.mini-btn{flex:1;font:600 14px var(--f-texto);min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.drow{display:grid;grid-template-columns:92px 1fr;gap:4px 10px;align-items:center;width:100%;padding:10px 0;border:0;border-top:1px solid var(--t-line);background:none;color:var(--t-ink);text-align:left;font:inherit;cursor:pointer;min-height:56px}
+.drow:first-of-type{border-top:0}
+.drow .dt{display:flex;flex-direction:column}
+.drow .pts{margin:0}
+.drow .dn{display:flex;flex-direction:column;grid-column:1;}
+.drow .dg{grid-column:2;display:flex;gap:4px;flex-wrap:wrap}
+.tag.ok{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));color:var(--t-ink)}
+.toast{position:fixed;left:16px;right:16px;top:70px;z-index:20;max-width:560px;margin:0 auto;padding:12px 16px;background:var(--t-ok);color:#fff;font-weight:700;border-radius:var(--raio);text-align:center;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s}
+.toast.rec{background:var(--t-accent2);color:#3B2A33}
+.toast.on{opacity:1;transform:none}
+#exDlg{border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);padding:18px;width:min(520px,94vw)}
+#exDlg::backdrop{background:rgba(40,30,60,.35)}
+#exDlg form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#exDlg label{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--t-muted)}
+#exDlg .full{grid-column:1/-1}
+#exDlg input,#exDlg select{font:inherit;font-size:16px;min-height:46px;padding:8px 10px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.acoes-dlg{display:flex;gap:8px;margin-top:6px}
+.acoes-dlg button{flex:1;min-height:46px;font:600 15px var(--f-texto);border-radius:var(--raio);cursor:pointer;border:1px solid var(--t-accent)}
+.btn-ok{background:var(--t-accent);color:var(--t-accent-ink)}
+.btn-no{background:transparent;color:var(--t-accent)}
+details.calc{margin:12px 0}
+details.calc summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -120,6 +181,7 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 
   <nav role="tablist" id="tabs">
     <button role="tab" aria-selected="true" data-t="dia">Dia</button>
+    <button role="tab" aria-selected="false" data-t="dias">Dias</button>
     <button role="tab" aria-selected="false" data-t="compras">Compras</button>
     <button role="tab" aria-selected="false" data-t="ideias">Ideias</button>
     <button role="tab" aria-selected="false" data-t="subs">Trocas</button>
@@ -128,12 +190,20 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
   </nav>
 
   <section id="dia" class="on">
-    <div class="meta"><b>Ponto de partida:</b> homem, 69 kg, 1,73 m (IMC 23,1). <b>Objetivo:</b> perder a gordura que ganhou e ganhar músculo ao mesmo tempo. O plano fica em torno de <b>2.200 kcal</b> (cerca de 2.350 com uma sobremesa), uns 200 a 350 abaixo do seu gasto estimado (~2.550 kcal, calculado para 25 anos), com bastante proteína.</div>
+    <div class="dnav"><button type="button" id="dPrev" aria-label="Dia anterior">‹</button><div id="dLabel"></div><button type="button" id="dNext" aria-label="Próximo dia">›</button></div>
+    <div id="analise"></div>
+    <h2 class="sec-t">Plano do dia <small>(o que você escolheu)</small></h2>
     <div class="resumo" id="resumo" aria-live="polite"></div>
     <div class="tl" id="tl"></div>
+    <div id="extras"></div>
     <p class="note">Arroz, feijão e carnes estão pesados <b>cozidos</b>. Calorias e macros são estimativas por tabela (TACO/USDA) e variam com o preparo e a marca. Toque nas opções de cada refeição para trocar: o total do dia se atualiza.</p>
     <p class="note">Doces e refeição livre não são proibidos e não precisam ser “compensados”.</p>
+    <details class="calc"><summary>Como esta meta foi calculada</summary>
+    <div class="meta"><b>Ponto de partida:</b> homem, 69 kg, 1,73 m (IMC 23,1). <b>Objetivo:</b> perder a gordura que ganhou e ganhar músculo ao mesmo tempo. O plano fica em torno de <b>2.200 kcal</b> (cerca de 2.350 com uma sobremesa), uns 200 a 350 abaixo do seu gasto estimado (~2.550 kcal, calculado para 25 anos), com bastante proteína.</div>
+    </details>
   </section>
+
+  <section id="dias"></section>
 
   <section id="compras"><div id="lista-compras"></div></section>
 
@@ -170,6 +240,7 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
       <tr><td>Peso e cintura parados por 3 semanas</td><td>Escolha o jantar “Lanche” ou tire o leite da vitamina</td></tr>
       <tr><td>Cargas do treino caindo</td><td>Coma mais: coloque o queijo no hambúrguer e o leite no café</td></tr>
       <tr><td>Peso estável ou caindo devagar, cintura menor, cargas subindo</td><td>Está funcionando: não mude nada</td></tr></tbody></table></div>
+    <div class="card"><h3>Refeição livre e bebida</h3><p>Registre no dia, em “Fora do plano”. Uma refeição livre pode valer como uma das 6 refeições e não quebra a sequência. Bebida entra como extra, só para você enxergar o dia inteiro.</p><p>Álcool tem 7 kcal por grama (quase como gordura) e pode piorar o sono e a recuperação do treino. Sem proibição: a média da semana é o que decide.</p></div>
     <div class="card"><h3>Farofa de ovos</h3>
       <p class="kc">4 ovos + 30 g de farinha de mandioca + 1 colher de chá de azeite/manteiga · ~460 kcal · 26 g P · 27 g G</p>
       <p>Serve como <b>jantar ocasional</b>. <b>Não</b> serve de pré-treino: gordura demais para digerir em 1 h.</p></div>
@@ -204,6 +275,9 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
     <p class="note">Registro fotográfico (frente, lado, costas) a cada 4 semanas — guarde as fotos no seu aparelho; este painel não envia imagens.</p>
   </section>
 </main>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="exDlg"><form method="dialog" class="f" id="exFrm"></form></dialog>
+<script src="assets/progresso.js"></script>
 <script>
 (function(){
   var tabs=document.getElementById('tabs');
@@ -278,25 +352,152 @@ var IDEIAS=[
     REF.forEach(function(r,i){
       if(r.treino){h+='<div class="treino-linha"><div class="hora">'+r.treino+'</div><div>'+r.txt+'</div></div>';return}
       var o=sel(i),sb=sob(i),t=soma(o.it.concat(sb?sb.it:[]));for(var k=0;k<4;k++)tot[k]+=t[k];
-      h+='<div class="ref'+(i===px?' prox':'')+'"><div class="hora">'+r.h+'</div><div class="card"><div class="cab"><h3>'+E(r.n)+'</h3>'+(r.tag?'<span class="tag">'+E(r.tag)+'</span>':'')+'</div>'+chips(t)+
+      var feito=((reg[diaSel]||{}).feitas||{})[r.key];
+      if(feito&&feito.livre){h+='<div class="ref"><div class="hora">'+r.h+'</div><div class="card feita"><div class="cab"><h3>'+E(r.n)+'</h3><span class="sp"></span><button type="button" class="fiz" data-fz="'+i+'" aria-pressed="true">✓ Feita</button></div><div class="livre-tag">Refeição livre: '+E(feito.op.replace('Livre: ',''))+' · '+feito.kcal+' kcal</div></div></div>';return}
+      h+='<div class="ref'+(i===px&&diaSel===hojeISO()&&!feito?' prox':'')+'"><div class="hora">'+r.h+'</div><div class="card'+(feito?' feita':'')+'"><div class="cab"><h3>'+E(r.n)+'</h3>'+(r.tag?'<span class="tag">'+E(r.tag)+'</span>':'')+'<span class="sp"></span><button type="button" class="fiz" data-fz="'+i+'" aria-pressed="'+(!!feito)+'">'+(feito?'✓ Feita':'Fiz')+'</button></div>'+chips(t)+
         (r.ops&&opsOf(i).length>1?(opsOf(i).length>5?'<div class="ops"><select class="ops-sel" data-r="'+i+'" aria-label="Opção de '+E(r.n)+'">'+opsOf(i).map(function(x){return '<option value="'+E(x.n)+'"'+(x===o?' selected':'')+'>'+E(x.n)+'</option>'}).join('')+'</select></div>':'<div class="ops" role="group" aria-label="Opção de '+E(r.n)+'">'+opsOf(i).map(function(x){return '<button type="button" data-r="'+i+'" data-o="'+E(x.n)+'" aria-pressed="'+(x===o)+'">'+E(x.n)+'</button>'}).join('')+'</div>'):'')+
         lista(o.it)+(o.obs||r.obs?'<p class="obs">'+E(o.obs||r.obs)+'</p>':'')+(r.sobremesa?'<div class="sobr"><label>Sobremesa<select data-s="'+i+'"><option value="">Sem sobremesa</option>'+SOBREMESAS.map(function(x){var k=soma(x.it)[0];return '<option value="'+E(x.n)+'"'+(sb&&sb.n===x.n?' selected':'')+'>'+E(x.n)+' · '+Math.round(k)+' kcal</option>'}).join('')+'</select></label>'+(sb?lista(sb.it)+'<p class="obs">'+E(sb.obs)+'</p>':'<p class="obs">Escolha uma para matar a vontade de doce: todas cabem no plano (100 a 155 kcal).</p>')+'</div>':'')+'</div></div>';
     });
     document.getElementById('tl').innerHTML=h;
+    renderNav();renderAnalise(tot[0]);renderExtras();
     document.getElementById('resumo').innerHTML='<div><b>'+Math.round(tot[0]).toLocaleString('pt-BR')+'</b><small>kcal</small></div><div><b>'+Math.round(tot[1])+' g</b><small>proteína</small></div><div><b>'+Math.round(tot[2])+' g</b><small>carbo</small></div><div><b>'+Math.round(tot[3])+' g</b><small>gordura</small></div>';
   }
   document.getElementById('tl').addEventListener('click',function(e){
+    var fz=e.target.closest('[data-fz]'); if(fz){alterna(+fz.dataset.fz);return}
     var b=e.target.closest('[data-r]'); if(!b) return;
     if(b.tagName==='SELECT')return;
     esc[b.dataset.r]=b.dataset.o; try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}
-    renderDia();
+    snapDone(+b.dataset.r);renderDia();renderDias();
   });
   document.getElementById('tl').addEventListener('change',function(e){
     var sd=e.target.closest('select[data-s]');
-    if(sd){esc['s'+sd.dataset.s]=sd.value;try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}renderDia();return}
+    if(sd){esc['s'+sd.dataset.s]=sd.value;try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}snapDone(+sd.dataset.s);renderDia();renderDias();return}
     var b=e.target.closest('select[data-r]'); if(!b) return;
     esc[b.dataset.r]=b.value; try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}
-    renderDia();
+    snapDone(+b.dataset.r);renderDia();renderDias();
+  });
+
+  /* ---- Registro do dia: marcar refeições, extras, análise e recompensa ---- */
+  var P=window.CP_PROG, reg={}, diaSel=hojeISO();
+  var NOMES_DIA=['dom','seg','ter','qua','qui','sex','sáb'];
+  function pad2(n){return String(n).padStart(2,'0')}
+  function hojeISO(){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())}
+  function parseISO(k){var p=k.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}
+  function rotuloDia(k){var d=parseISO(k);return NOMES_DIA[d.getDay()]+', '+pad2(d.getDate())+'/'+pad2(d.getMonth()+1)}
+  function regList(){return Object.keys(reg).map(function(k){return reg[k]})}
+  function estadoRef(){return P.refeicoes({refeicoes:regList()},new Date())}
+  function copia(o){return o?JSON.parse(JSON.stringify(o)):null}
+  function garante(k){if(!reg[k])reg[k]={date:k,feitas:{},extras:[]};reg[k].feitas=reg[k].feitas||{};reg[k].extras=reg[k].extras||[];return reg[k]}
+  function salvaDia(k){
+    var d=reg[k];
+    if(d&&!Object.keys(d.feitas||{}).length&&!(d.extras||[]).length){delete reg[k];if(db)db.doc('refeicoes/'+k).delete()}
+    else if(db&&d)db.doc('refeicoes/'+k).set(d);
+    renderDia();renderDias();
+  }
+  function snapshot(i){var o=sel(i),sb=sob(i),t=soma(o.it.concat(sb?sb.it:[]));return {op:o.n+(sb?' + '+sb.n:''),kcal:Math.round(t[0]),p:Math.round(t[1]),c:Math.round(t[2]),g:Math.round(t[3])}}
+  function snapDone(i){var d=reg[diaSel],key=REF[i]&&REF[i].key;if(d&&key&&d.feitas&&d.feitas[key]&&!d.feitas[key].livre){d.feitas[key]=snapshot(i);if(db)db.doc('refeicoes/'+diaSel).set(d)}}
+  function toast(msg,rec){var el=document.getElementById('toast');el.textContent=msg;el.className='toast on'+(rec?' rec':'');clearTimeout(toast._t);toast._t=setTimeout(function(){el.classList.remove('on')},3800)}
+
+  function alterna(i){
+    var key=REF[i].key,antesDoc=copia(reg[diaSel]),antes=estadoRef(),d=garante(diaSel);
+    if(d.feitas[key])delete d.feitas[key];else d.feitas[key]=snapshot(i);
+    var depois=estadoRef(),da=P.refDia(antesDoc),db_=P.refDia(reg[diaSel]);
+    salvaDia(diaSel);
+    var msg=null,rec=false;
+    if(depois.melhor>antes.melhor&&depois.sequencia===depois.melhor&&antes.melhor>0){msg='🏆 Nova melhor sequência: '+depois.sequencia+' dias seguidos';rec=true}
+    else if(db_.completo&&!da.completo)msg='Dia completo: as 6 refeições feitas 🎉';
+    else if(db_.bom&&!da.bom)msg='Dia bom ✓ '+(depois.sequencia>1?depois.sequencia+' dias seguidos':'conta na sua sequência');
+    else if(db_.proteina&&!da.proteina)msg='Meta de proteína batida 💪';
+    else if(db_.n>da.n)msg=db_.n+' de '+P.REF_N+' refeições feitas';
+    if(msg)toast(msg,rec);
+  }
+
+  /* extras: refeição livre e bebida */
+  var PRESETS={
+    livre:[['Pizza (3 fatias)',800],['Hambúrguer com batata frita',1000],['Churrasco (um prato)',900],['Sushi (combinado)',600],['Combo de fast food',1100],['Feijoada (um prato)',900],['Sobremesa (1 porção)',350],['Bolo ou doce (1 fatia)',350],['Petiscos (uma porção)',500]],
+    alcool:[['Cerveja (lata 350 ml)',150],['Chope (300 ml)',130],['Caipirinha (300 ml)',250],['Vinho (taça 150 ml)',125],['Destilado (dose 50 ml)',110],['Drink (200 ml)',200]]
+  };
+  var exDlg=document.getElementById('exDlg'),exFrm=document.getElementById('exFrm'),exTipo='livre';
+  function abreExtra(tipo){
+    exTipo=tipo;var d=docDia(diaSel),livres=REF.filter(function(r){return r.key&&!d.feitas[r.key]});
+    var pr=PRESETS[tipo];
+    exFrm.innerHTML='<h3 class="full">'+(tipo==='livre'?'Refeição livre':'Bebida alcoólica')+'</h3>'+
+      '<label class="full">Escolha um modelo<select name="preset">'+pr.map(function(x,i){return '<option value="'+i+'">'+E(x[0])+' · ~'+x[1]+' kcal</option>'}).join('')+'<option value="-1">Outro (digitar)</option></select></label>'+
+      '<label class="full">Nome<input name="nome" maxlength="60" autocomplete="off" value="'+E(pr[0][0])+'"></label>'+
+      '<label>Calorias (kcal)<input name="kcal" type="number" inputmode="numeric" min="0" max="5000" value="'+pr[0][1]+'"></label>'+
+      (tipo==='alcool'?'<label>Quantidade<input name="qtd" type="number" inputmode="numeric" min="1" max="20" value="1"></label>':
+        '<label>Vale como<select name="slot"><option value="">Um extra (além das refeições)</option>'+livres.map(function(r){return '<option value="'+r.key+'">'+E(r.n)+'</option>'}).join('')+'</select></label>')+
+      '<p class="mini full">Valores estimados. Ajuste as calorias se souber. Registrar é o que conta: sem culpa e sem “compensar”.</p>'+
+      '<div class="acoes-dlg full"><button value="ok" class="btn-ok">Registrar</button><button value="cancel" class="btn-no" formnovalidate>Cancelar</button></div>';
+    exFrm.elements.preset.onchange=function(){var x=pr[+this.value];if(x){exFrm.elements.nome.value=x[0];exFrm.elements.kcal.value=x[1]}else{exFrm.elements.nome.value='';exFrm.elements.kcal.value=''}};
+    exDlg.showModal();
+  }
+  exFrm.addEventListener('submit',function(e){
+    if(e.submitter&&e.submitter.value==='cancel')return;
+    var nome=exFrm.elements.nome.value.trim(),kcal=Math.max(0,Math.round(+exFrm.elements.kcal.value||0));
+    if(!nome)return;
+    var d=garante(diaSel),antes=estadoRef();
+    if(exTipo==='alcool'){var q=Math.max(1,Math.round(+exFrm.elements.qtd.value||1));d.extras.push({id:'x'+Date.now().toString(36),tipo:'alcool',nome:nome+(q>1?' ×'+q:''),kcal:kcal*q})}
+    else{var slot=exFrm.elements.slot.value;if(slot)d.feitas[slot]={op:'Livre: '+nome,kcal:kcal,p:0,c:0,g:0,livre:true};else d.extras.push({id:'x'+Date.now().toString(36),tipo:'livre',nome:nome,kcal:kcal})}
+    salvaDia(diaSel);
+    toast(exTipo==='alcool'?'Bebida registrada. O dia inteiro fica visível.':'Refeição livre registrada. Sem compensar.');
+  });
+  function docDia(k){return reg[k]?reg[k]:{date:k,feitas:{},extras:[]}}
+
+  function renderAnalise(planKcal){
+    var d=docDia(diaSel),x=P.refDia(d),e=estadoRef(),hoje=diaSel===hojeISO();
+    var verdict=x.n===0?(hoje?'Marque a primeira refeição para começar':'Sem registro neste dia'):x.completo?'Dia completo 🎉':x.bom?'Dia bom ✓':'Faltam '+(P.BOM_MIN-x.n)+' para um dia bom';
+    var dots='';REF.forEach(function(r){if(!r.key)return;var f=d.feitas[r.key];dots+='<span class="pt'+(f?' on':'')+(f&&f.livre?' lv':'')+'" title="'+E(r.n)+'"></span>'});
+    var pcKcal=planKcal?Math.min(100,Math.round(x.kcal/planKcal*100)):0,pcProt=Math.min(100,Math.round(x.p/P.PROT_META*100));
+    var h='<div class="seudia"><div class="topo-c"><b>'+x.n+' de '+P.REF_N+' refeições</b><span class="mini">'+verdict+'</span></div><div class="pts" aria-hidden="true">'+dots+'</div>'+
+      '<div class="meter"><div class="mrow"><span>Calorias</span><b>'+Math.round(x.kcal).toLocaleString('pt-BR')+' <small>de ~'+Math.round(planKcal).toLocaleString('pt-BR')+'</small></b></div><div class="barra-c"><i style="width:'+pcKcal+'%"></i></div></div>'+
+      '<div class="meter"><div class="mrow"><span>Proteína'+(x.proteina?' ✓':'')+'</span><b>'+Math.round(x.p)+' g <small>de '+P.PROT_META+' g</small></b></div><div class="barra-c"><i style="width:'+pcProt+'%"></i></div></div>'+
+      (x.extras?'<div class="mini" style="margin-top:8px">+ '+Math.round(x.extras).toLocaleString('pt-BR')+' kcal de extras'+(x.bebida?' (bebida: '+Math.round(x.bebida)+')':'')+' · dia todo: ~'+Math.round(x.kcal+x.extras).toLocaleString('pt-BR')+' kcal'+(x.kcal+x.extras>planKcal*1.15?'. Um dia acima do plano não desfaz a semana: o que decide é a média.':'')+'</div>':'')+'</div>';
+    // sequência
+    var msg=e.emRisco?'Hoje ainda dá tempo de manter os '+e.sequencia+' dias.':e.sequencia===0&&e.melhor>0?'Recomeço: sua melhor sequência foi de '+e.melhor+' dias.':e.melhor>e.sequencia?'Melhor sequência: '+e.melhor+' dias.':'';
+    var sem='<div class="sem" role="list" aria-label="Semana">'+e.semana.map(function(s,i){var L='STQQSSD'.charAt(i),nm=['segunda','terça','quarta','quinta','sexta','sábado','domingo'][i],est=s.feito?'dia bom':s.pausa?'pausa':s.futuro?'a fazer':s.n?'parcial':'sem registro';return '<div role="listitem" aria-label="'+nm+': '+est+'" class="'+(s.feito?'f':s.pausa?'p':'')+(s.hoje?' h':'')+'">'+(s.feito?'✓':s.pausa?'⏸':L)+'</div>'}).join('')+'</div>';
+    h+='<div class="seq"><div class="topo-c"><b>'+e.sequencia+' <small>dia'+(e.sequencia===1?'':'s')+' seguidos</small></b><span class="mini">dia bom = '+P.BOM_MIN+' ou mais refeições</span></div>'+sem+(msg?'<div class="mini" style="margin-top:6px">'+msg+'</div>':'')+'</div>';
+    document.getElementById('analise').innerHTML=h;
+  }
+  function renderExtras(){
+    var d=docDia(diaSel),ex=d.extras||[];
+    document.getElementById('extras').innerHTML='<div class="card"><h3>Fora do plano</h3><p class="mini" style="margin:0 0 8px">Refeição livre ou bebida: registre para ver o dia inteiro, sem julgamento.</p>'+
+      (ex.length?ex.map(function(x){return '<div class="exrow"><span>'+(x.tipo==='alcool'?'🍺 ':'🍽️ ')+E(x.nome)+'</span><b>'+Math.round(x.kcal)+' kcal</b><button type="button" class="b-x" data-exdel="'+E(x.id)+'" aria-label="Remover '+E(x.nome)+'">✕</button></div>'}).join(''):'')+
+      '<div class="acoes-ex"><button type="button" class="mini-btn" data-ex="livre">＋ Refeição livre</button><button type="button" class="mini-btn" data-ex="alcool">＋ Bebida</button></div></div>';
+  }
+  function renderNav(){
+    var h=hojeISO();document.getElementById('dLabel').innerHTML=(diaSel===h?'<b>Hoje</b> · ':'<b>')+rotuloDia(diaSel)+(diaSel===h?'':'</b>');
+    document.getElementById('dNext').disabled=diaSel>=h;
+  }
+  function mudaDia(n){var d=parseISO(diaSel);d.setDate(d.getDate()+n);var k=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());if(k>hojeISO())return;diaSel=k;renderDia()}
+  document.getElementById('dPrev').addEventListener('click',function(){mudaDia(-1)});
+  document.getElementById('dNext').addEventListener('click',function(){mudaDia(1)});
+  document.getElementById('extras').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    if(b.dataset.ex)return abreExtra(b.dataset.ex);
+    if(b.dataset.exdel){var d=garante(diaSel);d.extras=d.extras.filter(function(x){return x.id!==b.dataset.exdel});salvaDia(diaSel)}
+  });
+
+  /* ---- aba Dias: análise por dia ---- */
+  function renderDias(){
+    var el=document.getElementById('dias');if(!el)return;
+    var e=estadoRef(),h='';
+    h+='<div class="seudia"><div class="topo-c"><b>Esta semana</b><span class="mini">'+(e.regSemana?e.regSemana+' dia'+(e.regSemana===1?'':'s')+' com registro':'sem registros ainda')+'</span></div>'+
+      '<div class="resumo" style="margin:10px 0 0"><div><b>'+e.bonsSemana+'</b><small>dias bons</small></div><div><b>'+(e.mediaKcal?e.mediaKcal.toLocaleString('pt-BR'):'–')+'</b><small>kcal/dia</small></div><div><b>'+(e.mediaProt?e.mediaProt+' g':'–')+'</b><small>proteína</small></div><div><b>'+e.melhor+'</b><small>melhor seq.</small></div></div></div>';
+    var l='';
+    for(var i=0;i<14;i++){
+      var d=new Date();d.setDate(d.getDate()-i);var k=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()),r=reg[k],x=P.refDia(r),dots='';
+      REF.forEach(function(m){if(!m.key)return;var f=r&&r.feitas&&r.feitas[m.key];dots+='<span class="pt'+(f?' on':'')+(f&&f.livre?' lv':'')+'"></span>'});
+      var tags=(x.completo?'<span class="tag ok">completo</span>':x.bom?'<span class="tag ok">dia bom</span>':x.n?'<span class="tag">parcial</span>':'')+(r&&r.feitas&&Object.keys(r.feitas).some(function(q){return r.feitas[q].livre})?'<span class="tag">livre</span>':'')+(x.bebida?'<span class="tag">🍺</span>':'');
+      l+='<button type="button" class="drow" data-dia="'+k+'"><div class="dt"><b>'+(i===0?'Hoje':i===1?'Ontem':rotuloDia(k))+'</b><span class="mini">'+(i<2?rotuloDia(k):'')+'</span></div><div class="pts">'+dots+'</div><div class="dn">'+(x.n?'<b>'+Math.round(x.kcal+x.extras).toLocaleString('pt-BR')+' kcal</b><span class="mini">'+Math.round(x.p)+' g prot.</span>':'<span class="mini">sem registro</span>')+'</div><div class="dg">'+tags+'</div></button>';
+    }
+    h+='<div class="card" style="padding:6px 12px"><h3 style="margin:8px 0 4px">Últimos 14 dias</h3>'+l+'</div><p class="note">Toque em um dia para ver ou corrigir os registros. Calorias incluem refeições livres e bebidas; a proteína vem das refeições marcadas.</p>';
+    el.innerHTML=h;
+  }
+  document.getElementById('dias').addEventListener('click',function(e){
+    var b=e.target.closest('[data-dia]');if(!b)return;
+    diaSel=b.dataset.dia;renderDia();
+    document.querySelector('[data-t=dia]').click();window.scrollTo(0,0);
   });
 
   /* ---- Ideias (aprovação salva no banco: plano_ideias/main) ---- */
@@ -314,7 +515,7 @@ var IDEIAS=[
     renderIdeias(); renderDia();
     if(db) db.doc('plano_ideias/main').set({votos:votos});
   });
-  renderDia(); renderIdeias();
+  renderDia(); renderIdeias(); renderDias();
 
   /* ---- Compras da semana ---- */
   /* quantidades para 7 dias seguindo as opções padrão do plano (jantar de hambúrguer 3×); carnes e arroz em peso cru */
@@ -449,6 +650,7 @@ var IDEIAS=[
   claude.use('db').then(function(d){
     db=d;
     carregaCompras();
+    db.collection('refeicoes').onSnapshot(function(sn){reg={};sn.docs.forEach(function(d){var o=d.data();reg[o.date||d.id]=o});renderDia();renderDias()});
     db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'});
     db.doc('plano_ideias/main').get().then(function(s){if(s.exists){votos=s.data().votos||{};renderIdeias();renderDia()}});
   });

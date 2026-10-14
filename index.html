@@ -120,10 +120,11 @@ async function carregar(){
     seguro(db.doc('mud_checklist/main').get().then(function(s){return s.exists?s.data():{}}),{}), seguro(db.doc('mud_config/main').get().then(function(s){return s.exists?s.data():{}}),{}),
     seguro(fetch('assets/exercicios.json').then(function(x){return x.json()}),{}),
     seguro(db.collection('avaliacao').get().then(docs),[]),
-    seguro(db.collection('desafios').get().then(docs),[])
+    seguro(db.collection('desafios').get().then(docs),[]),
+    seguro(db.collection('refeicoes').get().then(docs),[])
   ]);
   return {sessions:r[0],habitos:{config:json(r[1]),records:json(r[2])||{}},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
-    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15]};
+    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16]};
 }
 
 function card(id,href,titulo,corpo){
@@ -142,10 +143,18 @@ function render(p){
   if(h.ativo)sem='<div class="sem" role="list" aria-label="Semana">'+h.semana.map(function(d,i){var L='STQQSSD'.charAt(i),nomes=['segunda','terça','quarta','quinta','sexta','sábado','domingo'];
       var estado=d.feito?'feito':d.pausa?'pausa':d.futuro?'a fazer':'sem registro';
       return '<div role="listitem" aria-label="'+nomes[i]+': '+estado+'" class="'+(d.feito?'f':d.pausa?'p':'')+(d.hoje?' h':'')+'">'+(d.feito?'✓':d.pausa?'⏸':L)+'</div>'}).join('')+'</div>';
+  var rf=p.refeicoes, semR='';
+  if(rf.total)semR='<div class="sem" role="list" aria-label="Semana de refeições">'+rf.semana.map(function(d,i){var L='STQQSSD'.charAt(i),nomes=['segunda','terça','quarta','quinta','sexta','sábado','domingo'];
+      var estado=d.feito?'dia bom':d.pausa?'pausa':d.futuro?'a fazer':d.n?'parcial':'sem registro';
+      return '<div role="listitem" aria-label="'+nomes[i]+': '+estado+'" class="'+(d.feito?'f':d.pausa?'p':'')+(d.hoje?' h':'')+'">'+(d.feito?'✓':d.pausa?'⏸':L)+'</div>'}).join('')+'</div>';
+  var msgR=rf.emRisco?'Hoje ainda dá tempo de manter os '+rf.sequencia+' dias.':rf.total&&rf.sequencia===0&&rf.melhor>0?'Recomeço — sua melhor sequência foi de '+rf.melhor+' dias.':rf.melhor>rf.sequencia?'Melhor sequência: '+rf.melhor+' dias.':'';
+  var peso=p.plano.ultimoPeso?'<div class="mini">'+p.plano.ultimoPeso.toFixed(1).replace('.',',')+' kg'+(p.plano.variacao!=null?' ('+(p.plano.variacao>0?'+':'')+p.plano.variacao.toFixed(1).replace('.',',')+' kg desde a 1ª medição)':'')+'</div>':'';
+  var corpoPlano=rf.total?'<div class="num">'+rf.sequencia+' <small>dia'+(rf.sequencia===1?'':'s')+' seguidos</small></div>'+semR+'<div class="mini">Hoje: '+rf.hoje+' de 6 refeições'+(rf.hojeInfo.bom?' · dia bom ✓':'')+'</div>'+(msgR?'<div class="mini">'+msgR+'</div>':'')+peso
+    :'<div class="mini">'+(rf.hoje?'Hoje: '+rf.hoje+' de 6 refeições.':'Marque as refeições do dia para acompanhar sua sequência.')+'</div>'+peso;
   var rotaPct=Math.round(p.rota.semana/p.rota.meta*100);
   var cards=[
     card('treino','treino.html','Treino','<div class="num">'+p.treino.semana+' <small>treino'+(p.treino.semana===1?'':'s')+' esta semana</small></div>'+delta(p.treino.semana,p.treino.anterior)+'<div class="mini">'+p.treino.total+(p.treino.total===1?' sessão':' sessões')+' · '+p.treino.prs.length+' recorde'+(p.treino.prs.length===1?'':'s')+'</div>'),
-    card('plano','plano.html','Plano alimentar',p.plano.ultimoPeso?'<div class="num">'+p.plano.ultimoPeso.toFixed(1).replace('.',',')+' <small>kg</small></div><div class="mini">'+(p.plano.variacao!=null?(p.plano.variacao>0?'+':'')+p.plano.variacao.toFixed(1).replace('.',',')+' kg desde a 1ª medição · ':'')+p.plano.total+' medições</div>':'<div class="mini">Cardápio, substituições e medidas. Registre a primeira medição.</div>'),
+    card('plano','plano.html','Plano alimentar',corpoPlano),
     card('habitos','habitos.html','Hábitos',h.ativo?'<div class="num">'+h.sequencia+' <small>dia'+(h.sequencia===1?'':'s')+' seguidos</small></div>'+sem+'<div class="mini">Hoje: '+h.feitosHoje+' de '+h.totalHoje+(h.pausas?' · '+h.pausas+' pausa'+(h.pausas>1?'s':'')+' usada'+(h.pausas>1?'s':''):'')+'</div>'+
         '<div class="mini">'+(h.emRisco?'Hoje ainda dá tempo de manter os '+h.sequencia+' dias.':h.sequencia===0&&h.melhor>0?'Recomeço — sua melhor sequência foi de '+h.melhor+' dias.':h.melhor>h.sequencia?'Melhor sequência: '+h.melhor+' dias.':'')+'</div>':'<div class="mini">Comece o check-in de hoje.</div>'),
     card('grimorio','grimorio.html','Grimório','<div class="num">'+p.grimorio.sequencia+' <small>dia'+(p.grimorio.sequencia===1?'':'s')+' de estudo</small></div><div class="mini">'+(p.grimorio.total?p.grimorio.total+' dias com registro':'Seu caderno de estudo e prática.')+'</div>'),
