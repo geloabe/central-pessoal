@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>document.documentElement.dataset.pg="plano"</script>
 <link rel="stylesheet" href="assets/tema.css">
 <script src="assets/config.js"></script>
@@ -12,25 +12,24 @@
 :root{--f:var(--f-texto)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f)}
-main{max-width:720px;margin:0 auto;padding:16px 16px 64px}
-a.back{color:var(--muted);font-size:14px;text-decoration:none}
+main{max-width:720px;margin:0 auto;padding:16px 16px calc(64px + env(safe-area-inset-bottom))}
 h1{font-size:26px;margin:8px 0 4px}
 .sub{color:var(--muted);margin:0 0 16px}
 nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
-nav button{font:inherit;font-size:14px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);white-space:nowrap;cursor:pointer}
-nav button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+nav button{font:inherit;font-size:15px;min-height:44px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);white-space:nowrap;cursor:pointer;border-radius:var(--raio)}
+nav button[aria-selected=true]{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-accent-ink)}
 section{display:none}section.on{display:block}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--raio);padding:14px 16px;margin-bottom:12px}
 .card h3{margin:0 0 4px;font-size:17px}
 .card .kc{font-size:13px;color:var(--muted);margin:0 0 8px}
-.card ul{margin:0;padding-left:20px}
-.note{border-left:3px solid var(--accent);padding:2px 12px;color:var(--muted);margin:12px 0}
-.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--line);color:var(--muted);margin-right:4px}
+.note{border-left:3px solid var(--t-accent);padding:2px 12px;color:var(--muted);margin:12px 0;font-size:14px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;background:var(--line);color:var(--muted);margin-right:4px}
+.mini{font-size:13px;color:var(--muted)}
 form.m{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 form.m label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
-form.m input,form.m textarea{font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+form.m input,form.m textarea{font:inherit;font-size:16px;padding:8px;border:1px solid var(--t-borda);background:var(--bg);color:var(--ink);width:100%;border-radius:var(--raio)}
 form.m .full{grid-column:1/-1}
-form.m button{grid-column:1/-1;font:inherit;font-weight:600;padding:10px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+form.m button{grid-column:1/-1;font:inherit;font-weight:600;padding:12px;border:0;background:var(--t-accent);color:var(--t-accent-ink);cursor:pointer;border-radius:var(--raio)}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left}
@@ -39,8 +38,46 @@ td button{background:none;border:0;color:var(--muted);cursor:pointer}
 .scroll{overflow-x:auto}
 .status{font-size:13px;color:var(--muted);min-height:1.2em}
 h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
-nav button[aria-selected=true]{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-accent-ink)}
-.card{border-radius:var(--raio)}nav button,form.m input,form.m textarea,form.m button{border-radius:var(--raio)}
+
+/* ---- visual do plano ---- */
+.resumo{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.resumo div{background:var(--t-surface);border:1px solid var(--t-line);padding:10px 4px;text-align:center}
+.resumo b{display:block;font:600 21px var(--f-titulo);color:var(--t-ink)}
+.resumo small{font:500 10px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--t-muted)}
+.meta{margin:0 0 14px;padding:12px 14px;background:var(--t-realce);border-left:4px solid var(--t-accent);font-size:14px}
+.tl{display:flex;flex-direction:column;gap:12px}
+.ref{display:grid;grid-template-columns:54px 1fr;gap:10px}
+.hora{font:600 14px var(--f-mono);color:var(--t-accent);padding-top:14px;text-align:right}
+.ref .card{margin:0;padding:14px}
+.ref.prox .card{border-color:var(--t-accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--t-accent) 25%,transparent)}
+.ref.prox .hora::after{content:"próxima";display:block;font:500 9px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--t-muted)}
+.cab{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cab h3{margin:0;font-size:19px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chips span{font:500 11px var(--f-mono);padding:2px 7px;background:var(--t-realce);color:var(--t-ink)}
+.chips .k{background:var(--t-accent);color:var(--t-accent-ink)}
+.ops{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 10px}
+.ops button{font:inherit;font-size:14px;min-height:40px;padding:6px 12px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.ops button[aria-pressed=true]{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-accent-ink)}
+.it{list-style:none;margin:0;padding:0}
+.it li{display:grid;grid-template-columns:116px 1fr;gap:10px;padding:7px 0;border-top:1px solid var(--t-line);font-size:15px}
+.it li:first-child{border-top:0}
+.it .q{font-weight:700;color:var(--t-ink)}
+.it .op{color:var(--t-muted)}
+.it .op .q{font-weight:500}
+.obs{margin:8px 0 0;font-size:13px;color:var(--t-muted)}
+.treino-linha{display:grid;grid-template-columns:54px 1fr;gap:10px;align-items:center}
+.treino-linha .hora{padding:0}
+.treino-linha div:last-child{padding:8px 12px;border:1px dashed var(--t-borda);color:var(--t-muted);font-size:14px}
+.tb td.n,.tb th.n{text-align:right;white-space:nowrap}
+.tb td,.tb th{text-align:left}
+.tb td.n,.tb th.n{text-align:right}
+.ideia .pergunta{display:flex;gap:8px;margin-top:12px}
+.ideia .pergunta button{flex:1;min-height:46px;font:600 15px var(--f-texto);border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.ideia .pergunta button[aria-pressed=true].s{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.ideia .pergunta button[aria-pressed=true].n{background:var(--t-muted);border-color:var(--t-muted);color:#fff}
+.ideia.nao{opacity:.55}
+@media(max-width:380px){.resumo b{font-size:18px}.ref{grid-template-columns:46px 1fr}}
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -48,52 +85,65 @@ nav button[aria-selected=true]{background:var(--t-accent);border-color:var(--t-a
 <body>
 <main>
   <h1>Plano alimentar</h1>
-  <p class="sub">Ganho de massa muscular · tudo sem lactose · treino às 13h</p>
+  <p class="sub">Recomposição corporal · tudo sem lactose · treino às 13h</p>
 
   <nav role="tablist" id="tabs">
     <button role="tab" aria-selected="true" data-t="dia">Dia</button>
-    <button role="tab" aria-selected="false" data-t="subs">Substituições</button>
+    <button role="tab" aria-selected="false" data-t="ideias">Ideias</button>
+    <button role="tab" aria-selected="false" data-t="subs">Trocas</button>
     <button role="tab" aria-selected="false" data-t="ajustes">Ajustes</button>
     <button role="tab" aria-selected="false" data-t="medidas">Medidas</button>
   </nav>
 
   <section id="dia" class="on">
-    <div class="card"><h3>Café da manhã</h3><ul>
-      <li>3 ovos mexidos/cozidos <b>ou</b> frango desfiado</li>
-      <li>2 fatias de pão integral (ou 1 wrap integral)</li>
-      <li>1 fruta média</li>
-      <li>Leite/iogurte zero lactose (opcional)</li></ul></div>
-    <div class="card"><h3>Pré-treino <span class="tag">1 h antes das 13h</span></h3><ul>
-      <li>2 ovos mexidos simples + 1 fruta, <b>ou</b> fruta + pão/torrada</li></ul></div>
-    <div class="card"><h3>Almoço</h3><p class="kc">~610 kcal · 57 g P · 75 g C · 7 g G (base frango)</p><ul>
-      <li>120 g de arroz cozido · 100 g de feijão</li>
-      <li><b>150 g de proteína</b>: frango, carne magra, peixe, filé-mignon suíno, fígado bovino (ocasional)</li>
-      <li>100 g de cenoura + 100 g de beterraba cozidas · folhas à vontade</li>
-      <li>1 tangerina depois</li></ul></div>
-    <div class="card"><h3>Lanche / pós-treino</h3><ul>
-      <li>Vitamina: 1 porção de whey zero lactose + leite zero lactose + 1 banana + aveia</li>
-      <li>2 ovos (ou sanduíche simples com proteína)</li></ul></div>
-    <div class="card"><h3>Jantar <span class="tag">escolha uma opção</span></h3><ul>
-      <li><b>Lanche:</b> 1 wrap integral + 100 g de frango desfiado ou atum + vegetais + pouco azeite (ou 2 fatias de pão integral com ovos/frango/atum)</li>
-      <li><b>Almoço:</b> 60 g de arroz, 50 g de feijão, 120 g de proteína, legumes e salada</li></ul></div>
-    <div class="card"><h3>Ceia</h3><p class="kc">~180 kcal · 9 g P</p><ul>
-      <li>Mingau de aveia: 200 ml de leite zero lactose + 1 colher de sopa de aveia</li>
-      <li>Alternativas: iogurte zero lactose com canela · 1–2 ovos cozidos</li></ul></div>
+    <div class="meta"><b>Ponto de partida:</b> homem, 69 kg, 1,73 m (IMC 23,1). <b>Objetivo:</b> perder a gordura que ganhou e ganhar músculo ao mesmo tempo. O plano fica em torno de <b>2.250 kcal</b>, cerca de 250 abaixo do seu gasto estimado (~2.500 kcal, calculado com 30 anos: me diga a idade para ajustar), com bastante proteína.</div>
+    <div class="resumo" id="resumo" aria-live="polite"></div>
+    <div class="tl" id="tl"></div>
+    <p class="note">Arroz, feijão e carnes estão pesados <b>cozidos</b>. Calorias e macros são estimativas por tabela (TACO/USDA) e variam com o preparo e a marca. Toque nas opções de cada refeição para trocar: o total do dia se atualiza.</p>
     <p class="note">Doces e refeição livre não são proibidos e não precisam ser “compensados”.</p>
   </section>
 
+  <section id="ideias">
+    <p class="note" style="margin-top:0">Propostas simples para quebrar a rotina. Marque <b>Quero</b> ou <b>Não quero</b>: o que você aprovar entra no plano. As quantidades já cabem na meta do dia.</p>
+    <div id="lista-ideias"></div>
+  </section>
+
   <section id="subs">
-    <div class="card"><h3>Purê no lugar do arroz</h3><p>~200 g de purê de batata no lugar de 120 g de arroz, com pouca ou nenhuma manteiga.</p></div>
-    <div class="card"><h3>Coxa / sobrecoxa</h3><p>Sem pele, assada sem óleo, vale como proteína: 150 g de carne cozida sem osso (~200–220 g com osso). Um pouco mais gordurosa que o peito.</p></div>
-    <div class="card"><h3>Pão ↔ wrap</h3><p>2 fatias de pão integral = 1 wrap integral.</p></div>
-    <div class="card"><h3>Proteína do almoço</h3><p>Frango, carne magra, peixe, filé-mignon suíno ou fígado bovino ocasional — 150 g.</p></div>
+    <div class="card"><h3>Carboidrato do almoço</h3>
+      <table class="tb"><thead><tr><th>Em vez de 120 g de arroz</th><th class="n">≈ kcal</th></tr></thead><tbody>
+      <tr><td>200 g de purê de batata (pouca ou nenhuma manteiga)</td><td class="n">150</td></tr>
+      <tr><td>180 g de batata cozida ou assada</td><td class="n">140</td></tr>
+      <tr><td>150 g de batata-doce cozida</td><td class="n">130</td></tr>
+      <tr><td>110 g de macarrão cozido</td><td class="n">170</td></tr></tbody></table></div>
+    <div class="card"><h3>Proteína de 150 g (cozida, sem osso)</h3>
+      <table class="tb"><thead><tr><th>Opção</th><th class="n">kcal</th><th class="n">proteína</th></tr></thead><tbody>
+      <tr><td>Peito de frango</td><td class="n">240</td><td class="n">47 g</td></tr>
+      <tr><td>Coxa/sobrecoxa sem pele, assada sem óleo<br><span class="mini">150 g sem osso ≈ 200–220 g com osso</span></td><td class="n">290</td><td class="n">40 g</td></tr>
+      <tr><td>Patinho ou carne magra grelhada</td><td class="n">330</td><td class="n">50 g</td></tr>
+      <tr><td>Peixe (tilápia, merluza)</td><td class="n">190</td><td class="n">39 g</td></tr>
+      <tr><td>Filé-mignon suíno</td><td class="n">230</td><td class="n">40 g</td></tr>
+      <tr><td>Fígado bovino <span class="mini">(ocasional)</span></td><td class="n">200</td><td class="n">30 g</td></tr></tbody></table></div>
+    <div class="card"><h3>Pão ↔ wrap</h3><p>2 fatias de pão integral (50 g) = 1 wrap integral (50 g). Vale no café, no lanche e no jantar.</p></div>
+    <div class="card"><h3>Feijão</h3><p>100 g de feijão = 100 g de lentilha ou grão-de-bico cozidos.</p></div>
+    <p class="note">Valores aproximados, para você decidir sem calcular. O que pesa é a constância, não o número exato.</p>
   </section>
 
   <section id="ajustes">
+    <div class="card"><h3>Como ajustar sozinho</h3>
+      <p>Pese-se 2 ou 3 vezes por semana, de manhã, e olhe a <b>média da semana</b>, não o dia. Meça a cintura a cada 2 semanas.</p>
+      <table class="tb"><tbody>
+      <tr><td>Peso caindo mais de 0,5 kg por semana, 2 semanas seguidas</td><td>Perda rápida demais: coloque o leite no café e 1 ovo na ceia</td></tr>
+      <tr><td>Peso e cintura parados por 3 semanas</td><td>Escolha o jantar “Lanche” ou tire o leite da vitamina</td></tr>
+      <tr><td>Cargas do treino caindo</td><td>Coma mais: coloque o queijo no hambúrguer e o leite no café</td></tr>
+      <tr><td>Peso estável ou caindo devagar, cintura menor, cargas subindo</td><td>Está funcionando: não mude nada</td></tr></tbody></table></div>
     <div class="card"><h3>Farofa de ovos</h3>
       <p class="kc">4 ovos + 30 g de farinha de mandioca + 1 colher de chá de azeite/manteiga · ~460 kcal · 26 g P · 27 g G</p>
       <p>Serve como <b>jantar ocasional</b>. <b>Não</b> serve de pré-treino: gordura demais para digerir em 1 h.</p></div>
-    <div class="card"><h3>Intolerância à lactose</h3><p>Leite, iogurte e whey sempre na versão zero lactose.</p></div>
+    <div class="card"><h3>Proteína</h3><p>O plano chega a ~170–180 g por dia (≈ 2,5 g/kg). A faixa que a pesquisa sustenta para ganhar músculo é 1,6–2,2 g/kg (110–150 g). Você tem folga: se algum dia faltar ovo ou whey, não faz diferença.</p></div>
+    <div class="card"><h3>Horários e água</h3>
+      <p>Se o treino mudar de horário, mantenha o pré-treino 1 h antes e a refeição principal até 1h30 depois. Se o almoço atrasar, tome a vitamina logo ao sair do treino.</p>
+      <p><b>Água:</b> cerca de 2,4 L por dia (35 ml por kg).</p></div>
+    <div class="card"><h3>Intolerância à lactose</h3><p>Leite, iogurte, queijo e whey sempre na versão zero lactose. Hambúrguer industrializado: confira o rótulo.</p></div>
   </section>
 
   <section id="medidas">
@@ -128,19 +178,103 @@ nav button[aria-selected=true]{background:var(--t-accent);border-color:var(--t-a
     tabs.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
     document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)});
   });
+  var db=null;
+  function E(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 
+  /* itens: [quantidade, alimento, kcal, proteína, carbo, gordura, opcional?] — opcional não entra na soma */
+  var REF=[
+   {h:'07:30',n:'Café da manhã',ops:[
+     {n:'Ovos',it:[['3 unidades','Ovos mexidos ou cozidos',216,19,1,14],['2 fatias (50 g)','Pão integral',120,6,22,2],['1 média (130 g)','Fruta (banana, maçã ou mamão)',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]},
+     {n:'Frango',it:[['100 g','Frango desfiado',160,31,0,4],['1 unidade (50 g)','Wrap integral',150,4,24,4],['1 média (130 g)','Fruta',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]}]},
+   {h:'12:00',n:'Pré-treino',tag:'1 h antes do treino',ops:[
+     {n:'Fruta + pão',it:[['1 média','Banana',90,1,23,0],['2 fatias (50 g)','Pão integral ou torrada',120,6,22,2]]},
+     {n:'Ovos + fruta',it:[['2 unidades','Ovos mexidos simples',144,13,1,10],['1 média','Banana',90,1,23,0]]}]},
+   {treino:'13:00',txt:'Treino'},
+   {h:'14:30',n:'Almoço',obs:'Primeira refeição depois do treino. Outras proteínas e trocas de carboidrato: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0],['100 g','Feijão cozido',77,5,14,1],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0],['à vontade','Folhas',10,1,2,0],['1 unidade','Tangerina, depois',40,1,10,0]]},
+   {h:'17:30',n:'Lanche da tarde',ops:[
+     {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
+     {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2],['2 unidades','Ovos (ou 80 g de frango)',144,13,1,10],['1 média','Fruta',80,1,19,0]]}]},
+   {h:'20:30',n:'Jantar',tag:'escolha uma opção',ops:[
+     {n:'Hambúrguer',it:[['1 pão (60 g)','Pão de hambúrguer',170,5,31,3],['1 unidade (100 g pronto)','Hambúrguer caseiro de patinho (125 g crus)',220,33,0,9],['60 g','Alface, tomate e cebola',15,1,3,0],['150 g','Batata assada, cozida ou na airfryer',130,3,30,0],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4,true]],obs:'No máximo 1 colher de chá de maionese. Se for hambúrguer pronto, escolha um de ~100 g e sem lactose.'},
+     {n:'Lanche',it:[['1 unidade (50 g)','Wrap integral',150,4,24,4],['100 g','Frango desfiado ou atum',160,31,0,4],['60 g','Vegetais',15,1,3,0],['1 colher de chá','Azeite',36,0,0,4]],obs:'Ou 2 fatias de pão integral com ovos, frango ou atum no lugar do wrap.'},
+     {n:'Prato',it:[['60 g','Arroz cozido',77,2,17,0],['50 g','Feijão cozido',39,2,7,0],['120 g','Proteína (frango, carne magra ou peixe)',192,37,0,4],['150 g','Legumes e salada',50,2,11,0]]}]},
+   {h:'22:30',n:'Ceia',ops:[
+     {n:'Iogurte',it:[['170 g','Iogurte zero lactose com canela',100,6,13,3]]},
+     {n:'Mingau',it:[['200 ml','Leite zero lactose',122,6,10,7],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
+     {n:'Ovos',it:[['1 a 2 unidades','Ovos cozidos',108,10,1,7]]}]}
+  ];
+
+  /* propostas novas: o que for aprovado entra no plano */
+  var IDEIAS=[
+   {id:'omelete-muffin',n:'Omelete de forno em forminhas',q:'Café ou lanche',t:'15 min · faz para 3 dias',dica:'Bata os ovos com os legumes, distribua em forminhas de muffin e asse a 180 °C por 15 min. Guarda 3 dias na geladeira e esquenta em 1 min.',it:[['3 unidades','Ovos',216,19,1,14],['60 g','Espinafre, tomate e cebola picados',15,1,3,0],['1 colher de chá','Azeite',36,0,0,4],['2 fatias (50 g)','Pão integral',120,6,22,2]]},
+   {id:'panqueca-banana',n:'Panqueca de banana e aveia',q:'Café',t:'8 min · só frigideira',dica:'Amasse a banana, misture com os ovos e a aveia, doure em frigideira antiaderente. Canela por cima. Sem açúcar e sem farinha.',it:[['1 média','Banana madura',90,1,23,0],['2 unidades','Ovos',144,13,1,10],['2 colheres de sopa (30 g)','Aveia',110,4,18,2],['a gosto','Canela',0,0,0,0]]},
+   {id:'crepioca',n:'Crepioca de frango',q:'Café, lanche ou jantar',t:'7 min',dica:'Misture o ovo com a goma, espalhe na frigideira, recheie com o frango e dobre. Vira “pizza” com molho de tomate e orégano.',it:[['1 unidade','Ovo',72,6,0,5],['2 colheres de sopa (30 g)','Goma de tapioca',100,0,24,0],['80 g','Frango desfiado',128,25,0,3],['a gosto','Tomate e orégano',15,1,3,0]]},
+   {id:'overnight',n:'Aveia de geladeira com cacau',q:'Café ou lanche',t:'3 min na véspera',dica:'Misture tudo num pote, deixe na geladeira e coma gelado de manhã. Zero fogão. Troque a banana por morango ou manga.',it:[['3 colheres de sopa (45 g)','Aveia',165,6,27,3],['150 ml','Leite zero lactose',92,5,7,5],['1 média','Banana',90,1,23,0],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['1 colher de sopa','Cacau em pó',10,1,1,0]]},
+   {id:'bowl-iogurte',n:'Bowl de iogurte proteico',q:'Lanche ou ceia',t:'2 min',dica:'Misture o whey no iogurte até virar um creme grosso, cubra com a fruta e a aveia. Parece sobremesa, tem 33 g de proteína.',it:[['170 g','Iogurte zero lactose natural',100,6,13,3],['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['1 média','Fruta picada',80,1,19,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
+   {id:'shakshuka',n:'Ovos no molho de tomate',q:'Almoço leve ou jantar',t:'12 min · uma panela',dica:'Refogue o molho com pimentão, abra covas, quebre os ovos dentro e tampe por 5 min. Mergulhe o pão.',it:[['3 unidades','Ovos',216,19,1,14],['150 g','Molho de tomate com pimentão e cebola',50,2,11,0],['2 fatias (50 g)','Pão integral',120,6,22,2]]},
+   {id:'tigela-mexicana',n:'Tigela mexicana',q:'Almoço ou jantar',t:'15 min',dica:'Monte a tigela: arroz, feijão, carne moída temperada com cominho e páprica, milho, tomate, cebola e coentro. Abacate por cima.',it:[['100 g','Arroz cozido',128,3,28,0],['80 g','Feijão cozido',62,4,11,0],['120 g','Patinho moído refogado',264,40,0,11],['40 g','Milho',35,1,8,0],['a gosto','Tomate, cebola e coentro',20,1,4,0],['40 g (2 colheres de sopa)','Abacate',64,1,3,6]]},
+   {id:'strogonoff',n:'Strogonoff leve sem lactose',q:'Almoço ou jantar',t:'20 min',dica:'Doure o frango em cubos, junte cogumelos e molho de tomate, finalize com o creme de leite zero lactose. Sem nata, sem batata palha.',it:[['150 g','Frango em cubos',240,47,0,5],['60 g + 2 colheres de sopa','Cogumelos e molho de tomate',40,2,8,0],['2 colheres de sopa (30 g)','Creme de leite zero lactose',60,1,1,6],['100 g','Arroz cozido',128,3,28,0],['à vontade','Salada',15,1,3,0]]},
+   {id:'escondidinho',n:'Escondidinho de batata-doce',q:'Jantar',t:'25 min · rende para congelar',dica:'Camada de carne moída refogada no fundo, purê de batata-doce por cima, forno ou airfryer por 10 min até dourar.',it:[['200 g','Purê de batata-doce',172,3,40,0],['100 g','Patinho moído refogado',220,33,0,9],['40 g','Molho de tomate e cebola',15,1,3,0],['à vontade','Salada',15,1,3,0]]},
+   {id:'temaki',n:'Temaki caseiro de atum',q:'Almoço ou jantar',t:'10 min',dica:'Enrole arroz, atum ao natural, pepino e cenoura em folhas de nori, em forma de cone. Shoyu light para molhar. Dá para fazer 2 e comer com as mãos.',it:[['120 g','Arroz cozido (2 temakis)',154,3,34,0],['100 g','Atum ao natural escorrido',116,26,0,1],['2 folhas','Nori',5,1,1,0],['50 g','Pepino e cenoura em tiras',12,0,3,0]]},
+   {id:'pizza-wrap',n:'Pizza de wrap na airfryer',q:'Jantar',t:'8 min',dica:'Espalhe o molho no wrap, cubra com frango e queijo, orégano, 5 min na airfryer a 200 °C. Fica crocante.',it:[['1 unidade (50 g)','Wrap integral',150,4,24,4],['3 colheres de sopa','Molho de tomate',20,1,4,0],['80 g','Frango desfiado',128,25,0,3],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4]]},
+   {id:'sorvete-banana',n:'Sorvete de banana com whey',q:'Ceia ou sobremesa',t:'5 min + freezer na véspera',dica:'Congele a banana em rodelas, bata no liquidificador com o whey, o leite e o cacau até virar sorvete. Come de colher.',it:[['1 média','Banana congelada',90,1,23,0],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['100 ml','Leite zero lactose',61,3,5,3],['1 colher de chá','Cacau em pó',10,1,1,0]]}
+  ];
+
+  function soma(l){var t=[0,0,0,0];l.forEach(function(x){if(!x[6])for(var k=0;k<4;k++)t[k]+=x[2+k]});return t}
+  function chips(t){return '<div class="chips"><span class="k">'+Math.round(t[0])+' kcal</span><span>'+Math.round(t[1])+' g P</span><span>'+Math.round(t[2])+' g C</span><span>'+Math.round(t[3])+' g G</span></div>'}
+  function lista(it){return '<ul class="it">'+it.map(function(x){return '<li'+(x[6]?' class="op"':'')+'><span class="q">'+E(x[0])+'</span><span>'+E(x[1])+(x[6]?' <i>(opcional, +'+x[2]+' kcal)</i>':'')+'</span></li>'}).join('')+'</ul>'}
+
+  /* ---- Dia ---- */
+  var KEY='plano-escolhas',esc={};
+  try{esc=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function sel(i){var r=REF[i];return r.ops?r.ops[Math.min(esc[i]||0,r.ops.length-1)]:r}
+  function proxima(){var n=new Date(),m=n.getHours()*60+n.getMinutes(),r=-1;REF.forEach(function(x,i){if(!x.h||r>=0)return;var p=x.h.split(':');if(+p[0]*60+ +p[1]>=m-30)r=i});return r}
+  function renderDia(){
+    var tot=[0,0,0,0],px=proxima(),h='';
+    REF.forEach(function(r,i){
+      if(r.treino){h+='<div class="treino-linha"><div class="hora">'+r.treino+'</div><div>'+r.txt+'</div></div>';return}
+      var o=sel(i),t=soma(o.it);for(var k=0;k<4;k++)tot[k]+=t[k];
+      h+='<div class="ref'+(i===px?' prox':'')+'"><div class="hora">'+r.h+'</div><div class="card"><div class="cab"><h3>'+E(r.n)+'</h3>'+(r.tag?'<span class="tag">'+E(r.tag)+'</span>':'')+'</div>'+chips(t)+
+        (r.ops&&r.ops.length>1?'<div class="ops" role="group" aria-label="Opção de '+E(r.n)+'">'+r.ops.map(function(x,j){return '<button type="button" data-r="'+i+'" data-o="'+j+'" aria-pressed="'+(x===o)+'">'+E(x.n)+'</button>'}).join('')+'</div>':'')+
+        lista(o.it)+(o.obs||r.obs?'<p class="obs">'+E(o.obs||r.obs)+'</p>':'')+'</div></div>';
+    });
+    document.getElementById('tl').innerHTML=h;
+    document.getElementById('resumo').innerHTML='<div><b>'+Math.round(tot[0]).toLocaleString('pt-BR')+'</b><small>kcal</small></div><div><b>'+Math.round(tot[1])+' g</b><small>proteína</small></div><div><b>'+Math.round(tot[2])+' g</b><small>carbo</small></div><div><b>'+Math.round(tot[3])+' g</b><small>gordura</small></div>';
+  }
+  document.getElementById('tl').addEventListener('click',function(e){
+    var b=e.target.closest('[data-r]'); if(!b) return;
+    esc[b.dataset.r]=+b.dataset.o; try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}
+    renderDia();
+  });
+
+  /* ---- Ideias (aprovação salva no banco: plano_ideias/main) ---- */
+  var votos={};
+  function renderIdeias(){
+    document.getElementById('lista-ideias').innerHTML=IDEIAS.map(function(d){
+      var v=votos[d.id];
+      return '<div class="card ideia'+(v==='nao'?' nao':'')+'"><div class="cab"><h3>'+E(d.n)+'</h3></div><div class="mini">'+E(d.q)+' · '+E(d.t)+'</div>'+chips(soma(d.it))+lista(d.it)+'<p class="obs">'+E(d.dica)+'</p>'+
+        '<div class="pergunta"><button type="button" class="s" data-v="'+d.id+'|sim" aria-pressed="'+(v==='sim')+'">'+(v==='sim'?'✓ Quero':'Quero')+'</button><button type="button" class="n" data-v="'+d.id+'|nao" aria-pressed="'+(v==='nao')+'">Não quero</button></div></div>';
+    }).join('');
+  }
+  document.getElementById('lista-ideias').addEventListener('click',function(e){
+    var b=e.target.closest('[data-v]'); if(!b) return;
+    var p=b.dataset.v.split('|'); if(votos[p[0]]===p[1]) delete votos[p[0]]; else votos[p[0]]=p[1];
+    renderIdeias();
+    if(db) db.doc('plano_ideias/main').set({votos:votos});
+  });
+  renderDia(); renderIdeias();
+
+  /* ---- Medidas ---- */
   var f=document.getElementById('mf'), st=document.getElementById('st'), rows=document.getElementById('rows');
   f.date.valueAsDate=new Date();
-  var db=null;
-  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function num(v){return v===''||v==null?'':String(v).replace(',','.')}
 
   function render(snap){
     var list=snap.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return a.date<b.date?1:-1});
     document.getElementById('wk').textContent=list.length?('semana '+Math.min(12,Math.floor((new Date(list[0].date)-new Date(list[list.length-1].date))/6048e5)+1)+' de 12'):'';
     rows.innerHTML=list.length?list.map(function(r){
-      return '<tr><td>'+esc(r.date.split('-').reverse().slice(0,2).join('/'))+'</td><td>'+esc(r.peso)+'</td><td>'+esc(r.gordura_pct)+'</td><td>'+esc(r.cintura)+'</td><td>'+esc(r.peito)+'</td><td>'+esc(r.braco)+'</td><td>'+esc(r.coxa)+'</td><td><button data-del="'+esc(r.id)+'" title="Apagar" aria-label="Apagar">✕</button></td></tr>'
-        +(r.notas?'<tr><td colspan="8" style="text-align:left;color:var(--muted)">'+esc(r.notas)+'</td></tr>':'');
+      return '<tr><td>'+E(r.date.split('-').reverse().slice(0,2).join('/'))+'</td><td>'+E(r.peso)+'</td><td>'+E(r.gordura_pct)+'</td><td>'+E(r.cintura)+'</td><td>'+E(r.peito)+'</td><td>'+E(r.braco)+'</td><td>'+E(r.coxa)+'</td><td><button data-del="'+E(r.id)+'" title="Apagar" aria-label="Apagar">✕</button></td></tr>'
+        +(r.notas?'<tr><td colspan="8" style="text-align:left;color:var(--muted)">'+E(r.notas)+'</td></tr>':'');
     }).join(''):'<tr><td colspan="8">Nenhuma medição ainda.</td></tr>';
   }
 
@@ -157,7 +291,11 @@ nav button[aria-selected=true]{background:var(--t-accent);border-color:var(--t-a
     db.doc('medidas/'+b.dataset.del).delete();
   });
 
-  claude.use('db').then(function(d){ db=d; db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'}); });
+  claude.use('db').then(function(d){
+    db=d;
+    db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'});
+    db.doc('plano_ideias/main').get().then(function(s){if(s.exists){votos=s.data().votos||{};renderIdeias()}});
+  });
 })();
 </script>
 <script src="assets/modulo.js"></script>
