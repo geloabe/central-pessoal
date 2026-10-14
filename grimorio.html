@@ -29,7 +29,7 @@
     --shadow: rgba(43,31,26,0.14);
     --cat: #241a15;
   }
-  @media (prefers-color-scheme: dark){
+  @media not all{
     :root:not([data-theme="light"]){
       --bg: #16101d;
       --bg-elevated: #211732;
@@ -672,7 +672,7 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
   const savedTheme = load('grimorio_theme', null);
   if(savedTheme) root.setAttribute('data-theme', savedTheme);
   document.getElementById('themeToggle').addEventListener('click', function(){
-    const current = root.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const current = root.getAttribute('data-theme') || 'light';
     const next = current === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
     save('grimorio_theme', next);

@@ -6,7 +6,7 @@ html[data-pg="habitos"]:not(#a):not(#b),.m-habitos{--m:var(--t-accent)}
 html[data-pg="grimorio"]:not(#a):not(#b),.m-grimorio{--m:#7D61C2;--t-accent:#7D61C2}
 html[data-pg="rota"]:not(#a):not(#b),.m-rota{--m:#4870C3;--t-accent:#4870C3}
 html[data-pg="financeiro"]:not(#a):not(#b),.m-financeiro{--m:#227D86;--t-accent:#227D86}
-@media (prefers-color-scheme:dark){
+@media not all{
  html[data-pg="treino"]:not([data-modo="claro"]):not(#a):not(#b),.m-treino{--m:#FFA088;--t-accent:#FFA088}
  html[data-pg="plano"]:not([data-modo="claro"]):not(#a):not(#b),.m-plano{--m:#7FD6AE;--t-accent:#7FD6AE}
  html[data-pg="grimorio"]:not([data-modo="claro"]):not(#a):not(#b),.m-grimorio{--m:#B9A3F0;--t-accent:#B9A3F0}

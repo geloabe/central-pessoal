@@ -28,7 +28,7 @@
   :root:not([data-theme="light"]) {
     /* default light values above already serve as base */
   }
-  @media (prefers-color-scheme: dark) {
+  @media not all {
     :root:not([data-theme="light"]) {
       --text: #f0e4ea;
       --text-muted: #c9b3bd;
@@ -61,7 +61,7 @@
     background: linear-gradient(135deg, #FFD9E8 0%, #FFE3D1 55%, #FFEFD6 100%);
     padding: 24px 20px 18px 20px;
   }
-  :root[data-theme="dark"] .header, @media (prefers-color-scheme: dark) { }
+  :root[data-theme="dark"] .header, @media not all { }
   .header h1 {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
