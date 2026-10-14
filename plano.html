@@ -58,6 +58,7 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 .chips .k{background:var(--t-accent);color:var(--t-accent-ink)}
 .ops{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 10px}
 .ops button{font:inherit;font-size:14px;min-height:40px;padding:6px 12px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.ops-sel{width:100%;font:inherit;font-size:16px;min-height:46px;padding:6px 10px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio)}
 .ops button[aria-pressed=true]{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-accent-ink)}
 .it{list-style:none;margin:0;padding:0}
 .it li{display:grid;grid-template-columns:116px 1fr;gap:10px;padding:7px 0;border-top:1px solid var(--t-line);font-size:15px}
@@ -81,6 +82,30 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 .passos li{margin:0 0 5px;padding-left:2px}
 .passos li::marker{color:var(--t-accent);font-weight:700}
 @media(max-width:380px){.resumo b{font-size:18px}.ref{grid-template-columns:46px 1fr}}
+
+/* ---- compras ---- */
+.cartao-c{background:var(--t-surface);border:1px solid var(--t-line);padding:14px 16px;margin-bottom:12px}
+.topo-c{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.topo-c b{font:600 20px var(--f-titulo)}
+.barra-c{height:8px;background:var(--t-line);overflow:hidden}
+.barra-c i{display:block;height:100%;background:var(--t-ok);transition:width .3s}
+.filtros{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.chip{font:inherit;font-size:14px;min-height:40px;padding:4px 12px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.chip.on{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-accent-ink)}
+.card.cat h3{margin-bottom:6px}
+.item{display:grid;grid-template-columns:1fr auto 36px;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--t-line)}
+.item:first-of-type{border-top:0}
+.item .nm{font-weight:600;font-size:16px}
+.item .qt{font-size:13px;color:var(--t-muted)}
+.item.tem .nm{color:var(--t-muted);text-decoration:line-through}
+.b-main{font:600 15px var(--f-texto);min-height:46px;min-width:104px;border:0;background:var(--t-ok);color:#fff;cursor:pointer;border-radius:var(--raio)}
+.b-main.acabou{background:transparent;color:var(--t-bad);border:1px solid var(--t-bad)}
+.b-x{min-height:44px;border:0;background:none;color:var(--t-muted);font-size:16px;cursor:pointer}
+.cform{display:grid;gap:8px}
+.cform input,.cform select{font:inherit;font-size:16px;min-height:46px;padding:8px 10px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.cform button{font:600 16px var(--f-texto);min-height:48px;border:0;background:var(--t-accent);color:var(--t-accent-ink);cursor:pointer;border-radius:var(--raio)}
+.row-c{display:flex;gap:8px;margin-bottom:12px}
+.b-sec{flex:1;font:600 15px var(--f-texto);min-height:48px;border:1px solid var(--t-accent);background:transparent;color:var(--t-accent);cursor:pointer;border-radius:var(--raio)}
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -92,6 +117,7 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 
   <nav role="tablist" id="tabs">
     <button role="tab" aria-selected="true" data-t="dia">Dia</button>
+    <button role="tab" aria-selected="false" data-t="compras">Compras</button>
     <button role="tab" aria-selected="false" data-t="ideias">Ideias</button>
     <button role="tab" aria-selected="false" data-t="subs">Trocas</button>
     <button role="tab" aria-selected="false" data-t="ajustes">Ajustes</button>
@@ -105,6 +131,8 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
     <p class="note">Arroz, feijão e carnes estão pesados <b>cozidos</b>. Calorias e macros são estimativas por tabela (TACO/USDA) e variam com o preparo e a marca. Toque nas opções de cada refeição para trocar: o total do dia se atualiza.</p>
     <p class="note">Doces e refeição livre não são proibidos e não precisam ser “compensados”.</p>
   </section>
+
+  <section id="compras"><div id="lista-compras"></div></section>
 
   <section id="ideias">
     <p class="note" style="margin-top:0">Comida de verdade, sem cara de “receita fit”. Passo a passo curto em cada uma. Marque <b>Quero</b> ou <b>Não quero</b>: o que você aprovar entra no plano. As quantidades já cabem na meta do dia.</p>
@@ -186,49 +214,46 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 
   /* itens: [quantidade, alimento, kcal, proteína, carbo, gordura, opcional?] — opcional não entra na soma */
 var IDEIAS=[
-   {id:'omelete-muffin',curto:'Omelete muffin',n:'Omelete de forno em forminhas',q:'Café ou lanche',t:'5 min + 15 min no forno · faz para 3 dias',passos:['Ligue o forno a 180 °C e unte forminhas de muffin com um fio de azeite.','Bata os ovos com sal e pimenta e misture o espinafre, o tomate e a cebola bem picados.','Divida nas forminhas (3 ovos rendem uns 3 muffins) e asse 15 min, até firmar.','Guarde na geladeira por até 3 dias. Para comer, 1 min no micro-ondas.'],it:[['3 unidades','Ovos',216,19,1,14],['60 g','Espinafre, tomate e cebola picados',15,1,3,0],['1 colher de chá','Azeite',36,0,0,4],['2 fatias (50 g)','Pão integral',120,6,22,2]]},
-   {id:'crepioca',curto:'Crepioca de frango',n:'Crepioca de frango',q:'Café, lanche ou jantar',t:'7 min',passos:['Misture 1 ovo, 2 colheres de sopa de goma de tapioca e uma pitada de sal.','Despeje numa frigideira antiaderente quente e espalhe como uma panqueca fina.','Quando soltar do fundo (cerca de 1 min), vire e coloque o frango e o tomate em uma metade.','Dobre ao meio e tire do fogo.'],it:[['1 unidade','Ovo',72,6,0,5],['2 colheres de sopa (30 g)','Goma de tapioca',100,0,24,0],['80 g','Frango desfiado',128,25,0,3],['a gosto','Tomate e orégano',15,1,3,0]]},
-   {id:'overnight',curto:'Aveia de geladeira',n:'Aveia de geladeira com cacau',q:'Café ou lanche',t:'3 min na véspera',passos:['Num pote com tampa, misture a aveia, o leite, o cacau e o whey.','Fatie a banana por cima.','Tampe e deixe na geladeira a noite toda.','Coma gelado, direto do pote.'],it:[['3 colheres de sopa (45 g)','Aveia',165,6,27,3],['150 ml','Leite zero lactose',92,5,7,5],['1 média','Banana',90,1,23,0],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['1 colher de sopa','Cacau em pó',10,1,1,0]]},
-   {id:'pizza-wrap',curto:'Pizza de wrap',n:'Pizza de wrap na airfryer',q:'Jantar',t:'8 min',passos:['Pré-aqueça a airfryer a 200 °C.','Espalhe o molho no wrap e cubra com o frango, o queijo e o orégano.','Leve 5 min, até o queijo derreter e a borda ficar crocante.','Sem airfryer: frigideira tampada em fogo baixo por 4 min.'],it:[['1 unidade (50 g)','Wrap integral',150,4,24,4],['3 colheres de sopa','Molho de tomate',20,1,4,0],['80 g','Frango desfiado',128,25,0,3],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4]]},
-   {id:'strogonoff',curto:'Strogonoff',n:'Strogonoff de frango',q:'Almoço ou jantar',t:'20 min · uma frigideira',passos:['Tempere o frango em cubos com sal, alho e pimenta.','Doure numa frigideira quente com o azeite, uns 5 min, mexendo.','Junte a cebola picada, o molho de tomate e a mostarda e cozinhe 3 min.','Desligue o fogo e misture o creme de leite zero lactose.','Sirva com o arroz.'],it:[['150 g','Frango em cubos',240,47,0,5],['½ cebola + 2 colheres de sopa','Cebola, molho de tomate e 1 colher de chá de mostarda',40,1,8,0],['2 colheres de sopa (30 g)','Creme de leite zero lactose',60,1,1,6],['100 g','Arroz cozido',128,3,28,0],['à vontade','Salada',15,1,3,0]]},
-   {id:'sorvete-banana',curto:'Sorvete de banana',n:'Sorvete de banana com whey',q:'Ceia ou sobremesa',t:'5 min + freezer na véspera',passos:['Na véspera, fatie a banana e congele em um pote.','Bata no liquidificador com o whey, o leite e o cacau. Pare e mexa se travar.','Em 1 a 2 min vira um creme grosso. Coma de colher na hora.'],it:[['1 média','Banana congelada',90,1,23,0],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['100 ml','Leite zero lactose',61,3,5,3],['1 colher de chá','Cacau em pó',10,1,1,0]]},
-   {id:'smash',curto:'Smash burger',n:'Smash burger com batata rústica',q:'Jantar (alternativa ao hambúrguer)',t:'15 min',passos:['Corte a batata em gomos, tempere com sal, páprica e alho em pó e leve à airfryer a 200 °C por 20 min.','Faça 2 bolinhas de 50 g de carne moída. Só tempere com sal na hora de cozinhar.','Frigideira bem quente, sem óleo: coloque a bolinha e amasse forte com a espátula. Espere 1,5 min e vire.','Coloque o queijo, tire do fogo e toste o pão na mesma frigideira.','Monte com cebola caramelizada (cebola fatiada em fogo baixo com uma pitada de sal por 10 min), picles e mostarda.'],it:[['1 pão de brioche pequeno (60 g)','Pão',190,5,33,4],['2 bolinhas (100 g pronto)','Carne de patinho moída',220,33,0,9],['40 g','Cebola caramelizada',30,1,6,0],['a gosto','Picles e mostarda',5,0,1,0],['150 g','Batata rústica na airfryer',130,3,30,0],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4,true]]},
-   {id:'frango-crocante',curto:'Frango crocante',n:'Frango crocante de airfryer',q:'Almoço ou jantar',t:'25 min',passos:['Corte o peito em 3 tiras e tempere com sal, alho, limão e 1 colher de chá de mostarda. Deixe 10 min.','Passe no ovo batido e depois no panko, apertando bem.','Borrife azeite e leve à airfryer a 200 °C por 12 min, virando na metade.','Molho: misture o iogurte, a mostarda e o mel.','Purê: amasse a batata cozida com o leite zero lactose e sal.'],it:[['150 g','Frango em tiras empanado no panko',386,53,18,8],['150 g','Purê de batata com um pouco de leite zero lactose',130,3,28,1],['2 colheres de sopa','Molho de iogurte, mostarda e mel',40,1,8,1],['à vontade','Salada com limão',15,1,3,0]]},
-   {id:'sanduiche-frango',curto:'Sanduíche de frango crocante',n:'Sanduíche de frango crocante',q:'Almoço ou jantar',t:'25 min',passos:['Prepare o frango como na receita de frango crocante: tempere, empane no ovo e panko e asse 12 min a 200 °C.','Tosta o pão na frigideira seca.','Passe o molho de iogurte, mostarda e mel no pão.','Monte com alface, tomate e o frango.'],it:[['1 pão de brioche pequeno (60 g)','Pão',190,5,33,4],['120 g','Frango empanado no panko',300,43,14,8],['2 colheres de sopa','Molho de iogurte, mostarda e mel',40,1,8,1],['à vontade','Alface e tomate',15,1,3,0]]},
-   {id:'parmegiana',curto:'Parmegiana',n:'Parmegiana de frango de airfryer',q:'Almoço ou jantar',t:'25 min',passos:['Achate o filé com a mão e tempere com sal e alho.','Passe no ovo batido e na farinha de rosca.','Airfryer a 200 °C por 10 min, virando na metade.','Cubra com o molho e o queijo e leve mais 3 min, até derreter.','Sirva com o arroz.'],it:[['150 g','Filé de frango empanado',346,52,14,8],['4 colheres de sopa','Molho de tomate',40,2,8,0],['2 fatias (40 g)','Queijo zero lactose',120,8,1,9],['80 g','Arroz cozido',102,2,22,0]]},
-   {id:'misto',curto:'Misto quente turbinado',n:'Misto quente turbinado',q:'Lanche ou jantar',t:'8 min',passos:['Mexa o ovo numa frigideira por 1 min e reserve.','Monte o sanduíche: pão, peito de peru, queijo, ovo e tomate, e feche com o outro pão.','Toste na sanduicheira ou na frigideira com tampa, 3 min de cada lado, até o queijo derreter.'],it:[['2 fatias (50 g)','Pão integral',120,6,22,2],['50 g','Peito de peru',50,9,1,1],['2 fatias (40 g)','Queijo zero lactose',120,8,1,9],['1 unidade','Ovo mexido',72,6,0,5],['3 fatias','Tomate',5,0,1,0]]},
-   {id:'cuscuz',curto:'Cuscuz com ovos',n:'Cuscuz com ovos e frango',q:'Café ou jantar',t:'10 min',passos:['Misture o flocão com uma pitada de sal e 60 ml de água. Deixe 5 min.','Cozinhe no vapor por 8 min, ou no micro-ondas tampado por 2 min.','Mexa os ovos numa frigideira até ficarem cremosos.','Sirva o cuscuz com os ovos, o frango desfiado, o vinagrete e um fio de manteiga ghee.'],it:[['50 g de flocão seco','Cuscuz de milho',175,4,37,1],['2 unidades','Ovos mexidos',144,13,1,10],['80 g','Frango desfiado',128,25,0,3],['3 colheres de sopa','Vinagrete',20,1,4,0],['1 colher de chá','Manteiga ghee',35,0,0,4]]},
-   {id:'tacos',curto:'Tacos de frango',n:'Tacos de frango desfiado',q:'Jantar',t:'20 min',passos:['Aqueça o frango desfiado com cominho, páprica, sal e limão por 3 min.','Aqueça as tortilhas numa frigideira seca, 20 s de cada lado.','Guacamole: amasse o abacate com limão e sal.','Pico de gallo: pique tomate, cebola e coentro.','Monte: tortilha, frango, guacamole e pico de gallo.'],it:[['3 unidades (75 g)','Tortilhas de milho',165,4,34,2],['120 g','Frango desfiado temperado',192,37,0,4],['50 g','Guacamole',80,1,4,7],['3 colheres de sopa','Pico de gallo',20,1,4,0],['2 colheres de sopa','Iogurte zero lactose com limão',20,1,2,1]]},
-   {id:'yakisoba',curto:'Yakisoba',n:'Yakisoba de frango',q:'Almoço ou jantar',t:'15 min',passos:['Cozinhe o macarrão, escorra e reserve.','Numa frigideira grande em fogo alto, doure o frango em tiras com sal por 5 min.','Junte o repolho, a cenoura e o brócolis picados e mexa 4 min.','Junte o macarrão, o shoyu e o óleo de gergelim e mexa mais 2 min.'],it:[['150 g','Macarrão cozido',232,8,45,1],['120 g','Frango em tiras',192,37,0,4],['150 g','Repolho, cenoura e brócolis',50,3,10,0],['1 colher de sopa + 1 de chá','Shoyu e óleo de gergelim',45,1,4,3]]},
-   {id:'alho-oleo',curto:'Macarrão alho e óleo',n:'Macarrão alho e óleo com frango',q:'Almoço ou jantar',t:'15 min',passos:['Cozinhe o macarrão até ficar firme (al dente). Guarde uma xícara da água do cozimento.','Grelhe o frango em tiras com sal por 5 min e reserve.','Na mesma frigideira, em fogo baixo, aqueça o azeite com o alho fatiado e a pimenta por 2 min, sem deixar queimar.','Junte o macarrão, o frango e um pouco da água. Mexa 1 min e finalize com salsinha.'],it:[['150 g','Macarrão cozido',232,8,45,1],['1 colher de sopa','Azeite',108,0,0,12],['120 g','Frango em tiras',192,37,0,4],['3 dentes','Alho, pimenta e salsinha',5,0,1,0]]},
-   {id:'bolonhesa',curto:'Macarrão à bolonhesa',n:'Macarrão à bolonhesa rápido',q:'Almoço ou jantar',t:'20 min',passos:['Cozinhe o macarrão e escorra.','Refogue a cebola e o alho picados no azeite por 2 min.','Junte a carne moída e mexa até dourar, uns 5 min.','Acrescente o molho de tomate, sal e orégano e cozinhe 5 min.','Misture o macarrão ao molho e sirva.'],it:[['150 g','Macarrão cozido',232,8,45,1],['120 g','Patinho moído (já cozido)',264,40,0,11],['5 colheres de sopa','Molho de tomate',50,2,10,0],['1 colher de chá','Azeite',36,0,0,4]]},
-   {id:'frango-cremoso',curto:'Frango cremoso com milho',n:'Frango cremoso com milho',q:'Almoço ou jantar',t:'15 min · uma frigideira',passos:['Tempere o frango em cubos com sal e alho e doure na frigideira por 5 min.','Junte o milho, o creme de leite zero lactose e 2 colheres de sopa de água.','Cozinhe 3 min em fogo baixo e finalize com cebolinha.','Sirva com o arroz.'],it:[['150 g','Frango em cubos',240,47,0,5],['3 colheres de sopa (40 g)','Milho',35,1,8,0],['2 colheres de sopa (30 g)','Creme de leite zero lactose',60,1,1,6],['100 g','Arroz cozido',128,3,28,0]]},
-   {id:'almondegas',curto:'Almôndegas ao molho',n:'Almôndegas ao molho com purê',q:'Almoço ou jantar',t:'25 min',passos:['Misture a carne moída com sal, alho, cebola ralada e a aveia (ela segura a massa).','Faça 6 bolinhas.','Airfryer a 200 °C por 10 min, ou forno a 200 °C por 15 min.','Aqueça o molho de tomate numa panela e coloque as almôndegas por 3 min.','Sirva com o purê de batata.'],it:[['150 g (crua)','Patinho moído',264,40,0,11],['1 colher de sopa (15 g)','Aveia',55,2,9,1],['4 colheres de sopa','Molho de tomate',40,2,8,0],['150 g','Purê de batata',130,3,28,1]]},
-   {id:'arroz-frito',curto:'Arroz frito com ovo',n:'Arroz frito com ovo e frango',q:'Almoço ou jantar · bom para sobras',t:'10 min',passos:['Use arroz e frango de sobra, de preferência frios.','Numa frigideira quente com um fio de azeite, mexa o ovo por 1 min e tire.','Na mesma frigideira, aqueça o frango e junte o arroz, o milho e a cebolinha em fogo alto por 3 min.','Coloque o shoyu, devolva o ovo e misture.'],it:[['150 g','Arroz cozido (de véspera)',192,4,42,0],['100 g','Frango cozido em cubos',160,31,0,4],['1 unidade','Ovo mexido',72,6,0,5],['2 colheres de sopa + cebolinha','Milho e shoyu',40,1,7,0]]},
-   {id:'brownie',curto:'Brownie de caneca',n:'Brownie de caneca',q:'Sobremesa ou ceia',t:'3 min no micro-ondas',passos:['Numa caneca grande, amasse a banana com um garfo.','Junte o ovo, o cacau e o whey e mexa até não ter grumes.','Misture o chocolate picado.','Micro-ondas por 1 min e 30 s. Se ainda estiver líquido, mais 15 s. Cuidado: a caneca esquenta.'],it:[['1 média','Banana amassada',90,1,23,0],['1 unidade','Ovo',72,6,0,5],['1 colher de sopa (15 g)','Cacau em pó',35,3,6,2],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['2 quadradinhos (20 g)','Chocolate meio amargo',100,1,10,6]]}
+   {id:'omelete-muffin',onde:['cafe', 'lanche1'],curto:'Omelete muffin',n:'Omelete de forno em forminhas',q:'Café ou lanche',t:'5 min + 15 min no forno · faz para 3 dias',passos:['Ligue o forno a 180 °C e unte forminhas de muffin com um fio de azeite.','Bata os ovos com sal e pimenta e misture o espinafre, o tomate e a cebola bem picados.','Divida nas forminhas (3 ovos rendem uns 3 muffins) e asse 15 min, até firmar.','Guarde na geladeira por até 3 dias. Para comer, 1 min no micro-ondas.'],it:[['3 unidades','Ovos',216,19,1,14],['60 g','Espinafre, tomate e cebola picados',15,1,3,0],['1 colher de chá','Azeite',36,0,0,4],['2 fatias (50 g)','Pão integral',120,6,22,2]]},
+   {id:'crepioca',onde:['cafe', 'lanche1', 'jantar'],curto:'Crepioca de frango',n:'Crepioca de frango',q:'Café, lanche ou jantar',t:'7 min',passos:['Misture 1 ovo, 2 colheres de sopa de goma de tapioca e uma pitada de sal.','Despeje numa frigideira antiaderente quente e espalhe como uma panqueca fina.','Quando soltar do fundo (cerca de 1 min), vire e coloque o frango e o tomate em uma metade.','Dobre ao meio e tire do fogo.'],it:[['1 unidade','Ovo',72,6,0,5],['2 colheres de sopa (30 g)','Goma de tapioca',100,0,24,0],['80 g','Frango desfiado',128,25,0,3],['a gosto','Tomate e orégano',15,1,3,0]]},
+   {id:'overnight',onde:['cafe', 'lanche1'],curto:'Aveia de geladeira',n:'Aveia de geladeira com cacau',q:'Café ou lanche',t:'3 min na véspera',passos:['Num pote com tampa, misture a aveia, o leite, o cacau e o whey.','Fatie a banana por cima.','Tampe e deixe na geladeira a noite toda.','Coma gelado, direto do pote.'],it:[['3 colheres de sopa (45 g)','Aveia',165,6,27,3],['150 ml','Leite zero lactose',92,5,7,5],['1 média','Banana',90,1,23,0],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['1 colher de sopa','Cacau em pó',10,1,1,0]]},
+   {id:'pizza-wrap',onde:['jantar'],curto:'Pizza de wrap',n:'Pizza de wrap na airfryer',q:'Jantar',t:'8 min',passos:['Pré-aqueça a airfryer a 200 °C.','Espalhe o molho no wrap e cubra com o frango, o queijo e o orégano.','Leve 5 min, até o queijo derreter e a borda ficar crocante.','Sem airfryer: frigideira tampada em fogo baixo por 4 min.'],it:[['1 unidade (50 g)','Wrap integral',150,4,24,4],['3 colheres de sopa','Molho de tomate',20,1,4,0],['80 g','Frango desfiado',128,25,0,3],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4]]},
+   {id:'strogonoff',onde:['almoco', 'jantar'],curto:'Strogonoff',n:'Strogonoff de frango',q:'Almoço ou jantar',t:'20 min · uma frigideira',passos:['Tempere o frango em cubos com sal, alho e pimenta.','Doure numa frigideira quente com o azeite, uns 5 min, mexendo.','Junte a cebola picada, o molho de tomate e a mostarda e cozinhe 3 min.','Desligue o fogo e misture o creme de leite zero lactose.','Sirva com o arroz.'],it:[['150 g','Frango em cubos',240,47,0,5],['½ cebola + 2 colheres de sopa','Cebola, molho de tomate e 1 colher de chá de mostarda',40,1,8,0],['2 colheres de sopa (30 g)','Creme de leite zero lactose',60,1,1,6],['100 g','Arroz cozido',128,3,28,0],['à vontade','Salada',15,1,3,0]]},
+   {id:'sorvete-banana',onde:['ceia'],curto:'Sorvete de banana',n:'Sorvete de banana com whey',q:'Ceia ou sobremesa',t:'5 min + freezer na véspera',passos:['Na véspera, fatie a banana e congele em um pote.','Bata no liquidificador com o whey, o leite e o cacau. Pare e mexa se travar.','Em 1 a 2 min vira um creme grosso. Coma de colher na hora.'],it:[['1 média','Banana congelada',90,1,23,0],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['100 ml','Leite zero lactose',61,3,5,3],['1 colher de chá','Cacau em pó',10,1,1,0]]},
+   {id:'smash',onde:['jantar'],curto:'Smash burger',n:'Smash burger com batata rústica',q:'Jantar (alternativa ao hambúrguer)',t:'15 min',passos:['Corte a batata em gomos, tempere com sal, páprica e alho em pó e leve à airfryer a 200 °C por 20 min.','Faça 2 bolinhas de 50 g de carne moída. Só tempere com sal na hora de cozinhar.','Frigideira bem quente, sem óleo: coloque a bolinha e amasse forte com a espátula. Espere 1,5 min e vire.','Coloque o queijo, tire do fogo e toste o pão na mesma frigideira.','Monte com cebola caramelizada (cebola fatiada em fogo baixo com uma pitada de sal por 10 min), picles e mostarda.'],it:[['1 pão de brioche pequeno (60 g)','Pão',190,5,33,4],['2 bolinhas (100 g pronto)','Carne de patinho moída',220,33,0,9],['40 g','Cebola caramelizada',30,1,6,0],['a gosto','Picles e mostarda',5,0,1,0],['150 g','Batata rústica na airfryer',130,3,30,0],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4,true]]},
+   {id:'frango-crocante',onde:['almoco', 'jantar'],curto:'Frango crocante',n:'Frango crocante de airfryer',q:'Almoço ou jantar',t:'25 min',passos:['Corte o peito em 3 tiras e tempere com sal, alho, limão e 1 colher de chá de mostarda. Deixe 10 min.','Passe no ovo batido e depois no panko, apertando bem.','Borrife azeite e leve à airfryer a 200 °C por 12 min, virando na metade.','Molho: misture o iogurte, a mostarda e o mel.','Purê: amasse a batata cozida com o leite zero lactose e sal.'],it:[['150 g','Frango em tiras empanado no panko',386,53,18,8],['150 g','Purê de batata com um pouco de leite zero lactose',130,3,28,1],['2 colheres de sopa','Molho de iogurte, mostarda e mel',40,1,8,1],['à vontade','Salada com limão',15,1,3,0]]},
+   {id:'sanduiche-frango',onde:['almoco', 'jantar'],curto:'Sanduíche de frango crocante',n:'Sanduíche de frango crocante',q:'Almoço ou jantar',t:'25 min',passos:['Prepare o frango como na receita de frango crocante: tempere, empane no ovo e panko e asse 12 min a 200 °C.','Tosta o pão na frigideira seca.','Passe o molho de iogurte, mostarda e mel no pão.','Monte com alface, tomate e o frango.'],it:[['1 pão de brioche pequeno (60 g)','Pão',190,5,33,4],['120 g','Frango empanado no panko',300,43,14,8],['2 colheres de sopa','Molho de iogurte, mostarda e mel',40,1,8,1],['à vontade','Alface e tomate',15,1,3,0]]},
+   {id:'parmegiana',onde:['almoco', 'jantar'],curto:'Parmegiana',n:'Parmegiana de frango de airfryer',q:'Almoço ou jantar',t:'25 min',passos:['Achate o filé com a mão e tempere com sal e alho.','Passe no ovo batido e na farinha de rosca.','Airfryer a 200 °C por 10 min, virando na metade.','Cubra com o molho e o queijo e leve mais 3 min, até derreter.','Sirva com o arroz.'],it:[['150 g','Filé de frango empanado',346,52,14,8],['4 colheres de sopa','Molho de tomate',40,2,8,0],['2 fatias (40 g)','Queijo zero lactose',120,8,1,9],['80 g','Arroz cozido',102,2,22,0]]},
+   {id:'misto',onde:['lanche1', 'jantar'],curto:'Misto quente turbinado',n:'Misto quente turbinado',q:'Lanche ou jantar',t:'8 min',passos:['Mexa o ovo numa frigideira por 1 min e reserve.','Monte o sanduíche: pão, peito de peru, queijo, ovo e tomate, e feche com o outro pão.','Toste na sanduicheira ou na frigideira com tampa, 3 min de cada lado, até o queijo derreter.'],it:[['2 fatias (50 g)','Pão integral',120,6,22,2],['50 g','Peito de peru',50,9,1,1],['2 fatias (40 g)','Queijo zero lactose',120,8,1,9],['1 unidade','Ovo mexido',72,6,0,5],['3 fatias','Tomate',5,0,1,0]]},
+   {id:'cuscuz',onde:['cafe', 'jantar'],curto:'Cuscuz com ovos',n:'Cuscuz com ovos e frango',q:'Café ou jantar',t:'10 min',passos:['Misture o flocão com uma pitada de sal e 60 ml de água. Deixe 5 min.','Cozinhe no vapor por 8 min, ou no micro-ondas tampado por 2 min.','Mexa os ovos numa frigideira até ficarem cremosos.','Sirva o cuscuz com os ovos, o frango desfiado, o vinagrete e um fio de manteiga ghee.'],it:[['50 g de flocão seco','Cuscuz de milho',175,4,37,1],['2 unidades','Ovos mexidos',144,13,1,10],['80 g','Frango desfiado',128,25,0,3],['3 colheres de sopa','Vinagrete',20,1,4,0],['1 colher de chá','Manteiga ghee',35,0,0,4]]},
+   {id:'alho-oleo',onde:['almoco', 'jantar'],curto:'Macarrão alho e óleo',n:'Macarrão alho e óleo com frango',q:'Almoço ou jantar',t:'15 min',passos:['Cozinhe o macarrão até ficar firme (al dente). Guarde uma xícara da água do cozimento.','Grelhe o frango em tiras com sal por 5 min e reserve.','Na mesma frigideira, em fogo baixo, aqueça o azeite com o alho fatiado e a pimenta por 2 min, sem deixar queimar.','Junte o macarrão, o frango e um pouco da água. Mexa 1 min e finalize com salsinha.'],it:[['150 g','Macarrão cozido',232,8,45,1],['1 colher de sopa','Azeite',108,0,0,12],['120 g','Frango em tiras',192,37,0,4],['3 dentes','Alho, pimenta e salsinha',5,0,1,0]]},
+   {id:'bolonhesa',onde:['almoco', 'jantar'],curto:'Macarrão à bolonhesa',n:'Macarrão à bolonhesa rápido',q:'Almoço ou jantar',t:'20 min',passos:['Cozinhe o macarrão e escorra.','Refogue a cebola e o alho picados no azeite por 2 min.','Junte a carne moída e mexa até dourar, uns 5 min.','Acrescente o molho de tomate, sal e orégano e cozinhe 5 min.','Misture o macarrão ao molho e sirva.'],it:[['150 g','Macarrão cozido',232,8,45,1],['120 g','Patinho moído (já cozido)',264,40,0,11],['5 colheres de sopa','Molho de tomate',50,2,10,0],['1 colher de chá','Azeite',36,0,0,4]]},
+   {id:'frango-cremoso',onde:['almoco', 'jantar'],curto:'Frango cremoso com milho',n:'Frango cremoso com milho',q:'Almoço ou jantar',t:'15 min · uma frigideira',passos:['Tempere o frango em cubos com sal e alho e doure na frigideira por 5 min.','Junte o milho, o creme de leite zero lactose e 2 colheres de sopa de água.','Cozinhe 3 min em fogo baixo e finalize com cebolinha.','Sirva com o arroz.'],it:[['150 g','Frango em cubos',240,47,0,5],['3 colheres de sopa (40 g)','Milho',35,1,8,0],['2 colheres de sopa (30 g)','Creme de leite zero lactose',60,1,1,6],['100 g','Arroz cozido',128,3,28,0]]},
+   {id:'almondegas',onde:['almoco', 'jantar'],curto:'Almôndegas ao molho',n:'Almôndegas ao molho com purê',q:'Almoço ou jantar',t:'25 min',passos:['Misture a carne moída com sal, alho, cebola ralada e a aveia (ela segura a massa).','Faça 6 bolinhas.','Airfryer a 200 °C por 10 min, ou forno a 200 °C por 15 min.','Aqueça o molho de tomate numa panela e coloque as almôndegas por 3 min.','Sirva com o purê de batata.'],it:[['150 g (crua)','Patinho moído',264,40,0,11],['1 colher de sopa (15 g)','Aveia',55,2,9,1],['4 colheres de sopa','Molho de tomate',40,2,8,0],['150 g','Purê de batata',130,3,28,1]]},
+   {id:'brownie',onde:['ceia'],curto:'Brownie de caneca',n:'Brownie de caneca',q:'Sobremesa ou ceia',t:'3 min no micro-ondas',passos:['Numa caneca grande, amasse a banana com um garfo.','Junte o ovo, o cacau e o whey e mexa até não ter grumes.','Misture o chocolate picado.','Micro-ondas por 1 min e 30 s. Se ainda estiver líquido, mais 15 s. Cuidado: a caneca esquenta.'],it:[['1 média','Banana amassada',90,1,23,0],['1 unidade','Ovo',72,6,0,5],['1 colher de sopa (15 g)','Cacau em pó',35,3,6,2],['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['2 quadradinhos (20 g)','Chocolate meio amargo',100,1,10,6]]}
   ];
   function I(id){var d=IDEIAS.filter(function(x){return x.id===id})[0];return {n:d.curto,it:d.it,obs:'Passo a passo na aba Ideias.'}}
 
   var REF=[
-   {h:'07:30',n:'Café da manhã',ops:[
+   {h:'07:30',key:'cafe',n:'Café da manhã',ops:[
      {n:'Ovos',it:[['3 unidades','Ovos mexidos ou cozidos',216,19,1,14],['2 fatias (50 g)','Pão integral',120,6,22,2],['1 média (130 g)','Fruta (banana, maçã ou mamão)',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]},
-     {n:'Frango',it:[['100 g','Frango desfiado',160,31,0,4],['1 unidade (50 g)','Wrap integral',150,4,24,4],['1 média (130 g)','Fruta',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]},I('omelete-muffin'),I('crepioca'),I('overnight')]},
-   {h:'10:00',n:'Lanche da manhã',ops:[
+     {n:'Frango',it:[['100 g','Frango desfiado',160,31,0,4],['1 unidade (50 g)','Wrap integral',150,4,24,4],['1 média (130 g)','Fruta',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]}]},
+   {h:'10:00',key:'lanche1',n:'Lanche da manhã',ops:[
      {n:'Fruta + pão',it:[['1 média','Banana',90,1,23,0],['2 fatias (50 g)','Pão integral ou torrada',120,6,22,2]]},
      {n:'Ovos + fruta',it:[['2 unidades','Ovos mexidos simples',144,13,1,10],['1 média','Banana',90,1,23,0]]}]},
-   {h:'12:00',n:'Almoço',tag:'1 h antes do treino',obs:'Se o treino pesar no estômago, coma o arroz e a proteína primeiro e deixe a salada e a tangerina para depois. Outras proteínas e trocas: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0],['100 g','Feijão cozido',77,5,14,1],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0],['à vontade','Folhas',10,1,2,0],['1 unidade','Tangerina, depois',40,1,10,0]]},
+   {h:'12:00',key:'almoco',n:'Almoço',tag:'1 h antes do treino',ops:[{n:'Padrão',obs:'Se o treino pesar no estômago, coma o arroz e a proteína primeiro e deixe a salada e a tangerina para depois. Outras proteínas e trocas: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0],['100 g','Feijão cozido',77,5,14,1],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0],['à vontade','Folhas',10,1,2,0],['1 unidade','Tangerina, depois',40,1,10,0]]}]},
    {treino:'13:00',txt:'Treino'},
-   {h:'14:30',n:'Pós-treino',tag:'logo depois do treino',ops:[
+   {h:'14:30',key:'pos',n:'Pós-treino',tag:'logo depois do treino',ops:[
      {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
      {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2],['2 unidades','Ovos (ou 80 g de frango)',144,13,1,10],['1 média','Fruta',80,1,19,0]]}]},
-   {h:'19:00',n:'Jantar',tag:'escolha uma opção',ops:[
+   {h:'19:00',key:'jantar',n:'Jantar',tag:'escolha uma opção',ops:[
      {n:'Hambúrguer',it:[['1 pão (60 g)','Pão de hambúrguer',170,5,31,3],['1 unidade (100 g pronto)','Hambúrguer caseiro de patinho (125 g crus)',220,33,0,9],['60 g','Alface, tomate e cebola',15,1,3,0],['150 g','Batata assada, cozida ou na airfryer',130,3,30,0],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4,true]],obs:'No máximo 1 colher de chá de maionese. Se for hambúrguer pronto, escolha um de ~100 g e sem lactose.'},
      {n:'Lanche',it:[['1 unidade (50 g)','Wrap integral',150,4,24,4],['100 g','Frango desfiado ou atum',160,31,0,4],['60 g','Vegetais',15,1,3,0],['1 colher de chá','Azeite',36,0,0,4]],obs:'Ou 2 fatias de pão integral com ovos, frango ou atum no lugar do wrap.'},
-     {n:'Prato',it:[['60 g','Arroz cozido',77,2,17,0],['50 g','Feijão cozido',39,2,7,0],['120 g','Proteína (frango, carne magra ou peixe)',192,37,0,4],['150 g','Legumes e salada',50,2,11,0]]},I('pizza-wrap'),I('strogonoff')]},
-   {h:'22:00',n:'Ceia',ops:[
+     {n:'Prato',it:[['60 g','Arroz cozido',77,2,17,0],['50 g','Feijão cozido',39,2,7,0],['120 g','Proteína (frango, carne magra ou peixe)',192,37,0,4],['150 g','Legumes e salada',50,2,11,0]]}]},
+   {h:'22:00',key:'ceia',n:'Ceia',ops:[
      {n:'Iogurte',it:[['170 g','Iogurte zero lactose com canela',100,6,13,3]]},
      {n:'Mingau',it:[['200 ml','Leite zero lactose',122,6,10,7],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
-     {n:'Ovos',it:[['1 a 2 unidades','Ovos cozidos',108,10,1,7]]},I('sorvete-banana')]}
+     {n:'Ovos',it:[['1 a 2 unidades','Ovos cozidos',108,10,1,7]]}]}
   ];
 
   function soma(l){var t=[0,0,0,0];l.forEach(function(x){if(!x[6])for(var k=0;k<4;k++)t[k]+=x[2+k]});return t}
@@ -236,9 +261,11 @@ var IDEIAS=[
   function lista(it){return '<ul class="it">'+it.map(function(x){return '<li'+(x[6]?' class="op"':'')+'><span class="q">'+E(x[0])+'</span><span>'+E(x[1])+(x[6]?' <i>(opcional, +'+x[2]+' kcal)</i>':'')+'</span></li>'}).join('')+'</ul>'}
 
   /* ---- Dia ---- */
-  var KEY='plano-escolhas-v2',esc={};
+  var KEY='plano-escolhas-v3',esc={};
   try{esc=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
-  function sel(i){var r=REF[i];return r.ops?r.ops[Math.min(esc[i]||0,r.ops.length-1)]:r}
+  var MEAL={cafe:'Café da manhã',lanche1:'Lanche da manhã',almoco:'Almoço',pos:'Pós-treino',jantar:'Jantar',ceia:'Ceia'};
+  function opsOf(i){var r=REF[i];if(!r.ops)return null;return r.ops.concat(IDEIAS.filter(function(x){return votos[x.id]==='sim'&&x.onde.indexOf(r.key)>=0}).map(function(x){return I(x.id)}))}
+  function sel(i){var r=REF[i];if(!r.ops)return r;var l=opsOf(i);return l.filter(function(x){return x.n===esc[i]})[0]||l[0]}
   function proxima(){var n=new Date(),m=n.getHours()*60+n.getMinutes(),r=-1;REF.forEach(function(x,i){if(!x.h||r>=0)return;var p=x.h.split(':');if(+p[0]*60+ +p[1]>=m-30)r=i});return r}
   function renderDia(){
     var tot=[0,0,0,0],px=proxima(),h='';
@@ -246,7 +273,7 @@ var IDEIAS=[
       if(r.treino){h+='<div class="treino-linha"><div class="hora">'+r.treino+'</div><div>'+r.txt+'</div></div>';return}
       var o=sel(i),t=soma(o.it);for(var k=0;k<4;k++)tot[k]+=t[k];
       h+='<div class="ref'+(i===px?' prox':'')+'"><div class="hora">'+r.h+'</div><div class="card"><div class="cab"><h3>'+E(r.n)+'</h3>'+(r.tag?'<span class="tag">'+E(r.tag)+'</span>':'')+'</div>'+chips(t)+
-        (r.ops&&r.ops.length>1?'<div class="ops" role="group" aria-label="Opção de '+E(r.n)+'">'+r.ops.map(function(x,j){return '<button type="button" data-r="'+i+'" data-o="'+j+'" aria-pressed="'+(x===o)+'">'+E(x.n)+'</button>'}).join('')+'</div>':'')+
+        (r.ops&&opsOf(i).length>1?(opsOf(i).length>5?'<div class="ops"><select class="ops-sel" data-r="'+i+'" aria-label="Opção de '+E(r.n)+'">'+opsOf(i).map(function(x){return '<option value="'+E(x.n)+'"'+(x===o?' selected':'')+'>'+E(x.n)+'</option>'}).join('')+'</select></div>':'<div class="ops" role="group" aria-label="Opção de '+E(r.n)+'">'+opsOf(i).map(function(x){return '<button type="button" data-r="'+i+'" data-o="'+E(x.n)+'" aria-pressed="'+(x===o)+'">'+E(x.n)+'</button>'}).join('')+'</div>'):'')+
         lista(o.it)+(o.obs||r.obs?'<p class="obs">'+E(o.obs||r.obs)+'</p>':'')+'</div></div>';
     });
     document.getElementById('tl').innerHTML=h;
@@ -254,7 +281,13 @@ var IDEIAS=[
   }
   document.getElementById('tl').addEventListener('click',function(e){
     var b=e.target.closest('[data-r]'); if(!b) return;
-    esc[b.dataset.r]=+b.dataset.o; try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}
+    if(b.tagName==='SELECT')return;
+    esc[b.dataset.r]=b.dataset.o; try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}
+    renderDia();
+  });
+  document.getElementById('tl').addEventListener('change',function(e){
+    var b=e.target.closest('select[data-r]'); if(!b) return;
+    esc[b.dataset.r]=b.value; try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}
     renderDia();
   });
 
@@ -264,16 +297,114 @@ var IDEIAS=[
     document.getElementById('lista-ideias').innerHTML=IDEIAS.map(function(d){
       var v=votos[d.id];
       return '<div class="card ideia'+(v==='nao'?' nao':'')+'"><div class="cab"><h3>'+E(d.n)+'</h3></div><div class="mini">'+E(d.q)+' · '+E(d.t)+'</div>'+chips(soma(d.it))+lista(d.it)+'<ol class="passos">'+d.passos.map(function(x){return '<li>'+E(x)+'</li>'}).join('')+'</ol>'+
-        '<div class="pergunta"><button type="button" class="s" data-v="'+d.id+'|sim" aria-pressed="'+(v==='sim')+'">'+(v==='sim'?'✓ Quero':'Quero')+'</button><button type="button" class="n" data-v="'+d.id+'|nao" aria-pressed="'+(v==='nao')+'">Não quero</button></div></div>';
+        (v==='sim'?'<div class="mini" style="margin-top:10px">✓ Aparece no plano em: '+d.onde.map(function(k){return MEAL[k]}).join(', ')+'</div>':'')+'<div class="pergunta"><button type="button" class="s" data-v="'+d.id+'|sim" aria-pressed="'+(v==='sim')+'">'+(v==='sim'?'✓ Quero':'Quero')+'</button><button type="button" class="n" data-v="'+d.id+'|nao" aria-pressed="'+(v==='nao')+'">Não quero</button></div></div>';
     }).join('');
   }
   document.getElementById('lista-ideias').addEventListener('click',function(e){
     var b=e.target.closest('[data-v]'); if(!b) return;
     var p=b.dataset.v.split('|'); if(votos[p[0]]===p[1]) delete votos[p[0]]; else votos[p[0]]=p[1];
-    renderIdeias();
+    renderIdeias(); renderDia();
     if(db) db.doc('plano_ideias/main').set({votos:votos});
   });
   renderDia(); renderIdeias();
+
+  /* ---- Compras da semana ---- */
+  /* quantidades para 7 dias seguindo as opções padrão do plano (jantar de hambúrguer 3×); carnes e arroz em peso cru */
+  var CATS=['Carnes e ovos','Laticínios zero lactose','Grãos e pães','Frutas','Legumes e verduras','Mercearia','Suplementos'];
+  var ITENS=[
+   ['frango','Carnes e ovos','Peito de frango','1,8 kg','almoços e jantares'],
+   ['patinho','Carnes e ovos','Patinho moído','500 g','hambúrguer e molhos'],
+   ['ovos','Carnes e ovos','Ovos','30 unidades','café, lanches e ceia'],
+   ['atum','Carnes e ovos','Atum ao natural','2 latas','jantar tipo lanche'],
+   ['leite','Laticínios zero lactose','Leite zero lactose','2 litros','vitamina, café e ceia'],
+   ['iogurte','Laticínios zero lactose','Iogurte zero lactose','7 potes (170 g)','ceia'],
+   ['queijo','Laticínios zero lactose','Queijo fatiado zero lactose','1 pacote (150 g)','hambúrguer e pizza de wrap'],
+   ['arroz','Grãos e pães','Arroz','500 g','cru'],
+   ['feijao','Grãos e pães','Feijão','500 g','cru'],
+   ['pao','Grãos e pães','Pão integral de forma','2 pacotes','café e lanche da manhã'],
+   ['pao-hamb','Grãos e pães','Pão de hambúrguer','1 pacote (4 unidades)',''],
+   ['wrap','Grãos e pães','Wrap integral','1 pacote',''],
+   ['aveia','Grãos e pães','Aveia em flocos','1 pacote (250 g)','vitamina e mingau'],
+   ['banana','Frutas','Banana','14 unidades','2 por dia'],
+   ['tangerina','Frutas','Tangerina','7 unidades','depois do almoço'],
+   ['fruta','Frutas','Maçã ou mamão','7 frutas','café da manhã'],
+   ['limao','Frutas','Limão','4 unidades',''],
+   ['cenoura','Legumes e verduras','Cenoura','1 kg',''],
+   ['beterraba','Legumes e verduras','Beterraba','700 g',''],
+   ['batata','Legumes e verduras','Batata','1 kg','hambúrguer e purê'],
+   ['alface','Legumes e verduras','Alface','2 pés','almoço e hambúrguer'],
+   ['tomate','Legumes e verduras','Tomate','600 g',''],
+   ['cebola','Legumes e verduras','Cebola','500 g',''],
+   ['alho','Legumes e verduras','Alho','1 cabeça',''],
+   ['molho','Mercearia','Molho de tomate','2 caixas',''],
+   ['azeite','Mercearia','Azeite','conferir','1 colher de chá por dia'],
+   ['mostarda','Mercearia','Mostarda','conferir',''],
+   ['temperos','Mercearia','Sal, canela e temperos','conferir',''],
+   ['whey','Suplementos','Whey zero lactose','210 g','1 dose por dia']
+  ];
+  var compras={dados:{estado:{},extras:[],removidos:[],semana:''},filtro:'falta'};
+  function seg(){var d=new Date(),w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+  function pad(n){return String(n).padStart(2,'0')}
+  function todos(){
+    var rem=compras.dados.removidos||[];
+    var l=ITENS.filter(function(x){return rem.indexOf(x[0])<0}).map(function(x){return {id:x[0],cat:x[1],nome:x[2],qtd:x[3],obs:x[4]}});
+    (compras.dados.extras||[]).forEach(function(x){l.push({id:x.id,cat:x.cat,nome:x.nome,qtd:x.qtd,obs:'',extra:true})});
+    return l;
+  }
+  function tenho(id){return compras.dados.estado[id]==='comprado'}
+  function salvaCompras(){compras.dados.semana=compras.dados.semana||seg();if(db)db.doc('plano_compras/main').set(compras.dados);renderCompras()}
+  function renderCompras(){
+    var l=todos(),n=l.length,ok=l.filter(function(x){return tenho(x.id)}).length,falta=n-ok;
+    var f=compras.filtro;
+    var h='<div class="cartao-c"><div class="topo-c"><b>'+ok+' de '+n+' itens</b><span class="mini">'+(falta?'faltam '+falta:'tudo comprado')+'</span></div><div class="barra-c"><i style="width:'+(n?Math.round(ok/n*100):0)+'%"></i></div>'+
+      '<div class="filtros">'+[['falta','Falta comprar ('+falta+')'],['tenho','Tenho ('+ok+')'],['tudo','Tudo']].map(function(x){return '<button type="button" class="chip'+(f===x[0]?' on':'')+'" data-cf="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div></div>';
+    CATS.forEach(function(c){
+      var it=l.filter(function(x){return x.cat===c&&(f==='tudo'||(f==='falta'?!tenho(x.id):tenho(x.id)))});
+      if(!it.length)return;
+      h+='<div class="card cat"><h3>'+E(c)+'</h3>'+it.map(function(x){
+        var t=tenho(x.id);
+        return '<div class="item'+(t?' tem':'')+'"><div class="info"><div class="nm">'+E(x.nome)+'</div><div class="qt">'+E(x.qtd)+(x.obs?' · '+E(x.obs):'')+'</div></div>'+
+          '<button type="button" class="b-main'+(t?' acabou':'')+'" data-ci="'+E(x.id)+'" aria-label="'+(t?'Marcar que acabou: ':'Marcar como comprado: ')+E(x.nome)+'">'+(t?'Acabou':'✓ Comprei')+'</button>'+
+          '<button type="button" class="b-x" data-cx="'+E(x.id)+'" aria-label="Remover '+E(x.nome)+' da lista">✕</button></div>'}).join('')+'</div>';
+    });
+    if(!l.length)h+='<div class="card">A lista está vazia. Adicione um item abaixo.</div>';
+    else if(f==='falta'&&!falta)h+='<div class="card cat" style="text-align:center">✅ Tudo comprado esta semana.</div>';
+    h+='<div class="card"><h3>Adicionar item</h3><form id="cf" class="cform"><input name="nome" placeholder="O que falta? (ex.: papel toalha)" required maxlength="60" autocomplete="off"><input name="qtd" placeholder="Quantidade (opcional)" maxlength="30" autocomplete="off"><select name="cat">'+CATS.map(function(c){return '<option>'+E(c)+'</option>'}).join('')+'</select><button type="submit">Adicionar</button></form></div>'+
+      '<div class="row-c"><button type="button" class="b-sec" data-ca="copiar">Copiar o que falta</button><button type="button" class="b-sec" data-ca="nova">Nova semana</button></div>'+
+      '<p class="note">Quantidades para 7 dias seguindo as opções padrão do plano (hambúrguer em 3 jantares). Carnes, arroz e feijão estão em peso <b>cru</b>. Se escolher outras opções ou receitas, ajuste aqui. Quando algo acabar no meio da semana, toque em <b>Acabou</b> e ele volta para “Falta comprar”.</p>';
+    document.getElementById('lista-compras').innerHTML=h;
+  }
+  document.getElementById('lista-compras').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    var d=compras.dados;
+    if(b.dataset.cf){compras.filtro=b.dataset.cf;renderCompras();return}
+    if(b.dataset.ci){d.estado[b.dataset.ci]=tenho(b.dataset.ci)?'comprar':'comprado';salvaCompras();return}
+    if(b.dataset.cx){var id=b.dataset.cx,x=todos().filter(function(i){return i.id===id})[0];
+      if(!x||!confirm('Tirar “'+x.nome+'” da lista?'))return;
+      if(x.extra)d.extras=d.extras.filter(function(i){return i.id!==id});else d.removidos=(d.removidos||[]).concat([id]);
+      delete d.estado[id];salvaCompras();return}
+    if(b.dataset.ca==='nova'){if(confirm('Começar uma nova semana? Todos os itens voltam para “Falta comprar”.')){d.estado={};d.semana=seg();compras.filtro='falta';salvaCompras()}return}
+    if(b.dataset.ca==='copiar'){
+      var txt=CATS.map(function(c){var it=todos().filter(function(x){return x.cat===c&&!tenho(x.id)});return it.length?c+':\n'+it.map(function(x){return '- '+x.nome+(x.qtd&&x.qtd!=='conferir'?' ('+x.qtd+')':'')}).join('\n'):''}).filter(Boolean).join('\n\n');
+      if(!txt){b.textContent='Nada para copiar';return}
+      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(function(){b.textContent='Copiado ✓'},function(){window.prompt('Copie a lista:',txt)});
+      setTimeout(function(){b.textContent='Copiar o que falta'},2500);
+    }
+  });
+  document.getElementById('lista-compras').addEventListener('submit',function(e){
+    if(e.target.id!=='cf')return;e.preventDefault();
+    var f=e.target,nome=f.nome.value.trim();if(!nome)return;
+    compras.dados.extras=(compras.dados.extras||[]).concat([{id:'x'+Date.now().toString(36),nome:nome,qtd:f.qtd.value.trim(),cat:f.cat.value}]);
+    compras.filtro='falta';salvaCompras();
+  });
+  function carregaCompras(){
+    db.doc('plano_compras/main').get().then(function(s){
+      if(s.exists){var v=s.data();compras.dados={estado:v.estado||{},extras:v.extras||[],removidos:v.removidos||[],semana:v.semana||''}}
+      if(!todos().some(function(x){return !tenho(x.id)}))compras.filtro='tudo';
+      renderCompras();
+    },function(){});
+  }
+  renderCompras();
 
   /* ---- Medidas ---- */
   var f=document.getElementById('mf'), st=document.getElementById('st'), rows=document.getElementById('rows');
@@ -304,8 +435,9 @@ var IDEIAS=[
 
   claude.use('db').then(function(d){
     db=d;
+    carregaCompras();
     db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'});
-    db.doc('plano_ideias/main').get().then(function(s){if(s.exists){votos=s.data().votos||{};renderIdeias()}});
+    db.doc('plano_ideias/main').get().then(function(s){if(s.exists){votos=s.data().votos||{};renderIdeias();renderDia()}});
   });
 })();
 </script>
