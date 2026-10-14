@@ -58,6 +58,9 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 .chips .k{background:var(--t-accent);color:var(--t-accent-ink)}
 .ops{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 10px}
 .ops button{font:inherit;font-size:14px;min-height:40px;padding:6px 12px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.sobr{margin-top:12px;padding-top:10px;border-top:1px dashed var(--t-borda)}
+.sobr label{display:flex;flex-direction:column;gap:4px;font:600 14px var(--f-texto);color:var(--t-ink);margin-bottom:6px}
+.sobr select{width:100%;font:inherit;font-size:16px;min-height:46px;padding:6px 10px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio)}
 .ops-sel{width:100%;font:inherit;font-size:16px;min-height:46px;padding:6px 10px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio)}
 .ops button[aria-pressed=true]{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-accent-ink)}
 .it{list-style:none;margin:0;padding:0}
@@ -241,12 +244,12 @@ var IDEIAS=[
    {h:'10:00',key:'lanche1',n:'Lanche da manhã',ops:[
      {n:'Fruta + pão',it:[['1 média','Banana',90,1,23,0],['2 fatias (50 g)','Pão integral ou torrada',120,6,22,2]]},
      {n:'Ovos + fruta',it:[['2 unidades','Ovos mexidos simples',144,13,1,10],['1 média','Banana',90,1,23,0]]}]},
-   {h:'12:00',key:'almoco',n:'Almoço',tag:'1 h antes do treino',ops:[{n:'Padrão',obs:'Se o treino pesar no estômago, coma o arroz e a proteína primeiro e deixe a salada e a tangerina para depois. Outras proteínas e trocas: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0],['100 g','Feijão cozido',77,5,14,1],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0],['à vontade','Folhas',10,1,2,0],['1 unidade','Tangerina, depois',40,1,10,0]]}]},
+   {h:'12:00',key:'almoco',sobremesa:true,n:'Almoço',tag:'1 h antes do treino',ops:[{n:'Padrão',obs:'Se o treino pesar no estômago, coma o arroz e a proteína primeiro e deixe a salada e a tangerina para depois. Outras proteínas e trocas: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0],['100 g','Feijão cozido',77,5,14,1],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0],['à vontade','Folhas',10,1,2,0],['1 unidade','Tangerina, depois',40,1,10,0]]}]},
    {treino:'13:00',txt:'Treino'},
    {h:'14:30',key:'pos',n:'Pós-treino',tag:'logo depois do treino',ops:[
      {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
      {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2],['2 unidades','Ovos (ou 80 g de frango)',144,13,1,10],['1 média','Fruta',80,1,19,0]]}]},
-   {h:'19:00',key:'jantar',n:'Jantar',tag:'escolha uma opção',ops:[
+   {h:'19:00',key:'jantar',sobremesa:true,n:'Jantar',tag:'escolha uma opção',ops:[
      {n:'Hambúrguer',it:[['1 pão (60 g)','Pão de hambúrguer',170,5,31,3],['1 unidade (100 g pronto)','Hambúrguer caseiro de patinho (125 g crus)',220,33,0,9],['60 g','Alface, tomate e cebola',15,1,3,0],['150 g','Batata assada, cozida ou na airfryer',130,3,30,0],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4,true]],obs:'No máximo 1 colher de chá de maionese. Se for hambúrguer pronto, escolha um de ~100 g e sem lactose.'},
      {n:'Lanche',it:[['1 unidade (50 g)','Wrap integral',150,4,24,4],['100 g','Frango desfiado ou atum',160,31,0,4],['60 g','Vegetais',15,1,3,0],['1 colher de chá','Azeite',36,0,0,4]],obs:'Ou 2 fatias de pão integral com ovos, frango ou atum no lugar do wrap.'},
      {n:'Prato',it:[['60 g','Arroz cozido',77,2,17,0],['50 g','Feijão cozido',39,2,7,0],['120 g','Proteína (frango, carne magra ou peixe)',192,37,0,4],['150 g','Legumes e salada',50,2,11,0]]}]},
@@ -260,6 +263,19 @@ var IDEIAS=[
   function chips(t){return '<div class="chips"><span class="k">'+Math.round(t[0])+' kcal</span><span>'+Math.round(t[1])+' g P</span><span>'+Math.round(t[2])+' g C</span><span>'+Math.round(t[3])+' g G</span></div>'}
   function lista(it){return '<ul class="it">'+it.map(function(x){return '<li'+(x[6]?' class="op"':'')+'><span class="q">'+E(x[0])+'</span><span>'+E(x[1])+(x[6]?' <i>(opcional, +'+x[2]+' kcal)</i>':'')+'</span></li>'}).join('')+'</ul>'}
 
+  /* sobremesas: até ~155 kcal, entram no total da refeição quando escolhidas */
+  var SOBREMESAS=[
+   {n:'Chocolate 70%',obs:'Derreça devagar na boca: o amargo dá a sensação de mais. Se quiser, 1 café junto.',it:[['3 quadradinhos (25 g)','Chocolate 70% cacau',150,2,11,11]]},
+   {n:'Mousse de chocolate',obs:'Misture o iogurte, o cacau e o mel, leve 15 min à geladeira. Fica cremoso e parece mousse de verdade.',it:[['170 g','Iogurte zero lactose natural',100,6,13,3],['1 colher de sopa (15 g)','Cacau em pó',35,3,6,2],['1 colher de chá','Mel',20,0,5,0]]},
+   {n:'Romeu e Julieta',obs:'Goiabada em fatia fina com o queijo por cima. 20 s no micro-ondas e o queijo derrete.',it:[['1 fatia fina (30 g)','Goiabada',80,0,20,0],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4]]},
+   {n:'Banana assada com chocolate',obs:'Corte a banana ao meio com a casca, coloque o chocolate picado dentro, canela e 3 min no micro-ondas ou 8 min na airfryer.',it:[['1 média','Banana',90,1,23,0],['2 quadradinhos (10 g)','Chocolate 70% cacau',60,1,4,4],['a gosto','Canela',0,0,0,0]]},
+   {n:'Morangos com chocolate',obs:'Derreta o chocolate no micro-ondas por 30 s e mergulhe os morangos.',it:[['150 g','Morangos',48,1,11,0],['3 quadradinhos (15 g)','Chocolate 70% cacau',90,1,7,7]]},
+   {n:'Brigadeiro de colher de whey',obs:'Misture o whey, o cacau e o leite até virar uma pasta. Coma de colher, 2 min no freezer deixam mais firme.',it:[['½ scoop (15 g)','Whey zero lactose',60,12,2,1],['1 colher de sopa (15 g)','Cacau em pó',35,3,6,2],['2 colheres de sopa (30 ml)','Leite zero lactose',20,1,2,1]]},
+   {n:'Paçoca',obs:'A vontade de doce clássica, e uma unidade resolve.',it:[['1 unidade (20 g)','Paçoca',100,3,10,6]]},
+   {n:'Maçã assada com canela',obs:'Fatie a maçã, polvilhe canela, regue com o mel e 4 min no micro-ondas. Aveia por cima dá o crocante.',it:[['1 média (130 g)','Maçã',70,0,19,0],['1 colher de chá','Mel',20,0,5,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]}
+  ];
+  function sob(i){var r=REF[i];if(!r.sobremesa)return null;var nm=esc['s'+i];return SOBREMESAS.filter(function(x){return x.n===nm})[0]||null}
+
   /* ---- Dia ---- */
   var KEY='plano-escolhas-v3',esc={};
   try{esc=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
@@ -271,10 +287,10 @@ var IDEIAS=[
     var tot=[0,0,0,0],px=proxima(),h='';
     REF.forEach(function(r,i){
       if(r.treino){h+='<div class="treino-linha"><div class="hora">'+r.treino+'</div><div>'+r.txt+'</div></div>';return}
-      var o=sel(i),t=soma(o.it);for(var k=0;k<4;k++)tot[k]+=t[k];
+      var o=sel(i),sb=sob(i),t=soma(o.it.concat(sb?sb.it:[]));for(var k=0;k<4;k++)tot[k]+=t[k];
       h+='<div class="ref'+(i===px?' prox':'')+'"><div class="hora">'+r.h+'</div><div class="card"><div class="cab"><h3>'+E(r.n)+'</h3>'+(r.tag?'<span class="tag">'+E(r.tag)+'</span>':'')+'</div>'+chips(t)+
         (r.ops&&opsOf(i).length>1?(opsOf(i).length>5?'<div class="ops"><select class="ops-sel" data-r="'+i+'" aria-label="Opção de '+E(r.n)+'">'+opsOf(i).map(function(x){return '<option value="'+E(x.n)+'"'+(x===o?' selected':'')+'>'+E(x.n)+'</option>'}).join('')+'</select></div>':'<div class="ops" role="group" aria-label="Opção de '+E(r.n)+'">'+opsOf(i).map(function(x){return '<button type="button" data-r="'+i+'" data-o="'+E(x.n)+'" aria-pressed="'+(x===o)+'">'+E(x.n)+'</button>'}).join('')+'</div>'):'')+
-        lista(o.it)+(o.obs||r.obs?'<p class="obs">'+E(o.obs||r.obs)+'</p>':'')+'</div></div>';
+        lista(o.it)+(o.obs||r.obs?'<p class="obs">'+E(o.obs||r.obs)+'</p>':'')+(r.sobremesa?'<div class="sobr"><label>Sobremesa<select data-s="'+i+'"><option value="">Sem sobremesa</option>'+SOBREMESAS.map(function(x){var k=soma(x.it)[0];return '<option value="'+E(x.n)+'"'+(sb&&sb.n===x.n?' selected':'')+'>'+E(x.n)+' · '+Math.round(k)+' kcal</option>'}).join('')+'</select></label>'+(sb?lista(sb.it)+'<p class="obs">'+E(sb.obs)+'</p>':'<p class="obs">Escolha uma para matar a vontade de doce: todas cabem no plano (100 a 155 kcal).</p>')+'</div>':'')+'</div></div>';
     });
     document.getElementById('tl').innerHTML=h;
     document.getElementById('resumo').innerHTML='<div><b>'+Math.round(tot[0]).toLocaleString('pt-BR')+'</b><small>kcal</small></div><div><b>'+Math.round(tot[1])+' g</b><small>proteína</small></div><div><b>'+Math.round(tot[2])+' g</b><small>carbo</small></div><div><b>'+Math.round(tot[3])+' g</b><small>gordura</small></div>';
@@ -286,6 +302,8 @@ var IDEIAS=[
     renderDia();
   });
   document.getElementById('tl').addEventListener('change',function(e){
+    var sd=e.target.closest('select[data-s]');
+    if(sd){esc['s'+sd.dataset.s]=sd.value;try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}renderDia();return}
     var b=e.target.closest('select[data-r]'); if(!b) return;
     esc[b.dataset.r]=b.value; try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}
     renderDia();
@@ -340,6 +358,10 @@ var IDEIAS=[
    ['azeite','Mercearia','Azeite','conferir','1 colher de chá por dia'],
    ['mostarda','Mercearia','Mostarda','conferir',''],
    ['temperos','Mercearia','Sal, canela e temperos','conferir',''],
+   ['choc','Mercearia','Chocolate 70% cacau','1 barra (80 g)','sobremesas'],
+   ['cacau','Mercearia','Cacau em pó','conferir','sobremesas'],
+   ['mel','Mercearia','Mel','conferir','sobremesas'],
+   ['goiabada','Mercearia','Goiabada','1 pacote pequeno','Romeu e Julieta'],
    ['whey','Suplementos','Whey zero lactose','210 g','1 dose por dia']
   ];
   var compras={dados:{estado:{},extras:[],removidos:[],semana:''},filtro:'falta'};
