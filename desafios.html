@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>document.documentElement.dataset.pg="desafios"</script>
+<link rel="stylesheet" href="assets/tema.css">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Desafios</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:860px;margin:0 auto;padding:16px 16px calc(80px + env(safe-area-inset-bottom))}
+h1{font-size:28px}
+.sub{color:var(--t-muted);margin:4px 0 16px}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:15px;min-height:44px;padding:8px 16px;border-radius:var(--raio);border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+section{display:none}section.on{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.mini{font-size:13px;color:var(--t-muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+.barra{height:8px;background:var(--t-line);overflow:hidden;margin:8px 0}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .8s ease-out}@keyframes cresce{from{width:0}}}
+.tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em}
+.tag.ok{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.cartao h3{font-size:20px}
+.fazer{width:100%;min-height:52px;margin-top:10px;font-size:17px}
+.fazer.feito{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.dias{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:4px;margin-top:10px}
+.dias button{font:500 12px var(--f-mono);min-height:36px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-muted);padding:0;cursor:pointer;border-radius:var(--raio)}
+.dias button.f{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.dias button.h{border:2px solid var(--m);color:var(--t-ink)}
+.dias button.x{opacity:.45;cursor:default}
+.ok-msg{color:var(--t-ok);font-weight:600}
+.vazio{padding:18px;text-align:center;color:var(--t-muted)}
+dialog{border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);padding:18px;width:min(520px,94vw)}
+dialog::backdrop{background:rgba(40,30,60,.35)}
+form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form.f label{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--t-muted)}
+form.f .full{grid-column:1/-1}
+form.f input{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.t .btn{min-height:46px}
+</style>
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
+</head>
+<body class="t">
+<main>
+  <h1>Desafios</h1>
+  <p class="sub">Metas curtas com data. Falhar um dia não zera nada: o que conta é quantos dias você fez.</p>
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-t="ativos" aria-selected="true">Em andamento</button>
+    <button role="tab" data-t="ideias" aria-selected="false">Ideias</button>
+    <button role="tab" data-t="feitos" aria-selected="false">Concluídos</button>
+  </nav>
+  <section id="ativos" class="on"></section>
+  <section id="ideias"></section>
+  <section id="feitos"></section>
+</main>
+<dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
+
+<script src="assets/progresso.js"></script>
+<script>
+(function(){
+'use strict';
+var db=null, L=[];
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+var P=window.CP_PROG;
+function hoje(){return new Date()}
+function dmy(s){return s.split('-').reverse().slice(0,2).join('/')}
+function mais(s,n){var p=s.split('-').map(Number);return P.iso(new Date(p[0],p[1]-1,p[2]+n))}
+
+var IDEIAS=[
+ ['Beber 2 litros de água',14,12,'Um copo grande a cada refeição ajuda a chegar lá.'],
+ ['Caminhar 20 minutos',21,15,'Pode ser em qualquer horário.'],
+ ['10 minutos de estudo no Grimório',30,22,'Pouco por dia, sem exigir um dia perfeito.'],
+ ['Treinar 3 vezes por semana',28,12,'12 treinos em 4 semanas.'],
+ ['Dormir antes das 23h',14,10,'Deixe o celular carregando longe da cama.'],
+ ['Uma candidatura por dia útil',14,10,'Dez dias úteis em duas semanas.'],
+ ['Guardar dinheiro para a entrada',30,20,'Qualquer valor, em qualquer dia: o hábito vem antes do tamanho.'],
+ ['Resolver uma pendência da mudança',14,10,'Um item do checklist por dia.']
+];
+
+function criar(nome,dias,alvo,nota){
+  return db.doc('desafios/'+uid()).set({nome:nome,dias:dias,alvo:alvo,nota:nota||'',inicio:P.iso(hoje()),feitos:{},arquivado:false});
+}
+function achar(id){return L.filter(function(x){return x.id===id})[0]}
+function marcar(id,dia){
+  var x=achar(id);if(!x)return;var f=Object.assign({},x.feitos||{});
+  if(f[dia])delete f[dia];else f[dia]=true;
+  var e=P.estado(Object.assign({},x,{feitos:f}),hoje()),up={feitos:f};
+  up.concluidoEm=e.status==='concluido'?(x.concluidoEm||P.iso(hoje())):null;
+  x.feitos=f;x.concluidoEm=up.concluidoEm;render();
+  return db.doc('desafios/'+id).update(up);
+}
+
+function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
+
+function cartao(x){
+  var e=P.estado(x,hoje()),h=P.iso(hoje()),f=x.feitos||{},q='';
+  for(var i=0;i<e.dias;i++){
+    var d=mais(x.inicio,i),fut=d>h,cls=(f[d]?'f':'')+(d===h?' h':'')+(fut?' x':'');
+    q+='<button type="button" class="'+cls+'" data-dia="'+x.id+'|'+d+'"'+(fut?' disabled':'')+' aria-pressed="'+(!!f[d])+'" aria-label="'+dmy(d)+(f[d]?': feito':fut?': ainda não chegou':': sem registro')+'">'+(f[d]?'✓':i+1)+'</button>';
+  }
+  var topo='<div class="row"><h3>'+esc(x.nome)+'</h3><span class="sp"></span>'+(e.status==='concluido'?'<span class="tag ok">CONCLUÍDO</span>':'<span class="tag">DIA '+e.dia+'/'+e.dias+'</span>')+'</div>';
+  var st=e.status==='concluido'?'<div class="ok-msg">Desafio concluído: '+e.feitos+' dias feitos.</div>':
+    e.status==='encerrado'?'<div class="mini">A janela acabou com '+e.feitos+' de '+e.alvo+' dias. Dá para prorrogar e continuar de onde parou.</div>':
+    '<div class="mini">'+e.feitos+' de '+e.alvo+' dias feitos · faltam '+e.restam+' · até '+dmy(e.fim)+'</div>';
+  var bt=e.status==='ativo'?'<button class="btn fazer'+(e.feitoHoje?' feito':'')+'" data-dia="'+x.id+'|'+h+'">'+(e.feitoHoje?'✓ Feito hoje (toque para desfazer)':'Fiz hoje')+'</button>':
+    e.status==='encerrado'?'<div class="row" style="margin-top:10px"><button class="btn" data-prorroga="'+x.id+'">Prorrogar 7 dias</button><button class="btn sec" data-arq="'+x.id+'">Arquivar</button></div>':
+    '<div class="row" style="margin-top:10px"><button class="btn sec" data-arq="'+x.id+'">Arquivar</button></div>';
+  return '<div class="cartao">'+topo+(x.nota?'<div class="mini">'+esc(x.nota)+'</div>':'')+barra(e.pct)+st+bt+'<div class="dias">'+q+'</div>'+
+    (e.status==='ativo'?'<div class="row" style="margin-top:10px"><button class="btn sec" data-arq="'+x.id+'">Tirar da lista</button></div>':'')+'</div>';
+}
+
+function render(){
+  var vis=L.filter(function(x){return x.inicio&&!x.arquivado}), at=[],fe=[];
+  vis.forEach(function(x){(P.estado(x,hoje()).status==='concluido'?fe:at).push(x)});
+  at.sort(function(a,b){return a.inicio<b.inicio?1:-1});
+  $('#ativos').innerHTML='<div class="row" style="margin-bottom:12px"><button class="btn" data-novo="1">+ Novo desafio</button></div>'+
+    (at.length?'<div class="grid">'+at.map(cartao).join('')+'</div>':'<div class="cartao vazio">Nenhum desafio em andamento. Escolha uma ideia ou crie o seu.</div>');
+  $('#ideias').innerHTML='<div class="grid">'+IDEIAS.map(function(i,k){return '<div class="cartao"><h3>'+esc(i[0])+'</h3><div class="mini">'+esc(i[3])+'</div><div class="mini" style="margin:6px 0">'+i[2]+' dias feitos em '+i[1]+' dias</div><button class="btn" data-ideia="'+k+'">Começar hoje</button></div>'}).join('')+'</div>';
+  $('#feitos').innerHTML=fe.length?'<div class="grid">'+fe.map(cartao).join('')+'</div>':'<div class="cartao vazio">Ainda nenhum concluído. O primeiro acende um marco na Central.</div>';
+}
+
+var dlg=$('#dlg'),frm=$('#frm');
+function abre(){
+  frm.innerHTML='<h3 class="full">Novo desafio</h3>'+
+   '<label class="full">O que você vai fazer?<input name="nome" required maxlength="80" autocomplete="off"></label>'+
+   '<label>Duração (dias)<input name="dias" type="number" inputmode="numeric" min="1" max="90" value="14" required></label>'+
+   '<label>Dias para vencer<input name="alvo" type="number" inputmode="numeric" min="1" max="90" value="10" required></label>'+
+   '<div class="mini full">Dica: deixe uma folga. 10 de 14 dias é um desafio real e perdoa os dias ruins.</div>'+
+   '<div class="row full"><button class="btn" value="ok">Começar hoje</button><button class="btn sec" type="button" id="cancela">Cancelar</button></div>';
+  dlg.showModal();$('#cancela').onclick=function(){dlg.close()};
+}
+frm.addEventListener('submit',function(e){
+  e.preventDefault();var n=frm.elements.nome.value.trim(),d=Math.max(1,Math.min(90,+frm.elements.dias.value||14)),a=Math.max(1,Math.min(d,+frm.elements.alvo.value||d));
+  if(!n)return;criar(n,d,a);dlg.close();
+});
+
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button');if(!t)return;
+  if(t.dataset.novo)abre();
+  else if(t.dataset.ideia){var i=IDEIAS[+t.dataset.ideia];criar(i[0],i[1],i[2],i[3]);document.querySelector('[data-t=ativos]').click()}
+  else if(t.dataset.dia){var p=t.dataset.dia.split('|');marcar(p[0],p[1])}
+  else if(t.dataset.prorroga){var x=achar(t.dataset.prorroga);db.doc('desafios/'+x.id).update({dias:(+x.dias||1)+7})}
+  else if(t.dataset.arq){var y=achar(t.dataset.arq);if(y&&confirm(y.concluidoEm?'Arquivar este desafio concluído?':'Tirar este desafio da lista?'))db.doc('desafios/'+y.id).update({arquivado:true})}
+});
+$('#tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
+
+claude.use('db').then(function(d){
+  db=d;
+  db.collection('desafios').onSnapshot(function(s){L=s.docs.map(function(x){var o=x.data();o.id=x.id;return o});render()});
+});
+render();
+})();
+</script>
+<script src="assets/modulo.js"></script>
+</body>
+</html>

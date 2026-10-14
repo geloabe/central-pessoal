@@ -123,6 +123,24 @@
     return { pct: total ? Math.round(n / total * 100) : 0, feitos: n, total: total, imoveis: (m.imoveis || []).length, cotacoes: (m.cotacoes || []).length };
   }
 
+  /* ---------- Desafios ---------- */
+  // Janela de N dias; conclui ao atingir `alvo` check-ins (não precisa ser seguido: falhar um dia não zera nada).
+  function estadoDesafio(x, hoje) {
+    var dias = Math.max(1, +x.dias || 1), alvo = Math.min(dias, Math.max(1, +x.alvo || dias)), f = x.feitos || {};
+    var ini = parse(x.inicio), fim = addDias(ini, dias - 1), h0 = parse(iso(hoje));
+    var feitos = Object.keys(f).filter(function (k) { return f[k]; }).length;
+    var st = feitos >= alvo ? 'concluido' : h0 > fim ? 'encerrado' : 'ativo';
+    var dia = Math.max(1, Math.min(dias, Math.round((h0 - ini) / DIA) + 1));
+    return { dias: dias, alvo: alvo, feitos: feitos, status: st, dia: dia, restam: Math.max(0, alvo - feitos), fim: iso(fim),
+             feitoHoje: !!f[iso(hoje)], pct: Math.min(100, Math.round(feitos / alvo * 100)) };
+  }
+  function desafios(d, hoje) {
+    var l = (d.desafios || []).filter(function (x) { return x.inicio && !x.arquivado; }).map(function (x) { return estadoDesafio(x, hoje); });
+    var at = l.filter(function (e) { return e.status === 'ativo'; });
+    return { ativos: at.length, concluidos: l.filter(function (e) { return e.status === 'concluido'; }).length,
+             hoje: at.filter(function (e) { return e.feitoHoje; }).length, pct: at.length ? Math.round(at.reduce(function (a, e) { return a + e.pct; }, 0) / at.length) : 0 };
+  }
+
   /* ---------- Marcos: conquistas que se acendem aos poucos ---------- */
   function marcos(p) {
     var l = [];
@@ -144,20 +162,22 @@
     add('m1', '1º imóvel anotado', p.mudanca.imoveis >= 1);
     add('m3', '3 orçamentos de mudança', p.mudanca.cotacoes >= 3);
     add('m50', 'Metade do checklist da mudança', p.mudanca.pct >= 50);
+    add('d1', '1º desafio concluído', p.desafios.concluidos >= 1);
+    add('d3', '3 desafios concluídos', p.desafios.concluidos >= 3);
     add('p1', '1ª medição do plano alimentar', p.plano.total >= 1);
     return l;
   }
 
   function coisasHoje(p) {
-    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje;
+    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje;
   }
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje) };
     p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
-  var api = { calcular: calcular, iso: iso, e1rm: e1rm };
+  var api = { calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_PROG = api;
 })(typeof window !== 'undefined' ? window : globalThis);

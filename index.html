@@ -119,10 +119,11 @@ async function carregar(){
     seguro(db.collection('mud_imoveis').get().then(docs),[]), seguro(db.collection('mud_cotacoes').get().then(docs),[]),
     seguro(db.doc('mud_checklist/main').get().then(function(s){return s.exists?s.data():{}}),{}), seguro(db.doc('mud_config/main').get().then(function(s){return s.exists?s.data():{}}),{}),
     seguro(fetch('assets/exercicios.json').then(function(x){return x.json()}),{}),
-    seguro(db.collection('avaliacao').get().then(docs),[])
+    seguro(db.collection('avaliacao').get().then(docs),[]),
+    seguro(db.collection('desafios').get().then(docs),[])
   ]);
   return {sessions:r[0],habitos:{config:json(r[1]),records:json(r[2])||{}},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
-    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14]};
+    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15]};
 }
 
 function card(id,href,titulo,corpo){
@@ -150,6 +151,7 @@ function render(p){
     card('grimorio','grimorio.html','Grimório','<div class="num">'+p.grimorio.sequencia+' <small>dia'+(p.grimorio.sequencia===1?'':'s')+' de estudo</small></div><div class="mini">'+(p.grimorio.total?p.grimorio.total+' dias com registro':'Seu caderno de estudo e prática.')+'</div>'),
     card('rota','rota-internacional.html','Rota Internacional','<div class="num">'+p.rota.semana+' <small>de '+p.rota.meta+' candidaturas</small></div>'+barra(rotaPct)+delta(p.rota.semana,p.rota.anterior)),
     card('financeiro','financeiro.html','Financeiro','<div class="num">'+p.financeiro.pct+'% <small>da entrada</small></div>'+barra(p.financeiro.pct)+'<div class="mini">'+brl(p.financeiro.guardado)+' de '+brl(p.financeiro.meta)+'</div>'),
+    card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
     card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>')
   ];
   $('#cards').innerHTML=cards.join('');
