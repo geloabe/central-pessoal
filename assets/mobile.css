@@ -45,4 +45,23 @@
   html[data-pg="financeiro"] .scenario-card .big { font-size: 22px; overflow-wrap: anywhere; }
   html[data-pg="financeiro"] .mini-trend-card, html[data-pg="financeiro"] .chart-wrap { min-width: 0; max-width: 100%; }
   html[data-pg="financeiro"] a[href^="#"] { display: inline-flex; align-items: center; min-height: 44px; }
+
+  /* Financeiro: lista de gastos em cartões (descrição + valor em cima, categoria embaixo) */
+  html[data-pg="financeiro"] #gastosTable, html[data-pg="financeiro"] #gastosTable tbody, html[data-pg="financeiro"] #gastosTable tfoot { display: block; width: 100%; }
+  html[data-pg="financeiro"] #gastosTable thead { display: none; }
+  html[data-pg="financeiro"] #gastosTable tbody tr { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 12px 4px; border-bottom: 1px solid var(--line-soft, #eee); }
+  html[data-pg="financeiro"] #gastosTable tbody td { display: block; padding: 0; border: 0; background: none; }
+  html[data-pg="financeiro"] #gastosTable td.desc { grid-column: 1; font-size: 15px; overflow-wrap: anywhere; }
+  html[data-pg="financeiro"] #gastosTable td.val { grid-column: 2; grid-row: 1; font-size: 15px; font-weight: 600; text-align: right; }
+  html[data-pg="financeiro"] #gastosTable td.c-data, html[data-pg="financeiro"] #gastosTable td.c-mes, html[data-pg="financeiro"] #gastosTable td.c-orig { grid-column: 1 / -1; font-size: 12px; display: inline; }
+  html[data-pg="financeiro"] #gastosTable td.c-mes, html[data-pg="financeiro"] #gastosTable td.c-orig { display: none; }
+  html[data-pg="financeiro"] #gastosTable td.c-data { grid-row: 2; }
+  html[data-pg="financeiro"] #gastosTable td.c-cat { grid-column: 1 / -1; grid-row: 3; margin-top: 6px; }
+  html[data-pg="financeiro"] #gastosTable td.c-cat select { width: 100%; }
+  html[data-pg="financeiro"] #gastosTable tfoot tr { display: flex; justify-content: space-between; padding: 12px 4px; }
+  html[data-pg="financeiro"] #gastosTable tfoot td { display: block; padding: 0; border: 0; }
+  html[data-pg="financeiro"] #gastosTable tfoot td[colspan="5"] { text-align: left !important; }
+  html[data-pg="financeiro"] #gastosTable tr.c-mais { display: block; }
+  html[data-pg="financeiro"] #gastosTable tr.c-mais td { width: 100%; }
+  html[data-pg="financeiro"] #gastosTable tr.c-mais button { width: 100%; min-height: 48px; }
 }

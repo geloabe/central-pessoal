@@ -886,9 +886,9 @@ function renderGastos(){
     </section>
   `;
 
-  document.getElementById('fText').addEventListener('input', e=>{ state.filterText = e.target.value; renderGastosTable(); });
-  document.getElementById('fCat').addEventListener('change', e=>{ state.filterCat = e.target.value; renderGastosTable(); });
-  document.getElementById('fMonth').addEventListener('change', e=>{ state.filterMonth = e.target.value; renderGastosTable(); });
+  document.getElementById('fText').addEventListener('input', e=>{ state.filterText = e.target.value; state.gastosLim = 60; renderGastosTable(); });
+  document.getElementById('fCat').addEventListener('change', e=>{ state.filterCat = e.target.value; state.gastosLim = 60; renderGastosTable(); });
+  document.getElementById('fMonth').addEventListener('change', e=>{ state.filterMonth = e.target.value; state.gastosLim = 60; renderGastosTable(); });
 
   renderGastosTable();
 }
@@ -902,16 +902,17 @@ function renderGastosTable(){
   txs = txs.slice().sort((a,b)=> b.date.localeCompare(a.date));
   const total = txs.reduce((a,t)=>a+t.value,0);
 
-  const rows = txs.slice(0,500).map(t=>{
+  const lim = state.gastosLim || 60;
+  const rows = txs.slice(0,lim).map(t=>{
     const dateMonthIdx = parseInt(t.date.slice(5,7),10)-1;
     const isOldInstallment = t.source==='Cartão de crédito' && MONTH_ALL[dateMonthIdx] !== t.month;
     return `
     <tr>
-      <td>${t.date.slice(8,10)}/${t.date.slice(5,7)}/${t.date.slice(0,4)}</td>
+      <td class="c-data">${t.date.slice(8,10)}/${t.date.slice(5,7)}/${t.date.slice(0,4)}</td>
       <td class="desc">${t.desc}${isOldInstallment ? ' <span class="parcela-badge">parcela</span>' : ''}</td>
-      <td>${categoryTagHtml(t)}</td>
-      <td>${t.month}</td>
-      <td>${t.source}</td>
+      <td class="c-cat">${categoryTagHtml(t)}</td>
+      <td class="c-mes">${t.month}</td>
+      <td class="c-orig">${t.source}</td>
       <td class="val">${fmt(t.value)}</td>
     </tr>`;
   }).join('');
@@ -919,8 +920,10 @@ function renderGastosTable(){
   tbl.innerHTML = `
     <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Mês</th><th>Origem</th><th style="text-align:right">Valor</th></tr></thead>
     <tbody>${rows || '<tr><td colspan="6" class="empty">Nada encontrado.</td></tr>'}</tbody>
-    <tfoot><tr><td colspan="5" style="text-align:right; font-weight:700; color:var(--ink)">Total (${txs.length} itens)</td><td class="val" style="font-weight:700">${fmt(total)}</td></tr></tfoot>
+    <tfoot><tr class="c-tot"><td colspan="5" style="text-align:right; font-weight:700; color:var(--ink)">Total (${txs.length} itens)</td><td class="val" style="font-weight:700">${fmt(total)}</td></tr>${txs.length>lim?`<tr class="c-mais"><td colspan="6"><button type="button" id="gastosMais">Mostrar mais ${Math.min(60,txs.length-lim)} de ${txs.length-lim} restantes</button></td></tr>`:''}</tfoot>
   `;
+  const mais = document.getElementById('gastosMais');
+  if(mais) mais.addEventListener('click', ()=>{ state.gastosLim = lim + 60; renderGastosTable(); });
   wireCategoryEdits(tbl);
 }
 
