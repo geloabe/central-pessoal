@@ -59,6 +59,17 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
 .marcos span.on{border-color:var(--t-ok);color:var(--t-ink);background:color-mix(in srgb,var(--t-ok) 16%,var(--t-surface))}
 .marcos span.on::before{content:"✓ ";color:var(--t-ok);font-weight:700}
 .erro{padding:14px;border:1px solid var(--t-bad);color:var(--t-bad);margin-top:12px}
+
+.agua{margin-top:12px;padding:14px 16px;background:var(--t-surface);border:1px solid var(--t-line);border-left:4px solid var(--t-c3)}
+.agua .topo{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.agua .big{font:600 28px var(--f-titulo);letter-spacing:var(--titulo-tracking)}
+.agua .big small{font:400 15px var(--f-texto);color:var(--t-muted)}
+.agua .msg{font-size:14px;color:var(--t-muted);margin-top:6px}
+.agua .msg.ok{color:var(--t-ok);font-weight:600}
+.agua .bts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.agua .bts button{font:600 15px var(--f-texto);min-height:52px;border:1px solid var(--t-c3);background:transparent;color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
+.agua .bts button.pri{background:var(--t-c3);color:#fff}
+.agua .desf{margin-top:8px;font:500 13px var(--f-texto);min-height:40px;border:0;background:none;color:var(--t-muted);text-decoration:underline;cursor:pointer}
 </style>
 </head>
 <body class="t">
@@ -75,6 +86,8 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
     <p id="sub"></p>
     <div id="pr"></div>
   </section>
+
+  <section class="agua" id="agua" aria-label="Água de hoje"></section>
 
   <div id="aval"></div>
 
@@ -121,10 +134,11 @@ async function carregar(){
     seguro(fetch('assets/exercicios.json').then(function(x){return x.json()}),{}),
     seguro(db.collection('avaliacao').get().then(docs),[]),
     seguro(db.collection('desafios').get().then(docs),[]),
-    seguro(db.collection('refeicoes').get().then(docs),[])
+    seguro(db.collection('refeicoes').get().then(docs),[]),
+    seguro(db.collection('agua').get().then(docs),[])
   ]);
   return {sessions:r[0],habitos:{config:json(r[1]),records:json(r[2])||{}},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
-    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16]};
+    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17]};
 }
 
 function card(id,href,titulo,corpo){
@@ -163,6 +177,7 @@ function render(p){
     card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
     card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>')
   ];
+  renderAgua(p);
   $('#cards').innerHTML=cards.join('');
 
   var feitos=p.marcos.filter(function(m){return m.ok}), faltam=p.marcos.filter(function(m){return !m.ok}).slice(0,4);
@@ -188,7 +203,30 @@ async function avaliacao(d){
   });
 }
 
-carregar().then(function(d){render(CP_PROG.calcular(d,new Date()));avaliacao(d)},function(e){
+var DADOS=null;
+function litros(ml){return String(Math.round(ml/10)/100).replace('.',',')}
+function hojeISO(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function renderAgua(p){
+  var a=p.agua, msg, cls='';
+  if(a.bateu){msg='Meta de 3 L batida 💧 Bom trabalho.';cls=' ok'}
+  else if(a.bomHoje){msg='Dia bom ✓ (mais de 2,4 L). Faltam '+litros(a.meta-a.hoje)+' L para a meta.';cls=' ok'}
+  else if(a.hoje===0){msg='Toque no copo ou na garrafa cada vez que beber.'}
+  else{msg='Faltam '+litros(a.meta-a.hoje)+' L para a meta.'}
+  var seq=a.sequencia?'<div class="msg">'+a.sequencia+' dia'+(a.sequencia===1?'':'s')+' seguidos acima de 2,4 L'+(a.melhor>a.sequencia?' · melhor: '+a.melhor:'')+(a.emRisco?' · hoje ainda dá tempo de manter':'')+'</div>':(a.melhor>0?'<div class="msg">Recomeço — sua melhor sequência foi de '+a.melhor+' dias.</div>':'');
+  $('#agua').innerHTML='<div class="topo"><div><div class="rotulo">Água hoje</div><div class="big">'+litros(a.hoje)+' L <small>de 3 L</small></div></div></div>'+barra(a.pct)+'<div class="msg'+cls+'">'+msg+'</div>'+seq+
+    '<div class="bts"><button type="button" data-ml="250">+ copo<br><small>250 ml</small></button><button type="button" class="pri" data-ml="500">+ garrafa<br><small>500 ml</small></button><button type="button" data-ml="-1">Outro valor</button></div>'+
+    (a.hoje>0?'<button type="button" class="desf" data-desf="1">Desfazer o último</button>':'');
+}
+function aguaDoc(){var d=DADOS.agua.filter(function(x){return x.date===hojeISO()})[0];if(!d){d={date:hojeISO(),id:hojeISO(),ml:0,log:[]};DADOS.agua.push(d)}d.log=d.log||[];return d}
+async function salvaAgua(d){try{var db=await claude.use('db');await db.doc('agua/'+d.date).set({date:d.date,ml:d.ml,log:d.log})}catch(e){console.error(e)}}
+$('#agua').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b||!DADOS)return;
+  var d=aguaDoc();
+  if(b.dataset.desf){var u=d.log.pop();d.ml=Math.max(0,d.ml-(u||0))}
+  else{var ml=+b.dataset.ml;if(ml<0){var v=prompt('Quantos ml você bebeu?','300');ml=Math.round(+String(v||'').replace(',','.'));if(!ml||ml<0||ml>3000)return}d.ml+=ml;d.log.push(ml)}
+  salvaAgua(d);render(CP_PROG.calcular(DADOS,new Date()));
+});
+carregar().then(function(d){DADOS=d;render(CP_PROG.calcular(d,new Date()));avaliacao(d)},function(e){
   console.error(e);$('#titulo').textContent='Não consegui carregar seus dados agora.';$('#erro').innerHTML='<div class="erro">Verifique a conexão e recarregue a página.</div>';
 });
 })();

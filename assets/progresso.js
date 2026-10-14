@@ -102,6 +102,20 @@
       hoje: apps.filter(function (a) { return a.appliedAt === iso(hoje); }).length };
   }
 
+  /* ---------- Água: meta diária, sequência de dias bons ---------- */
+  var AGUA_META = 3000, AGUA_BOM = 2400; // 3 L; "dia bom" = 80% da meta
+  function agua(d, hoje) {
+    var mapa = {}; (d.agua || []).forEach(function (r) { if (r && r.date) mapa[r.date] = r; });
+    function ml(k) { return num((mapa[k] || {}).ml); }
+    var datas = Object.keys(mapa).sort(), sq = sequencia(function (k) { return ml(k) >= AGUA_BOM; }, datas, hoje);
+    var semana = [], ini = segunda(hoje);
+    for (var i = 0; i < 7; i++) { var dt = addDias(ini, i), k = iso(dt); semana.push({ dia: k, feito: ml(k) >= AGUA_BOM, meta: ml(k) >= AGUA_META, pausa: !!sq.set[k], futuro: dt > hoje, hoje: k === iso(hoje), ml: ml(k) }); }
+    var h = ml(iso(hoje));
+    return { hoje: h, meta: AGUA_META, bom: AGUA_BOM, pct: Math.min(100, Math.round(h / AGUA_META * 100)), bateu: h >= AGUA_META, bomHoje: h >= AGUA_BOM,
+      sequencia: sq.seq, melhor: sq.melhor, pausas: sq.pausas, emRisco: sq.emRisco, semana: semana,
+      diasMeta: datas.filter(function (k) { return ml(k) >= AGUA_META; }).length, total: datas.length };
+  }
+
   /* ---------- Plano alimentar: refeições marcadas por dia ---------- */
   var REF_N = 6, BOM_MIN = 4, PROT_META = 130; // 6 refeições no plano; "dia bom" = 4 ou mais; proteína mínima ≈ 1,9 g/kg
   function refDia(r) {
@@ -197,6 +211,8 @@
     add('a7', '7 dias seguidos na alimentação', p.refeicoes.sequencia >= 7);
     add('ac', '1º dia completo na alimentação', p.refeicoes.completos >= 1);
     add('ap', 'Meta de proteína batida', p.refeicoes.diasProteina >= 1);
+    add('w1', 'Meta de água batida (3 L)', p.agua.diasMeta >= 1);
+    add('w3', '3 dias seguidos bebendo água', p.agua.sequencia >= 3);
     add('d1', '1º desafio concluído', p.desafios.concluidos >= 1);
     add('d3', '3 desafios concluídos', p.desafios.concluidos >= 3);
     add('p1', '1ª medição do plano alimentar', p.plano.total >= 1);
@@ -204,15 +220,15 @@
   }
 
   function coisasHoje(p) {
-    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0);
+    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0);
   }
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje) };
     p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
-  var api = { refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
+  var api = { agua: agua, AGUA_META: AGUA_META, AGUA_BOM: AGUA_BOM, refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_PROG = api;
 })(typeof window !== 'undefined' ? window : globalThis);
