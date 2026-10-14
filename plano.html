@@ -330,7 +330,7 @@ var IDEIAS=[
 
   function soma(l){var t=[0,0,0,0];l.forEach(function(x){if(!x[6])for(var k=0;k<4;k++)t[k]+=x[2+k]});return t}
   function chips(t){return '<div class="chips"><span class="k">'+Math.round(t[0])+' kcal</span><span>'+Math.round(t[1])+' g P</span><span>'+Math.round(t[2])+' g C</span><span>'+Math.round(t[3])+' g G</span></div>'}
-  function lista(it,mi){return '<ul class="it">'+it.map(function(x){return '<li'+(x[6]?' class="op"':'')+'><span class="q">'+E(x[0])+'</span><span>'+E(x[1])+(x[6]?' <i>(opcional, +'+x[2]+' kcal)</i>':'')+(x[7]&&mi!=null?'<span class="alt" role="group" aria-label="Escolher: '+E(x[7].map(function(a){return a[0]}).join(' ou '))+'">'+x[7].map(function(a,jj){return '<button type="button" data-alt="'+mi+'|'+x[9]+'|'+jj+'" aria-pressed="'+(jj===x[8])+'">'+E(a[0])+'</button>'}).join('')+'</span>':'')+'</span></li>'}).join('')+'</ul>'}
+  function lista(it,mi){return '<ul class="it">'+it.map(function(x){var dia=mi!=null;return '<li'+(x[6]?' class="op"':'')+'><span class="q">'+E(x[0])+'</span><span>'+E(x[1])+((x[6]||(dia&&x[10]))?' <i>(opcional · +'+x[2]+' kcal)</i>':'')+(x[7]&&dia?'<span class="alt" role="group" aria-label="Escolher: '+E(x[7].map(function(a){return a[0]}).join(' ou '))+'">'+x[7].map(function(a,jj){return '<button type="button" data-alt="'+mi+'|'+x[9]+'|'+jj+'" aria-pressed="'+(jj===x[8])+'">'+E(a[0])+'</button>'}).join('')+'</span>':'')+(dia&&x[10]?'<span class="alt"><button type="button" data-opt="'+mi+'|'+x[9]+'" aria-pressed="'+(!x[6])+'">'+(x[6]?'Coloquei?':'✓ Coloquei')+'</button></span>':'')+'</span></li>'}).join('')+'</ul>'}
 
   /* sobremesas: até ~155 kcal, entram no total da refeição quando escolhidas */
   var SOBREMESAS=[
@@ -348,7 +348,8 @@ var IDEIAS=[
   try{esc=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
   var MEAL={cafe:'Café da manhã',lanche1:'Lanche da manhã',almoco:'Almoço',pos:'Pós-treino',jantar:'Jantar',ceia:'Ceia'};
   function altIdx(i,o,k){var v=esc['a|'+i+'|'+o.n+'|'+k];return v==null?0:v}
-  function itensOf(i,o){return o.it.map(function(x,k){if(!x[7])return x;var j=Math.min(altIdx(i,o,k),x[7].length-1),a=x[7][j];return [a[1],a[2],a[3],a[4],a[5],a[6],x[6],x[7],j,k]})}
+  function optOn(i,o,k){return esc['o|'+i+'|'+o.n+'|'+k]===1}
+  function itensOf(i,o){return o.it.map(function(x,k){var isOpt=x[6]===true,b=x,j=0;if(x[7]){j=Math.min(altIdx(i,o,k),x[7].length-1);var a=x[7][j];b=[a[1],a[2],a[3],a[4],a[5],a[6]]}return [b[0],b[1],b[2],b[3],b[4],b[5],isOpt&&!optOn(i,o,k),x[7]||null,j,k,isOpt]})}
   function opsOf(i){var r=REF[i];if(!r.ops)return null;return r.ops.concat(IDEIAS.filter(function(x){return votos[x.id]==='sim'&&x.onde.indexOf(r.key)>=0}).map(function(x){return I(x.id)}))}
   function sel(i){var r=REF[i];if(!r.ops)return r;var l=opsOf(i);return l.filter(function(x){return x.n===esc[i]})[0]||l[0]}
   function proxima(){var n=new Date(),m=n.getHours()*60+n.getMinutes(),r=-1;REF.forEach(function(x,i){if(!x.h||r>=0)return;var p=x.h.split(':');if(+p[0]*60+ +p[1]>=m-30)r=i});return r}
@@ -368,6 +369,8 @@ var IDEIAS=[
     document.getElementById('resumo').innerHTML='<div><b>'+Math.round(tot[0]).toLocaleString('pt-BR')+'</b><small>kcal</small></div><div><b>'+Math.round(tot[1])+' g</b><small>proteína</small></div><div><b>'+Math.round(tot[2])+' g</b><small>carbo</small></div><div><b>'+Math.round(tot[3])+' g</b><small>gordura</small></div>';
   }
   document.getElementById('tl').addEventListener('click',function(e){
+    var ot=e.target.closest('[data-opt]');
+    if(ot){var qo=ot.dataset.opt.split('|'),oi2=+qo[0],kk='o|'+oi2+'|'+sel(oi2).n+'|'+qo[1];esc[kk]=esc[kk]===1?0:1;try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}snapDone(oi2);renderDia();renderDias();return}
     var al=e.target.closest('[data-alt]');
     if(al){var q=al.dataset.alt.split('|'),oi=+q[0];esc['a|'+oi+'|'+sel(oi).n+'|'+q[1]]=+q[2];try{localStorage.setItem(KEY,JSON.stringify(esc))}catch(x){}snapDone(oi);renderDia();renderDias();return}
     var fz=e.target.closest('[data-fz]'); if(fz){alterna(+fz.dataset.fz);return}
@@ -401,7 +404,7 @@ var IDEIAS=[
     else if(db&&d)db.doc('refeicoes/'+k).set(d);
     renderDia();renderDias();
   }
-  function snapshot(i){var o=sel(i),sb=sob(i),its=itensOf(i,o),t=soma(its.concat(sb?sb.it:[])),al=its.filter(function(x){return x[7]}).map(function(x){return x[7][x[8]][0]});return {op:o.n+(al.length?' ('+al.join(', ')+')':'')+(sb?' + '+sb.n:''),kcal:Math.round(t[0]),p:Math.round(t[1]),c:Math.round(t[2]),g:Math.round(t[3])}}
+  function snapshot(i){var o=sel(i),sb=sob(i),its=itensOf(i,o),t=soma(its.concat(sb?sb.it:[])),al=its.filter(function(x){return x[7]}).map(function(x){return x[7][x[8]][0]}).concat(its.filter(function(x){return x[10]&&!x[6]}).map(function(x){return '+ '+x[1].split(' ')[0].toLowerCase()}));return {op:o.n+(al.length?' ('+al.join(', ')+')':'')+(sb?' + '+sb.n:''),kcal:Math.round(t[0]),p:Math.round(t[1]),c:Math.round(t[2]),g:Math.round(t[3])}}
   function snapDone(i){var d=reg[diaSel],key=REF[i]&&REF[i].key;if(d&&key&&d.feitas&&d.feitas[key]&&!d.feitas[key].livre){d.feitas[key]=snapshot(i);if(db)db.doc('refeicoes/'+diaSel).set(d)}}
   function toast(msg,rec){var el=document.getElementById('toast');el.textContent=msg;el.className='toast on'+(rec?' rec':'');clearTimeout(toast._t);toast._t=setTimeout(function(){el.classList.remove('on')},3800)}
 
