@@ -69,11 +69,20 @@
   }
 
   /* ---------- Hábitos: sequência com "pausa" (1 dia ruim a cada 7 não quebra) ---------- */
-  function habitosDiarios(cfg) { return ((cfg && cfg.habits) || []).filter(function (h) { return h.freq === 'day'; }); }
+  // academia, água e livro saíram do Hábitos: academia vem do Treino, água da Central
+  var FORA = ['academia', 'agua', 'livro'];
+  // mesmos hábitos que o Hábitos usa quando ainda não há configuração salva
+  var CONFIG_PADRAO = { habits: [
+    { id: 'cuidados_bucais', name: 'Cuidados bucais', kind: 'quantity', freq: 'day', target: 3, unit: 'x', step: 1 },
+    { id: 'skincare_manha', name: 'Skincare (manhã)', kind: 'boolean', freq: 'day', target: 1, unit: null, step: null },
+    { id: 'skincare_noite', name: 'Skincare (noite)', kind: 'boolean', freq: 'day', target: 1, unit: null, step: null },
+    { id: 'omega3', name: 'Ômega 3', kind: 'boolean', freq: 'day', target: 1, unit: null, step: null }] };
+  function habitosAtivos(cfg) { return ((cfg && cfg.habits) || []).filter(function (h) { return FORA.indexOf(h.id) < 0; }); }
+  function habitosDiarios(cfg) { return habitosAtivos(cfg).filter(function (h) { return h.freq === 'day'; }); }
   function bateu(h, v) { return h.kind === 'boolean' ? !!v : num(v) >= h.target; }
   function habitos(d, hoje) {
-    var cfg = (d.habitos && d.habitos.config) || null, rec = (d.habitos && d.habitos.records) || {};
-    if (!cfg) return { ativo: false, feitosHoje: 0, totalHoje: 0, sequencia: 0, pausas: 0, melhor: 0, emRisco: false, semana: [] };
+    var cfg = (d.habitos && d.habitos.config) || CONFIG_PADRAO, rec = (d.habitos && d.habitos.records) || {};
+    if (!cfg) return { ativo: false, feitosHoje: 0, totalHoje: 0, sequencia: 0, pausas: 0, melhor: 0, emRisco: false, semana: [], lista: [], diasBons: 0, semanaisFeitos: 0, semanaisTotal: 0 };
     var diarios = habitosDiarios(cfg);
     function feitos(dia) { var r = rec[dia] || {}; return diarios.filter(function (h) { return bateu(h, r[h.id]); }).length; }
     function bom(dia) { return diarios.length ? feitos(dia) >= Math.ceil(diarios.length / 2) : false; }
@@ -81,8 +90,18 @@
     var h0 = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
     var semana = [], ini = segunda(hoje);
     for (var i = 0; i < 7; i++) { var dia = addDias(ini, i), k = iso(dia); semana.push({ dia: k, feito: bom(k), pausa: !!atual.set[k], futuro: dia > hoje, hoje: k === iso(hoje) }); }
+    var hojeK = iso(hoje), rh = rec[hojeK] || {};
+    var lista = habitosAtivos(cfg).filter(function (h) { return !h.semHome; }).map(function (h) {
+      var n = 0;
+      if (h.freq === 'week') for (var i = 0; i < 7; i++) { var dt = addDias(ini, i); if (dt <= hoje && bateu(h, (rec[iso(dt)] || {})[h.id])) n++; }
+      return { id: h.id, nome: h.name, kind: h.kind, freq: h.freq, meta: h.target, unit: h.unit || '', step: h.step || 1, valor: rh[h.id] || (h.kind === 'boolean' ? false : 0),
+               bateu: bateu(h, rh[h.id]), semanaN: n, semanaOk: h.freq === 'week' && n >= h.target };
+    });
+    var semanais = lista.filter(function (x) { return x.freq === 'week'; });
+    var diasBons = semana.filter(function (x) { return x.feito; }).length;
     return { ativo: true, feitosHoje: feitos(iso(hoje)), totalHoje: diarios.length, sequencia: atual.seq, pausas: atual.pausas,
-      melhor: melhor, emRisco: !bom(iso(h0)) && atual.seq > 0, semana: semana };
+      melhor: melhor, emRisco: !bom(iso(h0)) && atual.seq > 0, semana: semana, lista: lista, diasBons: diasBons,
+      semanaisFeitos: semanais.filter(function (x) { return x.semanaOk; }).length, semanaisTotal: semanais.length };
   }
 
   /* ---------- Grimório: dias seguidos com registro ---------- */
@@ -239,7 +258,26 @@
   function calcular(d, hoje) {
     hoje = hoje || new Date();
     var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje) };
-    p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
+    p.metas = metas(p, d); p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
+  }
+
+  /* ---------- Metas da semana, por área (as de saúde primeiro) ---------- */
+  var META_DIAS = 5; // dias bons por semana para refeições, água e hábitos
+  function metas(p, d) {
+    var cfg = (d.habitos && d.habitos.config) || {}, ac = ((cfg.habits || []).filter(function (h) { return h.id === 'academia'; })[0]) || {};
+    var mt = num(ac.target) || num(cfg.metaTreino) || 4;
+    function m(area, id, nome, atual, meta, href, texto) { return { area: area, id: id, nome: nome, atual: atual, meta: meta, pct: meta ? Math.min(100, Math.round(atual / meta * 100)) : 0, ok: atual >= meta, href: href, texto: texto || (atual + ' de ' + meta) }; }
+    var s = [], o = [];
+    s.push(m('saude', 'treino', 'Treinos na semana', p.treino.semana, mt, 'treino.html'));
+    s.push(m('saude', 'refeicoes', 'Dias bons de alimentação', p.refeicoes.semana.filter(function (x) { return x.feito; }).length, META_DIAS, 'plano.html', null));
+    s.push(m('saude', 'agua', 'Dias com água acima de 2,4 L', p.agua.semana.filter(function (x) { return x.feito; }).length, META_DIAS, 'index.html#agua', null));
+    if (p.habitos.ativo) s.push(m('saude', 'habitos', 'Dias bons de hábitos', p.habitos.diasBons, META_DIAS, 'habitos.html', null));
+    p.habitos.lista.filter(function (x) { return x.freq === 'week'; }).forEach(function (x) { s.push(m('saude', 'h_' + x.id, x.nome, x.semanaN, x.meta, 'habitos.html', x.semanaN + ' de ' + x.meta + ' esta semana')); });
+    o.push(m('vida', 'rota', 'Candidaturas na semana', p.rota.semana, p.rota.meta, 'rota-internacional.html'));
+    o.push(m('vida', 'financeiro', 'Entrada do imóvel', p.financeiro.pct, 100, 'financeiro.html', p.financeiro.pct + '%'));
+    o.push(m('vida', 'mudanca', 'Mudança (checklist)', p.mudanca.pct, 100, 'mudanca.html', p.mudanca.pct + '%'));
+    if (p.desafios.ativos) o.push(m('vida', 'desafios', 'Desafios em andamento', p.desafios.pct, 100, 'desafios.html', p.desafios.pct + '%'));
+    return { saude: s, vida: o };
   }
 
   var api = { agua: agua, AGUA_META: AGUA_META, AGUA_BOM: AGUA_BOM, refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };

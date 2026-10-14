@@ -459,6 +459,16 @@
     main{ padding:22px 16px 70px 16px; }
     .sc-num{ font-size:28px; }
   }
+  .habit-row{ flex-wrap:wrap; row-gap:0; }
+  .h-opts{ flex-basis:100%; margin-top:6px; font-size:13px; }
+  .h-opts summary{ cursor:pointer; color:var(--text-faint); list-style:none; }
+  .h-opts[open] button{ display:inline-block; margin:6px 8px 0 0; padding:8px 12px; border:1px solid var(--border); background:transparent; border-radius:8px; color:inherit; cursor:pointer; }
+  .sug-lista{ display:grid; gap:10px; }
+  .sug{ border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+  .sug-top{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .sug-freq{ font-size:12px; opacity:.7; }
+  .sug p{ margin:6px 0 10px; font-size:14px; line-height:1.45; }
+  .sug button{ min-height:44px; padding:0 18px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; font-weight:600; cursor:pointer; }
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -520,9 +530,6 @@
 /* ================= CONFIG PADRÃO ================= */
 const DEFAULT_CONFIG = {
   habits: [
-    { id:'academia', name:'Academia', kind:'boolean', freq:'week', target:5, unit:null, step:null },
-    { id:'agua', name:'Água', kind:'quantity', freq:'day', target:3, unit:'L', step:0.5 },
-    { id:'livro', name:'Livro', kind:'quantity', freq:'day', target:10, unit:'páginas', step:5 },
     { id:'cuidados_bucais', name:'Cuidados bucais', kind:'quantity', freq:'day', target:3, unit:'x', step:1 },
     { id:'skincare_manha', name:'Skincare (manhã)', kind:'boolean', freq:'day', target:1, unit:null, step:null },
     { id:'skincare_noite', name:'Skincare (noite)', kind:'boolean', freq:'day', target:1, unit:null, step:null },
@@ -573,6 +580,14 @@ async function loadState(){
   // migração: quem já tinha dados salvos ganha os hábitos novos automaticamente, sem perder histórico
   let changed = false;
   if(!CONFIG.habits) CONFIG.habits = [];
+  // academia (vem do Treino), água (vem da Central) e livro saíram da lista; o histórico fica guardado
+  const SAIU = ['academia','agua','livro'];
+  if(CONFIG.habits.some(h=>SAIU.includes(h.id))){
+    const ac = CONFIG.habits.find(h=>h.id==='academia');
+    if(ac && ac.target) CONFIG.metaTreino = ac.target;
+    CONFIG.habits = CONFIG.habits.filter(h=>!SAIU.includes(h.id));
+    changed = true;
+  }
   DEFAULT_CONFIG.habits.forEach(defH=>{
     if(!CONFIG.habits.some(h=>h.id===defH.id)){
       CONFIG.habits.push(JSON.parse(JSON.stringify(defH)));
@@ -816,6 +831,46 @@ function maybeCelebrate(habit){
   return msg;
 }
 
+/* opções de cada hábito: aparecer ou não na Central, remover da lista (o histórico fica) */
+function optsHtml(h){
+  return `<details class="h-opts"><summary>Opções</summary>
+    <button type="button" data-action="toggle-home" data-habit="${h.id}">${h.semHome ? 'Mostrar na Central' : 'Tirar da Central'}</button>
+    <button type="button" data-action="remove-habit" data-habit="${h.id}">Remover hábito</button></details>`;
+}
+
+/* sugestões de hábitos para saúde e bem-estar: o usuário escolhe quais adicionar */
+const SUGESTOES = [
+  { id:'yoga', name:'Yoga ou alongamento (10 min)', kind:'boolean', freq:'week', target:1, unit:null, step:null,
+    why:'Mobilidade e menos tensão muscular. Combina com dia de descanso ou depois do treino.' },
+  { id:'agua_cravo', name:'Água de cravo', kind:'boolean', freq:'week', target:3, unit:null, step:null,
+    why:'Ritual de hidratação sem açúcar. O efeito do cravo na saúde ainda é pouco estudado em pessoas, então vale mais pelo hábito. Use 1 ou 2 cravos e, se tomar anticoagulante, pergunte ao médico.' },
+  { id:'sono', name:'Dormir 7 h ou mais', kind:'boolean', freq:'week', target:5, unit:null, step:null,
+    why:'Sono é o que mais pesa na recomposição corporal: ajuda a recuperar o músculo, controla a fome e melhora o humor.' },
+  { id:'sol_manha', name:'Luz do sol de manhã (10 min)', kind:'boolean', freq:'week', target:5, unit:null, step:null,
+    why:'Luz natural cedo ajuda a regular o relógio do corpo e, com o tempo, o sono. Dá para fazer tomando café na janela ou na rua.' },
+  { id:'caminhada', name:'Caminhada de 20 min', kind:'boolean', freq:'week', target:3, unit:null, step:null,
+    why:'Gasta energia sem pesar na recuperação do treino. Boa nos dias sem academia.' },
+  { id:'respirar', name:'Respirar ou meditar (5 min)', kind:'boolean', freq:'week', target:3, unit:null, step:null,
+    why:'Pausa curta para baixar o estresse e treinar o foco. Cinco minutos já contam.' },
+  { id:'sem_telas', name:'Sem telas 30 min antes de dormir', kind:'boolean', freq:'week', target:4, unit:null, step:null,
+    why:'Ajuda a pegar no sono mais rápido. Pode trocar por ler, alongar ou ouvir música.' },
+  { id:'creatina', name:'Creatina (3 a 5 g)', kind:'boolean', freq:'day', target:1, unit:null, step:null,
+    why:'É um dos suplementos com mais evidência para força e massa magra, e combina com o seu objetivo. Vale combinar com a nutri antes de começar.' },
+  { id:'planejar_dia', name:'Planejar o dia (5 min)', kind:'boolean', freq:'week', target:5, unit:null, step:null,
+    why:'Escolher as 3 coisas do dia reduz a sensação de caos. Ajuda quem tem TDAH.' },
+  { id:'social', name:'Falar com um amigo ou familiar', kind:'boolean', freq:'week', target:2, unit:null, step:null,
+    why:'Contato com pessoas queridas é um dos fatores mais ligados ao bem-estar.' }
+];
+function sugestoesHtml(){
+  const tem = new Set(app.CONFIG.habits.map(h=>h.id));
+  const falta = SUGESTOES.filter(s=>!tem.has(s.id));
+  if(!falta.length) return '';
+  return `<h2 class="section-title" style="margin-top:28px">Sugestões para saúde e bem-estar</h2>
+    <p class="section-lede">Escolha só o que fizer sentido agora. Dá para remover depois e o histórico fica guardado.</p>
+    <div class="sug-lista">${falta.map(s=>`<div class="sug"><div class="sug-top"><b>${esc(s.name)}</b><span class="sug-freq">${habitGoalLabel(s)}</span></div>
+      <p>${esc(s.why)}</p><button type="button" data-action="add-sug" data-sug="${s.id}">Adicionar</button></div>`).join('')}</div>`;
+}
+
 function renderRoutine(){
   const el = document.getElementById('tab-routine');
   const config = app.CONFIG;
@@ -856,6 +911,7 @@ function renderRoutine(){
         <button class="check-btn ${done?'done':''} ${isFlash?'pulse':''}" data-action="toggle-bool" data-habit="${h.id}" aria-label="Marcar ${esc(h.name)}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </button>
+        ${optsHtml(h)}
       </div>`;
     } else {
       const v = U.getVal(today, h.id) || 0;
@@ -873,6 +929,7 @@ function renderRoutine(){
           <span class="qty-value-tag" data-action="qty-edit" data-habit="${h.id}" title="Clique para corrigir">${v}${h.unit.length>1?' ':''}${h.unit}</span>
           <button class="qty-btn" data-action="qty-inc" data-habit="${h.id}">+</button>
         </div>
+        ${optsHtml(h)}
       </div>`;
     }
   });
@@ -897,6 +954,7 @@ function renderRoutine(){
     </div>
     <div class="panel">${rows || '<p class="empty-note">Nenhum hábito cadastrado ainda.</p>'}</div>
     <p class="day-complete-msg ${allDone?'show':''}" id="complete-msg">${completeMsg}</p>
+    ${sugestoesHtml()}
   `;
 
   if(banner){
@@ -918,6 +976,30 @@ document.getElementById('tab-routine').addEventListener('click', (e)=>{
   }
   const backBtn = e.target.closest('[data-action="back-today"]');
   if(backBtn){ routineDate = U.todayStr(); renderRoutine(); return; }
+
+  const addS = e.target.closest('[data-action="add-sug"]');
+  if(addS){
+    const s = SUGESTOES.find(x=>x.id===addS.dataset.sug);
+    if(s && !config.habits.some(h=>h.id===s.id)){
+      const novo = {id:s.id, name:s.name, kind:s.kind, freq:s.freq, target:s.target, unit:s.unit, step:s.step};
+      config.habits.push(novo); U.saveConfig(); renderRoutine();
+    }
+    return;
+  }
+  const togH = e.target.closest('[data-action="toggle-home"]');
+  if(togH){
+    const h = config.habits.find(x=>x.id===togH.dataset.habit);
+    if(h){ h.semHome = !h.semHome; U.saveConfig(); renderRoutine(); }
+    return;
+  }
+  const remH = e.target.closest('[data-action="remove-habit"]');
+  if(remH){
+    const h = config.habits.find(x=>x.id===remH.dataset.habit);
+    if(h && confirm('Remover "'+h.name+'" da lista? O histórico fica guardado e dá para adicionar de novo.')){
+      config.habits = config.habits.filter(x=>x.id!==h.id); U.saveConfig(); renderRoutine();
+    }
+    return;
+  }
 
   const toggleBtn = e.target.closest('[data-action="toggle-bool"]');
   if(toggleBtn){

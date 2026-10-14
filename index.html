@@ -76,6 +76,36 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
 .parahoje .chips{display:flex;gap:8px;flex-wrap:wrap}
 .parahoje a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1px solid var(--t-borda);background:var(--t-surface);color:var(--t-ink);text-decoration:none;font:600 14px var(--f-texto);border-radius:var(--raio)}
 .parahoje a.ok{border-color:var(--t-ok);color:var(--t-ok)}
+
+.hoje-lista{display:grid;gap:8px}
+a.lin{display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 14px;background:var(--t-surface);border:1px solid var(--t-line);border-left:4px solid var(--t-borda);border-radius:var(--raio);color:inherit;text-decoration:none}
+a.lin.ok{border-left-color:var(--t-ok)}
+a.lin .ico{font-size:22px;flex:none}
+a.lin .tx{flex:1;min-width:0}
+a.lin b{display:block;font:600 16px var(--f-texto)}
+a.lin small{display:block;color:var(--t-muted);font-size:13px}
+a.lin .go{color:var(--t-muted);font-size:18px}
+.habhoje .cap{font:500 12px var(--f-mono);color:var(--t-muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.04em}
+.hab{display:flex;align-items:center;gap:12px;min-height:64px;padding:8px 14px;background:var(--t-surface);border:1px solid var(--t-line);border-radius:var(--raio);margin-bottom:8px}
+.hab.ok{border-color:var(--t-ok);background:color-mix(in srgb,var(--t-ok) 10%,var(--t-surface))}
+.hab .tx{flex:1;min-width:0}
+.hab b{display:block;font:600 15px var(--f-texto)}
+.hab small{display:block;color:var(--t-muted);font-size:13px}
+.hab button{flex:none;min-width:52px;height:52px;border-radius:26px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);font:700 22px var(--f-texto);cursor:pointer}
+.hab button.on{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.hab .qt{display:flex;align-items:center;gap:8px}
+.hab .qt span{min-width:44px;text-align:center;font:600 16px var(--f-mono)}
+.hab .vazio{font-size:14px;color:var(--t-muted)}
+.metas-res{font-size:14px;color:var(--t-muted);margin-bottom:10px}
+.metas-g{background:var(--t-surface);border:1px solid var(--t-line);border-radius:var(--raio);padding:6px 14px 8px;margin-bottom:12px}
+.metas-g.saude{border-top:4px solid var(--t-ok)}
+.metas-g.vida{border-top:4px solid var(--t-accent)}
+.metas-g h3{font:600 17px var(--f-titulo);margin:10px 0 2px}
+a.meta{display:block;padding:10px 0;color:inherit;text-decoration:none;min-height:48px}
+a.meta+a.meta{border-top:1px solid var(--t-line)}
+a.meta .l{display:flex;justify-content:space-between;gap:10px;font-size:15px;margin-bottom:6px}
+a.meta .l span:last-child{font:500 13px var(--f-mono);color:var(--t-muted);white-space:nowrap}
+a.meta.ok .l span:last-child{color:var(--t-ok);font-weight:700}
 </style>
 <link rel="stylesheet" href="assets/mobile.css">
 </head>
@@ -94,9 +124,15 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
     <div id="pr"></div>
   </section>
 
-  <section class="parahoje" id="parahoje" aria-label="Para hoje"></section>
-
+  <h2 class="sec rotulo">Saúde e fitness · hoje</h2>
+  <div class="hoje-lista" id="hoje-saude"></div>
   <section class="agua" id="agua" aria-label="Água de hoje"></section>
+
+  <h2 class="sec rotulo">Hábitos de hoje</h2>
+  <div class="habhoje" id="habhoje"></div>
+
+  <h2 class="sec rotulo">Metas · andamento da semana</h2>
+  <div id="metas"></div>
 
   <div id="aval"></div>
 
@@ -187,13 +223,13 @@ function render(p){
     card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
     card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>')
   ];
-  renderAgua(p);
+  P=p; renderAgua(p); renderHoje(p); renderHabitos(p); renderMetas(p);
   (function(){
     var l=[], r=p.refeicoes, hb=p.habitos, ds=p.desafios;
     if(r.hoje<6) l.push(['plano.html','🍽️',r.hoje?'Refeições: '+r.hoje+' de 6':'Marcar as refeições']);
     if(!hb.ativo||hb.feitosHoje<hb.totalHoje) l.push(['habitos.html','✅',hb.ativo?'Hábitos: '+hb.feitosHoje+' de '+hb.totalHoje:'Check-in de hábitos']);
     if(ds.ativos&&ds.hoje<ds.ativos) l.push(['desafios.html','🎯','Desafio: falta marcar hoje']);
-    var el=$('#parahoje');
+    var el=$('#parahoje'); if(!el)return;
     if(!l.length){el.innerHTML='<div class="rotulo">Para hoje</div><div class="chips"><a class="ok" href="#">✓ Tudo em dia hoje</a></div>';return}
     el.innerHTML='<div class="rotulo">Para hoje · toque para ir</div><div class="chips">'+l.slice(0,3).map(function(x){return '<a href="'+x[0]+'"><span aria-hidden="true">'+x[1]+'</span>'+esc(x[2])+'</a>'}).join('')+'</div>';
   })();
@@ -222,9 +258,66 @@ async function avaliacao(d){
   });
 }
 
-var DADOS=null;
+var DADOS=null,P=null;
 function litros(ml){return String(Math.round(ml/10)/100).replace('.',',')}
 function hojeISO(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+function linhasHoje(p){
+  var t=p.treino, rf=p.refeicoes, mt=p.metas.saude[0];
+  return [
+    ['treino.html','🏋️','Treino',t.hoje?'Feito hoje ✓':'Ainda não hoje',(t.hoje?'':'')+t.semana+' de '+mt.meta+' na semana',!!t.hoje],
+    ['plano.html','🍽️','Refeições',rf.hoje+' de 6 marcadas'+(rf.hojeInfo&&rf.hojeInfo.bom?' · dia bom ✓':''),rf.sequencia?rf.sequencia+' dia'+(rf.sequencia===1?'':'s')+' seguidos':'Toque para marcar',rf.hoje>=4]
+  ];
+}
+function renderHoje(p){
+  $('#hoje-saude').innerHTML=linhasHoje(p).map(function(x){
+    return '<a class="lin'+(x[5]?' ok':'')+'" href="'+x[0]+'"><span class="ico" aria-hidden="true">'+x[1]+'</span><span class="tx"><b>'+x[2]+' · '+esc(x[3])+'</b><small>'+esc(x[4])+'</small></span><span class="go" aria-hidden="true">→</span></a>'}).join('');
+}
+function renderHabitos(p){
+  var l=p.habitos.lista||[], el=$('#habhoje');
+  if(!p.habitos.ativo||!l.length){el.innerHTML='<div class="hab"><span class="vazio">Nenhum hábito na lista. <a href="habitos.html">Veja as sugestões</a>.</span></div>';return}
+  function linha(x){
+    var sub=x.freq==='week'?(x.semanaN+' de '+x.meta+' esta semana'+(x.semanaOk?' ✓':'')):(x.kind==='boolean'?'Todo dia':'Meta: '+x.meta+(x.unit.length>1?' ':'')+x.unit);
+    var ctl=x.kind==='boolean'?'<button type="button" class="'+(x.bateu?'on':'')+'" data-h="'+esc(x.id)+'" data-a="t" aria-pressed="'+!!x.bateu+'" aria-label="Marcar '+esc(x.nome)+'">✓</button>'
+      :'<div class="qt"><button type="button" data-h="'+esc(x.id)+'" data-a="dec" aria-label="Menos">−</button><span>'+x.valor+'/'+x.meta+'</span><button type="button" class="'+(x.bateu?'on':'')+'" data-h="'+esc(x.id)+'" data-a="inc" aria-label="Mais">+</button></div>';
+    return '<div class="hab'+(x.bateu?' ok':'')+'"><span class="tx"><b>'+esc(x.nome)+'</b><small>'+esc(sub)+'</small></span>'+ctl+'</div>';
+  }
+  var d=l.filter(function(x){return x.freq==='day'}), w=l.filter(function(x){return x.freq==='week'});
+  el.innerHTML=(d.length?'<div class="cap">Todo dia · '+d.filter(function(x){return x.bateu}).length+' de '+d.length+'</div>'+d.map(linha).join(''):'')+
+    (w.length?'<div class="cap">Na semana · '+w.filter(function(x){return x.semanaOk}).length+' de '+w.length+' metas</div>'+w.map(linha).join(''):'')+
+    '<div class="mini"><a href="habitos.html">Ver sugestões e opções</a></div>';
+}
+var fila=Promise.resolve();
+function marcaHabito(id,acao){
+  var x=(P.habitos.lista||[]).filter(function(h){return h.id===id})[0]; if(!x)return;
+  var dia=hojeISO();
+  function aplica(r){
+    r=r||{};
+    if(x.kind==='boolean'){ if(acao==='t'){ if(r[id])delete r[id]; else r[id]=true } }
+    else{ var v=Math.round(((+r[id]||0)+(acao==='inc'?1:-1)*x.step)*100)/100; if(v<=0)delete r[id]; else r[id]=v }
+    return r;
+  }
+  // tela atualiza na hora; o banco recebe depois, na ordem dos toques
+  var rec=DADOS.habitos.records, r=aplica(Object.assign({},rec[dia]));
+  if(Object.keys(r).length)rec[dia]=r; else delete rec[dia];
+  render(CP_PROG.calcular(DADOS,new Date()));
+  fila=fila.then(async function(){
+    try{
+      var raw=json(await window.storage.get('records'))||{}, rr=aplica(raw[dia]);
+      if(Object.keys(rr).length)raw[dia]=rr; else delete raw[dia];
+      await window.storage.set('records',JSON.stringify(raw),false);
+    }catch(e){console.error('hábito não salvou',e)}
+  });
+}
+$('#habhoje').addEventListener('click',function(e){var b=e.target.closest('button[data-h]');if(b&&DADOS&&P)marcaHabito(b.dataset.h,b.dataset.a)});
+function renderMetas(p){
+  var m=p.metas, todas=m.saude.concat(m.vida), ok=todas.filter(function(x){return x.ok}).length;
+  function grupo(cls,tit,l){
+    return '<div class="metas-g '+cls+'"><h3>'+tit+'</h3>'+l.map(function(x){
+      return '<a class="meta'+(x.ok?' ok':'')+'" href="'+x.href+'"><div class="l"><span>'+esc(x.nome)+'</span><span>'+(x.ok?'✓ ':'')+esc(x.texto)+'</span></div>'+barra(x.pct)+'</a>'}).join('')+'</div>';
+  }
+  $('#metas').innerHTML='<div class="metas-res">'+ok+' de '+todas.length+' metas em dia nesta semana. As de saúde vêm primeiro.</div>'+grupo('saude','Saúde e fitness',m.saude)+grupo('vida','Carreira, dinheiro e mudança',m.vida);
+}
 function renderAgua(p){
   var a=p.agua, msg, cls='';
   if(a.bateu){msg='Meta de 3 L batida 💧 Bom trabalho.';cls=' ok'}
