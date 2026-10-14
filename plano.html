@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Plano alimentar</title>
+<style>
+:root{--bg:#F3F2EE;--surface:#fff;--ink:#1C1B19;--muted:#6A6760;--line:#E1DED6;--accent:#D9577E;--ok:#1F8A5B;
+  --f:system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#141412;--surface:#1D1C1A;--ink:#EEECE6;--muted:#A39F96;--line:#302E2A;--accent:#F08AA8;--ok:#5CCB95;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f)}
+main{max-width:720px;margin:0 auto;padding:16px 16px 64px}
+a.back{color:var(--muted);font-size:14px;text-decoration:none}
+h1{font-size:26px;margin:8px 0 4px}
+.sub{color:var(--muted);margin:0 0 16px}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:14px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+section{display:none}section.on{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .kc{font-size:13px;color:var(--muted);margin:0 0 8px}
+.card ul{margin:0;padding-left:20px}
+.note{border-left:3px solid var(--accent);padding:2px 12px;color:var(--muted);margin:12px 0}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--line);color:var(--muted);margin-right:4px}
+form.m{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+form.m label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+form.m input,form.m textarea{font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+form.m .full{grid-column:1/-1}
+form.m button{grid-column:1/-1;font:inherit;font-weight:600;padding:10px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:500}
+td button{background:none;border:0;color:var(--muted);cursor:pointer}
+.scroll{overflow-x:auto}
+.status{font-size:13px;color:var(--muted);min-height:1.2em}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="index.html">← Central</a>
+  <h1>Plano alimentar</h1>
+  <p class="sub">Ganho de massa muscular · tudo sem lactose · treino às 13h</p>
+
+  <nav role="tablist" id="tabs">
+    <button role="tab" aria-selected="true" data-t="dia">Dia</button>
+    <button role="tab" aria-selected="false" data-t="subs">Substituições</button>
+    <button role="tab" aria-selected="false" data-t="ajustes">Ajustes</button>
+    <button role="tab" aria-selected="false" data-t="medidas">Medidas</button>
+  </nav>
+
+  <section id="dia" class="on">
+    <div class="card"><h3>Café da manhã</h3><ul>
+      <li>3 ovos mexidos/cozidos <b>ou</b> frango desfiado</li>
+      <li>2 fatias de pão integral (ou 1 wrap integral)</li>
+      <li>1 fruta média</li>
+      <li>Leite/iogurte zero lactose (opcional)</li></ul></div>
+    <div class="card"><h3>Pré-treino <span class="tag">1 h antes das 13h</span></h3><ul>
+      <li>2 ovos mexidos simples + 1 fruta, <b>ou</b> fruta + pão/torrada</li></ul></div>
+    <div class="card"><h3>Almoço</h3><p class="kc">~610 kcal · 57 g P · 75 g C · 7 g G (base frango)</p><ul>
+      <li>120 g de arroz cozido · 100 g de feijão</li>
+      <li><b>150 g de proteína</b>: frango, carne magra, peixe, filé-mignon suíno, fígado bovino (ocasional)</li>
+      <li>100 g de cenoura + 100 g de beterraba cozidas · folhas à vontade</li>
+      <li>1 tangerina depois</li></ul></div>
+    <div class="card"><h3>Lanche / pós-treino</h3><ul>
+      <li>Vitamina: 1 porção de whey zero lactose + leite zero lactose + 1 banana + aveia</li>
+      <li>2 ovos (ou sanduíche simples com proteína)</li></ul></div>
+    <div class="card"><h3>Jantar <span class="tag">escolha uma opção</span></h3><ul>
+      <li><b>Lanche:</b> 1 wrap integral + 100 g de frango desfiado ou atum + vegetais + pouco azeite (ou 2 fatias de pão integral com ovos/frango/atum)</li>
+      <li><b>Almoço:</b> 60 g de arroz, 50 g de feijão, 120 g de proteína, legumes e salada</li></ul></div>
+    <div class="card"><h3>Ceia</h3><p class="kc">~180 kcal · 9 g P</p><ul>
+      <li>Mingau de aveia: 200 ml de leite zero lactose + 1 colher de sopa de aveia</li>
+      <li>Alternativas: iogurte zero lactose com canela · 1–2 ovos cozidos</li></ul></div>
+    <p class="note">Doces e refeição livre não são proibidos e não precisam ser “compensados”.</p>
+  </section>
+
+  <section id="subs">
+    <div class="card"><h3>Purê no lugar do arroz</h3><p>~200 g de purê de batata no lugar de 120 g de arroz, com pouca ou nenhuma manteiga.</p></div>
+    <div class="card"><h3>Coxa / sobrecoxa</h3><p>Sem pele, assada sem óleo, vale como proteína: 150 g de carne cozida sem osso (~200–220 g com osso). Um pouco mais gordurosa que o peito.</p></div>
+    <div class="card"><h3>Pão ↔ wrap</h3><p>2 fatias de pão integral = 1 wrap integral.</p></div>
+    <div class="card"><h3>Proteína do almoço</h3><p>Frango, carne magra, peixe, filé-mignon suíno ou fígado bovino ocasional — 150 g.</p></div>
+  </section>
+
+  <section id="ajustes">
+    <div class="card"><h3>Farofa de ovos</h3>
+      <p class="kc">4 ovos + 30 g de farinha de mandioca + 1 colher de chá de azeite/manteiga · ~460 kcal · 26 g P · 27 g G</p>
+      <p>Serve como <b>jantar ocasional</b>. <b>Não</b> serve de pré-treino: gordura demais para digerir em 1 h.</p></div>
+    <div class="card"><h3>Intolerância à lactose</h3><p>Leite, iogurte e whey sempre na versão zero lactose.</p></div>
+  </section>
+
+  <section id="medidas">
+    <div class="card">
+      <h3>Nova medição</h3>
+      <form class="m" id="mf">
+        <label>Data<input type="date" name="date" required></label>
+        <label>Peso (kg)<input name="peso" inputmode="decimal"></label>
+        <label>% gordura<input name="gordura_pct" inputmode="decimal"></label>
+        <label>Cintura (cm)<input name="cintura" inputmode="decimal"></label>
+        <label>Peito (cm)<input name="peito" inputmode="decimal"></label>
+        <label>Braço (cm)<input name="braco" inputmode="decimal"></label>
+        <label>Coxa (cm)<input name="coxa" inputmode="decimal"></label>
+        <label class="full">Notas<textarea name="notas" rows="2"></textarea></label>
+        <button type="submit">Salvar</button>
+      </form>
+      <div class="status" id="st"></div>
+    </div>
+    <div class="card scroll">
+      <h3>Histórico <span class="tag" id="wk"></span></h3>
+      <table><thead><tr><th>Data</th><th>Peso</th><th>%G</th><th>Cint.</th><th>Peito</th><th>Braço</th><th>Coxa</th><th></th></tr></thead>
+      <tbody id="rows"><tr><td colspan="8">Carregando…</td></tr></tbody></table>
+    </div>
+    <p class="note">Registro fotográfico (frente, lado, costas) a cada 4 semanas — guarde as fotos no seu aparelho; este painel não envia imagens.</p>
+  </section>
+</main>
+<script>
+(function(){
+  var tabs=document.getElementById('tabs');
+  tabs.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    tabs.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+    document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)});
+  });
+
+  var f=document.getElementById('mf'), st=document.getElementById('st'), rows=document.getElementById('rows');
+  f.date.valueAsDate=new Date();
+  var db=null;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function num(v){return v===''||v==null?'':String(v).replace(',','.')}
+
+  function render(snap){
+    var list=snap.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return a.date<b.date?1:-1});
+    document.getElementById('wk').textContent=list.length?('semana '+Math.min(12,Math.floor((new Date(list[0].date)-new Date(list[list.length-1].date))/6048e5)+1)+' de 12'):'';
+    rows.innerHTML=list.length?list.map(function(r){
+      return '<tr><td>'+esc(r.date.split('-').reverse().slice(0,2).join('/'))+'</td><td>'+esc(r.peso)+'</td><td>'+esc(r.gordura_pct)+'</td><td>'+esc(r.cintura)+'</td><td>'+esc(r.peito)+'</td><td>'+esc(r.braco)+'</td><td>'+esc(r.coxa)+'</td><td><button data-del="'+esc(r.id)+'" title="Apagar" aria-label="Apagar">✕</button></td></tr>'
+        +(r.notas?'<tr><td colspan="8" style="text-align:left;color:var(--muted)">'+esc(r.notas)+'</td></tr>':'');
+    }).join(''):'<tr><td colspan="8">Nenhuma medição ainda.</td></tr>';
+  }
+
+  f.addEventListener('submit',function(e){
+    e.preventDefault(); if(!db) return;
+    var d={date:f.date.value};
+    ['peso','gordura_pct','cintura','peito','braco','coxa'].forEach(function(k){d[k]=num(f[k].value)});
+    d.notas=f.notas.value.trim();
+    st.textContent='salvando…';
+    db.doc('medidas/'+d.date).set(d).then(function(){st.textContent='✅ salvo';f.reset();f.date.valueAsDate=new Date()},function(){st.textContent='não consegui salvar agora — tente de novo.'});
+  });
+  rows.addEventListener('click',function(e){
+    var b=e.target.closest('[data-del]'); if(!b||!db||!confirm('Apagar esta medição?')) return;
+    db.doc('medidas/'+b.dataset.del).delete();
+  });
+
+  claude.use('db').then(function(d){ db=d; db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'}); });
+})();
+</script>
+</body>
+</html>

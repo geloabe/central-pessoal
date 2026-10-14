@@ -1,0 +1,1231 @@
+<!doctype html><html><head>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rota Internacional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: painel de embarque. Faixa de partida no topo (destino + contagem regressiva), abas de operação, conteúdo em coluna única de até 1080px. */
+:root{
+  --bg:#EEF1F5; --surface:#FFFFFF; --sunk:#F5F7FA; --ink:#121A26; --muted:#5A6576; --line:#D9DFE7;
+  --accent:#1E44CF; --accent-soft:#E4EAFC; --accent-ink:#FFFFFF;
+  --board:#0F1722; --board-ink:#F3C54A; --board-dim:#8C99AC;
+  --ok:#17804F; --ok-soft:#DDF3E8; --warn:#A86A00; --warn-soft:#FBF0D6; --bad:#B03D2B; --bad-soft:#F8E1DC; --neutral-soft:#E7EBF1;
+  --f-display:"Archivo",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Public Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1118; --surface:#141B25; --sunk:#10161F; --ink:#E6EBF2; --muted:#96A2B4; --line:#253041;
+  --accent:#8AA6FF; --accent-soft:#1B2645; --accent-ink:#0C1118;
+  --board:#070B11; --board-ink:#F3C54A; --board-dim:#7C889B;
+  --ok:#4FC98D; --ok-soft:#12291F; --warn:#F0B64A; --warn-soft:#2B2210; --bad:#F08270; --bad-soft:#2E1714; --neutral-soft:#1C2430;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1118; --surface:#141B25; --sunk:#10161F; --ink:#E6EBF2; --muted:#96A2B4; --line:#253041;
+  --accent:#8AA6FF; --accent-soft:#1B2645; --accent-ink:#0C1118;
+  --board:#070B11; --board-ink:#F3C54A; --board-dim:#7C889B;
+  --ok:#4FC98D; --ok-soft:#12291F; --warn:#F0B64A; --warn-soft:#2B2210; --bad:#F08270; --bad-soft:#2E1714; --neutral-soft:#1C2430;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;padding:0 16px;padding-block:0 48px}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h2{font-size:1.5rem;font-variation-settings:"wdth" 88;font-weight:750}
+h3{font-size:1.06rem;font-weight:700;font-variation-settings:"wdth" 95}
+p{margin:0}
+a{color:var(--accent)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.small{font-size:.85rem}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* departure board */
+.board{background:var(--board);color:var(--board-ink);border-radius:0 0 var(--r) var(--r);padding:14px 18px;margin:0 -2px;display:grid;grid-template-columns:1fr auto;gap:10px 24px;align-items:end}
+.board .brand{font-family:var(--f-display);font-weight:800;font-size:clamp(1.5rem,4.5vw,2.3rem);font-variation-settings:"wdth" 70;letter-spacing:.01em;line-height:1;color:#F6F8FB;text-transform:uppercase}
+.board .rows{display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+.board .rows span b{color:var(--board-ink);font-weight:600}
+.board .rows span{color:var(--board-dim)}
+.tminus{font-family:var(--f-mono);text-align:right}
+.tminus .n{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:600;line-height:1;color:var(--board-ink)}
+.tminus .l{font-size:.7rem;letter-spacing:.14em;color:var(--board-dim);text-transform:uppercase}
+@media (max-width:560px){.board{grid-template-columns:1fr}.tminus{text-align:left}}
+
+/* tabs */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;margin-bottom:6px}
+.tabs-inner{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
+.tabs-inner::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:0;background:none;color:var(--muted);font:600 .9rem var(--f-body);padding:9px 12px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+section.panel{display:grid;gap:18px}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:10px}
+.head p{max-width:62ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.card.flat{background:transparent;border:0;padding:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
+.stack{display:grid;gap:10px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* forms */
+label{font-size:.8rem;font-weight:600;color:var(--muted);display:grid;gap:4px}
+input,select,textarea{font:inherit;font-size:.92rem;color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;line-height:1.5}
+textarea.big{min-height:280px;font-family:var(--f-mono);font-size:.8rem}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 .86rem var(--f-body);padding:8px 14px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted);padding-inline:8px}
+.btn.danger{color:var(--bad)}
+.btn[disabled]{opacity:.55;cursor:default}
+.ai-only{}
+body.no-ai .ai-only{display:none!important}
+body.no-ai .ai-note{display:block!important}
+.ai-note{display:none}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px}
+.kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpi .v{font-family:var(--f-display);font-variation-settings:"wdth" 80;font-size:2rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .k{font-size:.78rem;color:var(--muted)}
+@media (max-width:820px){.kpis,.kpis.k4{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis:not(.k4) .kpi:first-child{grid-column:1/-1}}
+
+/* status */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-realizada{background:var(--accent-soft);color:var(--accent)}
+.st-andamento{background:var(--warn-soft);color:var(--warn)}
+.st-dispensada{background:var(--neutral-soft);color:var(--muted)}
+.st-oferta{background:var(--ok-soft);color:var(--ok)}
+.chip{display:inline-block;font-size:.76rem;padding:2px 8px;border-radius:6px;background:var(--neutral-soft);color:var(--ink);margin:2px 3px 2px 0}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+
+/* bars */
+.bar{height:8px;border-radius:99px;background:var(--neutral-soft);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.funnel{display:grid;gap:10px}
+.funnel .fr{display:grid;grid-template-columns:150px 1fr 40px;gap:10px;align-items:center;font-size:.86rem}
+.funnel .fr .bar{height:14px}
+@media (max-width:480px){.funnel .fr{grid-template-columns:110px 1fr 32px}}
+
+/* score dial */
+.score{display:flex;gap:16px;align-items:center}
+.dial{--p:0;--c:var(--accent);width:92px;height:92px;flex:none;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--neutral-soft) 0);display:grid;place-items:center}
+.dial::after{content:attr(data-v);width:72px;height:72px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font:700 1.5rem var(--f-display);font-variation-settings:"wdth" 80;font-variant-numeric:tabular-nums}
+
+.checklist{display:grid;gap:6px;list-style:none;padding:0;margin:0}
+.checklist li{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}
+.checklist .ic{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.7rem;font-weight:700;margin-top:2px}
+.ic.y{background:var(--ok-soft);color:var(--ok)} .ic.n{background:var(--bad-soft);color:var(--bad)}
+.tick{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);font-size:.9rem;cursor:pointer}
+.tick:last-child{border-bottom:0}
+.tick input{width:auto;margin-top:4px;accent-color:var(--accent)}
+.tick.done span{color:var(--muted);text-decoration:line-through}
+
+/* applications */
+.apps{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.app{border-bottom:1px solid var(--line)}
+.app:last-child{border-bottom:0}
+.app-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:12px 16px}
+.app-row .t{font-weight:600;overflow-wrap:anywhere}
+.app-row .s{font-size:.8rem;color:var(--muted)}
+.app-row select{width:auto;font-size:.8rem;padding:5px 8px}
+.app-detail{padding:4px 16px 16px;display:grid;gap:12px;background:var(--sunk);border-top:1px dashed var(--line)}
+@media (max-width:600px){.app-row{grid-template-columns:1fr auto}.app-row .more{grid-column:1/-1;justify-self:start}}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px}
+.seg button{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 .8rem var(--f-body);padding:5px 10px;border-radius:99px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:22px;text-align:left;color:var(--muted);background:var(--surface)}
+.empty b{color:var(--ink)}
+.out{white-space:pre-wrap;font-size:.9rem;line-height:1.6;overflow-wrap:anywhere}
+pre.code{white-space:pre-wrap;font-family:var(--f-mono);font-size:.78rem;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:12px;margin:0;max-height:420px;overflow:auto;overflow-wrap:anywhere}
+.think{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.think::after{content:"";display:inline-block;width:1ch;animation:dots 1.4s steps(4) infinite}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@media (prefers-reduced-motion:reduce){.think::after{animation:none;content:"..."}}
+
+.roadmap{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.rm{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--surface);display:grid;gap:4px;align-content:start}
+.rm .m{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rm .g{font-size:.84rem;font-weight:600;line-height:1.35}
+.rm.now{border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.rm.past{opacity:.65}
+@media (max-width:820px){.roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.gap-lv{display:flex;gap:3px}
+.gap-lv i{width:12px;height:8px;border-radius:2px;background:var(--neutral-soft)}
+.gap-lv i.on{background:var(--muted)}
+.gap-lv i.req{outline:1.5px solid var(--accent);outline-offset:-1.5px}
+.gap-lv i.on.req{background:var(--accent)}
+
+.board-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.board-list a{display:grid;gap:2px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);text-decoration:none;color:var(--ink)}
+.board-list a:hover{border-color:var(--accent)}
+.board-list a b{color:var(--accent);font-weight:650}
+.board-list a span{font-size:.82rem;color:var(--muted)}
+
+.url-out{font-family:var(--f-mono);font-size:.78rem;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-wrap:anywhere}
+.two-lists{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.two-lists{grid-template-columns:1fr}}
+ul.plain{margin:0;padding-left:18px;display:grid;gap:5px;font-size:.9rem}
+.tpl{display:grid;gap:8px}
+details summary{cursor:pointer;font-weight:600}
+details>*:not(summary){margin-top:10px}
+
+.mk-tier{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.mk{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr) 44px 86px 84px;gap:10px;align-items:center;padding:5px 0;font-size:.88rem}
+.mk .b{height:12px;border-radius:3px;background:var(--neutral-soft);position:relative}
+.mk .b>i{position:absolute;inset:0 auto 0 0;border-radius:3px}
+.mk .pct{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.lvbtn{appearance:none;border:0;cursor:pointer;font:600 .74rem var(--f-body);padding:3px 9px;border-radius:99px;width:100%}
+.lv2{background:var(--ok-soft);color:var(--ok)} .lv1{background:var(--warn-soft);color:var(--warn)} .lv0{background:var(--bad-soft);color:var(--bad)}
+.mk .when{white-space:nowrap;font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+@media (max-width:600px){.mk{grid-template-columns:minmax(0,1fr) 40px 76px;row-gap:3px}.mk .b{grid-column:1/-1;grid-row:2}.mk .when{white-space:nowrap;display:none}}
+table.heat{font-size:.78rem;min-width:760px}
+table.heat th.rot{height:96px;vertical-align:bottom;padding:4px 2px;white-space:nowrap}
+table.heat th.rot>span{display:inline-block;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--f-mono);letter-spacing:.04em;text-transform:none;font-size:.72rem}
+table.heat td{padding:5px 2px;text-align:center}
+table.heat td.nm{text-align:left;padding-right:10px;white-space:nowrap}
+table.heat .d{display:inline-block;width:12px;height:12px;border-radius:3px}
+table.heat .d.opt{opacity:.45}
+table.heat tfoot td{font-family:var(--f-mono);font-weight:600;border-bottom:0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.88rem;z-index:20;max-width:calc(100% - 32px)}
+.banner{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:.88rem}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--f-mono);font-size:10px}
+.job{display:grid;gap:8px}
+.job .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.fit{font-family:var(--f-mono);font-weight:600;font-size:.82rem}
+.confirm{display:inline-flex;gap:6px;align-items:center;font-size:.82rem}
+</style>
+
+<div class="wrap">
+  <header class="board" aria-label="Contagem regressiva">
+    <div class="stack" style="gap:10px">
+      <div class="brand">Rota Internacional</div>
+      <div class="rows">
+        <span>Passageira <b id="bd-name">Eloabe Costa</b></span>
+        <span>Destino <b id="bd-role">Data Engineer · remoto</b></span>
+        <span>Embarque <b>31 MAR 2027</b></span>
+        <span>Portão <b id="bd-gate">—</b></span>
+      </div>
+    </div>
+    <div class="tminus"><div class="n" id="bd-t">T–000</div><div class="l">dias para a meta</div></div>
+  </header>
+
+  <nav class="tabs" aria-label="Seções"><div class="tabs-inner" role="tablist">
+    <button class="tab" role="tab" data-tab="painel">Painel</button>
+    <button class="tab" role="tab" data-tab="requisitos">Requisitos</button>
+    <button class="tab" role="tab" data-tab="curriculo">Currículo e ATS</button>
+    <button class="tab" role="tab" data-tab="vaga">Analisar vaga</button>
+    <button class="tab" role="tab" data-tab="candidaturas">Candidaturas</button>
+    <button class="tab" role="tab" data-tab="plano">Plano de estudos</button>
+    <button class="tab" role="tab" data-tab="ingles">Inglês</button>
+    <button class="tab" role="tab" data-tab="vagas">Vagas sugeridas</button>
+    <button class="tab" role="tab" data-tab="guia">Guia de busca</button>
+    <button class="tab" role="tab" data-tab="entrevistas">Entrevistas</button>
+  </div></nav>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <!-- PAINEL -->
+  <section class="panel" id="p-painel" hidden>
+    <div class="head"><div><div class="eyebrow">Visão geral</div><h2>Como está a sua rota</h2></div>
+      <p class="muted small" id="dash-sub"></p></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid2">
+      <div class="card stack">
+        <div class="row" style="justify-content:space-between"><h3>Ritmo semanal</h3><span class="mono small muted" id="wk-label"></span></div>
+        <div class="chart" id="wk-chart"></div>
+        <div class="row small muted" style="justify-content:space-between"><span>Linha tracejada: sua meta semanal</span>
+          <label class="row" style="gap:6px;font-weight:500">Meta <input id="goal" type="number" min="1" max="60" style="width:70px;padding:4px 8px"> /semana</label></div>
+      </div>
+      <div class="card stack">
+        <h3>Funil</h3>
+        <div class="funnel" id="funnel"></div>
+        <div class="small muted" id="funnel-note"></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card stack">
+        <h3>O que fazer agora</h3>
+        <ul class="plain" id="todo"></ul>
+      </div>
+      <div class="card stack">
+        <div class="row" style="justify-content:space-between"><h3>Insights</h3>
+          <button class="btn ai-only" id="ins-btn">Análise do Claude</button></div>
+        <ul class="plain" id="insights"></ul>
+        <div class="out" id="ins-out" hidden></div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="row" style="justify-content:space-between"><h3>Rota de 6 meses</h3><span class="small muted" id="rm-prog"></span></div>
+      <div class="roadmap" id="roadmap"></div>
+    </div>
+  </section>
+
+  <!-- REQUISITOS -->
+  <section class="panel" id="p-requisitos" hidden>
+    <div class="head"><div><div class="eyebrow">Mercado × você</div><h2>Requisitos técnicos das vagas</h2></div>
+      <p class="muted small">Frequência de cada requisito no mercado e nas vagas remotas abertas ao Brasil que analisei, cruzada com o seu nível. Clique no seu nível para atualizar conforme estuda.</p></div>
+    <div class="kpis k4" id="rq-kpis"></div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>O que o mercado pede</h3><span class="small muted">% das vagas de Data Engineer que citam cada item · base de 6.877 anúncios, 2026</span></div>
+      <div class="row small muted" style="gap:14px"><span><span class="pill st-oferta">tenho</span></span><span><span class="pill st-andamento">parcial</span></span><span><span class="pill" style="background:var(--bad-soft);color:var(--bad)">lacuna</span></span><span>A cor da barra segue o seu nível.</span></div>
+      <div id="rq-market"></div>
+    </div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>Nas vagas relevantes para você</h3><span class="small muted" id="rq-sample-note"></span></div>
+      <p class="small muted">Vagas remotas de empresas estrangeiras abertas a Brasil ou LATAM, lidas uma a uma em set/2026. Cada ponto é um requisito citado; a cor mostra se você já tem.</p>
+      <div class="table-wrap"><table class="heat" id="rq-heat"></table></div>
+    </div>
+    <div class="grid2">
+      <div class="card stack"><h3>Leitura</h3><ul class="plain" id="rq-read"></ul></div>
+      <div class="card stack"><h3>Nas vagas sugeridas e analisadas</h3><p class="small muted">Atualiza sozinho com as vagas que chegam toda segunda e com as que você analisa.</p><div id="rq-live"></div></div>
+    </div>
+  </section>
+
+  <!-- CURRÍCULO -->
+  <section class="panel" id="p-curriculo" hidden>
+    <div class="head"><div><div class="eyebrow">Documentos padrão</div><h2>Currículo e cover letter</h2></div>
+      <p class="muted small">Esta é a versão base. Cada vaga ganha uma versão adaptada na aba Analisar vaga, sem mexer aqui.</p></div>
+    <div class="card stack">
+      <h3>Perfil-alvo</h3>
+      <div class="grid3">
+        <label>Cargo-alvo<input id="pf-role" placeholder="Data Engineer"></label>
+        <label>Senioridade<input id="pf-sen" placeholder="Pleno / Sênior"></label>
+        <label>Inglês<input id="pf-eng" placeholder="B2–C1"></label>
+      </div>
+      <label>Onde / modelo<input id="pf-reg" placeholder="Remoto a partir do Brasil para empresa estrangeira"></label>
+      <div class="row"><button class="btn primary" id="pf-save">Salvar perfil</button><span class="small muted" id="pf-msg"></span></div>
+    </div>
+    <div class="grid2">
+      <div class="card stack">
+        <div class="row" style="justify-content:space-between"><h3>Currículo (texto)</h3><span class="small muted mono" id="cv-meta"></span></div>
+        <textarea id="cv" class="big" placeholder="Cole aqui o texto do seu currículo em inglês."></textarea>
+        <div class="row"><button class="btn primary" id="cv-save">Salvar currículo</button>
+          <button class="btn ai-only" id="cv-ai">Avaliação ATS completa</button>
+          <button class="btn ghost" id="cv-copy">Copiar</button></div>
+      </div>
+      <div class="card stack">
+        <h3>Checagem ATS rápida</h3>
+        <p class="small muted">Regras de parseabilidade e conteúdo, calculadas na hora enquanto você edita.</p>
+        <div class="score"><div class="dial" id="cv-dial" data-v="0"></div>
+          <div class="small"><b id="cv-verdict">—</b><br><span class="muted" id="cv-verdict2"></span></div></div>
+        <ul class="checklist" id="cv-checks"></ul>
+      </div>
+    </div>
+    <div class="card stack" id="ats-card">
+      <div class="row" style="justify-content:space-between"><h3>Avaliação ATS do Claude</h3><span class="small muted mono" id="ats-when"></span></div>
+      <div id="ats-out"><div class="empty">Nenhuma avaliação ainda. <b>Avaliação ATS completa</b> analisa palavras-chave para Data Engineer, impacto, clareza e inglês, e sugere reescritas de bullets.</div></div>
+      <p class="ai-note small muted">A avaliação com o Claude não está disponível nesta visualização. Abra o painel no claude.ai para usá-la.</p>
+    </div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>Cover letter padrão</h3><span class="small muted">Use quando a vaga pedir ou tiver campo aberto</span></div>
+      <textarea id="cl" class="big" style="min-height:220px" placeholder="Sua cover letter base, em inglês."></textarea>
+      <div class="row"><button class="btn primary" id="cl-save">Salvar cover letter</button>
+        <button class="btn ai-only" id="cl-ai">Avaliar cover letter</button>
+        <button class="btn ai-only" id="cl-gen">Gerar rascunho a partir do currículo</button></div>
+      <div id="cl-out"></div>
+    </div>
+  </section>
+
+  <!-- ANALISAR VAGA -->
+  <section class="panel" id="p-vaga" hidden>
+    <div class="head"><div><div class="eyebrow">Match com ATS</div><h2>Analisar uma vaga</h2></div>
+      <p class="muted small">Cole a descrição inteira. A cobertura de palavras-chave aparece na hora; a análise do Claude compara com seu currículo e entrega uma versão adaptada, sem inventar experiência.</p></div>
+    <div class="card stack">
+      <div class="grid3">
+        <label>Cargo<input id="jd-role" placeholder="Senior Data Engineer"></label>
+        <label>Empresa<input id="jd-co" placeholder="Nome da empresa"></label>
+        <label>Link<input id="jd-link" placeholder="https://www.linkedin.com/jobs/view/…"></label>
+      </div>
+      <label>Descrição da vaga<textarea id="jd" class="big" style="min-height:220px" placeholder="Cole aqui o texto completo da vaga (responsabilidades, requisitos, nice to have)."></textarea></label>
+      <div class="row">
+        <button class="btn primary ai-only" id="jd-ai">Analisar com o Claude</button>
+        <button class="btn" id="jd-save">Salvar como candidatura</button>
+        <button class="btn ghost" id="jd-clear">Limpar</button>
+        <button class="btn ghost" id="jd-stop" hidden>Parar</button>
+      </div>
+    </div>
+    <div class="card stack" id="jd-local" hidden></div>
+    <div id="jd-result"></div>
+  </section>
+
+  <!-- CANDIDATURAS -->
+  <section class="panel" id="p-candidaturas" hidden>
+    <div class="head"><div><div class="eyebrow">Acompanhamento</div><h2>Candidaturas</h2></div>
+      <p class="muted small">Mude o status direto na lista. “Em andamento” é qualquer etapa de processo: triagem, teste, entrevistas.</p></div>
+    <form class="card stack" id="app-form">
+      <h3>Nova candidatura</h3>
+      <div class="grid3">
+        <label>Cargo<input id="ap-role" required placeholder="Data Engineer"></label>
+        <label>Empresa<input id="ap-co" required placeholder="Empresa"></label>
+        <label>Data<input id="ap-date" type="date"></label>
+      </div>
+      <div class="grid3">
+        <label>Link da vaga<input id="ap-link" placeholder="https://…"></label>
+        <label>Fonte<select id="ap-src"><option>LinkedIn</option><option>Site da empresa</option><option>Indicação</option><option>Himalayas</option><option>Remotive</option><option>We Work Remotely</option><option>Wellfound</option><option>Recrutador</option><option>Outra</option></select></label>
+        <label>Status<select id="ap-st"></select></label>
+      </div>
+      <div class="row"><button class="btn primary" type="submit">Adicionar</button></div>
+    </form>
+    <div class="row" style="justify-content:space-between">
+      <div class="seg" id="app-filter"></div>
+      <input id="app-q" placeholder="Buscar cargo ou empresa" style="max-width:260px">
+    </div>
+    <div id="app-list"></div>
+  </section>
+
+  <!-- PLANO -->
+  <section class="panel" id="p-plano" hidden>
+    <div class="head"><div><div class="eyebrow">Lacunas e estudo</div><h2>Plano de estudos</h2></div>
+      <p class="muted small" id="plan-sub"></p></div>
+    <div id="plan-body"><div class="empty"><b>O plano ainda não foi carregado.</b> Ele é montado a partir do seu currículo e de vagas reais de Data Engineer remoto para o Brasil.</div></div>
+    <div class="card stack">
+      <h3>Lacunas que aparecem nas suas vagas</h3>
+      <p class="small muted">Somatório das palavras-chave ausentes em todas as vagas que você analisou. Quanto mais vagas, mais preciso.</p>
+      <div id="agg-gaps"></div>
+    </div>
+  </section>
+
+  <!-- INGLÊS -->
+  <section class="panel" id="p-ingles" hidden>
+    <div class="head"><div><div class="eyebrow">B2–C1 → fluência de entrevista</div><h2>Inglês todo dia</h2></div>
+      <p class="muted small">Cerca de 40 minutos ativos por dia, em três blocos curtos. O foco é falar mais, com menos pausas e com as estruturas e sons que mais denunciam o brasileiro.</p></div>
+    <div class="kpis k4" id="en-kpis"></div>
+    <div class="grid2">
+      <div class="card stack">
+        <div class="row" style="justify-content:space-between"><h3>Hoje</h3><span class="mono small muted" id="en-date"></span></div>
+        <div class="row small" style="gap:12px">
+          <label class="row" style="gap:6px;font-weight:500">Acordo às <input id="en-wake" type="time" style="width:auto;padding:4px 8px"></label>
+          <label class="row" style="gap:6px;font-weight:500">Trabalho às <input id="en-work" type="time" style="width:auto;padding:4px 8px"></label>
+        </div>
+        <div class="small" id="en-wake-note"></div>
+        <div id="en-today"></div>
+      </div>
+      <div class="card stack">
+        <div class="eyebrow">Tema de fala de hoje</div>
+        <h3 id="en-theme"></h3>
+        <p class="small muted" id="en-theme-why"></p>
+        <div class="url-out" id="en-prompt" style="font-family:var(--f-body);font-size:.95rem"></div>
+        <div class="eyebrow" style="margin-top:6px">Foco da semana</div>
+        <h3 id="en-focus"></h3>
+        <p class="small" id="en-focus-why"></p>
+        <div class="small"><span class="muted">Exemplos para usar hoje:</span><ul class="plain" id="en-focus-ex"></ul></div>
+      </div>
+    </div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>Últimos 35 dias</h3><span class="small muted">Dia cumprido = 4 das 6 tarefas</span></div>
+      <div id="en-heat" class="row" style="gap:4px"></div>
+    </div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>Corretor de fala</h3><span class="small muted">Grave, transcreva (o gravador do celular faz isso) e cole aqui</span></div>
+      <div class="grid3">
+        <label>Pergunta ou tema<input id="en-q" placeholder="Tell me about a pipeline you built"></label>
+        <label>Duração da gravação (segundos)<input id="en-secs" type="number" min="10" max="900" placeholder="120"></label>
+        <label>Pausas e "éé/uhm" que você contou<input id="en-pauses" type="number" min="0" max="200" placeholder="opcional"></label>
+      </div>
+      <label>Transcrição da sua fala<textarea id="en-text" style="min-height:150px" placeholder="Cole o texto exatamente como você falou, com os erros."></textarea></label>
+      <div class="row"><button class="btn primary ai-only" id="en-fix">Corrigir e gerar cartões</button><button class="btn" id="en-measure">Registrar só a medição</button><button class="btn ghost" id="en-stop" hidden>Parar</button><span class="small muted" id="en-wpm"></span></div>
+      <p class="ai-note small muted">A correção precisa do Claude; abra o painel no claude.ai.</p>
+      <div id="en-out"></div>
+    </div>
+    <div class="grid2">
+      <div class="card stack">
+        <div class="row" style="justify-content:space-between"><h3>Evolução</h3><span class="small muted">palavras por minuto</span></div>
+        <div class="chart" id="en-chart"></div>
+        <p class="small muted">Meça sempre a mesma pergunta no dia 1 de cada mês: “Tell me about yourself and your last project”. Referência: fala natural em inglês fica entre 120 e 150 palavras por minuto.</p>
+      </div>
+      <div class="card stack">
+        <div class="row" style="justify-content:space-between"><h3>Log de erros</h3><span class="mono small muted" id="en-err-n"></span></div>
+        <p class="small muted">Seus erros reais viram cartões do Anki. É o material de estudo mais eficiente que existe para você.</p>
+        <div id="en-errs"></div>
+        <div class="row"><button class="btn" id="en-anki">Copiar para o Anki (frente;verso)</button></div>
+      </div>
+    </div>
+    <div class="card stack">
+      <h3>Como cada técnica funciona</h3>
+      <div class="grid2" id="en-how"></div>
+    </div>
+    <div class="card stack">
+      <h3>Ciclo de 12 semanas</h3>
+      <p class="small muted">Uma estrutura por semana, escolhida pelo que mais aparece em entrevistas técnicas e pelos erros típicos de quem fala português. Depois da semana 12, o ciclo recomeça com material mais difícil.</p>
+      <div class="table-wrap"><table id="en-cycle"></table></div>
+    </div>
+    <div class="card stack">
+      <h3>Materiais</h3>
+      <div class="board-list" id="en-res"></div>
+    </div>
+  </section>
+
+  <!-- VAGAS -->
+  <section class="panel" id="p-vagas" hidden>
+    <div class="head"><div><div class="eyebrow">Curadoria</div><h2>Vagas sugeridas</h2></div>
+      <p class="muted small">Vagas remotas abertas a quem mora no Brasil, escolhidas pelo seu perfil. Confira se a vaga ainda está aberta antes de aplicar.</p></div>
+    <div class="seg" id="job-filter"></div>
+    <div id="job-list"></div>
+  </section>
+
+  <!-- GUIA -->
+  <section class="panel" id="p-guia" hidden>
+    <div class="head"><div><div class="eyebrow">Método</div><h2>Guia de busca</h2></div>
+      <p class="muted small">Como achar vagas internacionais boas (e não gastar tempo com as ruins), com foco no LinkedIn.</p></div>
+
+    <div class="card stack">
+      <h3>Gerador de busca no LinkedIn</h3>
+      <p class="small muted">Monta a URL com filtros que a interface esconde, como “publicadas na última hora”. Abra, depois salve como alerta.</p>
+      <div class="grid3">
+        <label>Palavras-chave<input id="li-kw"></label>
+        <label>Localização<select id="li-loc">
+          <option>Brazil</option><option>Latin America</option><option>Worldwide</option><option>Americas</option><option>United States</option><option>European Union</option><option>Portugal</option><option>Canada</option></select></label>
+        <label>Publicadas<select id="li-t"><option value="r3600">Última hora</option><option value="r86400" selected>Últimas 24h</option><option value="r604800">Última semana</option><option value="r2592000">Último mês</option><option value="">Qualquer data</option></select></label>
+      </div>
+      <div class="grid3">
+        <label>Modelo<select id="li-wt"><option value="2" selected>Remoto</option><option value="">Qualquer</option><option value="3">Híbrido</option></select></label>
+        <label>Nível<select id="li-e"><option value="3,4" selected>Associate + Mid-Senior</option><option value="4">Só Mid-Senior</option><option value="">Qualquer</option></select></label>
+        <label>Ordenar<select id="li-s"><option value="DD" selected>Mais recentes</option><option value="R">Relevância</option></select></label>
+      </div>
+      <div class="row" id="li-presets"></div>
+      <div class="url-out" id="li-url"></div>
+      <div class="row"><a class="btn primary" id="li-open" href="#" target="_blank" rel="noopener">Abrir no LinkedIn</a><button class="btn" id="li-copy">Copiar URL</button></div>
+      <details><summary>Como a busca booleana funciona</summary>
+        <ul class="plain">
+          <li>Operadores em MAIÚSCULAS: <span class="mono">AND</span>, <span class="mono">OR</span>, <span class="mono">NOT</span>. Aspas para termo exato, parênteses para agrupar.</li>
+          <li>Exemplo: <span class="mono">("data engineer" OR "analytics engineer") AND (dbt OR Spark) NOT (intern OR junior)</span></li>
+          <li>Localização <b>Brazil</b> + Remoto mostra empresas de fora que contratam aqui. <b>Latin America</b> pega vagas “LATAM” que não citam o Brasil.</li>
+          <li>“Última hora” e “24h” importam: as primeiras candidaturas são as mais lidas. Crie alertas diários para as 3 buscas que mais trazem resultado.</li>
+        </ul>
+      </details>
+    </div>
+
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>Checklist do perfil no LinkedIn</h3><span class="small muted mono" id="ck-prog"></span></div>
+      <div id="ck-list"></div>
+    </div>
+
+    <div class="card stack">
+      <h3>Separar vaga boa de vaga ruim</h3>
+      <div class="two-lists">
+        <div class="stack"><div class="eyebrow" style="color:var(--ok)">Sinais bons</div><ul class="plain">
+          <li>Diz explicitamente que aceita Brasil ou LATAM, ou cita fuso (“overlap with EST/PST”).</li>
+          <li>Faixa salarial em USD publicada, ou modelo de contratação claro (contractor, EOR via Deel/Remote/Oyster).</li>
+          <li>Stack concreta (dbt, Airflow, Snowflake, Fabric) e problemas reais descritos.</li>
+          <li>Processo descrito em etapas e com prazo.</li>
+          <li>Empresa com página no Glassdoor, time de dados visível no LinkedIn, vagas anteriores com o mesmo modelo.</li>
+        </ul></div>
+        <div class="stack"><div class="eyebrow" style="color:var(--bad)">Sinais de alerta</div><ul class="plain">
+          <li>“Remote” mas exige residência nos EUA, W-2 ou autorização de trabalho de lá.</li>
+          <li>Pede pagamento, curso ou equipamento para participar do processo.</li>
+          <li>Recrutador sem empresa identificada, contato só por Telegram ou WhatsApp.</li>
+          <li>Vaga repostada há meses, 500+ candidatos e sem recrutador identificado.</li>
+          <li>Lista de 25 tecnologias obrigatórias para um salário baixo: geralmente é vaga de “faz tudo”.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <h3>Onde mais procurar</h3>
+      <div class="board-list" id="boards"></div>
+    </div>
+
+    <div class="card stack">
+      <h3>Modelos de contratação e dinheiro</h3>
+      <div class="grid3">
+        <div class="stack"><b>Contractor / PJ</b><p class="small muted">Você emite nota por uma empresa sua e recebe em dólar via plataforma (Deel, Remote, Husky, Wise). Maior valor bruto, sem 13º e férias pagas. Converse com um contador sobre regime tributário antes da primeira oferta.</p></div>
+        <div class="stack"><b>EOR (Employer of Record)</b><p class="small muted">Uma empresa parceira te contrata no Brasil em nome da empresa de fora, geralmente com CLT e benefícios. Salário em reais, atrelado ao dólar ou não: pergunte.</p></div>
+        <div class="stack"><b>Como falar de salário</b><p class="small muted">Responda em USD anual e com faixa. Pesquise antes em Levels.fyi, Glassdoor e nas faixas das vagas LATAM. Pergunte: moeda, reajuste, feriados, equipamento, PTO e quem paga as taxas da plataforma.</p></div>
+      </div>
+    </div>
+
+    <div class="card stack">
+      <h3>Mensagens prontas (em inglês)</h3>
+      <div class="grid3" id="tpls"></div>
+    </div>
+  </section>
+
+  <!-- ENTREVISTAS -->
+  <section class="panel" id="p-entrevistas" hidden>
+    <div class="head"><div><div class="eyebrow">Preparação</div><h2>Entrevistas</h2></div>
+      <p class="muted small">Processos para fora costumam ter: triagem com recrutador, SQL/Python ao vivo, design de pipeline, comportamental em inglês.</p></div>
+    <div class="card stack">
+      <h3>Treinar uma resposta</h3>
+      <label>Pergunta<select id="iq"></select></label>
+      <label>Sua resposta (em inglês, como você falaria)<textarea id="ia" style="min-height:160px"></textarea></label>
+      <div class="row"><button class="btn primary ai-only" id="ia-btn">Avaliar resposta</button><button class="btn ghost" id="ia-stop" hidden>Parar</button></div>
+      <p class="ai-note small muted">A avaliação precisa do Claude; abra o painel no claude.ai.</p>
+      <div class="out" id="ia-out"></div>
+    </div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>Banco de histórias STAR</h3><span class="small muted">Situação, Tarefa, Ação, Resultado. Tenha 6 a 8 prontas.</span></div>
+      <form class="stack" id="st-form">
+        <label>Título curto<input id="st-title" placeholder="Migração para Medallion na HUBi" required></label>
+        <div class="grid2">
+          <label>Situation<textarea id="st-s" rows="3"></textarea></label>
+          <label>Task<textarea id="st-t" rows="3"></textarea></label>
+          <label>Action<textarea id="st-a" rows="3"></textarea></label>
+          <label>Result (com número)<textarea id="st-r" rows="3"></textarea></label>
+        </div>
+        <label>Serve para (tags)<input id="st-tags" placeholder="conflict, ownership, failure, impact"></label>
+        <div class="row"><button class="btn primary" type="submit">Salvar história</button></div>
+      </form>
+      <div id="st-list"></div>
+    </div>
+    <div class="card stack">
+      <h3>O que estudar para as etapas técnicas</h3>
+      <div class="grid2">
+        <ul class="plain">
+          <li><b>SQL ao vivo:</b> window functions, CTEs, deduplicação, SCD tipo 2, gaps-and-islands. Pratique falando em inglês enquanto escreve.</li>
+          <li><b>Python:</b> manipular JSON/CSV, chamadas de API com paginação e retry, testes com pytest.</li>
+        </ul>
+        <ul class="plain">
+          <li><b>Design de pipeline:</b> batch vs streaming, idempotência, backfill, particionamento, qualidade de dados, custo.</li>
+          <li><b>Modelagem:</b> star schema, grão da fato, dimensões lentas, trade-offs entre modelos.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TARGET=new Date('2027-03-31T23:59:00-03:00'), START=new Date('2026-09-30T00:00:00-03:00');
+const STATUS={realizada:'Candidatura realizada',andamento:'Em andamento',dispensada:'Dispensada',oferta:'Oferta'};
+const S={profile:{},ats:null,checks:{},apps:[],plan:null,progress:{done:{}},jobs:[],stories:[],ready:false};
+let db=null, sample=null, aiOff=false;
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const pd=s=>s?new Date(String(s).slice(0,10)+'T12:00:00'):null;
+const fmtD=s=>{const d=pd(s);return d?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}):'—'};
+const daysSince=s=>{const d=pd(s);return d?Math.floor((Date.now()-d)/864e5):0};
+
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2600)}
+function copy(text,btn){const done=()=>toast('Copiado');try{navigator.clipboard.writeText(text).then(done,()=>fallback())}catch(e){fallback()}
+  function fallback(){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){toast('Selecione e copie manualmente')}ta.remove()}}
+
+/* ---------- tabs ---------- */
+function show(tab){$$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));$$('section.panel').forEach(p=>p.hidden=p.id!=='p-'+tab);
+  try{localStorage.setItem('rota-tab',tab)}catch(e){}}
+$$('.tab').forEach(b=>b.onclick=()=>{show(b.dataset.tab);window.scrollTo({top:0})});
+let first='painel';const h=(location.hash||'').slice(1);
+if(h&&$('#p-'+h))first=h;else{try{const t=localStorage.getItem('rota-tab');if(t&&$('#p-'+t))first=t}catch(e){}}
+show(first);
+
+/* ---------- board ---------- */
+function renderBoard(){const d=Math.max(0,Math.ceil((TARGET-Date.now())/864e5));$('#bd-t').textContent='T–'+String(d).padStart(3,'0');
+  const p=S.profile;$('#bd-role').textContent=(p.targetRole||'Data Engineer')+' · remoto';
+  const m=Math.min(6,Math.max(1,Math.floor((Date.now()-START)/(30.4*864e5))+1));$('#bd-gate').textContent='MÊS '+m+'/6';}
+
+/* ---------- db helpers ---------- */
+const chains={};
+function writeDoc(path,build){if(!db){toast('Sem conexão com o armazenamento');return Promise.resolve()}
+  chains[path]=(chains[path]||Promise.resolve()).then(()=>db.doc(path).set(build())).catch(e=>toast(dbMsg(e)));return chains[path]}
+function dbMsg(e){const c=e&&e.code;return c==='quota_exceeded'?'Limite de armazenamento atingido. Apague itens antigos.':c==='invalid_argument'?'Não foi possível salvar (sem permissão de escrita).':'Não foi possível salvar agora. Tente de novo.'}
+
+/* ---------- AI helpers ---------- */
+function aiMsg(e){const c=e&&e.code;
+  if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].includes(c)){aiOff=true;document.body.classList.add('no-ai');return 'O uso do Claude não foi permitido nesta visualização.'}
+  return ({rate_limited:'Muitas chamadas seguidas. Espere um pouco e tente de novo.',session_expired:'Sua sessão expirou. Entre de novo no claude.ai.',prompt_too_large:'Texto grande demais. Encurte a vaga ou o currículo.',invalid_json:'A resposta veio fora do formato. Tente de novo.',refused:'O Claude não respondeu a esse conteúdo. Revise o texto enviado.',cancelled:'Interrompido.',empty_completion:'Resposta vazia. Tente de novo.'})[c]||'Falha temporária ao falar com o Claude. Tente de novo.'}
+function profileCtx(){const p=S.profile;return `Pessoa: ${p.name||'Eloabe Costa'}\nCargo-alvo: ${p.targetRole||'Data Engineer'} (${p.seniority||'Pleno/Sênior'})\nModelo desejado: ${p.regions||'remoto morando no Brasil para empresa estrangeira'}\nInglês: ${p.english||'B2–C1'}`}
+
+/* ---------- local ATS ---------- */
+const VERBS='built|designed|developed|implemented|led|owned|own|managed|manage|automated|optimized|reduced|increased|created|delivered|migrated|architected|provisioned|provision|integrated|improved|launched|drove|established|scaled|processed|modeled|contributed|collaborated|trained|mentored|analyzed|performed|gathered|apply|applied|build|maintained|deployed|orchestrated'.split('|');
+function localAts(t){t=t||'';const lines=t.split(/\n/).map(l=>l.trim()).filter(Boolean);const words=t.split(/\s+/).filter(Boolean).length;
+  const bullets=lines.filter(l=>/^[•\-\*–·]/.test(l)||l.length>60);
+  const verbLines=lines.filter(l=>{const w=l.replace(/^[•\-\*–·\s]+/,'').split(/\s+/)[0]?.toLowerCase().replace(/[^a-z]/g,'');return VERBS.includes(w)}).length;
+  const metricLines=lines.filter(l=>/\d/.test(l)&&/(%|\+|hours|hrs|tables|gb|tb|\$|x\b|million|k\b|\d{2,})/i.test(l)&&!/^\S*@/.test(l)&&!/(19|20)\d{2}\s*[–-]/.test(l)).length;
+  const en=(t.match(/\b(the|and|with|for|from|to|of|data|built|using)\b/gi)||[]).length, pt=(t.match(/\b(de|com|para|dados|uma|dos|das|utilizando|desenvolvimento)\b/gi)||[]).length;
+  const C=[
+    ['Contato: e-mail',/[\w.+-]+@[\w-]+\.[\w.]+/.test(t),8],
+    ['Contato: telefone com DDI (+55)',/\+\s?55/.test(t),4],
+    ['Link do LinkedIn',/linkedin\.com\/in\//i.test(t),8],
+    ['Seção Summary/Profile',/\b(summary|profile|about)\b/i.test(t),6],
+    ['Seção Experience',/\b(experience|employment|work history)\b/i.test(t),8],
+    ['Seção Skills',/\bskills\b/i.test(t),8],
+    ['Seção Education',/\beducation\b/i.test(t),6],
+    ['Escrito em inglês',en>pt*2&&en>20,12],
+    [`Tamanho adequado (${words} palavras; ideal 450–1000)`,words>=450&&words<=1000,6],
+    [`Bullets com números (${metricLines}; ideal 5+)`,metricLines>=5,12],
+    [`Bullets começando com verbo de ação (${verbLines}; ideal 8+)`,verbLines>=8,10],
+    ['Sem pronomes em 1ª pessoa (I, my)',(t.match(/\b(I|my|me)\b/g)||[]).length<3,4],
+    ['Sem ícones, emojis ou tabelas de texto',!/[\u{1F300}-\u{1FAFF}☀-➿|]/u.test(t),4],
+    ['Datas no formato Mon YYYY – Mon YYYY',/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.? \d{4}/i.test(t),4],
+  ];
+  const tot=C.reduce((a,c)=>a+c[2],0),got=C.reduce((a,c)=>a+(c[1]?c[2]:0),0);
+  return {score:t.trim()?Math.round(got/tot*100):0,checks:C};}
+function dial(el,v){el.style.setProperty('--p',v);el.dataset.v=v;el.style.setProperty('--c',v>=80?'var(--ok)':v>=60?'var(--warn)':'var(--bad)')}
+function renderLocalAts(){const r=localAts($('#cv').value);dial($('#cv-dial'),r.score);
+  $('#cv-verdict').textContent=!$('#cv').value.trim()?'Cole seu currículo':r.score>=85?'Pronto para ATS':r.score>=65?'Bom, com ajustes':'Precisa de trabalho';
+  $('#cv-verdict2').textContent=r.checks.filter(c=>!c[1]).length+' pontos a corrigir';
+  $('#cv-checks').innerHTML=r.checks.map(c=>`<li><span class="ic ${c[1]?'y':'n'}">${c[1]?'✓':'×'}</span><span>${esc(c[0])}</span></li>`).join('');}
+
+/* ---------- keywords ---------- */
+const KW=['python','sql','pyspark','spark','scala','java','go','r','dbt','airflow','prefect','dagster','kafka','flink','kinesis','pub/sub','spark streaming','snowflake','databricks','bigquery','redshift','synapse','microsoft fabric','fabric','azure','aws','gcp','google cloud','azure data factory','data factory','glue','lambda','s3','emr','athena','terraform','docker','kubernetes','ci/cd','github actions','git','delta lake','delta','iceberg','hudi','parquet','lakehouse','data lake','data warehouse','medallion','dimensional modeling','data modeling','star schema','etl','elt','cdc','debezium','fivetran','airbyte','great expectations','data quality','data contracts','data observability','monte carlo','data governance','unity catalog','purview','power bi','looker','tableau','postgresql','postgres','mysql','sql server','oracle','mongodb','dynamodb','clickhouse','trino','presto','duckdb','api','rest','streaming','batch','real-time','machine learning','mlops','llm','genai','rag','vector','semantic layer','dataops','agile','scrum','stakeholder','english','mentoring','cost optimization','performance tuning','testing','pytest','unit tests','observability','monitoring','grafana','datadog','sla'];
+function kwIn(text,k){const t=text.toLowerCase();const re=new RegExp('(^|[^a-z0-9])'+k.replace(/[.*+?^${}()|[\]\\/]/g,'\\$&')+'($|[^a-z0-9])','i');return re.test(t)}
+function localMatch(jd,cv){const found=KW.filter(k=>kwIn(jd,k));
+  const dedup=found.filter(k=>!found.some(o=>o!==k&&o.includes(k)&&o.length>k.length&&!['sql'].includes(k)));
+  const present=dedup.filter(k=>kwIn(cv,k)),missing=dedup.filter(k=>!kwIn(cv,k));
+  return {terms:dedup,present,missing,cov:dedup.length?Math.round(present.length/dedup.length*100):0}}
+
+/* ---------- PAINEL ---------- */
+function weekStart(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+function stats(){const a=S.apps;const c={realizada:0,andamento:0,dispensada:0,oferta:0};a.forEach(x=>c[x.status]=(c[x.status]||0)+1);
+  const tot=a.length,resp=c.andamento+c.oferta+a.filter(x=>x.status==='dispensada'&&x.reached).length;
+  return {c,tot,resp,rate:tot?Math.round((c.andamento+c.oferta+a.filter(x=>x.reached&&x.status==='dispensada').length)/tot*100):0}}
+function renderDash(){renderBoard();const st=stats(),g=+(S.profile.weeklyGoal||10);
+  const wk0=weekStart(new Date()),thisWeek=S.apps.filter(x=>pd(x.appliedAt)>=wk0).length;
+  $('#goal').value=g;
+  $('#kpis').innerHTML=[
+    [st.tot,'Candidaturas'],[thisWeek+'/'+g,'Esta semana'],[st.c.andamento,'Em andamento'],[st.rate+'%','Taxa de avanço'],[st.c.oferta,'Ofertas']
+  ].map(([v,k])=>`<div class="kpi"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+  $('#dash-sub').textContent=st.tot?`Última candidatura há ${Math.min(...S.apps.map(a=>daysSince(a.appliedAt)))} dia(s).`:'Comece registrando suas candidaturas na aba Candidaturas.';
+  // weekly chart
+  const weeks=[];for(let i=11;i>=0;i--){const s=new Date(wk0);s.setDate(s.getDate()-7*i);weeks.push(s)}
+  const counts=weeks.map((w,i)=>{const e=new Date(w);e.setDate(e.getDate()+7);return S.apps.filter(a=>{const d=pd(a.appliedAt);return d>=w&&d<e}).length});
+  const max=Math.max(g,...counts,1),top=Math.ceil(max/5)*5||5;
+  const W=600,H=170,L=28,B=22,T=10,cw=(W-L-6)/12,y=v=>T+(H-T-B)*(1-v/top);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Candidaturas por semana nas últimas 12 semanas">`;
+  [0,top/2,top].forEach(v=>{svg+=`<line x1="${L}" x2="${W-6}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${L-6}" y="${y(v)+3}" text-anchor="end">${v}</text>`});
+  counts.forEach((c,i)=>{const x=L+i*cw+cw*.18,w=cw*.64,hh=(H-T-B)-(y(c)-T);svg+=`<rect x="${x}" y="${y(c)}" width="${w}" height="${Math.max(0,hh)}" rx="3" fill="${i===11?'var(--accent)':'var(--muted)'}" opacity="${i===11?1:.45}"><title>${c} na semana de ${weeks[i].toLocaleDateString('pt-BR')}</title></rect>`;
+    if(c>0)svg+=`<text x="${x+w/2}" y="${y(c)-4}" text-anchor="middle">${c}</text>`;
+    if(i%2===1||i===11)svg+=`<text x="${x+w/2}" y="${H-6}" text-anchor="middle">${weeks[i].toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}</text>`});
+  svg+=`<line x1="${L}" x2="${W-6}" y1="${y(g)}" y2="${y(g)}" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="5 4"/></svg>`;
+  $('#wk-chart').innerHTML=svg;$('#wk-label').textContent=`meta ${g}/semana`;
+  // funnel
+  const fr=[['realizada','Realizadas',st.tot],['andamento','Em andamento',st.c.andamento+st.c.oferta],['oferta','Ofertas',st.c.oferta],['dispensada','Dispensadas',st.c.dispensada]];
+  const fm=Math.max(1,st.tot);
+  $('#funnel').innerHTML=fr.map(([k,l,v])=>`<div class="fr"><span>${l}</span><div class="bar"><i style="width:${v/fm*100}%;background:${k==='oferta'?'var(--ok)':k==='andamento'?'var(--warn)':k==='dispensada'?'var(--muted)':'var(--accent)'}"></i></div><span class="mono">${v}</span></div>`).join('');
+  $('#funnel-note').textContent=st.tot?`De cada 10 candidaturas, ${(st.rate/10).toFixed(1).replace('.',',')} avançam para processo. Referência de mercado para vagas remotas: 5–15%.`:'';
+  // todo
+  const todo=[];const cvT=S.profile.resume||'';
+  if(!cvT)todo.push('Salve seu currículo na aba Currículo e ATS.');
+  else{const r=localAts(cvT);if(r.score<85)todo.push(`Suba a checagem ATS de ${r.score} para 85+ (aba Currículo).`)}
+  const ckDone=Object.values(S.checks||{}).filter(Boolean).length;if(ckDone<CHECKS.length)todo.push(`Complete o checklist do LinkedIn (${ckDone}/${CHECKS.length}).`);
+  if(thisWeek<g)todo.push(`Faltam ${g-thisWeek} candidaturas para a meta desta semana.`);
+  const stale=S.apps.filter(a=>a.status==='realizada'&&daysSince(a.appliedAt)>=10&&!a.followed);
+  if(stale.length)todo.push(`${stale.length} candidatura(s) sem resposta há 10+ dias: mande follow-up ao recrutador ou marque como dispensada.`);
+  const newJobs=S.jobs.filter(j=>(j.status||'nova')==='nova').length;if(newJobs)todo.push(`${newJobs} vaga(s) sugerida(s) esperando sua avaliação.`);
+  const nextItem=nextPlanItem();if(nextItem)todo.push('Próximo item do plano: '+nextItem.text);
+  if(!S.stories.length)todo.push('Escreva suas primeiras histórias STAR (aba Entrevistas).');
+  if(typeof dayDone==='function'&&dayDone(dayKey(new Date()))<4)todo.push(`Rotina de inglês de hoje: ${dayDone(dayKey(new Date()))}/6 tarefas (aba Inglês).`);
+  $('#todo').innerHTML=todo.length?todo.map(t=>`<li>${esc(t)}</li>`).join(''):'<li>Tudo em dia. Mantenha o ritmo.</li>';
+  // insights (local)
+  const ins=[];
+  if(st.tot>=5){
+    const bySrc={};S.apps.forEach(a=>{const s=a.source||'Outra';bySrc[s]=bySrc[s]||{n:0,ok:0};bySrc[s].n++;if(a.status==='andamento'||a.status==='oferta'||a.reached)bySrc[s].ok++});
+    const best=Object.entries(bySrc).filter(([,v])=>v.n>=2).sort((a,b)=>b[1].ok/b[1].n-a[1].ok/a[1].n)[0];
+    if(best)ins.push(`Fonte com mais retorno: ${best[0]} (${best[1].ok} de ${best[1].n}).`);
+    const withM=S.apps.filter(a=>typeof a.match==='number');
+    const adv=withM.filter(a=>a.status==='andamento'||a.status==='oferta'),rej=withM.filter(a=>a.status==='dispensada');
+    if(adv.length&&rej.length){const av=x=>Math.round(x.reduce((s,a)=>s+a.match,0)/x.length);ins.push(`Match médio das que avançaram: ${av(adv)}; das dispensadas: ${av(rej)}. Priorize vagas acima de ${Math.max(60,av(adv)-5)}.`)}
+  }
+  const agg=aggGaps().slice(0,3);if(agg.length)ins.push('Palavras-chave que mais faltam nas suas vagas: '+agg.map(x=>x[0]+' ('+x[1]+')').join(', ')+'.');
+  const elapsed=(Date.now()-START)/(TARGET-START);if(st.tot&&elapsed>0.05){const proj=Math.round(st.tot/elapsed);ins.push(`No ritmo atual você chega a ~${proj} candidaturas até março. Para uma oferta, planeje 80–150.`)}
+  $('#insights').innerHTML=ins.length?ins.map(t=>`<li>${esc(t)}</li>`).join(''):'<li class="muted">Os insights aparecem a partir de 5 candidaturas registradas.</li>';
+  renderRoadmap();}
+function aggGaps(){const m={};S.apps.forEach(a=>(a.missing||[]).forEach(k=>{k=String(k).toLowerCase();m[k]=(m[k]||0)+1}));return Object.entries(m).sort((a,b)=>b[1]-a[1])}
+$('#goal').addEventListener('change',e=>{const v=Math.max(1,Math.min(60,+e.target.value||10));writeDoc('profile/main',()=>({...S.profile,weeklyGoal:v}))});
+$('#ins-btn').onclick=async()=>{const out=$('#ins-out'),btn=$('#ins-btn');if(!sample)return;btn.disabled=true;out.hidden=false;out.innerHTML='<span class="think">Analisando suas candidaturas</span>';
+  const st=stats();const rows=S.apps.slice(0,120).map(a=>`${a.appliedAt||''} | ${a.role} @ ${a.company} | ${STATUS[a.status]} | fonte ${a.source||'?'} | match ${a.match??'?'}${a.stage?' | etapa '+a.stage:''}`).join('\n');
+  const prompt=`Você é um coach de carreira para vagas internacionais remotas de dados. Analise o funil de candidaturas abaixo e escreva em português do Brasil, em texto simples sem markdown, até 8 linhas curtas: o que os números mostram, o principal gargalo (volume, currículo, alvo das vagas ou entrevistas) e 3 ações concretas para a próxima semana. A meta é uma oferta até 31/03/2027; hoje é ${today()}.\n\n${profileCtx()}\nMeta semanal: ${S.profile.weeklyGoal||10}\nTotais: ${JSON.stringify(st.c)}\nPalavras-chave mais ausentes: ${aggGaps().slice(0,8).map(x=>x[0]).join(', ')||'—'}\n\nCandidaturas:\n${rows||'(nenhuma ainda)'}`;
+  try{await sample(prompt,{cache:false,onText:({text})=>{out.textContent=text}})}catch(e){out.textContent=(e.text||'')+'\n'+aiMsg(e)}finally{btn.disabled=false}};
+
+const RM=[['Out 2026','Base pronta','CV em inglês com ATS 85+, LinkedIn completo, alertas criados, 10 candidaturas/semana.'],
+ ['Nov 2026','Volume e certificação','Rodar 10–15/semana, iniciar DP-700 e dbt avançado, 4 histórias STAR.'],
+ ['Dez 2026','Portfólio público','Projeto no GitHub cobrindo as lacunas (Snowflake/Databricks, CI/CD, testes).'],
+ ['Jan 2027','Entrevistas','Simulados semanais em inglês, SQL ao vivo, design de pipeline.'],
+ ['Fev 2027','Pipeline cheio','3–5 processos em paralelo, indicações ativas, follow-up sistemático.'],
+ ['Mar 2027','Oferta','Negociação em USD, comparar modelos (contractor vs EOR), decidir.']];
+function renderRoadmap(){const now=new Date();const idx=Math.min(5,Math.max(0,(now.getFullYear()-2026)*12+now.getMonth()-9));
+  const phases=(S.plan&&S.plan.phases)||[];
+  $('#roadmap').innerHTML=RM.map((r,i)=>{const ph=phases[i];let prog='';if(ph&&ph.items&&ph.items.length){const d=ph.items.filter(it=>S.progress.done&&S.progress.done[it.id]).length;prog=`<div class="bar" style="height:5px;margin-top:4px"><i style="width:${d/ph.items.length*100}%"></i></div><span class="small muted mono">${d}/${ph.items.length}</span>`}
+    return `<div class="rm ${i===idx?'now':i<idx?'past':''}"><div class="m">${r[0]}</div><div class="g">${esc(ph?.title||r[1])}</div><div class="small muted">${esc(ph?.goal||r[2])}</div>${prog}</div>`}).join('');
+  const all=phases.flatMap(p=>p.items||[]);const d=all.filter(it=>S.progress.done&&S.progress.done[it.id]).length;$('#rm-prog').textContent=all.length?`${d} de ${all.length} itens do plano concluídos`:''}
+function nextPlanItem(){for(const p of (S.plan?.phases||[]))for(const it of (p.items||[]))if(!(S.progress.done||{})[it.id])return it;return null}
+
+/* ---------- CURRÍCULO ---------- */
+let cvDirty=false,clDirty=false;
+$('#cv').addEventListener('input',()=>{cvDirty=true;renderLocalAts();$('#cv-meta').textContent='não salvo'});
+$('#cl').addEventListener('input',()=>{clDirty=true});
+function onProfile(){const p=S.profile;
+  if(document.activeElement!==$('#pf-role'))$('#pf-role').value=p.targetRole||'';
+  if(document.activeElement!==$('#pf-sen'))$('#pf-sen').value=p.seniority||'';
+  if(document.activeElement!==$('#pf-eng'))$('#pf-eng').value=p.english||'';
+  if(document.activeElement!==$('#pf-reg'))$('#pf-reg').value=p.regions||'';
+  if(!cvDirty){$('#cv').value=p.resume||'';$('#cv-meta').textContent=p.resumeUpdatedAt?'salvo '+fmtD(p.resumeUpdatedAt):''}
+  if(!clDirty)$('#cl').value=p.cover||'';
+  if(!$('#li-kw').dataset.touched){$('#li-kw').value=defaultKw();buildLi()}
+  renderLocalAts();renderDash();}
+$('#pf-save').onclick=()=>writeDoc('profile/main',()=>({...S.profile,targetRole:$('#pf-role').value.trim(),seniority:$('#pf-sen').value.trim(),english:$('#pf-eng').value.trim(),regions:$('#pf-reg').value.trim()})).then(()=>toast('Perfil salvo'));
+$('#cv-save').onclick=()=>{const v=$('#cv').value;writeDoc('profile/main',()=>({...S.profile,resume:v,resumeUpdatedAt:today()})).then(()=>{cvDirty=false;toast('Currículo salvo');$('#cv-meta').textContent='salvo hoje'})};
+$('#cl-save').onclick=()=>{const v=$('#cl').value;writeDoc('profile/main',()=>({...S.profile,cover:v})).then(()=>{clDirty=false;toast('Cover letter salva')})};
+$('#cv-copy').onclick=()=>copy($('#cv').value);
+function renderAts(){const a=S.ats;if(!a||!a.result){return}const r=a.result;$('#ats-when').textContent=a.at?'avaliado '+fmtD(a.at):'';
+  const crit=(r.criterios||[]).map(c=>`<tr><td>${esc(c.nome)}</td><td class="num mono">${esc(c.nota)}/10</td><td>${esc(c.comentario)}</td></tr>`).join('');
+  $('#ats-out').innerHTML=`<div class="score"><div class="dial" id="ats-dial"></div><div class="stack" style="gap:4px"><b>Nota ATS do Claude</b><span class="small muted">Para ${esc(S.profile.targetRole||'Data Engineer')} ${esc(S.profile.seniority||'')}</span></div></div>
+   <div class="table-wrap"><table><thead><tr><th>Critério</th><th>Nota</th><th>Comentário</th></tr></thead><tbody>${crit}</tbody></table></div>
+   <div class="grid2"><div class="stack"><div class="eyebrow">Palavras-chave fortes</div><div>${(r.keywordsFortes||[]).map(k=>`<span class="chip ok">${esc(k)}</span>`).join('')}</div></div>
+   <div class="stack"><div class="eyebrow">Ausentes e comuns em vagas</div><div>${(r.keywordsAusentes||[]).map(k=>`<span class="chip bad">${esc(k)}</span>`).join('')}</div></div></div>
+   ${(r.prioridades||[]).length?`<div class="stack"><div class="eyebrow">Prioridades</div><ol class="plain">${r.prioridades.map(p=>`<li>${esc(p)}</li>`).join('')}</ol></div>`:''}
+   ${(r.bullets||[]).length?`<div class="stack"><div class="eyebrow">Reescritas sugeridas</div><div class="table-wrap"><table><thead><tr><th>Antes</th><th>Depois</th></tr></thead><tbody>${r.bullets.map(b=>`<tr><td class="muted">${esc(b.antes)}</td><td>${esc(b.depois)}</td></tr>`).join('')}</tbody></table></div></div>`:''}
+   ${r.headlineLinkedin?`<div class="stack"><div class="eyebrow">Headline sugerida para o LinkedIn</div><div class="url-out">${esc(r.headlineLinkedin)}</div></div>`:''}`;
+  dial($('#ats-dial'),+r.score||0)}
+$('#cv-ai').onclick=async()=>{const cv=$('#cv').value.trim();if(!cv){toast('Cole o currículo primeiro');return}if(!sample)return;const btn=$('#cv-ai');btn.disabled=true;$('#ats-out').innerHTML='<span class="think">Avaliando o currículo como um ATS e um recrutador</span>';
+  const prompt=`Você é especialista em ATS (Greenhouse, Lever, Workday, Ashby) e recrutador técnico de vagas internacionais remotas de dados. Avalie o currículo abaixo para o cargo-alvo. Escreva comentários em português do Brasil; termos técnicos, keywords e reescritas em inglês. Não invente fatos: nas reescritas, use [X] onde faltar um número que a pessoa precisa preencher.\n${profileCtx()}\n\nResponda somente com JSON:\n{"score":0-100,"criterios":[{"nome":"Parseabilidade","nota":0-10,"comentario":""},{"nome":"Palavras-chave do cargo","nota":0,"comentario":""},{"nome":"Impacto quantificado","nota":0,"comentario":""},{"nome":"Clareza e concisão","nota":0,"comentario":""},{"nome":"Estrutura e seções","nota":0,"comentario":""},{"nome":"Qualidade do inglês","nota":0,"comentario":""}],"keywordsFortes":["até 12"],"keywordsAusentes":["até 12, comuns em vagas do cargo-alvo"],"prioridades":["3 a 5 ações, em ordem"],"bullets":[{"antes":"","depois":""}],"headlineLinkedin":"até 220 caracteres"}\nInclua 4 a 6 bullets reescritos.\n\nCURRÍCULO:\n${cv.slice(0,16000)}`;
+  try{const r=await sample.json(prompt,{modelTier:'default'});S.ats={result:r,at:today()};renderAts();writeDoc('profile/ats',()=>({result:r,at:today()}))}catch(e){$('#ats-out').innerHTML=`<div class="empty">${esc(aiMsg(e))}</div>`}finally{btn.disabled=false}};
+$('#cl-ai').onclick=async()=>{const cl=$('#cl').value.trim();if(!cl){toast('Escreva ou gere a cover letter primeiro');return}const out=$('#cl-out');out.innerHTML='<span class="think">Avaliando</span>';
+  try{const r=await sample.json(`Avalie esta cover letter para vagas remotas internacionais de ${S.profile.targetRole||'Data Engineer'}. Comentários em português; versão revisada em inglês, com no máximo 220 palavras, sem inventar fatos que não estejam no currículo. Responda só com JSON: {"score":0-100,"pontos":["fortes"],"melhorias":["o que mudar"],"versaoRevisada":""}\n\nCURRÍCULO (referência):\n${($('#cv').value||'').slice(0,9000)}\n\nCOVER LETTER:\n${cl.slice(0,6000)}`);
+    out.innerHTML=`<div class="stack"><div class="score"><div class="dial" id="cl-dial"></div><div class="small"><b>Nota da cover letter</b></div></div>
+    <div class="two-lists"><div><div class="eyebrow">Pontos fortes</div><ul class="plain">${(r.pontos||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div><div class="eyebrow">Melhorias</div><ul class="plain">${(r.melhorias||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div>
+    <div class="eyebrow">Versão revisada</div><pre class="code" id="cl-rev">${esc(r.versaoRevisada)}</pre><div class="row"><button class="btn" id="cl-use">Usar esta versão</button><button class="btn ghost" id="cl-cp">Copiar</button></div></div>`;
+    dial($('#cl-dial'),+r.score||0);$('#cl-use').onclick=()=>{$('#cl').value=r.versaoRevisada||'';clDirty=true;toast('Revise e clique em Salvar cover letter')};$('#cl-cp').onclick=()=>copy(r.versaoRevisada||'')}catch(e){out.innerHTML=`<div class="empty">${esc(aiMsg(e))}</div>`}};
+$('#cl-gen').onclick=async()=>{const cv=$('#cv').value.trim();if(!cv){toast('Salve o currículo primeiro');return}const ta=$('#cl');ta.value='Escrevendo…';
+  try{await sample(`Escreva uma cover letter base em inglês (180–220 palavras) para candidaturas a ${S.profile.targetRole||'Data Engineer'} ${S.profile.seniority||''} remoto, trabalhando do Brasil para empresas estrangeiras. Use apenas fatos do currículo. Deixe [Company] e [Role] como marcadores para personalizar. Tom direto, sem clichês ("I am writing to express"). Mencione disponibilidade em fuso UTC-3 com sobreposição com EUA e Europa. Responda só com o texto da carta.\n\nCURRÍCULO:\n${cv.slice(0,12000)}`,{cache:false,onText:({text})=>{ta.value=text}});clDirty=true;toast('Rascunho pronto. Revise e salve.')}catch(e){ta.value=e.text||'';toast(aiMsg(e))}};
+
+/* ---------- ANALISAR VAGA ---------- */
+let lastAnalysis=null,jdCtl=null;
+function renderJdLocal(){const jd=$('#jd').value.trim(),box=$('#jd-local');if(jd.length<80){box.hidden=true;return}
+  const m=localMatch(jd,S.profile.resume||$('#cv').value||'');box.hidden=false;
+  box.innerHTML=`<div class="row" style="justify-content:space-between"><h3>Cobertura de palavras-chave</h3><span class="small muted">cálculo local, instantâneo</span></div>
+   <div class="score"><div class="dial" id="jd-dial"></div><div class="small">${m.present.length} de ${m.terms.length} termos técnicos da vaga aparecem no seu currículo base.</div></div>
+   <div>${m.present.map(k=>`<span class="chip ok">${esc(k)}</span>`).join('')}${m.missing.map(k=>`<span class="chip bad">${esc(k)}</span>`).join('')}</div>
+   <p class="small muted">Verde: presente. Vermelho: ausente. Só inclua um termo ausente no currículo se você realmente tem a experiência.</p>`;
+  dial($('#jd-dial'),m.cov)}
+let jdT;$('#jd').addEventListener('input',()=>{clearTimeout(jdT);jdT=setTimeout(renderJdLocal,300)});
+$('#jd-clear').onclick=()=>{['#jd','#jd-role','#jd-co','#jd-link'].forEach(s=>$(s).value='');$('#jd-result').innerHTML='';$('#jd-local').hidden=true;lastAnalysis=null};
+$('#jd-stop').onclick=()=>jdCtl&&jdCtl.abort();
+$('#jd-ai').onclick=async()=>{const jd=$('#jd').value.trim(),cv=(S.profile.resume||$('#cv').value||'').trim();
+  if(jd.length<80){toast('Cole a descrição completa da vaga');return}if(!cv){toast('Salve seu currículo antes');return}
+  const btn=$('#jd-ai');btn.disabled=true;$('#jd-stop').hidden=false;jdCtl=new AbortController();
+  $('#jd-result').innerHTML='<div class="card"><span class="think">Lendo a vaga, comparando com seu currículo e adaptando. Leva de 30 s a 2 min</span></div>';
+  const prompt=`Você é recrutador técnico sênior e especialista em ATS (Greenhouse, Lever, Workday, Ashby) para vagas internacionais remotas. Compare o currículo com a vaga.
+Regras: textos de análise em português do Brasil; palavras-chave, bullets e currículo adaptado em inglês (ou no idioma da vaga). NÃO invente experiência, empresa, data, número ou tecnologia que não esteja no currículo. Pode reescrever, reordenar, trocar sinônimos pelos termos exatos da vaga quando forem equivalentes reais, e destacar o que já existe. Onde uma melhoria depender de dado que a pessoa precisa confirmar, escreva [CONFIRMAR: ...].
+Verifique também elegibilidade: a vaga aceita quem mora no Brasil? Exige autorização de trabalho em outro país?
+${profileCtx()}
+
+Responda somente com JSON:
+{"cargo":"","empresa":"","senioridade":"","elegibilidadeBrasil":"sim|não|incerto","modelo":"remoto/híbrido + restrições de país e fuso","salario":"se informado","matchScore":0-100,"veredito":"aplicar|aplicar com ajustes|baixa aderência","motivo":"1-2 frases","keywords":[{"termo":"","presente":true,"importancia":"alta|média|baixa"}],"pontosFortes":["3-5"],"lacunas":[{"item":"","contornavel":true,"comoContornar":""}],"ajustes":[{"secao":"","antes":"","depois":""}],"curriculoAdaptado":"currículo completo em texto puro, pronto para colar","perguntasProvaveis":["4-6 em inglês"],"redFlags":[]}
+
+CURRÍCULO:
+${cv.slice(0,14000)}
+
+VAGA:
+${jd.slice(0,14000)}`;
+  try{const r=await sample.json(prompt,{signal:jdCtl.signal});lastAnalysis=r;if(!$('#jd-role').value&&r.cargo)$('#jd-role').value=r.cargo;if(!$('#jd-co').value&&r.empresa)$('#jd-co').value=r.empresa;renderAnalysis(r,$('#jd-result'),true)}
+  catch(e){$('#jd-result').innerHTML=`<div class="empty">${esc(aiMsg(e))}</div>`}finally{btn.disabled=false;$('#jd-stop').hidden=true}};
+function renderAnalysis(r,host,live){const vcls=r.veredito==='aplicar'?'ok':r.veredito==='baixa aderência'?'bad':'warn';
+  host.innerHTML=`<div class="card stack">
+   <div class="row" style="justify-content:space-between"><div><h3>${esc(r.cargo||'Vaga')} · ${esc(r.empresa||'')}</h3><div class="small muted">${esc(r.senioridade||'')} · ${esc(r.modelo||'')}${r.salario?' · '+esc(r.salario):''}</div></div>
+     <span class="chip ${vcls}" style="font-weight:600">${esc(r.veredito||'')}</span></div>
+   <div class="score"><div class="dial" data-role="m"></div><div class="small"><b>Match ${esc(r.matchScore)}/100</b><br>${esc(r.motivo||'')}<br><span class="muted">Aceita Brasil: <b>${esc(r.elegibilidadeBrasil||'incerto')}</b></span></div></div>
+   <div><div class="eyebrow">Palavras-chave da vaga</div>${(r.keywords||[]).map(k=>`<span class="chip ${k.presente?'ok':k.importancia==='alta'?'bad':'warn'}">${esc(k.termo)}</span>`).join('')}</div>
+   <div class="two-lists"><div><div class="eyebrow">Pontos fortes</div><ul class="plain">${(r.pontosFortes||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+     <div><div class="eyebrow">Lacunas</div><ul class="plain">${(r.lacunas||[]).map(x=>`<li><b>${esc(x.item)}</b>${x.comoContornar?' · '+esc(x.comoContornar):''}</li>`).join('')}</ul></div></div>
+   ${(r.redFlags||[]).length?`<div class="banner">${r.redFlags.map(esc).join(' · ')}</div>`:''}
+   ${(r.ajustes||[]).length?`<div class="stack"><div class="eyebrow">Ajustes feitos no currículo</div><div class="table-wrap"><table><thead><tr><th>Seção</th><th>Antes</th><th>Depois</th></tr></thead><tbody>${r.ajustes.map(a=>`<tr><td>${esc(a.secao)}</td><td class="muted">${esc(a.antes)}</td><td>${esc(a.depois)}</td></tr>`).join('')}</tbody></table></div></div>`:''}
+   <details ${live?'open':''}><summary>Currículo adaptado para esta vaga</summary><pre class="code">${esc(r.curriculoAdaptado||'')}</pre><div class="row"><button class="btn" data-act="cpcv">Copiar currículo adaptado</button></div></details>
+   ${(r.perguntasProvaveis||[]).length?`<details><summary>Perguntas prováveis na entrevista</summary><ul class="plain">${r.perguntasProvaveis.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></details>`:''}
+   ${live?`<div class="row"><button class="btn primary" data-act="save">Salvar como candidatura realizada</button><button class="btn ai-only" data-act="cl">Gerar cover letter para esta vaga</button></div><pre class="code" data-role="clout" hidden></pre>`:''}
+  </div>`;
+  dial(host.querySelector('[data-role="m"]'),+r.matchScore||0);
+  host.querySelector('[data-act="cpcv"]').onclick=()=>copy(r.curriculoAdaptado||'');
+  if(live){host.querySelector('[data-act="save"]').onclick=()=>saveFromJd('realizada');
+    host.querySelector('[data-act="cl"]').onclick=async()=>{const pre=host.querySelector('[data-role="clout"]');pre.hidden=false;pre.textContent='Escrevendo…';
+      try{await sample(`Escreva uma cover letter em inglês (150–220 palavras) para esta vaga, usando só fatos do currículo, conectando 2–3 requisitos da vaga a resultados reais. Sem clichês. Responda só com a carta.\n\nCOVER LETTER BASE (tom de referência):\n${(S.profile.cover||'').slice(0,3000)}\n\nCURRÍCULO:\n${(S.profile.resume||'').slice(0,10000)}\n\nVAGA:\n${$('#jd').value.slice(0,10000)}`,{cache:false,onText:({text})=>{pre.textContent=text}});
+        const b=document.createElement('button');b.className='btn';b.textContent='Copiar cover letter';b.onclick=()=>copy(pre.textContent);pre.after(b)}catch(e){pre.textContent=(e.text||'')+'\n'+aiMsg(e)}}}}
+function saveFromJd(status){const role=$('#jd-role').value.trim()||lastAnalysis?.cargo||'',co=$('#jd-co').value.trim()||lastAnalysis?.empresa||'';
+  if(!role||!co){toast('Preencha cargo e empresa');return}if(!db){toast('Sem conexão com o armazenamento');return}
+  const jd=$('#jd').value.trim(),lm=localMatch(jd,S.profile.resume||'');
+  const a=lastAnalysis;const missing=a?(a.keywords||[]).filter(k=>!k.presente).map(k=>k.termo):lm.missing;
+  const doc={role,company:co,link:$('#jd-link').value.trim(),source:/linkedin/i.test($('#jd-link').value)?'LinkedIn':'Site da empresa',status,appliedAt:today(),updatedAt:today(),
+    match:a?+a.matchScore:lm.cov,missing:missing.slice(0,30),jd:jd.slice(0,20000),analysis:a?{...a}:null,notes:''};
+  db.collection('apps').add(doc).then(()=>{toast('Candidatura salva');show('candidaturas')},e=>toast(dbMsg(e)))}
+$('#jd-save').onclick=()=>saveFromJd('realizada');
+
+/* ---------- CANDIDATURAS ---------- */
+$('#ap-st').innerHTML=Object.entries(STATUS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('#ap-date').value=today();
+$('#app-form').addEventListener('submit',e=>{e.preventDefault();if(!db){toast('Sem conexão com o armazenamento');return}
+  const doc={role:$('#ap-role').value.trim(),company:$('#ap-co').value.trim(),link:$('#ap-link').value.trim(),source:$('#ap-src').value,status:$('#ap-st').value,appliedAt:$('#ap-date').value||today(),updatedAt:today(),match:null,missing:[],notes:''};
+  if(!doc.role||!doc.company)return;db.collection('apps').add(doc).then(()=>{toast('Adicionada');$('#ap-role').value='';$('#ap-co').value='';$('#ap-link').value=''},er=>toast(dbMsg(er)))});
+let appFilter='todas';const open=new Set();const confirmDel=new Set();
+function renderAppFilter(){const st=stats();const opts=[['todas','Todas',st.tot],...Object.keys(STATUS).map(k=>[k,STATUS[k].replace('Candidatura ',''),st.c[k]||0])];
+  $('#app-filter').innerHTML=opts.map(([k,l,n])=>`<button type="button" aria-pressed="${appFilter===k}" data-f="${k}">${esc(l)} <span class="mono">${n}</span></button>`).join('');
+  $$('#app-filter button').forEach(b=>b.onclick=()=>{appFilter=b.dataset.f;renderApps()})}
+$('#app-q').addEventListener('input',()=>renderApps());
+function renderApps(){renderAppFilter();const q=$('#app-q').value.toLowerCase();
+  const list=S.apps.filter(a=>(appFilter==='todas'||a.status===appFilter)&&(!q||(a.role+' '+a.company).toLowerCase().includes(q))).sort((a,b)=>(b.appliedAt||'').localeCompare(a.appliedAt||''));
+  if(!S.apps.length){$('#app-list').innerHTML=`<div class="empty"><b>Nenhuma candidatura ainda.</b> Adicione pelo formulário acima, ou analise uma vaga e salve direto de lá. Exemplo: “Senior Data Engineer · Alpaca”, status Candidatura realizada.</div>`;return}
+  if(!list.length){$('#app-list').innerHTML='<div class="empty">Nada com esse filtro.</div>';return}
+  $('#app-list').innerHTML=`<div class="apps">${list.map(a=>`<div class="app" data-id="${a.id}">
+    <div class="app-row"><div style="min-width:0"><div class="t">${esc(a.role)} · ${esc(a.company)}</div>
+      <div class="s">${fmtD(a.appliedAt)} · há ${daysSince(a.appliedAt)}d · ${esc(a.source||'')}${typeof a.match==='number'?' · match '+a.match:''}${a.stage?' · '+esc(a.stage):''}</div></div>
+      <select aria-label="Status" id="st-${a.id}" data-st>${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${a.status===k?'selected':''}>${v}</option>`).join('')}</select>
+      <button class="btn ghost more" data-more>${open.has(a.id)?'Fechar':'Detalhes'}</button></div>
+    ${open.has(a.id)?`<div class="app-detail">
+      <div class="grid2"><label>Etapa atual<input id="sg-${a.id}" data-stage value="${esc(a.stage||'')}" placeholder="Ex.: Entrevista técnica 2"></label>
+      <label>Link<input id="lk-${a.id}" data-link value="${esc(a.link||'')}"></label></div>
+      <label>Notas<textarea id="nt-${a.id}" data-notes rows="3" placeholder="Recrutador, salário discutido, próximos passos">${esc(a.notes||'')}</textarea></label>
+      <label class="row" style="font-weight:500"><input type="checkbox" data-reached ${a.reached?'checked':''} style="width:auto"> Chegou a ter entrevista (conta como avanço mesmo se dispensada)</label>
+      <label class="row" style="font-weight:500"><input type="checkbox" data-followed ${a.followed?'checked':''} style="width:auto"> Follow-up enviado</label>
+      <div class="row">${a.link?`<a class="btn" href="${esc(a.link)}" target="_blank" rel="noopener">Abrir vaga</a>`:''}
+        ${a.analysis?`<button class="btn" data-an>Ver análise</button>`:''}
+        ${confirmDel.has(a.id)?`<span class="confirm">Apagar de vez? <button class="btn danger" data-delyes>Apagar</button><button class="btn ghost" data-delno>Cancelar</button></span>`:`<button class="btn ghost danger" data-del>Excluir</button>`}</div>
+      <div data-anhost></div></div>`:''}
+  </div>`).join('')}</div>`;
+  $$('#app-list .app').forEach(el=>{const id=el.dataset.id,a=S.apps.find(x=>x.id===id),ref=db&&db.doc('apps/'+id);
+    const up=patch=>ref&&ref.update({...patch,updatedAt:today()}).catch(e=>toast(dbMsg(e)));
+    el.querySelector('[data-st]').onchange=e=>{const v=e.target.value;up(v==='andamento'?{status:v,reached:true}:{status:v});toast('Status: '+STATUS[v])};
+    el.querySelector('[data-more]').onclick=()=>{open.has(id)?open.delete(id):open.add(id);renderApps()};
+    const bind=(sel,key)=>{const i=el.querySelector(sel);if(i)i.addEventListener('change',()=>up({[key]:i.value}))};
+    bind('[data-stage]','stage');bind('[data-link]','link');bind('[data-notes]','notes');
+    const rc=el.querySelector('[data-reached]');if(rc)rc.onchange=()=>up({reached:rc.checked});
+    const fc=el.querySelector('[data-followed]');if(fc)fc.onchange=()=>up({followed:fc.checked});
+    const d=el.querySelector('[data-del]');if(d)d.onclick=()=>{confirmDel.add(id);renderApps()};
+    const dn=el.querySelector('[data-delno]');if(dn)dn.onclick=()=>{confirmDel.delete(id);renderApps()};
+    const dy=el.querySelector('[data-delyes]');if(dy)dy.onclick=()=>{confirmDel.delete(id);open.delete(id);ref&&ref.delete().then(()=>toast('Excluída'))};
+    const an=el.querySelector('[data-an]');if(an)an.onclick=()=>renderAnalysis(a.analysis,el.querySelector('[data-anhost]'),false);});}
+
+/* ---------- PLANO ---------- */
+function lv(n,req){let s='<span class="gap-lv" aria-label="nível '+n+' de 5, exigido '+req+'">';for(let i=1;i<=5;i++)s+=`<i class="${i<=n?'on':''} ${i<=req?'req':''}"></i>`;return s+'</span>'}
+function renderPlan(){const p=S.plan;if(!p){$('#plan-sub').textContent='';renderAggGaps();return}
+  $('#plan-sub').textContent=(p.summary||'')+(p.generatedAt?` Atualizado em ${fmtD(p.generatedAt)}.`:'');
+  const done=S.progress.done||{};
+  const trackName=id=>((p.tracks||[]).find(t=>t.id===id)||{}).name||id;
+  const gaps=(p.gaps||[]).map(g=>`<tr><td><b>${esc(g.skill)}</b><div class="small muted">${esc(g.why||'')}</div></td><td>${lv(+g.current||0,+g.required||0)}<div class="small muted mono">${g.current}/5 → ${g.required}/5</div></td><td><span class="chip ${g.priority==='alta'?'bad':g.priority==='média'?'warn':''}">${esc(g.priority)}</span></td><td class="small">${esc(g.howToProve||'')}</td></tr>`).join('');
+  const phases=(p.phases||[]).map(ph=>{const n=(ph.items||[]).length,d=(ph.items||[]).filter(i=>done[i.id]).length;
+    return `<details class="card" ${ph.open?'open':''}><summary><span class="mono small muted">${esc(ph.label||'')}</span> · ${esc(ph.title)} <span class="small muted mono">(${d}/${n})</span></summary>
+    <p class="small muted">${esc(ph.goal||'')}</p><div class="bar" style="height:5px"><i style="width:${n?d/n*100:0}%"></i></div>
+    <div>${(ph.items||[]).map(it=>`<label class="tick ${done[it.id]?'done':''}"><input type="checkbox" id="pi-${esc(it.id)}" data-pi="${esc(it.id)}" ${done[it.id]?'checked':''}><span>${it.track?`<span class="chip" style="background:var(--accent-soft);color:var(--accent)">${esc(trackName(it.track))}</span> `:''}${esc(it.text)}${it.hours?` <span class="mono small muted">· ${it.hours}h</span>`:''}${it.url?` · <a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.resource||'recurso')}</a>`:it.resource?` <span class="small muted">· ${esc(it.resource)}</span>`:''}</span></label>`).join('')}</div></details>`}).join('');
+  const rhythm=(p.weeklyRhythm||[]).length?`<div class="card stack"><h3>Semana-tipo</h3><ul class="plain">${p.weeklyRhythm.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+  const src=(p.sources||[]).length?`<p class="small muted">Base da pesquisa: ${p.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join(' · ')}</p>`:'';
+  const allItems=(p.phases||[]).flatMap(ph=>(ph.items||[]).map(it=>({...it,month:ph.label})));
+  const tracks=(p.tracks||[]).map(t=>{const its=allItems.filter(i=>i.track===t.id),d=its.filter(i=>done[i.id]).length,h=its.reduce((a,i)=>a+(+i.hours||0),0);
+    return `<div class="card stack"><div class="row" style="justify-content:space-between"><h3>${esc(t.name)}</h3><span class="mono small muted">${d}/${its.length} · ${h}h</span></div>
+      <div class="bar"><i style="width:${its.length?d/its.length*100:0}%"></i></div>
+      <div class="small"><span class="muted">Hoje:</span> ${esc(t.from)}<br><span class="muted">Meta:</span> <b>${esc(t.to)}</b></div>
+      <ul class="plain small">${(t.signals||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+      <div class="small muted">${[...new Set(its.map(i=>i.month))].join(' → ')}</div></div>`}).join('');
+  $('#plan-body').innerHTML=`<div class="stack" style="gap:16px">
+    ${p.focusNote?`<div class="banner" style="background:var(--accent-soft);color:var(--accent)">${esc(p.focusNote)}</div>`:''}
+    ${tracks?`<div><div class="eyebrow" style="margin-bottom:8px">Trilhas de aprofundamento</div><div class="grid3">${tracks}</div></div>`:''}
+    <div class="card stack"><h3>Lacunas em relação às vagas atuais</h3><p class="small muted">Barra cinza: seu nível hoje. Contorno azul: o que as vagas pleno/sênior pedem.</p>
+      <div class="table-wrap"><table><thead><tr><th>Competência</th><th>Nível</th><th>Prioridade</th><th>Como provar</th></tr></thead><tbody>${gaps}</tbody></table></div></div>
+    ${rhythm}${phases}${src}</div>`;
+  $$('[data-pi]').forEach(c=>c.onchange=()=>{const id=c.dataset.pi,v=c.checked;writeDoc('plan/progress',()=>{const d={...(S.progress.done||{})};if(v)d[id]=true;else delete d[id];return {done:d}})});
+  renderAggGaps();}
+function renderAggGaps(){const g=aggGaps();$('#agg-gaps').innerHTML=g.length?`<div>${g.slice(0,24).map(([k,n])=>`<span class="chip ${n>=3?'bad':n>=2?'warn':''}">${esc(k)} <span class="mono">×${n}</span></span>`).join('')}</div>`:'<p class="small muted">Aparece quando você salvar vagas analisadas.</p>'}
+
+/* ---------- VAGAS ---------- */
+let jobFilter='nova';
+function renderJobs(){const c={nova:0,salva:0,descartada:0};S.jobs.forEach(j=>c[j.status||'nova']++);
+  $('#job-filter').innerHTML=[['nova','Novas'],['salva','Salvas'],['descartada','Descartadas']].map(([k,l])=>`<button type="button" aria-pressed="${jobFilter===k}" data-f="${k}">${l} <span class="mono">${c[k]}</span></button>`).join('');
+  $$('#job-filter button').forEach(b=>b.onclick=()=>{jobFilter=b.dataset.f;renderJobs()});
+  const list=S.jobs.filter(j=>(j.status||'nova')===jobFilter).sort((a,b)=>(b.fit||0)-(a.fit||0));
+  if(!S.jobs.length){$('#job-list').innerHTML='<div class="empty"><b>Sem sugestões ainda.</b> As vagas chegam aqui a cada rodada de pesquisa.</div>';return}
+  if(!list.length){$('#job-list').innerHTML='<div class="empty">Nada nesta lista.</div>';return}
+  $('#job-list').innerHTML=`<div class="grid2">${list.map(j=>`<div class="card job" data-id="${j.id}">
+    <div class="top"><div style="min-width:0"><h3>${esc(j.title)}</h3><div class="small muted">${esc(j.company)} · ${esc(j.location||'')}${j.salary?' · '+esc(j.salary):''}</div></div><span class="fit" style="color:${(j.fit||0)>=75?'var(--ok)':(j.fit||0)>=60?'var(--warn)':'var(--muted)'}">fit ${j.fit||'?'}</span></div>
+    <p class="small">${esc(j.why||'')}</p>
+    ${(j.skills||[]).length?`<div>${j.skills.map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div>`:''}
+    <div class="small muted">${j.addedAt?'Sugerida em '+fmtD(j.addedAt):''}${j.posted?' · publicada '+esc(j.posted):''}</div>
+    <div class="row">${j.link?`<a class="btn" href="${esc(j.link)}" target="_blank" rel="noopener">Abrir</a>`:''}
+      <button class="btn primary" data-apply>Registrar candidatura</button>
+      ${(j.status||'nova')!=='salva'?'<button class="btn ghost" data-save>Salvar</button>':''}
+      ${(j.status||'nova')!=='descartada'?'<button class="btn ghost" data-drop>Descartar</button>':'<button class="btn ghost" data-new>Restaurar</button>'}</div></div>`).join('')}</div>`;
+  $$('#job-list .job').forEach(el=>{const id=el.dataset.id,j=S.jobs.find(x=>x.id===id),ref=db&&db.doc('jobs/'+id);
+    const set=s=>ref&&ref.update({status:s}).catch(e=>toast(dbMsg(e)));
+    el.querySelector('[data-apply]').onclick=()=>{if(!db)return;db.collection('apps').add({role:j.title,company:j.company,link:j.link||'',source:j.source||'Sugestão',status:'realizada',appliedAt:today(),updatedAt:today(),match:typeof j.fit==='number'?j.fit:null,missing:j.missing||[],notes:''}).then(()=>{set('salva');toast('Registrada em Candidaturas')})};
+    ['save','drop','new'].forEach(k=>{const b=el.querySelector('[data-'+k+']');if(b)b.onclick=()=>set(k==='save'?'salva':k==='drop'?'descartada':'nova')})})}
+
+/* ---------- GUIA ---------- */
+function defaultKw(){const r=(S.profile.targetRole||'Data Engineer');return `("${r}" OR "Analytics Engineer") AND (Python OR SQL) NOT (intern OR junior)`}
+const PRESETS=[
+  ['Remoto de fora, Brasil',{kw:'("Data Engineer") AND (remote) NOT (junior OR intern)',loc:'Brazil'}],
+  ['LATAM',{kw:'("Data Engineer" OR "Analytics Engineer") AND (LATAM OR "Latin America")',loc:'Latin America'}],
+  ['Stack Fabric/Azure',{kw:'("Data Engineer") AND ("Microsoft Fabric" OR Azure OR Databricks)',loc:'Latin America'}],
+  ['dbt + Snowflake',{kw:'("Data Engineer" OR "Analytics Engineer") AND dbt AND (Snowflake OR BigQuery)',loc:'Brazil'}],
+];
+$('#li-presets').innerHTML=PRESETS.map((p,i)=>`<button class="btn ghost" type="button" data-p="${i}" style="border-color:var(--line)">${p[0]}</button>`).join('');
+$$('#li-presets button').forEach(b=>b.onclick=()=>{const p=PRESETS[+b.dataset.p][1];$('#li-kw').value=p.kw;$('#li-kw').dataset.touched='1';$('#li-loc').value=p.loc;buildLi()});
+function buildLi(){const u=new URL('https://www.linkedin.com/jobs/search/');u.searchParams.set('keywords',$('#li-kw').value);u.searchParams.set('location',$('#li-loc').value);
+  if($('#li-t').value)u.searchParams.set('f_TPR',$('#li-t').value);if($('#li-wt').value)u.searchParams.set('f_WT',$('#li-wt').value);if($('#li-e').value)u.searchParams.set('f_E',$('#li-e').value);u.searchParams.set('sortBy',$('#li-s').value);
+  const s=u.toString();$('#li-url').textContent=s;$('#li-open').href=s}
+['#li-kw','#li-loc','#li-t','#li-wt','#li-e','#li-s'].forEach(s=>$(s).addEventListener('input',()=>{if(s==='#li-kw')$('#li-kw').dataset.touched='1';buildLi()}));
+$('#li-copy').onclick=()=>copy($('#li-url').textContent);
+$('#li-kw').value=defaultKw();buildLi();
+
+const CHECKS=[
+ ['headline','Headline em inglês: cargo + stack + “Remote” (ex.: Data Engineer | Azure · Microsoft Fabric · dbt · Spark | Remote from Brazil)'],
+ ['about','About em inglês com 3 resultados concretos e as tecnologias principais'],
+ ['exp','Experiências em inglês, com os mesmos bullets do currículo'],
+ ['otw','Open to Work visível só para recrutadores, com cargos, “Remote” e países/regiões'],
+ ['loc','Localização real (Fortaleza, Brazil). Não finja morar fora: o ATS filtra e o recrutador percebe'],
+ ['skills','Skills: as 5 mais pedidas nas vagas no topo (Python, SQL, Spark, dbt, Azure)'],
+ ['featured','Destaques: link do portfólio no GitHub e 1–2 projetos'],
+ ['url','URL personalizada e foto profissional'],
+ ['recs','2 recomendações de gestores ou colegas (em inglês se possível)'],
+ ['alerts','3 alertas diários criados com as buscas do gerador acima'],
+ ['recruiters','Conectar com 5 recrutadores por semana (“technical recruiter LATAM”, “talent acquisition remote”)'],
+ ['posts','1 post por semana em inglês sobre algo que você construiu ou aprendeu'],
+];
+function renderChecks(){const c=S.checks||{};const d=CHECKS.filter(([k])=>c[k]).length;$('#ck-prog').textContent=`${d}/${CHECKS.length}`;
+  $('#ck-list').innerHTML=CHECKS.map(([k,t])=>`<label class="tick ${c[k]?'done':''}"><input type="checkbox" id="ck-${k}" data-ck="${k}" ${c[k]?'checked':''}><span>${esc(t)}</span></label>`).join('');
+  $$('[data-ck]').forEach(i=>i.onchange=()=>{const k=i.dataset.ck,v=i.checked;writeDoc('profile/checks',()=>{const n={...(S.checks||{})};if(v)n[k]=true;else delete n[k];return n})})}
+const BOARDS=[['Himalayas','https://himalayas.app/jobs/countries/brazil/data-engineer','Filtra por país: vagas remotas abertas ao Brasil'],['Remote Rocketship','https://www.remoterocketship.com/country/latin-america/jobs/data-engineer/','Agregador com filtro LATAM'],['Wellfound','https://wellfound.com/jobs','Startups, muitas com salário publicado'],['We Work Remotely','https://weworkremotely.com','Vagas 100% remotas, várias worldwide'],['Remotive','https://remotive.com','Curadoria de vagas remotas de tecnologia'],['Arc','https://arc.dev','Plataforma de contratação remota para devs e dados'],['Turing','https://www.turing.com','Contratos longos com empresas dos EUA'],['Strider','https://www.onstrider.com','Foco em talentos da América Latina'],['Revelo','https://www.revelo.com','Empresas dos EUA contratando na LATAM'],['Toptal','https://www.toptal.com','Freelance sênior, processo seletivo rígido'],['Levels.fyi','https://www.levels.fyi','Referência de salário para negociar'],['Glassdoor','https://www.glassdoor.com','Checar reputação e processo da empresa']];
+$('#boards').innerHTML=BOARDS.map(([n,u,d])=>`<a href="${u}" target="_blank" rel="noopener"><b>${n}</b><span>${d}</span></a>`).join('');
+const TPLS=[['Pedido de indicação',`Hi [Name], I'm a Data Engineer based in Brazil (Azure, Microsoft Fabric, dbt, Spark) and I just saw the [Role] opening at [Company]. My background matches [requirement 1] and [requirement 2]. Would you be open to referring me, or telling me a bit about the data team? Happy to send my resume. Thanks!`],
+ ['Para o recrutador após aplicar',`Hi [Name], I've just applied for the [Role] position at [Company]. I'm a Data Engineer working remotely from Brazil (UTC-3, good overlap with US and EU hours), with hands-on experience in [key skill from the job]. I'd love to learn more about the team and next steps. Thanks for your time!`],
+ ['Follow-up após entrevista',`Hi [Name], thank you for the conversation today about the [Role] role. I enjoyed learning about [specific topic]. It reinforced my interest, especially in [challenge they mentioned], where my experience with [your skill] could help. Looking forward to the next steps.`]];
+$('#tpls').innerHTML=TPLS.map(([t,b],i)=>`<div class="tpl"><b>${t}</b><pre class="code">${esc(b)}</pre><button class="btn" data-tpl="${i}">Copiar</button></div>`).join('');
+$$('[data-tpl]').forEach(b=>b.onclick=()=>copy(TPLS[+b.dataset.tpl][1]));
+
+/* ---------- ENTREVISTAS ---------- */
+const QS=['Tell me about yourself.','Why do you want to work remotely for a company outside Brazil?','Walk me through a data pipeline you built end to end.','Tell me about a time a pipeline failed in production. What did you do?','Describe a time you disagreed with a stakeholder or teammate.','How do you ensure data quality in your pipelines?','Tell me about a time you had to learn a new technology quickly.','How would you design a daily batch pipeline from an API to a lakehouse?','How do you communicate with a team across time zones?','What are your salary expectations?','Tell me about your biggest professional mistake.','Why are you looking to leave your current job?'];
+$('#iq').innerHTML=QS.map((q,i)=>`<option value="${i}">${esc(q)}</option>`).join('');
+let iaCtl=null;$('#ia-stop').onclick=()=>iaCtl&&iaCtl.abort();
+$('#ia-btn').onclick=async()=>{const ans=$('#ia').value.trim();if(ans.length<30){toast('Escreva sua resposta primeiro');return}const out=$('#ia-out');iaCtl=new AbortController();$('#ia-stop').hidden=false;out.innerHTML='<span class="think">Avaliando</span>';
+  const stories=S.stories.slice(0,8).map(s=>`- ${s.title}: ${s.result||''}`).join('\n');
+  try{await sample(`Você é entrevistador de uma empresa estrangeira contratando ${S.profile.targetRole||'Data Engineer'} ${S.profile.seniority||''} remoto. Avalie a resposta abaixo. Escreva em português do Brasil, texto simples sem markdown: 1) nota de 0 a 10 para conteúdo, estrutura (STAR quando couber) e inglês; 2) o que funcionou; 3) o que mudar (inclua correções de inglês pontuais); 4) uma versão melhorada em inglês, falada, com até 150 palavras, sem inventar fatos além do currículo e das histórias.\n\nPERGUNTA: ${QS[+$('#iq').value]}\n\nRESPOSTA:\n${ans.slice(0,5000)}\n\nCURRÍCULO (resumo):\n${(S.profile.resume||'').slice(0,5000)}\n\nHISTÓRIAS STAR:\n${stories||'(nenhuma)'}`,{cache:false,signal:iaCtl.signal,onText:({text})=>{out.textContent=text}})}catch(e){out.textContent=(e.text||'')+(e.code==='cancelled'?'':'\n'+aiMsg(e))}finally{$('#ia-stop').hidden=true}};
+$('#st-form').addEventListener('submit',e=>{e.preventDefault();if(!db){toast('Sem conexão com o armazenamento');return}
+  const d={title:$('#st-title').value.trim(),situation:$('#st-s').value.trim(),task:$('#st-t').value.trim(),action:$('#st-a').value.trim(),result:$('#st-r').value.trim(),tags:$('#st-tags').value.split(',').map(s=>s.trim()).filter(Boolean),at:today()};
+  if(!d.title)return;db.collection('stories').add(d).then(()=>{['#st-title','#st-s','#st-t','#st-a','#st-r','#st-tags'].forEach(s=>$(s).value='');toast('História salva')},er=>toast(dbMsg(er)))});
+function renderStories(){if(!S.stories.length){$('#st-list').innerHTML='<p class="small muted">Nenhuma história ainda. Boas candidatas do seu currículo: a implantação da Medallion Architecture, a automação que economizou 10–15 h por semana, o agente com Gemini.</p>';return}
+  $('#st-list').innerHTML=`<div class="stack">${S.stories.map(s=>`<details class="card" style="padding:12px 14px"><summary>${esc(s.title)} ${(s.tags||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</summary>
+   <div class="grid2 small"><div><b>S</b> ${esc(s.situation)}</div><div><b>T</b> ${esc(s.task)}</div><div><b>A</b> ${esc(s.action)}</div><div><b>R</b> ${esc(s.result)}</div></div>
+   <button class="btn ghost danger" data-sdel="${s.id}">Excluir</button></details>`).join('')}</div>`;
+  $$('[data-sdel]').forEach(b=>b.onclick=()=>{if(b.dataset.armed){db.doc('stories/'+b.dataset.sdel).delete()}else{b.dataset.armed='1';b.textContent='Confirmar exclusão'}})}
+
+/* ---------- REQUISITOS ---------- */
+// lv: 2 tenho em produção, 1 parcial, 0 lacuna. when: mês do plano que cobre.
+const SK={
+ pipelines:{n:'Pipelines ETL/ELT',lv:2},sql:{n:'SQL',lv:2},python:{n:'Python',lv:2},aws:{n:'AWS',lv:1,when:'fora do foco'},dq:{n:'Qualidade de dados',lv:1,when:'Dez'},
+ modeling:{n:'Modelagem de dados',lv:2},azure:{n:'Azure',lv:2},spark:{n:'Spark / PySpark',lv:2},snowflake:{n:'Snowflake',lv:0,when:'Nov'},monitoring:{n:'Monitoramento',lv:1,when:'Dez'},
+ cicd:{n:'CI/CD',lv:0,when:'Nov'},databricks:{n:'Databricks',lv:1,when:'Dez'},airflow:{n:'Airflow',lv:2},gcp:{n:'Google Cloud',lv:0,when:'opcional'},dbt:{n:'dbt',lv:2},
+ kafka:{n:'Kafka / streaming',lv:0,when:'Fev'},bigquery:{n:'BigQuery',lv:0,when:'opcional'},docker:{n:'Docker',lv:0,when:'Nov'},terraform:{n:'Terraform / IaC',lv:2},observability:{n:'Observabilidade',lv:0,when:'Dez'},
+ kubernetes:{n:'Kubernetes',lv:0,when:'depois'},fabric:{n:'Microsoft Fabric',lv:2},postgres:{n:'PostgreSQL',lv:2},trino:{n:'Trino / Presto',lv:0,when:'depois'},clickhouse:{n:'ClickHouse',lv:0,when:'depois'},
+ iceberg:{n:'Iceberg',lv:0,when:'depois'},dagster:{n:'Dagster',lv:1,when:'—'},bi:{n:'Ferramenta de BI',lv:1,when:'—'}};
+const MARKET=[['pipelines',74],['sql',71],['python',71],['aws',44],['dq',43],['modeling',38],['azure',33],['spark',33],['snowflake',31],['monitoring',31],['cicd',30],['databricks',29],['airflow',29],['gcp',25],['dbt',24],['kafka',17],['bigquery',14],['docker',14],['terraform',14],['observability',14],['kubernetes',13]];
+// r = requisito, o = diferencial/opcional
+const SAMPLE=[
+ {co:'Atmosera',role:'Sr Consultant, Fabric',loc:'LATAM',r:['fabric','azure','spark','modeling','pipelines'],o:['databricks','bi']},
+ {co:'InterEx Group',role:'Senior DE, Fabric',loc:'LATAM',r:['fabric','azure','databricks','python','pipelines']},
+ {co:'OneSix',role:'Data Engineer',loc:'LATAM + Brasil',r:['sql','pipelines','snowflake','dbt','modeling','bi','azure'],o:['kafka','spark','cicd','terraform']},
+ {co:'Donorbox',role:'Senior DE',loc:'LATAM',r:['sql','python','dbt','airflow','postgres','gcp']},
+ {co:'CharterUP',role:'Senior DE',loc:'Brasil',r:['sql','python','dbt','snowflake']},
+ {co:'Kiwi Financial',role:'Data Engineer',loc:'LATAM (sem BR)',r:['sql','snowflake','dbt','python']},
+ {co:'IDT',role:'Senior DE',loc:'LATAM',r:['python','spark','kafka','snowflake','sql']},
+ {co:"Hilbert's AI",role:'Sr Forward Deployed DE',loc:'LATAM',r:['clickhouse','snowflake','python','dagster']},
+ {co:'Sweed',role:'Data Engineer',loc:'Internacional',r:['sql','python','airflow','clickhouse','spark']},
+ {co:'Skydropx',role:'Data Engineer',loc:'Colômbia',r:['python','sql','bigquery','airflow']},
+ {co:'Jampp',role:'Senior DE',loc:'Argentina',r:['python','aws','trino','spark','sql']},
+ {co:'ON.energy',role:'AWS Data Engineer',loc:'Arg./México',r:['aws','python','spark','sql','terraform']},
+ {co:'Alpaca',role:'Senior DE',loc:'Américas',r:['python','sql','kubernetes','docker','terraform','trino','iceberg','kafka','airflow','gcp'],o:['dbt']},
+ {co:'Clera',role:'AWS Data Engineer',loc:'Mundo',r:['aws','kafka','dq','cicd']}];
+const lvOf=k=>{const v=(S.skills||{})[k];return typeof v==='number'?v:(SK[k]?SK[k].lv:0)};
+const lvCol=l=>l===2?'var(--ok)':l===1?'var(--warn)':'var(--bad)';
+const LVT=['lacuna','parcial','tenho'];
+function renderReq(){
+  // KPIs
+  const mw=MARKET.reduce((a,[,f])=>a+f,0),mc=MARKET.reduce((a,[k,f])=>a+f*lvOf(k)/2,0);
+  const sc=SAMPLE.map(p=>p.r.reduce((a,k)=>a+lvOf(k)/2,0)/p.r.length);
+  const avg=Math.round(sc.reduce((a,b)=>a+b,0)/sc.length*100);
+  const strong=SAMPLE.filter((p,i)=>sc[i]>=.75).length;
+  const cnt={};SAMPLE.forEach(p=>p.r.forEach(k=>cnt[k]=(cnt[k]||0)+1));
+  const topGap=Object.entries(cnt).filter(([k])=>lvOf(k)===0).sort((a,b)=>b[1]-a[1])[0];
+  $('#rq-kpis').innerHTML=[[Math.round(mc/mw*100)+'%','Cobertura do mercado (ponderada)'],[avg+'%','Cobertura média nas vagas relevantes'],[strong+'/'+SAMPLE.length,'Vagas em que você cobre 75%+'],[topGap?SK[topGap[0]].n:'—','Lacuna mais citada nas vagas']]
+    .map(([v,k])=>`<div class="kpi"><div class="v" style="${String(v).length>6?'font-size:1.35rem;line-height:1.6':''}">${esc(v)}</div><div class="k">${k}</div></div>`).join('');
+  // market bars
+  const tiers=[['Básico: 50%+ das vagas',f=>f>=50],['Comum: 20 a 50%',f=>f>=20&&f<50],['Diferencial: 5 a 20%',f=>f<20]];
+  $('#rq-market').innerHTML=tiers.map(([t,fn])=>`<div class="mk-tier">${t}</div>`+MARKET.filter(([,f])=>fn(f)).map(([k,f])=>{const l=lvOf(k);
+    return `<div class="mk"><span>${esc(SK[k].n)}</span><div class="b" role="img" aria-label="${f}% das vagas"><i style="width:${f/80*100}%;background:${lvCol(l)};opacity:.85"></i></div><span class="pct">${f}%</span>
+      <button class="lvbtn lv${l}" id="lv-${k}" data-lv="${k}" title="Clique para mudar seu nível">${LVT[l]}</button><span class="when">${l<2&&SK[k].when?(SK[k].when==='—'?'':/^[A-Z][a-z]{2}$/.test(SK[k].when)?'plano: '+SK[k].when:SK[k].when):''}</span></div>`}).join('')).join('');
+  // heatmap
+  const cols=Object.keys(cnt).concat(Object.keys(SK).filter(k=>!cnt[k]&&SAMPLE.some(p=>(p.o||[]).includes(k)))).sort((a,b)=>(cnt[b]||0)-(cnt[a]||0));
+  $('#rq-heat').innerHTML=`<thead><tr><th>Vaga</th>${cols.map(k=>`<th class="rot"><span>${esc(SK[k].n)}</span></th>`).join('')}<th class="rot"><span>Sua cobertura</span></th></tr></thead>
+   <tbody>${SAMPLE.map((p,i)=>`<tr><td class="nm"><b>${esc(p.co)}</b> <span class="muted">· ${esc(p.role)} · ${esc(p.loc)}</span></td>${cols.map(k=>{const req=p.r.includes(k),opt=(p.o||[]).includes(k);
+      return `<td>${req||opt?`<span class="d ${opt?'opt':''}" style="background:${lvCol(lvOf(k))}" title="${esc(SK[k].n)}${opt?' (diferencial)':''}: ${LVT[lvOf(k)]}"></span>`:''}</td>`}).join('')}<td class="mono" style="color:${sc[i]>=.75?'var(--ok)':sc[i]>=.5?'var(--warn)':'var(--bad)'}">${Math.round(sc[i]*100)}%</td></tr>`).join('')}</tbody>
+   <tfoot><tr><td class="nm">Vagas que pedem</td>${cols.map(k=>`<td>${cnt[k]||''}</td>`).join('')}<td></td></tr></tfoot>`;
+  $('#rq-sample-note').textContent=`${SAMPLE.length} vagas · pontos claros = diferencial`;
+  // reading
+  const gapsRanked=Object.entries(cnt).filter(([k])=>lvOf(k)<2).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,n])=>`${SK[k].n} (${n}/${SAMPLE.length})`);
+  $('#rq-read').innerHTML=[
+    `Você cobre todo o bloco básico (pipelines, SQL, Python). O que te separa das vagas não é o fundamento, é o ecossistema.`,
+    `Seu fosso é Azure + Microsoft Fabric: poucas vagas pedem (2/${SAMPLE.length}), mas nessas o seu encaixe é quase total. Aplique em todas que aparecerem.`,
+    `Lacunas que mais aparecem nas vagas relevantes: ${gapsRanked.join(', ')||'nenhuma'}. Snowflake + dbt é o par mais comum nas empresas dos EUA que contratam na LATAM.`,
+    `CI/CD, qualidade e monitoramento somam 30–43% do mercado e são o que diferencia pleno de sênior. Um projeto público com testes e pipeline de CI prova os três de uma vez.`,
+    `AWS fica fora do foco por escolha sua: vagas centradas em Glue/Redshift (Clera, ON.energy, Jampp) ficam em segundo plano. Priorize Azure/Fabric e Snowflake + dbt.`,
+    `Pode deixar para depois: Kubernetes, Trino, ClickHouse e Iceberg. Aparecem em vagas sênior de produto (Alpaca) e não compensam antes de março.`].map(t=>`<li>${esc(t)}</li>`).join('');
+  // live from suggested jobs + analyzed apps
+  const live={};S.jobs.forEach(j=>(j.skills||[]).forEach(s=>{const k=String(s).trim();live[k]=(live[k]||0)+1}));
+  const miss=aggGaps();
+  $('#rq-live').innerHTML=(Object.keys(live).length?`<div class="eyebrow">Mais citados nas vagas sugeridas (${S.jobs.length})</div><div>${Object.entries(live).sort((a,b)=>b[1]-a[1]).slice(0,18).map(([k,n])=>`<span class="chip">${esc(k)} <span class="mono">×${n}</span></span>`).join('')}</div>`:'<p class="small muted">Sem vagas sugeridas ainda.</p>')
+    +(miss.length?`<div class="eyebrow" style="margin-top:10px">Faltando nas vagas que você analisou</div><div>${miss.slice(0,14).map(([k,n])=>`<span class="chip bad">${esc(k)} <span class="mono">×${n}</span></span>`).join('')}</div>`:'<p class="small muted" style="margin-top:8px">Analise vagas na aba Analisar vaga para ver aqui o que falta nelas.</p>');
+  $$('[data-lv]').forEach(b=>b.onclick=()=>{const k=b.dataset.lv,n=(lvOf(k)+1)%3;S.skills={...(S.skills||{}),[k]:n};renderReq();writeDoc('profile/skills',()=>({...(S.skills||{})}))});
+}
+
+/* ---------- INGLÊS ---------- */
+const EN_TASKS=[
+ ['anki','m','5 min','Revisar o Anki: seus erros e chunks'],
+ ['shadow','m','10 min','Shadowing de 1–2 min de áudio (mesmo áudio por 3–4 dias)'],
+ ['standup','m','5 min','Standup gravado de 60–90 s: yesterday, today, blockers'],
+ ['listen','d','15–20 min','Podcast ou vídeo de dados no almoço ou deslocamento, sem legenda em português'],
+ ['432','n','12 min','4/3/2 no tema do dia: 4 min, 3 min, 2 min; grave a última'],
+ ['fix','n','8 min','Transcrever, corrigir aqui e mandar 3 erros para o Anki']];
+const EN_BLOCK={m:'Manhã',d:'Durante o dia',n:'Noite'};
+const EN_THEMES={
+ 1:['Seus projetos','Segunda é dia de contar o que você construiu, com números. É a base do "tell me about yourself".',['Walk me through the lakehouse you run at Snowfox AI.','Why did you choose a Medallion Architecture, and what changed after it?','Describe the analytics agent with Gemini you helped build.','Explain the daily Airflow pipelines behind the critical reports at HUBi.']],
+ 2:['Explicação técnica','Explique um conceito da trilha do mês como se fosse para um colega novo. É o que as etapas técnicas testam.',['Explain what a shuffle is in Spark and why it is expensive.','Explain incremental models in dbt to a new teammate.','Explain Terraform state and why remote state matters.','Explain the difference between a data lake, a warehouse and a lakehouse.','How would you handle data skew in a Spark join?']],
+ 3:['Comportamental (STAR)','Situação, tarefa, ação, resultado. Use as histórias da aba Entrevistas.',['Tell me about a time a pipeline failed in production.','Tell me about a disagreement with a stakeholder.','Tell me about a time you had to learn something fast.','Tell me about your biggest mistake at work.']],
+ 4:['Trade-offs e opinião','Defenda uma escolha e reconheça o outro lado. Use o hedging da semana 7.',['Snowflake or Databricks for a mid-size company? Pick one and defend it.','Batch or streaming for daily sales reports? Why?','Transformations in dbt or in Spark: when would you use each?','Should a small team adopt Terraform from day one?']],
+ 5:['Small talk e cultura','Muita entrevista começa com 5 minutos de conversa leve. Ela também cria conexão com o time.',['What did you do last weekend? Tell it as a story.','Describe Fortaleza to someone who has never been to Brazil.','Talk about a series, book or hobby you enjoy.','What do you like most about remote work?']],
+ 6:['Conversa longa','Sábado é para volume: aula, conversa com tutor ou um simulado de 30–45 min.',['Sem aula hoje? Faça o 4/3/2 duas vezes com perguntas da aba Entrevistas.']],
+ 0:['Revisão da semana','Compare a gravação de segunda com a de sexta. Escolha 1 erro para eliminar na próxima semana.',['Ouça as gravações da semana e anote: pausas longas, palavras que faltaram, sons que escaparam.']]};
+const EN_FOCUS=[
+ ['Present perfect × past simple','gramática','Brasileiros tendem a usar o passado para tudo. Em entrevista, experiência contínua pede present perfect.',['I\'ve been working with dbt since 2024.','I built that pipeline last year, and I\'ve maintained it ever since.']],
+ ['Artigos: a / the / nenhum','gramática','Português usa artigo antes de substantivo genérico; inglês não. "The data" só quando for um dado específico.',['Data quality matters to every team.','The data in that table was stale.','We pushed it to production on Friday.']],
+ ['Preposições e colocações técnicas','vocabulário','São os erros mais frequentes em falantes avançados, e soam estranhos na hora.',['I was in charge of the ingestion layer.','It depends on the volume.','We run it at scale, on a daily schedule.']],
+ ['Finais sem vogal extra','pronúncia','O "i" no fim de work, build, stack e job é a marca mais reconhecível do sotaque brasileiro.',['I worked on that job.','Our big data stack.','We built a Spark job.']],
+ ['Finais -ed: /t/, /d/, /ɪd/','pronúncia','Só ganha sílaba extra depois de t ou d. Worked é uma sílaba; integrated tem quatro.',['I worked, deployed and integrated it.','We automated and tested the pipeline.']],
+ ['Condicionais para design','gramática','Entrevista de design é cheia de hipóteses. Condicionais corretas soam sênior.',['If the volume grew tenfold, I\'d partition by date.','If I had known about the skew, I would have salted the key.']],
+ ['Hedging e linguagem diplomática','fala','Nível C1 é saber discordar e opinar com nuance, algo que times de fora valorizam muito.',['I\'d argue that dbt is enough here.','It might be worth adding a data contract.','One trade-off is higher cost.']],
+ ['TH, L final e M final','pronúncia','"Think" vira "tink", "pool" vira "pow", "team" vira "tin". Treine com YouGlish.',['I think the whole team agreed.','We pulled the file from the pool.']],
+ ['Cleft sentences para ênfase','gramática','Estrutura típica de C1 para destacar o que importa numa resposta.',['What I did was rebuild the ingestion.','The reason we chose Delta was time travel.','It was the backfill that took longest.']],
+ ['Tônica de palavras técnicas','pronúncia','Errar a sílaba tônica atrapalha mais a compreensão do que o sotaque.',['ARchitecture · anaLYTics · deVELopment','PIPEline · techNOLogy · DAtabase']],
+ ['Conectores e fala estruturada','fala','Sinalizar a estrutura da resposta faz você parecer organizada e ganha tempo para pensar.',['First, … On top of that, … That said, …','As a result, … To wrap up, …']],
+ ['Schwa, ritmo e entonação','pronúncia','Inglês reduz palavras funcionais (to, for, and) e acentua as de conteúdo. É o que dá fluidez.',['I need to /tə/ check it for /fər/ you.','Bread and /ən/ butter.']]];
+const EN_HOW=[
+ ['Shadowing','Escolha 1–2 min de fala nativa com transcrição. Ouça 2 vezes, leia junto, repita colada no áudio 3 a 5 vezes imitando ritmo e entonação, grave a última e compare. Estudos associam a técnica a ganhos de pronúncia, prosódia e fluidez. Repita o mesmo áudio por 3–4 dias antes de trocar.'],
+ ['4/3/2','Conte a mesma coisa três vezes: em 4, depois 3, depois 2 minutos. Como o conteúdo já está planejado, o cérebro é forçado a falar mais rápido e com menos pausas. Estudos medem aumento da taxa de fala e menos hesitação; a autoavaliação da gravação potencializa o efeito.'],
+ ['Chunks','Falantes fluentes montam frases com blocos prontos (the trade-off here is, it depends on). Pesquisas ligam o domínio desses blocos a fala mais rápida e com menos pausas. Colecione os chunks que o corretor sugerir e os que você ouvir nos podcasts.'],
+ ['Log de erros + repetição espaçada','Revisar em intervalos crescentes, tentando lembrar antes de ver a resposta, fixa muito mais que reler. Cartões com os seus próprios erros atacam exatamente o que te trava. Frente: a frase errada. Verso: a correta, lida em voz alta.'],
+ ['Standup gravado','Simula a situação que você vai viver todo dia num time remoto. Em 60–90 s: o que fez ontem, o que fará hoje, o que está bloqueando. Com o tempo, vire a câmera para você: é treino de entrevista também.'],
+ ['Input estreito','Ouvir sempre o mesmo domínio (dados) faz o vocabulário se repetir e entrar mais rápido. Escolha episódios sobre o que está estudando na trilha do mês.']];
+const EN_RES=[['Anki','https://apps.ankiweb.net','Repetição espaçada para o log de erros e chunks'],['YouGlish','https://youglish.com','Ouça qualquer palavra pronunciada em vídeos reais'],['Data Engineering Podcast','https://www.dataengineeringpodcast.com','Input no seu domínio, com entrevistados nativos'],['Software Engineering Daily','https://softwareengineeringdaily.com','Episódios curtos sobre infraestrutura e dados'],['TED Talks','https://www.ted.com/talks','Áudio com transcrição, ótimo para shadowing'],['Rachel\'s English','https://www.youtube.com/@rachelsenglish','Pronúncia americana: ritmo, redução e sons'],['EF SET','https://www.efset.org','Teste gratuito para medir o nível a cada 2 meses']];
+let EN={config:{},log:{days:{}},errors:{items:[]},metrics:{entries:[]}};
+const tmin=s=>{const [h,m]=String(s||'').split(':').map(Number);return h*60+(m||0)};
+const tstr=m=>String(Math.floor(((m%1440)+1440)%1440/60)).padStart(2,'0')+':'+String(((m%60)+60)%60).padStart(2,'0');
+function enWeek(){return Math.max(0,Math.floor((Date.now()-START)/(7*864e5)))}
+function dayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dayDone(k){const d=(EN.log.days||{})[k]||{};return EN_TASKS.filter(([id])=>d[id]).length}
+function streak(){let n=0;const d=new Date();if(dayDone(dayKey(d))<4)d.setDate(d.getDate()-1);while(dayDone(dayKey(d))>=4){n++;d.setDate(d.getDate()-1)}return n}
+function renderEnglish(){const now=new Date(),key=dayKey(now);
+  const wake=EN.config.wake||'08:00',work=EN.config.work||'09:00';
+  if(document.activeElement!==$('#en-wake'))$('#en-wake').value=wake;if(document.activeElement!==$('#en-work'))$('#en-work').value=work;
+  const W=tmin(wake),WS=tmin(work),mStart=W+20,mEnd=mStart+20;
+  const need=WS-5-40;
+  $('#en-wake-note').innerHTML=mEnd<=WS-5?`<span style="color:var(--ok)">Dá para fazer o bloco da manhã sem acordar mais cedo: ${tstr(mStart)}–${tstr(mEnd)}, depois de 20 min para acordar e tomar café.</span>`:`<span style="color:var(--warn)">Para o bloco da manhã caber antes do trabalho, acorde às ${tstr(need)} (${W-need} min mais cedo). Se preferir não mudar, faça o bloco da manhã no almoço e mantenha o podcast no deslocamento.</span>`;
+  $('#en-date').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'short'});
+  const done=(EN.log.days||{})[key]||{};
+  const times={m:`${tstr(mStart)}`,d:'almoço',n:'antes de dormir'};
+  $('#en-today').innerHTML=['m','d','n'].map(b=>`<div class="eyebrow" style="margin-top:8px">${EN_BLOCK[b]} · ${times[b]}</div>`+EN_TASKS.filter(t=>t[1]===b).map(([id,,dur,txt])=>`<label class="tick ${done[id]?'done':''}"><input type="checkbox" id="en-t-${id}" data-ent="${id}" ${done[id]?'checked':''}><span>${esc(txt)} <span class="mono small muted">· ${dur}</span></span></label>`).join('')).join('');
+  $$('[data-ent]').forEach(c=>c.onchange=()=>{const id=c.dataset.ent,v=c.checked;const days={...(EN.log.days||{})};const d={...(days[key]||{})};if(v)d[id]=true;else delete d[id];days[key]=d;
+    const keep=Object.keys(days).sort().slice(-400);const trimmed={};keep.forEach(k=>trimmed[k]=days[k]);EN.log={days:trimmed};renderEnglish();writeDoc('english/log',()=>({days:trimmed}))});
+  // theme & focus
+  const th=EN_THEMES[now.getDay()],doy=Math.floor((now-new Date(now.getFullYear(),0,0))/864e5);
+  $('#en-theme').textContent=th[0];$('#en-theme-why').textContent=th[1];$('#en-prompt').textContent=th[2][doy%th[2].length];
+  const wk=enWeek(),f=EN_FOCUS[wk%12];$('#en-focus').textContent=`Semana ${wk%12+1}: ${f[0]}`;$('#en-focus-why').textContent=f[2];$('#en-focus-ex').innerHTML=f[3].map(x=>`<li>${esc(x)}</li>`).join('');
+  // kpis
+  let c30=0;for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);if(dayDone(dayKey(d))>=4)c30++}
+  const ms=(EN.metrics.entries||[]),last=ms[ms.length-1];
+  $('#en-kpis').innerHTML=[[streak()+' d','Sequência atual'],[c30+'/30','Dias cumpridos no mês'],[last?last.wpm:'—','Palavras/min (última)'],[(EN.errors.items||[]).length,'Erros no log']].map(([v,k])=>`<div class="kpi"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+  // heat
+  let h='';for(let i=34;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const n=dayDone(dayKey(d));h+=`<span title="${d.toLocaleDateString('pt-BR')}: ${n}/6" style="width:18px;height:18px;border-radius:4px;display:inline-block;background:${n>=4?'var(--ok)':n>0?'var(--warn)':'var(--neutral-soft)'};opacity:${n>=4?.5+n/12:n>0?.6:1}"></span>`}
+  $('#en-heat').innerHTML=h;
+  // chart
+  if(ms.length>=2){const W2=600,H2=160,L=34,B=22,T=10,vals=ms.map(m=>+m.wpm||0),mx=Math.max(160,...vals),mn=Math.min(60,...vals);const x=i=>L+(W2-L-10)*(i/(ms.length-1)),y=v=>T+(H2-T-B)*(1-(v-mn)/(mx-mn));
+    let sv=`<svg viewBox="0 0 ${W2} ${H2}" role="img" aria-label="Palavras por minuto ao longo do tempo">`;[mn,120,150,mx].forEach(v=>{sv+=`<line x1="${L}" x2="${W2-10}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" ${v===120||v===150?'stroke-dasharray="4 4"':''}/><text x="${L-6}" y="${y(v)+3}" text-anchor="end">${Math.round(v)}</text>`});
+    sv+=`<polyline fill="none" stroke="var(--accent)" stroke-width="2" points="${vals.map((v,i)=>x(i)+','+y(v)).join(' ')}"/>`;vals.forEach((v,i)=>{sv+=`<circle cx="${x(i)}" cy="${y(v)}" r="${i===vals.length-1?4.5:3}" fill="var(--accent)"><title>${fmtD(ms[i].d)}: ${v} wpm</title></circle>`;if(i===0||i===vals.length-1||vals.length<8)sv+=`<text x="${x(i)}" y="${H2-6}" text-anchor="middle">${esc(fmtD(ms[i].d))}</text>`});
+    $('#en-chart').innerHTML=sv+'</svg>'}else $('#en-chart').innerHTML='<div class="empty small">Faça a medição de base: grave 2 minutos respondendo “Tell me about yourself and your last project”, cole a transcrição no corretor com a duração e clique em Registrar só a medição.</div>';
+  // errors
+  const it=(EN.errors.items||[]);$('#en-err-n').textContent=it.length+' itens';
+  $('#en-errs').innerHTML=it.length?`<div class="table-wrap" style="max-height:260px;overflow:auto"><table><thead><tr><th>Você disse</th><th>Natural</th><th>Tipo</th></tr></thead><tbody>${it.slice().reverse().slice(0,40).map(e=>`<tr><td class="muted">${esc(e.wrong)}</td><td>${esc(e.right)}</td><td class="small">${esc(e.type||'')}</td></tr>`).join('')}</tbody></table></div>`:'<p class="small muted">Vazio. O corretor adiciona aqui os erros que você escolher.</p>';}
+function enCountWords(t){return (t.trim().match(/\b[\w'’-]+\b/g)||[]).length}
+function enWpm(){const t=$('#en-text').value,s=+$('#en-secs').value;const w=enCountWords(t);$('#en-wpm').textContent=w&&s?`${w} palavras · ${Math.round(w/(s/60))} palavras/min`:w?`${w} palavras`:'';return {w,s,wpm:w&&s?Math.round(w/(s/60)):null}}
+$('#en-text').addEventListener('input',enWpm);$('#en-secs').addEventListener('input',enWpm);
+['#en-wake','#en-work'].forEach(s=>$(s).addEventListener('change',()=>{const cfg={wake:$('#en-wake').value||'08:00',work:$('#en-work').value||'09:00'};EN.config=cfg;renderEnglish();writeDoc('english/config',()=>cfg)}));
+function addMetric(level){const m=enWpm();if(!m.wpm){toast('Informe a duração e cole a transcrição');return}
+  const e={d:today(),wpm:m.wpm,words:m.w,secs:m.s,pauses:$('#en-pauses').value?+$('#en-pauses').value:null,q:$('#en-q').value.trim().slice(0,200),level:level||null};
+  const entries=[...(EN.metrics.entries||[]),e].slice(-200);EN.metrics={entries};renderEnglish();writeDoc('english/metrics',()=>({entries})).then(()=>toast('Medição registrada'))}
+$('#en-measure').onclick=()=>addMetric();
+let enCtl=null;$('#en-stop').onclick=()=>enCtl&&enCtl.abort();
+$('#en-fix').onclick=async()=>{const text=$('#en-text').value.trim();if(enCountWords(text)<20){toast('Cole uma transcrição com pelo menos algumas frases');return}if(!sample)return;
+  const out=$('#en-out'),btn=$('#en-fix');btn.disabled=true;$('#en-stop').hidden=false;enCtl=new AbortController();out.innerHTML='<span class="think">Corrigindo</span>';
+  const f=EN_FOCUS[enWeek()%12],m=enWpm();
+  const prompt=`Você é professor de inglês especializado em profissionais de tecnologia brasileiros de nível B2–C1 que vão fazer entrevistas em inglês para vagas remotas de Data Engineer. Analise a transcrição de fala abaixo (é fala, não texto escrito: ignore pontuação e maiúsculas). Explicações em português do Brasil; correções e exemplos em inglês.
+Priorize erros que um entrevistador nativo notaria: tempo verbal, artigos, preposições, colocações, ordem de palavras, falsos cognatos, palavras de tecnologia usadas de forma errada. Não corrija escolhas que já soam naturais. Máximo 8 erros, os mais importantes primeiro.
+Foco da semana: ${f[0]} — comente especificamente como a pessoa foi nisso.
+Pergunta respondida: ${$('#en-q').value.trim()||'(não informada)'}
+${m.wpm?`Velocidade: ${m.wpm} palavras/min em ${m.s}s.`:''}${$('#en-pauses').value?` Pausas/hesitações contadas: ${$('#en-pauses').value}.`:''}
+
+Responda somente com JSON:
+{"nivelEstimado":"B2|B2+|C1|C1+","resumo":"2 frases sobre fluência e precisão","focoDaSemana":"1 frase","erros":[{"errado":"trecho como foi dito","certo":"versão natural","tipo":"tempo verbal|artigo|preposição|colocação|vocabulário|ordem|falso cognato|outro","explicacao":"curta"}],"chunks":[{"chunk":"expressão pronta útil para esta resposta","exemplo":"frase de exemplo"}],"versaoNatural":"a mesma resposta como um profissional C1 falaria, mesmo conteúdo, sem inventar fatos, até 180 palavras","proximoPasso":"1 ação para amanhã"}
+Inclua 3 a 5 chunks.
+
+TRANSCRIÇÃO:
+${text.slice(0,8000)}`;
+  try{const r=await sample.json(prompt,{signal:enCtl.signal});
+    out.innerHTML=`<div class="stack">
+     <div class="row" style="justify-content:space-between"><div><b>Nível estimado: ${esc(r.nivelEstimado||'')}</b> <span class="small muted">${m.wpm?'· '+m.wpm+' palavras/min':''}</span></div></div>
+     <p class="small">${esc(r.resumo||'')}</p>${r.focoDaSemana?`<p class="small"><b>Foco da semana:</b> ${esc(r.focoDaSemana)}</p>`:''}
+     <div class="table-wrap"><table><thead><tr><th></th><th>Você disse</th><th>Natural</th><th>Por quê</th></tr></thead><tbody>${(r.erros||[]).map((e,i)=>`<tr><td><input type="checkbox" id="en-sel-${i}" data-sel="${i}" ${i<3?'checked':''} aria-label="Levar ao log" style="width:auto"></td><td class="muted">${esc(e.errado)}</td><td><b>${esc(e.certo)}</b></td><td class="small">${esc(e.tipo)} · ${esc(e.explicacao)}</td></tr>`).join('')}</tbody></table></div>
+     ${(r.chunks||[]).length?`<div><div class="eyebrow">Chunks para aprender</div><ul class="plain">${r.chunks.map((c,i)=>`<li><label class="row" style="gap:6px;font-weight:500;display:flex"><input type="checkbox" id="en-ch-${i}" data-ch="${i}" checked style="width:auto"><span><b>${esc(c.chunk)}</b> <span class="muted">· ${esc(c.exemplo)}</span></span></label></li>`).join('')}</ul></div>`:''}
+     <details><summary>Versão natural da sua resposta</summary><pre class="code">${esc(r.versaoNatural||'')}</pre><p class="small muted">Use como texto de shadowing amanhã.</p></details>
+     ${r.proximoPasso?`<p class="small"><b>Amanhã:</b> ${esc(r.proximoPasso)}</p>`:''}
+     <div class="row"><button class="btn primary" id="en-save-errs">Levar selecionados ao log</button>${m.wpm?'<button class="btn" id="en-save-m">Registrar medição</button>':''}</div></div>`;
+    $('#en-save-errs').onclick=()=>{const add=[];$$('[data-sel]').forEach(c=>{if(c.checked){const e=r.erros[+c.dataset.sel];add.push({d:today(),wrong:e.errado,right:e.certo,type:e.tipo,note:e.explicacao})}});
+      $$('[data-ch]').forEach(c=>{if(c.checked){const ch=r.chunks[+c.dataset.ch];add.push({d:today(),wrong:'(chunk) '+ch.chunk,right:ch.exemplo,type:'chunk',note:''})}});
+      if(!add.length){toast('Nada selecionado');return}const items=[...(EN.errors.items||[]),...add].slice(-400);EN.errors={items};renderEnglish();writeDoc('english/errors',()=>({items})).then(()=>toast(add.length+' itens no log'))};
+    const sm=$('#en-save-m');if(sm)sm.onclick=()=>addMetric(r.nivelEstimado);
+  }catch(e){out.innerHTML=`<div class="empty">${esc(aiMsg(e))}</div>`}finally{btn.disabled=false;$('#en-stop').hidden=true}};
+$('#en-anki').onclick=()=>{const it=EN.errors.items||[];if(!it.length){toast('O log está vazio');return}
+  copy(it.map(e=>e.type==='chunk'?`${e.wrong.replace('(chunk) ','')} — use numa frase;${e.right}`:`Corrija: ${e.wrong};${e.right}${e.note?' ('+e.note+')':''}`).map(l=>l.replace(/\n/g,' ')).join('\n'));toast('Copiado. No Anki: Arquivo › Importar, separador ponto e vírgula')};
+$('#en-how').innerHTML=EN_HOW.map(([t,d])=>`<div class="stack" style="gap:4px"><b>${esc(t)}</b><p class="small muted">${esc(d)}</p></div>`).join('');
+$('#en-cycle').innerHTML=`<thead><tr><th>Semana</th><th>Foco</th><th>Tipo</th><th>Por quê</th></tr></thead><tbody>${EN_FOCUS.map((f,i)=>`<tr ${i===enWeek()%12?'style="background:var(--accent-soft)"':''}><td class="num mono">${i+1}</td><td><b>${esc(f[0])}</b></td><td class="small">${esc(f[1])}</td><td class="small">${esc(f[2])}</td></tr>`).join('')}</tbody>`;
+$('#en-res').innerHTML=EN_RES.map(([n,u,d])=>`<a href="${u}" target="_blank" rel="noopener"><b>${esc(n)}</b><span>${esc(d)}</span></a>`).join('');
+
+/* ---------- boot ---------- */
+function renderAll(){renderBoard();renderLocalAts();renderDash();renderApps();renderPlan();renderJobs();renderChecks();renderStories();renderAts();renderReq();renderEnglish()}
+renderAll();setInterval(renderBoard,60*60*1000);
+(async()=>{
+  const use=n=>(window.claude&&window.claude.use)?window.claude.use(n).catch(()=>null):Promise.resolve(null);
+  [db,sample]=await Promise.all([use('db'),use('sample')]);
+  if(!sample)document.body.classList.add('no-ai');
+  if(!db){const b=$('#banner');b.hidden=false;b.textContent='O armazenamento não está disponível nesta visualização. Abra o painel no claude.ai conectado à sua conta para salvar seus dados.';return}
+  const err=e=>{if(e&&e.code==='revoked'){const b=$('#banner');b.hidden=false;b.textContent='O acesso a este painel mudou. Recarregue a página.'}};
+  db.doc('profile/main').onSnapshot(s=>{S.profile=s.exists?{...s.data()}:{};onProfile()},err);
+  db.doc('profile/ats').onSnapshot(s=>{S.ats=s.exists?s.data():null;renderAts()},err);
+  db.doc('profile/checks').onSnapshot(s=>{S.checks=s.exists?{...s.data()}:{};renderChecks();renderDash()},err);
+  db.collection('apps').onSnapshot(s=>{S.apps=s.docs.map(d=>({id:d.id,...d.data()}));renderApps();renderDash();renderAggGaps();renderReq()},err);
+  db.doc('english/config').onSnapshot(s=>{EN.config=s.exists?{...s.data()}:{};renderEnglish()},err);
+  db.doc('english/log').onSnapshot(s=>{EN.log=s.exists?{days:{...(s.data().days||{})}}:{days:{}};renderEnglish();renderDash()},err);
+  db.doc('english/errors').onSnapshot(s=>{EN.errors=s.exists?{items:[...(s.data().items||[])]}:{items:[]};renderEnglish()},err);
+  db.doc('english/metrics').onSnapshot(s=>{EN.metrics=s.exists?{entries:[...(s.data().entries||[])]}:{entries:[]};renderEnglish()},err);
+  db.doc('profile/skills').onSnapshot(s=>{S.skills=s.exists?{...s.data()}:{};renderReq()},err);
+  db.doc('plan/main').onSnapshot(s=>{S.plan=s.exists?s.data():null;renderPlan();renderDash()},err);
+  db.doc('plan/progress').onSnapshot(s=>{S.progress=s.exists?{...s.data()}:{done:{}};renderPlan();renderDash()},err);
+  db.collection('jobs').onSnapshot(s=>{S.jobs=s.docs.map(d=>({id:d.id,...d.data()}));renderJobs();renderDash();renderReq()},err);
+  db.collection('stories').onSnapshot(s=>{S.stories=s.docs.map(d=>({id:d.id,...d.data()}));renderStories();renderDash()},err);
+})();
+})();
+</script>
+
+</body></html>

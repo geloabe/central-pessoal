@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Central Pessoal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: uma estante de quatro "cadernos" pessoais; cabeçalho curto, grade 2x2 que vira uma coluna no celular */
+:root{
+  --bg:#F3F2EE; --surface:#FFFFFF; --ink:#1C1B19; --muted:#6A6760; --line:#E1DED6;
+  --treino:#D9577E; --habitos:#C98A2B; --grimorio:#7A4FA8; --rota:#2F5BD3; --fin:#1F8A5B;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141412; --surface:#1D1C1A; --ink:#EEECE6; --muted:#A39F96; --line:#302E2A;
+  --treino:#F08AA8; --habitos:#E8B05A; --grimorio:#B48CDD; --rota:#8AA8FF; --fin:#5CCB95; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141412; --surface:#1D1C1A; --ink:#EEECE6; --muted:#A39F96; --line:#302E2A;
+  --treino:#F08AA8; --habitos:#E8B05A; --grimorio:#B48CDD; --rota:#8AA8FF; --fin:#5CCB95; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 56px}
+.wrap{max-width:900px;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:6px}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,6vw,2.8rem);line-height:1.05;margin:0;letter-spacing:-.02em;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:58ch}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:640px){.grid{grid-template-columns:1fr}}
+.card{--c:var(--ink);display:grid;grid-template-rows:auto 1fr auto;gap:12px;min-width:0;text-decoration:none;color:var(--ink);
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;overflow:hidden;
+  transition:border-color .15s ease,transform .15s ease}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:100%;height:4px;background:var(--c)}
+.card.wide{grid-column:1/-1}
+.subs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.subs{grid-template-columns:1fr}}
+.sub{display:grid;gap:6px;min-width:0;padding:14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);transition:border-color .15s ease}
+.sub:hover{border-color:var(--c)}
+.sub:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.sub h3{font-family:var(--f-display);font-weight:700;font-size:1.05rem;margin:0}
+.sub .foot{border-top:0;padding-top:0}
+a.card:hover{border-color:var(--c);transform:translateY(-2px)}
+a.card:focus-visible{outline:2px solid var(--c);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){a.card{transition:none}a.card:hover{transform:none}}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+h2{font-family:var(--f-display);font-weight:700;font-size:1.35rem;margin:0;letter-spacing:-.01em}
+.kind{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c);white-space:nowrap}
+.desc{margin:0;color:var(--muted);font-size:.93rem}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.tags span{font-size:.76rem;padding:2px 9px;border-radius:99px;border:1px solid var(--line);color:var(--ink)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--f-mono);font-size:.74rem;color:var(--muted);
+  border-top:1px dashed var(--line);padding-top:10px}
+.foot b{color:var(--c);font-weight:500}
+.note{font-size:.85rem;color:var(--muted);max-width:62ch;margin:0}
+.t{--c:var(--treino)} .h{--c:var(--habitos)} .g{--c:var(--grimorio)} .r{--c:var(--rota)} .f{--c:var(--fin)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Corpo · Rotina · Espírito · Carreira · Dinheiro</span>
+    <h1>Central Pessoal</h1>
+    <p>Tudo da vida fora do trabalho num lugar só. Cada cartão abre o painel completo em outra aba, com seus registros intactos.</p>
+  </header>
+
+  <main class="grid">
+    <section class="card t wide" aria-labelledby="vs">
+      <div class="top"><h2 id="vs">Vida Saudável</h2><span class="kind">Corpo</span></div>
+      <p class="desc">Treino e alimentação juntos, pensados para ganho de massa muscular com treino às 13h.</p>
+      <div class="subs">
+        <a class="sub" href="treino.html">
+          <h3>Treino</h3>
+          <p class="desc">Divisão A/B/C/D com séries, carga e repetições. Guarda histórico, recordes pessoais e evolução de cada exercício em gráfico.</p>
+          <div class="tags"><span>A · Peito, tríceps, ombro</span><span>B · Quadríceps</span><span>C · Costas, bíceps</span><span>D · Posterior, glúteo</span></div>
+          <div class="foot"><span>Painel · 16/09/2026</span><b>Abrir ↗</b></div>
+        </a>
+        <a class="sub" href="plano.html">
+          <h3>Plano alimentar</h3>
+          <p class="desc">PDF com cardápio do dia, substituições, lista de compras e acompanhamento de 12 semanas (peso, gordura, medidas, fotos e treinos), mais os ajustes de porções e pré-treino.</p>
+          <div class="tags"><span>Café · Almoço · Pós-treino · Jantar</span><span>Substituições</span><span>12 semanas</span></div>
+          <div class="foot"><span>Painel</span><b>Abrir ↗</b></div>
+        </a>
+      </div>
+    </section>
+
+    <a class="card h" href="habitos.html">
+      <div class="top"><h2>Hábitos</h2><span class="kind">Rotina</span></div>
+      <div>
+        <p class="desc">Checklist diário de hábitos com metas por quantidade, sequências e marcos. Tem visão geral, resumo semanal e mensal em grade, registros editáveis e diagnóstico.</p>
+        <div class="tags"><span>Rotina do dia</span><span>Sequências</span><span>Resumo do mês</span><span>Diagnóstico</span></div>
+      </div>
+      <div class="foot"><span>Atualizado 03/09/2026</span><b>Abrir ↗</b></div>
+    </a>
+
+    <a class="card g" href="grimorio.html">
+      <div class="top"><h2>Grimório</h2><span class="kind">Espírito</span></div>
+      <div>
+        <p class="desc">Caderno de estudo e prática: sequência de dias, diário, registro de sonhos, trilhas de estudo com progresso, orações e feitiços, e tabela de correspondências.</p>
+        <div class="tags"><span>Hoje</span><span>Diário</span><span>Sonhos</span><span>Trilhas</span><span>Correspondências</span></div>
+      </div>
+      <div class="foot"><span>Atualizado 16/09/2026</span><b>Abrir ↗</b></div>
+    </a>
+
+    <a class="card r" href="rota-internacional.html">
+      <div class="top"><h2>Rota Internacional</h2><span class="kind">Carreira</span></div>
+      <div>
+        <p class="desc">Painel da busca por vaga remota no exterior: candidaturas com status, funil, roteiro mês a mês, lacunas de habilidade e atalhos para os sites de vagas.</p>
+        <div class="tags"><span>Candidaturas</span><span>Funil</span><span>Roteiro</span><span>Lacunas</span></div>
+      </div>
+      <div class="foot"><span>Atualizado 30/09/2026</span><b>Abrir ↗</b></div>
+    </a>
+
+    <a class="card f" href="financeiro.html">
+      <div class="top"><h2>Financeiro</h2><span class="kind">Dinheiro</span></div>
+      <div>
+        <p class="desc">Renda × gasto mês a mês, para onde vai o dinheiro por categoria, tetos do orçamento, carteira de investimentos e metas. Tem lançamento manual de gastos e receitas e um diagnóstico com os cortes que mais liberam folga no mês.</p>
+        <div class="tags"><span>Visão geral</span><span>Gastos</span><span>Orçamento</span><span>Carteira</span><span>Metas</span><span>Diagnóstico</span></div>
+      </div>
+      <div class="foot"><span>Painel</span><b>Abrir ↗</b></div>
+    </a>
+  </main>
+
+  <p class="note">Os dados de cada painel ficam guardados no próprio painel, então nada se perde ao acessar por aqui. Para adicionar um novo caderno à estante, é só pedir.</p>
+</div>

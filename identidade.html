@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Identidade — três direções</title>
+<link rel="stylesheet" href="assets/tema.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#111;font-family:system-ui,sans-serif}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 16px;background:#111;color:#ddd;border-bottom:1px solid #2a2a2a}
+.bar button{font:500 14px system-ui;padding:8px 14px;border-radius:999px;border:1px solid #444;background:transparent;color:#ddd;cursor:pointer}
+.bar button[aria-pressed=true]{background:#eee;color:#111;border-color:#eee}
+.bar .sp{flex:1}
+.stage{min-height:100vh;padding:28px 16px 80px;overflow:hidden}
+.wrap{max-width:1040px;margin:0 auto;position:relative;z-index:1;display:grid;gap:20px}
+.top{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.nome{display:flex;align-items:center;gap:12px}
+.nome h1{font-size:28px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.sw{display:flex;gap:0;height:64px;border-radius:var(--raio);overflow:hidden;border:1px solid var(--line)}
+.sw div{flex:1;display:flex;align-items:flex-end;padding:6px;font:500 10px var(--f-mono)}
+.leg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font:400 10px var(--f-mono);color:var(--muted);margin-top:6px}
+.capa{min-height:260px;display:flex;flex-direction:column;justify-content:space-between;padding:22px;background:var(--accent);color:var(--accent-ink);border-radius:var(--raio);position:relative;overflow:hidden}
+.capa h2{font-size:40px;max-width:11ch}
+.capa .rotulo{color:inherit;opacity:.75}
+.capa svg.fundo{position:absolute;right:-30px;bottom:-30px;width:220px;opacity:.28}
+.hab{display:grid;gap:10px}
+.hab .linha{display:flex;align-items:center;gap:10px;font-size:15px}
+.hab .barra{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.hab .barra i{display:block;height:100%;background:var(--accent)}
+.hab .v{font:500 12px var(--f-mono);color:var(--muted);width:42px;text-align:right}
+.doc h2{font-size:30px;margin-bottom:6px}
+.doc p{margin:8px 0;color:var(--muted)}
+.doc table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.doc td,.doc th{padding:6px 0;border-bottom:1px solid var(--line);text-align:left}
+.doc th{font:500 10px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.avs{display:flex;gap:16px;align-items:center}
+.av{display:grid;place-items:center;background:var(--accent);border-radius:50%}
+.tipo .gr{font-family:var(--f-titulo);font-weight:var(--peso-titulo);letter-spacing:var(--titulo-tracking);font-size:56px;line-height:1}
+.tipo p{margin:8px 0 0}
+.reacao{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.reacao button{font:500 14px var(--f-texto);padding:10px 14px;border-radius:var(--raio);border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.reacao button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.resumo{font-size:14px;color:var(--muted)}
+
+/* composição própria de cada direção */
+[data-tema=arquitetura] .capa{border-left:10px solid var(--ink)}
+[data-tema=arquitetura] .capa h2{font-size:38px}
+[data-tema=atmosfera] .capa{background:radial-gradient(120% 90% at 85% 110%,var(--accent2) 0,transparent 55%),var(--accent)}
+[data-tema=atmosfera] .capa h2{font-size:54px;font-style:italic;font-weight:400}
+[data-tema=atmosfera] .nome h1{font-size:36px;font-style:italic}
+[data-tema=atmosfera] .tipo .gr{font-style:italic;font-size:64px}
+[data-tema=precisao] .capa{background:linear-gradient(var(--accent) 0 0),var(--accent);background-image:repeating-linear-gradient(0deg,transparent 0 31px,rgba(255,255,255,.07) 31px 32px),repeating-linear-gradient(90deg,transparent 0 31px,rgba(255,255,255,.07) 31px 32px)}
+[data-tema=precisao] .cartao{border-top:3px solid var(--accent)}
+[data-tema=precisao] .capa h2{font-size:34px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <strong>Identidade</strong>
+  <button data-d="arquitetura" aria-pressed="true">1 · Arquitetura</button>
+  <button data-d="atmosfera" aria-pressed="false">2 · Atmosfera</button>
+  <button data-d="precisao" aria-pressed="false">3 · Precisão</button>
+  <span class="sp"></span>
+  <button data-m="claro" aria-pressed="true">Claro</button>
+  <button data-m="escuro" aria-pressed="false">Escuro</button>
+</div>
+
+<div class="stage t grao" id="st" data-tema="arquitetura" data-modo="claro">
+<div class="wrap">
+
+  <header class="top">
+    <div class="nome">
+      <svg class="marca" id="m1" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><use href="#marca"/></svg>
+      <div><h1>Eloabe Costa</h1><div class="rotulo" id="sub"></div></div>
+    </div>
+    <div class="avs" aria-label="Avatar em vários tamanhos">
+      <div class="av" style="width:56px;height:56px"><svg class="marca" width="34" height="34" viewBox="0 0 48 48"><use href="#marca"/></svg></div>
+      <div class="av" style="width:32px;height:32px"><svg class="marca" width="20" height="20" viewBox="0 0 48 48"><use href="#marca"/></svg></div>
+      <div class="av" style="width:20px;height:20px"><svg class="marca" width="12" height="12" viewBox="0 0 48 48"><use href="#marca"/></svg></div>
+    </div>
+  </header>
+
+  <div>
+    <div class="sw" id="sw"></div>
+    <div class="leg" id="leg"></div>
+  </div>
+
+  <div class="g2">
+    <article class="capa" aria-label="Capa de projeto">
+      <div class="rotulo">Projeto · 2026</div>
+      <h2 id="capaT"></h2>
+      <div class="rotulo">Eloabe Costa — dados &amp; sistemas</div>
+      <svg class="fundo" viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="4" width="28" height="28" fill="currentColor"/><rect x="16" y="16" width="28" height="28" fill="currentColor"/></svg>
+    </article>
+
+    <article class="cartao hab" aria-label="Painel de hábitos">
+      <div class="rotulo">Hábitos · hoje</div>
+      <h3 style="font-size:26px">Cinco de sete</h3>
+      <div class="linha">Água <div class="barra"><i style="width:100%"></i></div><span class="v">3 / 3 L</span></div>
+      <div class="linha">Livro <div class="barra"><i style="width:60%"></i></div><span class="v">6 / 10</span></div>
+      <div class="linha">Skincare <div class="barra"><i style="width:100%"></i></div><span class="v">2 / 2</span></div>
+      <div class="linha">Academia <div class="barra"><i style="width:80%"></i></div><span class="v">4 / 5</span></div>
+      <hr class="regua">
+      <div style="display:flex;gap:8px"><button class="btn">Registrar</button><button class="btn sec">Ver semana</button></div>
+    </article>
+  </div>
+
+  <div class="g2">
+    <article class="cartao doc" aria-label="Documento">
+      <div class="rotulo">Relatório · v1.2</div>
+      <h2>Arquitetura do pipeline</h2>
+      <hr class="regua">
+      <p>Ingestão incremental, camadas bronze e prata, e testes de qualidade a cada carga. Texto corrido em tamanho de leitura, com títulos que carregam a personalidade.</p>
+      <table><tr><th>Etapa</th><th>Latência</th><th>Status</th></tr>
+        <tr><td>Ingestão</td><td>4 min</td><td>ok</td></tr>
+        <tr><td>Transformação</td><td>11 min</td><td>ok</td></tr>
+        <tr><td>Publicação</td><td>2 min</td><td>atenção</td></tr></table>
+    </article>
+
+    <article class="cartao tipo" aria-label="Tipografia">
+      <div class="rotulo">Tipografia</div>
+      <div class="gr" id="gr">Aa Ágil</div>
+      <p id="fontes" class="rotulo" style="margin-top:12px"></p>
+      <p>Texto de leitura em português, com acentuação, números 0123456789 e <code style="font-family:var(--f-mono);font-size:13px">código_em_mono()</code>.</p>
+      <hr class="regua">
+      <div class="rotulo">Reação</div>
+      <div class="resumo">“Quero que meus projetos, documentos e meu computador tenham essa aparência.”</div>
+      <div class="reacao" id="rx">
+        <button data-v="sim">Quero muito</button><button data-v="talvez">Talvez</button><button data-v="nao">Não é a minha cara</button>
+      </div>
+    </article>
+  </div>
+
+  <div class="resumo" id="placar"></div>
+</div>
+</div>
+
+<!-- símbolo: dois planos deslocados; no cruzamento, um quarto de círculo recortado -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="marca">
+    <rect class="p1" x="4" y="4" width="28" height="28"/>
+    <rect class="p2" x="16" y="16" width="28" height="28"/>
+    <rect class="x" x="16" y="16" width="16" height="16"/>
+    <path class="c" d="M16 32 A16 16 0 0 1 32 16 V32 Z"/>
+  </g></defs></svg>
+
+<script>
+var D={
+ arquitetura:{sub:'Arquitetura · carvão, musgo, ardósia, marfim',capa:'Pipeline de dados',fontes:'Fraunces (títulos) · Hanken Grotesk (texto)',
+  cores:[['--bg','fundo'],['--surface','superfície'],['--ink','tinta'],['--muted','apoio'],['--line','linha'],['--accent','musgo'],['--accent2','ardósia']]},
+ atmosfera:{sub:'Atmosfera · osso, ameixa, vinho, cobre',capa:'O que o dado esconde',fontes:'Instrument Serif (títulos) · Manrope (texto)',
+  cores:[['--bg','osso'],['--surface','superfície'],['--ink','tinta'],['--muted','apoio'],['--line','linha'],['--accent','ameixa'],['--accent2','cobre']]},
+ precisao:{sub:'Precisão · azul-noite, petróleo, cinza esverdeado',capa:'Observabilidade',fontes:'Schibsted Grotesk · JetBrains Mono (dados)',
+  cores:[['--bg','fundo'],['--surface','superfície'],['--ink','tinta'],['--muted','apoio'],['--line','linha'],['--accent','petróleo'],['--accent2','noite']]}
+};
+var st=document.getElementById('st'), cur='arquitetura', modo='claro', votos={};
+try{votos=JSON.parse(localStorage.getItem('id-votos')||'{}')}catch(e){}
+function hex(v){var c=getComputedStyle(st).getPropertyValue(v).trim();return c.toUpperCase()}
+function pinta(){
+  st.dataset.tema=cur; st.dataset.modo=modo; var d=D[cur];
+  document.getElementById('sub').textContent=d.sub;
+  document.getElementById('capaT').textContent=d.capa;
+  document.getElementById('fontes').textContent=d.fontes;
+  document.getElementById('sw').innerHTML=d.cores.map(function(c){return '<div style="background:var('+c[0]+')"></div>'}).join('');
+  document.getElementById('leg').innerHTML=d.cores.map(function(c){return '<span>'+c[1]+'<br>'+hex(c[0])+'</span>'}).join('');
+  document.querySelectorAll('[data-d]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.d===cur)});
+  document.querySelectorAll('[data-m]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.m===modo)});
+  document.querySelectorAll('#rx button').forEach(function(b){b.setAttribute('aria-pressed',votos[cur]===b.dataset.v)});
+  var n={sim:'Quero muito',talvez:'Talvez',nao:'Não é a minha cara'};
+  document.getElementById('placar').textContent='Suas reações: '+Object.keys(D).map(function(k){return k+' → '+(n[votos[k]]||'—')}).join('  ·  ');
+}
+document.querySelector('.bar').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.d)cur=b.dataset.d;if(b.dataset.m)modo=b.dataset.m;pinta()});
+document.getElementById('rx').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;votos[cur]=b.dataset.v;try{localStorage.setItem('id-votos',JSON.stringify(votos))}catch(x){}pinta()});
+pinta();
+</script>
+</body>
+</html>
