@@ -2,130 +2,149 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="stylesheet" href="assets/tema.css">
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <title>Central Pessoal</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: uma estante de quatro "cadernos" pessoais; cabeçalho curto, grade 2x2 que vira uma coluna no celular */
-:root{
-  --bg:#F3F2EE; --surface:#FFFFFF; --ink:#1C1B19; --muted:#6A6760; --line:#E1DED6;
-  --treino:#D9577E; --habitos:#C98A2B; --grimorio:#7A4FA8; --rota:#2F5BD3; --fin:#1F8A5B;
-  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
-  --f-body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#141412; --surface:#1D1C1A; --ink:#EEECE6; --muted:#A39F96; --line:#302E2A;
-  --treino:#F08AA8; --habitos:#E8B05A; --grimorio:#B48CDD; --rota:#8AA8FF; --fin:#5CCB95; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#141412; --surface:#1D1C1A; --ink:#EEECE6; --muted:#A39F96; --line:#302E2A;
-  --treino:#F08AA8; --habitos:#E8B05A; --grimorio:#B48CDD; --rota:#8AA8FF; --fin:#5CCB95; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 56px}
-.wrap{max-width:900px;margin:0 auto;display:grid;gap:28px}
-header{display:grid;gap:6px}
-.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-h1{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,6vw,2.8rem);line-height:1.05;margin:0;letter-spacing:-.02em;text-wrap:balance}
-header p{margin:0;color:var(--muted);max-width:58ch}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-@media (max-width:640px){.grid{grid-template-columns:1fr}}
-.card{--c:var(--ink);display:grid;grid-template-rows:auto 1fr auto;gap:12px;min-width:0;text-decoration:none;color:var(--ink);
-  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;overflow:hidden;
-  transition:border-color .15s ease,transform .15s ease}
-.card::before{content:"";position:absolute;inset:0 auto 0 0;width:100%;height:4px;background:var(--c)}
-.card.wide{grid-column:1/-1}
-.subs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media (max-width:640px){.subs{grid-template-columns:1fr}}
-.sub{display:grid;gap:6px;min-width:0;padding:14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);transition:border-color .15s ease}
-.sub:hover{border-color:var(--c)}
-.sub:focus-visible{outline:2px solid var(--c);outline-offset:2px}
-.sub h3{font-family:var(--f-display);font-weight:700;font-size:1.05rem;margin:0}
-.sub .foot{border-top:0;padding-top:0}
-a.card:hover{border-color:var(--c);transform:translateY(-2px)}
-a.card:focus-visible{outline:2px solid var(--c);outline-offset:3px}
-@media (prefers-reduced-motion:reduce){a.card{transition:none}a.card:hover{transform:none}}
-.top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-h2{font-family:var(--f-display);font-weight:700;font-size:1.35rem;margin:0;letter-spacing:-.01em}
-.kind{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c);white-space:nowrap}
-.desc{margin:0;color:var(--muted);font-size:.93rem}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
-.tags span{font-size:.76rem;padding:2px 9px;border-radius:99px;border:1px solid var(--line);color:var(--ink)}
-.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--f-mono);font-size:.74rem;color:var(--muted);
-  border-top:1px dashed var(--line);padding-top:10px}
-.foot b{color:var(--c);font-weight:500}
-.note{font-size:.85rem;color:var(--muted);max-width:62ch;margin:0}
-.t{--c:var(--treino)} .h{--c:var(--habitos)} .g{--c:var(--grimorio)} .r{--c:var(--rota)} .f{--c:var(--fin)}
+body{margin:0}
+main{max-width:960px;margin:0 auto;padding:16px 16px 64px;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+header.top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+header.top h1{font-size:22px}
+.sp{flex:1}
+.destaque{padding:22px 20px}
+.destaque h2{font-size:clamp(28px,7vw,40px);max-width:18ch}
+.destaque p{margin:8px 0 0;color:var(--t-muted)}
+.pr{display:flex;gap:12px;align-items:center;margin-top:16px;padding:12px 14px;background:var(--t-surface);border-left:4px solid var(--t-accent2);border:1px solid var(--t-line);border-left-width:4px}
+.selo{flex:none;width:38px;height:38px;display:grid;place-items:center;background:var(--t-accent2);color:#3B2A33;font:700 13px var(--f-mono)}
+.pr b{font:600 17px var(--f-titulo)}
+.pr small{display:block;color:var(--t-muted);font-size:13px}
+h2.sec{font-size:13px;margin:26px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+a.mod{display:flex;flex-direction:column;gap:10px;padding:16px;background:var(--t-surface);border:1px solid var(--t-line);border-top:4px solid var(--m);color:inherit;text-decoration:none;border-radius:var(--raio);min-height:150px}
+a.mod:hover{box-shadow:0 10px 24px -16px var(--m)}
+a.mod .cab{display:flex;align-items:center;gap:10px}
+a.mod h3{font-size:19px}
+a.mod .ic{width:34px;height:34px;flex:none}
+a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
+.num{font:600 30px/1 var(--f-titulo);letter-spacing:var(--titulo-tracking)}
+.num small{font:500 13px var(--f-texto);color:var(--t-muted);letter-spacing:0}
+.mini{font-size:13px;color:var(--t-muted)}
+.up{color:var(--t-ok);font:500 12px var(--f-mono)}
+.dn{color:var(--t-muted);font:500 12px var(--f-mono)}
+.barra{height:8px;background:var(--t-line);overflow:hidden}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .9s ease-out}@keyframes cresce{from{width:0}}}
+.sem{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.sem div{height:22px;border:1px solid var(--t-line);font:500 10px/20px var(--f-mono);text-align:center;color:var(--t-muted)}
+.sem div.f{background:color-mix(in srgb,var(--t-ok) 22%,var(--t-surface));border-color:var(--t-ok);color:var(--t-ink)}
+.sem div.h{border-color:var(--t-accent);color:var(--t-accent);font-weight:700}
+.marcos{display:flex;gap:8px;flex-wrap:wrap}
+.marcos span{font:500 12px var(--f-mono);padding:7px 11px;border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-muted)}
+.marcos span.on{border-color:var(--t-ok);color:var(--t-ink);background:color-mix(in srgb,var(--t-ok) 16%,var(--t-surface))}
+.marcos span.on::before{content:"✓ ";color:var(--t-ok);font-weight:700}
+.erro{padding:14px;border:1px solid var(--t-bad);color:var(--t-bad);margin-top:12px}
 </style>
-
-<div class="wrap">
-  <header>
-    <span class="eyebrow">Corpo · Rotina · Espírito · Carreira · Dinheiro</span>
-    <h1>Central Pessoal</h1>
-    <p>Tudo da vida fora do trabalho num lugar só. Cada cartão abre o painel completo em outra aba, com seus registros intactos.</p>
+</head>
+<body class="t">
+<main>
+  <header class="top">
+    <svg class="marca" width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><use href="#marca"/></svg>
+    <div><h1>Central Pessoal</h1><div class="rotulo" id="data"></div></div>
+    <span class="sp"></span>
   </header>
 
-  <main class="grid">
-    <section class="card t wide" aria-labelledby="vs">
-      <div class="top"><h2 id="vs">Vida Saudável</h2><span class="kind">Corpo</span></div>
-      <p class="desc">Treino e alimentação juntos, pensados para ganho de massa muscular com treino às 13h.</p>
-      <div class="subs">
-        <a class="sub" href="treino.html">
-          <h3>Treino</h3>
-          <p class="desc">Divisão A/B/C/D com séries, carga e repetições. Guarda histórico, recordes pessoais e evolução de cada exercício em gráfico.</p>
-          <div class="tags"><span>A · Peito, tríceps, ombro</span><span>B · Quadríceps</span><span>C · Costas, bíceps</span><span>D · Posterior, glúteo</span></div>
-          <div class="foot"><span>Painel · 16/09/2026</span><b>Abrir ↗</b></div>
-        </a>
-        <a class="sub" href="plano.html">
-          <h3>Plano alimentar</h3>
-          <p class="desc">PDF com cardápio do dia, substituições, lista de compras e acompanhamento de 12 semanas (peso, gordura, medidas, fotos e treinos), mais os ajustes de porções e pré-treino.</p>
-          <div class="tags"><span>Café · Almoço · Pós-treino · Jantar</span><span>Substituições</span><span>12 semanas</span></div>
-          <div class="foot"><span>Painel</span><b>Abrir ↗</b></div>
-        </a>
-      </div>
-    </section>
+  <section class="destaque" aria-live="polite">
+    <div class="rotulo" style="color:var(--t-muted)">Hoje</div>
+    <h2 id="titulo">Carregando…</h2>
+    <p id="sub"></p>
+    <div id="pr"></div>
+  </section>
 
-    <a class="card h" href="habitos.html">
-      <div class="top"><h2>Hábitos</h2><span class="kind">Rotina</span></div>
-      <div>
-        <p class="desc">Checklist diário de hábitos com metas por quantidade, sequências e marcos. Tem visão geral, resumo semanal e mensal em grade, registros editáveis e diagnóstico.</p>
-        <div class="tags"><span>Rotina do dia</span><span>Sequências</span><span>Resumo do mês</span><span>Diagnóstico</span></div>
-      </div>
-      <div class="foot"><span>Atualizado 03/09/2026</span><b>Abrir ↗</b></div>
-    </a>
+  <h2 class="sec rotulo">Seus painéis</h2>
+  <div class="grid" id="cards"></div>
 
-    <a class="card g" href="grimorio.html">
-      <div class="top"><h2>Grimório</h2><span class="kind">Espírito</span></div>
-      <div>
-        <p class="desc">Caderno de estudo e prática: sequência de dias, diário, registro de sonhos, trilhas de estudo com progresso, orações e feitiços, e tabela de correspondências.</p>
-        <div class="tags"><span>Hoje</span><span>Diário</span><span>Sonhos</span><span>Trilhas</span><span>Correspondências</span></div>
-      </div>
-      <div class="foot"><span>Atualizado 16/09/2026</span><b>Abrir ↗</b></div>
-    </a>
+  <h2 class="sec rotulo">Marcos</h2>
+  <div class="marcos" id="marcos"></div>
+  <div id="erro"></div>
+</main>
 
-    <a class="card r" href="rota-internacional.html">
-      <div class="top"><h2>Rota Internacional</h2><span class="kind">Carreira</span></div>
-      <div>
-        <p class="desc">Painel da busca por vaga remota no exterior: candidaturas com status, funil, roteiro mês a mês, lacunas de habilidade e atalhos para os sites de vagas.</p>
-        <div class="tags"><span>Candidaturas</span><span>Funil</span><span>Roteiro</span><span>Lacunas</span></div>
-      </div>
-      <div class="foot"><span>Atualizado 30/09/2026</span><b>Abrir ↗</b></div>
-    </a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="marca"><rect class="p1" x="4" y="4" width="28" height="28"/><rect class="p2" x="16" y="16" width="28" height="28"/><rect class="x" x="16" y="16" width="16" height="16"/><path class="c" d="M16 32A16 16 0 0 1 32 16V32Z"/></g></defs></svg>
 
-    <a class="card f" href="financeiro.html">
-      <div class="top"><h2>Financeiro</h2><span class="kind">Dinheiro</span></div>
-      <div>
-        <p class="desc">Renda × gasto mês a mês, para onde vai o dinheiro por categoria, tetos do orçamento, carteira de investimentos e metas. Tem lançamento manual de gastos e receitas e um diagnóstico com os cortes que mais liberam folga no mês.</p>
-        <div class="tags"><span>Visão geral</span><span>Gastos</span><span>Orçamento</span><span>Carteira</span><span>Metas</span><span>Diagnóstico</span></div>
-      </div>
-      <div class="foot"><span>Painel</span><b>Abrir ↗</b></div>
-    </a>
-  </main>
+<script src="assets/modulo.js"></script>
+<script src="assets/progresso.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function brl(n){return 'R$ '+Math.round(n).toLocaleString('pt-BR')}
+function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+Math.max(0,Math.min(100,p))+'%"></i></div>'}
+function delta(a,b){var d=a-b;return d>0?'<span class="up">▲ +'+d+' vs. semana passada</span>':d<0?'<span class="dn">▼ '+d+' vs. semana passada</span>':'<span class="dn">= semana passada</span>'}
 
-  <p class="note">Os dados de cada painel ficam guardados no próprio painel, então nada se perde ao acessar por aqui. Para adicionar um novo caderno à estante, é só pedir.</p>
-</div>
+var hoje=new Date();
+$('#data').textContent=hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+
+function json(r){try{return r&&r.value?JSON.parse(r.value):null}catch(e){return null}}
+function docs(s){return s.docs.map(function(d){var o=d.data();o.id=d.id;return o})}
+function seguro(p,v){return p.then(function(x){return x},function(){return v})}
+
+async function carregar(){
+  var db=await claude.use('db'), st=window.storage;
+  var r=await Promise.all([
+    seguro(db.collection('sessions').get().then(docs),[]),
+    seguro(st.get('config'),null), seguro(st.get('records'),null),
+    seguro(st.get('grimorio_entries'),null),
+    seguro(db.collection('apps').get().then(docs),[]), seguro(db.doc('profile/main').get().then(function(s){return s.exists?s.data():{}}),{}),
+    seguro(db.collection('medidas').get().then(docs),[]),
+    seguro(db.doc('fin/base').get().then(function(s){return s.exists?s.data():{}}),{}), seguro(st.get('investEntries'),null),
+    seguro(db.collection('mud_imoveis').get().then(docs),[]), seguro(db.collection('mud_cotacoes').get().then(docs),[]),
+    seguro(db.doc('mud_checklist/main').get().then(function(s){return s.exists?s.data():{}}),{}), seguro(db.doc('mud_config/main').get().then(function(s){return s.exists?s.data():{}}),{}),
+    seguro(fetch('assets/exercicios.json').then(function(x){return x.json()}),{})
+  ]);
+  return {sessions:r[0],habitos:{config:json(r[1]),records:json(r[2])||{}},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
+    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13]};
+}
+
+function card(id,href,titulo,corpo){
+  return '<a class="mod m-'+id+'" href="'+href+'"><div class="cab">'+CP_ICONE(id,34)+'<h3>'+esc(titulo)+'</h3><span class="go" aria-hidden="true">→</span></div>'+corpo+'</a>';
+}
+
+function render(p){
+  var n=p.hoje;
+  $('#titulo').textContent=n===0?'Um passo pequeno já conta.':n===1?'Você já fez 1 coisa hoje.':'Você já fez '+n+' coisas hoje.';
+  $('#sub').textContent=n===0?'Escolha uma coisa só — o resto pode esperar.':'Cada registro conta. O resto do dia é bônus.';
+  var pr=p.treino.ultimoPR;
+  if(pr&&(hoje-new Date(pr.data+'T12:00:00'))<=14*864e5)
+    $('#pr').innerHTML='<div class="pr"><div class="selo">PR</div><div><b>Novo recorde: '+esc(pr.nome)+'</b><small>1RM estimado '+pr.para.toFixed(1).replace('.',',')+' kg · antes '+pr.de.toFixed(1).replace('.',',')+' kg (+'+Math.round(pr.pct)+'%)</small></div></div>';
+
+  var h=p.habitos, sem='';
+  if(h.ativo)sem='<div class="sem" aria-label="Semana">'+h.semana.map(function(d,i){return '<div class="'+(d.feito?'f':'')+(d.hoje?' h':'')+'">'+'STQQSSD'.charAt(i)+'</div>'}).join('')+'</div>';
+  var rotaPct=Math.round(p.rota.semana/p.rota.meta*100);
+  var cards=[
+    card('treino','treino.html','Treino','<div class="num">'+p.treino.semana+' <small>treino'+(p.treino.semana===1?'':'s')+' esta semana</small></div>'+delta(p.treino.semana,p.treino.anterior)+'<div class="mini">'+p.treino.total+(p.treino.total===1?' sessão':' sessões')+' · '+p.treino.prs.length+' recorde'+(p.treino.prs.length===1?'':'s')+'</div>'),
+    card('plano','plano.html','Plano alimentar',p.plano.ultimoPeso?'<div class="num">'+p.plano.ultimoPeso.toFixed(1).replace('.',',')+' <small>kg</small></div><div class="mini">'+(p.plano.variacao!=null?(p.plano.variacao>0?'+':'')+p.plano.variacao.toFixed(1).replace('.',',')+' kg desde a 1ª medição · ':'')+p.plano.total+' medições</div>':'<div class="mini">Cardápio, substituições e medidas. Registre a primeira medição.</div>'),
+    card('habitos','habitos.html','Hábitos',h.ativo?'<div class="num">'+h.sequencia+' <small>dia'+(h.sequencia===1?'':'s')+' seguidos</small></div>'+sem+'<div class="mini">Hoje: '+h.feitosHoje+' de '+h.totalHoje+(h.pausas?' · '+h.pausas+' pausa'+(h.pausas>1?'s':'')+' usada'+(h.pausas>1?'s':''):'')+'</div>':'<div class="mini">Comece o check-in de hoje.</div>'),
+    card('grimorio','grimorio.html','Grimório','<div class="num">'+p.grimorio.sequencia+' <small>dia'+(p.grimorio.sequencia===1?'':'s')+' de estudo</small></div><div class="mini">'+(p.grimorio.total?p.grimorio.total+' dias com registro':'Seu caderno de estudo e prática.')+'</div>'),
+    card('rota','rota-internacional.html','Rota Internacional','<div class="num">'+p.rota.semana+' <small>de '+p.rota.meta+' candidaturas</small></div>'+barra(rotaPct)+delta(p.rota.semana,p.rota.anterior)),
+    card('financeiro','financeiro.html','Financeiro','<div class="num">'+p.financeiro.pct+'% <small>da entrada</small></div>'+barra(p.financeiro.pct)+'<div class="mini">'+brl(p.financeiro.guardado)+' de '+brl(p.financeiro.meta)+'</div>'),
+    card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>')
+  ];
+  $('#cards').innerHTML=cards.join('');
+
+  var feitos=p.marcos.filter(function(m){return m.ok}), faltam=p.marcos.filter(function(m){return !m.ok}).slice(0,4);
+  $('#marcos').innerHTML=feitos.map(function(m){return '<span class="on">'+esc(m.nome)+'</span>'}).join('')+faltam.map(function(m){return '<span>'+esc(m.nome)+'</span>'}).join('');
+}
+
+carregar().then(function(d){render(CP_PROG.calcular(d,new Date()))},function(e){
+  console.error(e);$('#titulo').textContent='Não consegui carregar seus dados agora.';$('#erro').innerHTML='<div class="erro">Verifique a conexão e recarregue a página.</div>';
+});
+})();
+</script>
+</body>
+</html>

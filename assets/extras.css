@@ -1,0 +1,48 @@
+/* Ajustes por módulo que não cabem no mapeamento de variáveis (cores fixas das páginas originais, alvos de toque no celular). */
+
+/* ---------- Treino: usado na academia, com uma mão, com pressa ---------- */
+html[data-pg="treino"] body *{font-family:var(--f-texto)}
+html[data-pg="treino"] .header h1,html[data-pg="treino"] .ex-name{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
+html[data-pg="treino"] .header{background:linear-gradient(120deg,var(--t-realce),var(--t-pastel))}
+html[data-pg="treino"] .header h1{color:var(--t-ink)}
+html[data-pg="treino"] .header p{color:var(--t-muted)}
+html[data-pg="treino"] .view-btn.active,html[data-pg="treino"] .tab-btn.active,html[data-pg="treino"] .ex-target,html[data-pg="treino"] .save-btn{background:var(--t-accent);color:var(--t-accent-ink)}
+html[data-pg="treino"] .ex-card.bonus .ex-target{background:var(--t-accent2);color:#3B2A33}
+html[data-pg="treino"] .ex-card.core .ex-target{background:var(--t-c3);color:#fff}
+html[data-pg="treino"] .save-btn{box-shadow:0 6px 18px -8px var(--t-accent);border-radius:var(--raio)}
+html[data-pg="treino"] .ex-card,html[data-pg="treino"] .view-btn,html[data-pg="treino"] .tab-btn{border-radius:var(--raio)}
+/* campos grandes o bastante para o polegar */
+html[data-pg="treino"] .set-row{padding:8px 0;gap:10px}
+html[data-pg="treino"] .set-num{width:28px;height:28px;line-height:28px;font-size:12px}
+html[data-pg="treino"] .set-input{width:72px;min-height:46px;padding:8px 10px;font-size:18px;text-align:center;border-color:var(--t-line);border-radius:var(--raio)}
+html[data-pg="treino"] .set-input:focus{outline:2px solid var(--t-accent);outline-offset:1px;border-style:solid}
+html[data-pg="treino"] .set-input::placeholder{color:var(--t-muted);opacity:.6}
+html[data-pg="treino"] .set-input.prefilled,html[data-pg="treino"] .ex-card.bonus .set-input.prefilled,html[data-pg="treino"] .ex-card.core .set-input.prefilled{background:var(--t-realce)}
+html[data-pg="treino"] .set-label{font-size:12px}
+/* concluído = verde, em todos os cartões */
+html[data-pg="treino"] .set-check,html[data-pg="treino"] .ex-card.bonus .set-check,html[data-pg="treino"] .ex-card.core .set-check{width:32px;height:32px;accent-color:var(--t-ok)}
+html[data-pg="treino"] .save-btn{padding:16px;font-size:16px}
+
+/* ---------- Mudança ---------- */
+html[data-pg="mudanca"]:not(#a):not(#b),.m-mudanca{--m:#C76B4E;--t-accent:#C76B4E}
+@media (prefers-color-scheme:dark){html[data-pg="mudanca"]:not([data-modo="claro"]):not(#a):not(#b),.m-mudanca{--m:#F2A388;--t-accent:#F2A388}}
+html[data-modo="escuro"][data-pg="mudanca"]:not(#a):not(#b){--m:#F2A388;--t-accent:#F2A388}
+
+/* ---------- Rota Internacional: mapeamento completo + painel de embarque pastel ---------- */
+html[data-pg="rota"]:not(#a):not(#b){
+  --bg:var(--t-bg);--surface:var(--t-surface);--sunk:color-mix(in srgb,var(--t-accent) 6%,var(--t-surface));--ink:var(--t-ink);--muted:var(--t-muted);--line:var(--t-line);
+  --accent:var(--t-accent);--accent-soft:color-mix(in srgb,var(--t-accent) 14%,var(--t-surface));--accent-ink:var(--t-accent-ink);
+  --board:var(--t-pastel);--board-ink:var(--t-ink);--board-dim:var(--t-muted);
+  --ok:var(--t-ok);--ok-soft:color-mix(in srgb,var(--t-ok) 16%,var(--t-surface));
+  --warn:var(--t-accent2);--warn-soft:color-mix(in srgb,var(--t-accent2) 22%,var(--t-surface));
+  --bad:var(--t-bad);--bad-soft:color-mix(in srgb,var(--t-bad) 14%,var(--t-surface));--neutral-soft:var(--t-realce);
+  --f-display:var(--f-titulo);--f-body:var(--f-texto);--r:3px}
+html[data-pg="rota"] .board .brand{color:var(--t-ink);font-variation-settings:normal;font-family:var(--f-titulo);text-transform:none;font-weight:600}
+html[data-pg="rota"] .board{border-bottom:3px solid var(--t-accent)}
+html[data-pg="rota"] h2,html[data-pg="rota"] h3{font-variation-settings:normal;font-weight:600}
+html[data-pg="rota"] .btn.primary{background:var(--t-accent);color:var(--t-accent-ink)}
+
+/* ---------- Hábitos: o cabeçalho antigo era escuro fixo ---------- */
+html[data-pg="habitos"] header.top{background:color-mix(in srgb,var(--t-surface) 94%,transparent);border-bottom:1px solid var(--t-line)}
+html[data-pg="habitos"] nav.tabs button.active{color:var(--t-accent);border-bottom-color:var(--t-accent)}
+html[data-pg="habitos"] .brand h1{color:var(--t-ink)}

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>document.documentElement.dataset.pg="mudanca"</script>
+<link rel="stylesheet" href="assets/tema.css">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Mudança</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:860px;margin:0 auto;padding:16px 16px 80px}
+h1{font-size:28px}
+.sub{color:var(--t-muted);margin:4px 0 16px}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:14px;padding:8px 14px;border-radius:var(--raio);border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+section{display:none}section.on{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.cartao h3{font-size:19px}
+.mini{font-size:13px;color:var(--t-muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+.tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em}
+.tag.ok{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.no{opacity:.55;text-decoration:line-through}
+.barra{height:8px;background:var(--t-line);overflow:hidden}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .8s ease-out}@keyframes cresce{from{width:0}}}
+.prox{border-left:4px solid var(--t-ok);background:color-mix(in srgb,var(--t-ok) 10%,var(--t-surface))}
+.big{font:600 30px var(--f-titulo);letter-spacing:var(--titulo-tracking)}
+.fase{margin-bottom:14px}
+.fase h3{display:flex;align-items:center;gap:10px}
+.item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--t-line)}
+.item input{margin-top:4px;accent-color:var(--t-ok);width:18px;height:18px;flex:none}
+.item.feito span{color:var(--t-muted);text-decoration:line-through}
+.item .x{margin-left:auto;background:none;border:0;color:var(--t-muted);cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--t-line);vertical-align:top}
+th{font:500 10px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--t-muted)}
+td.n,th.n{text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+dialog{border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);padding:18px;width:min(520px,94vw)}
+dialog::backdrop{background:rgba(40,30,60,.35)}
+form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form.f label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--t-muted)}
+form.f .full{grid-column:1/-1}
+form.f input,form.f select,form.f textarea{font:inherit;padding:8px;border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.vazio{padding:18px;text-align:center;color:var(--t-muted)}
+a{color:var(--t-accent)}
+.est{letter-spacing:2px;color:var(--t-accent2)}
+</style>
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
+</head>
+<body class="t">
+<main>
+  <h1>Mudança</h1>
+  <p class="sub">Do imóvel ao primeiro dia na casa nova — um passo de cada vez.</p>
+
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-t="geral" aria-selected="true">Visão geral</button>
+    <button role="tab" data-t="imoveis" aria-selected="false">Imóveis</button>
+    <button role="tab" data-t="checklist" aria-selected="false">Checklist</button>
+    <button role="tab" data-t="cotacoes" aria-selected="false">Mudança</button>
+    <button role="tab" data-t="orcamento" aria-selected="false">Orçamento</button>
+  </nav>
+
+  <section id="geral" class="on"></section>
+  <section id="imoveis"></section>
+  <section id="checklist"></section>
+  <section id="cotacoes"></section>
+  <section id="orcamento"></section>
+</main>
+
+<dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
+
+<script>
+(function(){
+'use strict';
+var db=null, S={imoveis:[],cotacoes:[],orc:[],check:{done:{},extra:[]},cfg:{}};
+var $=function(s,r){return (r||document).querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function num(v){var n=parseFloat(String(v==null?'':v).replace(/\./g,'').replace(',','.'));return isNaN(n)?0:n}
+function brl(n){return 'R$ '+Math.round(n).toLocaleString('pt-BR')}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+/* ---------- modelo ---------- */
+var FASES=[
+ ['decidir','1 · Decidir',['Definir o valor máximo do imóvel e a entrada disponível','Listar o que é indispensável e o que é desejável (bairro, quartos, vaga, andar, pet)','Simular financiamento em 2–3 bancos (parcela, prazo, CET)','Pedir a aprovação de crédito antes de fechar negócio','Reservar dinheiro para ITBI, escritura, registro e avaliação do banco']],
+ ['buscar','2 · Buscar e visitar',['Montar a lista de imóveis (portais, corretores, indicações)','Agendar visitas — de preferência em horários e dias diferentes','Na visita: umidade, barulho, sol, pressão da água, sinal de celular, vizinhança','Conferir condomínio, IPTU e o que está incluso','Comparar os finalistas lado a lado na aba Imóveis']],
+ ['fechar','3 · Fechar negócio',['Negociar preço e condições; fazer a proposta','Conferir matrícula atualizada e certidões do imóvel e do vendedor','Checar débitos de condomínio e IPTU','Avaliação do imóvel pelo banco','Assinar o contrato de financiamento','Pagar o ITBI','Escritura e registro em cartório','Vistoria e entrega das chaves']],
+ ['preparar','4 · Preparar a mudança',['Avisar a imobiliária/proprietário do aluguel atual (prazo e multa)','Pedir orçamento a pelo menos 3 empresas de mudança','Contratar e fixar a data','Separar o que vai, doar, vender ou descartar','Conseguir caixas e material de embalagem','Medir móveis e portas para ver o que cabe','Pintura, reparos e limpeza antes de entrar']],
+ ['contas','5 · Contas e endereço',['Transferir ou ligar energia, água e gás','Agendar a instalação da internet','Mudar o endereço: bancos, trabalho, cartões, documentos, Correios','Avisar o novo condomínio e cadastrar biometria/acesso','Cancelar ou transferir serviços do endereço antigo']],
+ ['dia','6 · Dia da mudança e depois',['Fotografar o estado do imóvel antigo na saída','Conferir os itens na chegada e na entrega da empresa','Montar o essencial primeiro: cama, banheiro, cozinha básica','Guardar comprovantes e contratos em uma pasta','Primeira semana: ajustar, reparar, comemorar']]
+];
+var ORC_PADRAO=['Entrada','ITBI','Escritura e registro','Avaliação do banco','Mudança (frete e equipe)','Embalagens','Reforma e pintura','Móveis e eletrodomésticos','Taxas e depósitos iniciais'];
+var ST_IMV={interesse:'Interesse',agendada:'Visita agendada',visitado:'Visitado',proposta:'Proposta feita',escolhido:'Escolhido',descartado:'Descartado'};
+var ST_COT={contatar:'A contatar',contatado:'Contatado',recebido:'Orçamento recebido',contratada:'Contratada',descartada:'Descartada'};
+
+/* ---------- persistência ---------- */
+function save(col,id,data){return db.doc(col+'/'+id).set(data)}
+function del(col,id){return db.doc(col+'/'+id).delete()}
+function saveCheck(){return save('mud_checklist','main',S.check)}
+function saveCfg(){return save('mud_config','main',S.cfg)}
+
+/* ---------- derivados ---------- */
+function todosItens(){
+  var l=[];FASES.forEach(function(f){f[2].forEach(function(t,i){l.push({id:f[0]+i,fase:f[1],t:t})})});
+  S.check.extra.forEach(function(e){l.push({id:e.id,fase:'Meus itens',t:e.t,extra:true})});return l;
+}
+function progresso(){var it=todosItens(),n=it.filter(function(i){return S.check.done[i.id]}).length;return {feitos:n,total:it.length,pct:it.length?Math.round(n/it.length*100):0}}
+function proximo(){var it=todosItens();for(var i=0;i<it.length;i++)if(!S.check.done[it[i].id])return it[i];return null}
+function totais(){var p=0,r=0;S.orc.forEach(function(o){p+=num(o.previsto);r+=num(o.real)});return {previsto:p,real:r}}
+
+/* ---------- renderização ---------- */
+function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
+
+function rGeral(){
+  var pr=progresso(), px=proximo(), t=totais(), meta=num(S.cfg.entrada)||0;
+  var esc_=S.imoveis.filter(function(i){return i.status==='escolhido'})[0];
+  var vis=S.imoveis.filter(function(i){return i.status==='visitado'||i.status==='proposta'||i.status==='escolhido'}).length;
+  var cot=S.cotacoes.filter(function(c){return c.status==='recebido'||c.status==='contratada'}).length;
+  var h='<div class="cartao prox"><div class="rotulo">Próximo passo</div>'+
+    (px?'<div class="big" style="font-size:22px;margin:6px 0">'+esc(px.t)+'</div><div class="mini">'+esc(px.fase)+'</div><div class="row" style="margin-top:10px"><button class="btn" data-fazer="'+esc(px.id)+'">Concluí</button></div>'
+       :'<div class="big" style="font-size:22px;margin:6px 0">Tudo concluído. Bem-vinda à casa nova.</div>')+'</div>';
+  h+='<div class="grid" style="margin-top:12px">'+
+   '<div class="cartao"><div class="rotulo">Checklist</div><div class="big">'+pr.pct+'%</div>'+barra(pr.pct)+'<div class="mini" style="margin-top:6px">'+pr.feitos+' de '+pr.total+' passos</div></div>'+
+   '<div class="cartao"><div class="rotulo">Imóveis</div><div class="big">'+S.imoveis.length+'</div><div class="mini">'+vis+' visitado(s)'+(esc_?' · escolhido: '+esc(esc_.nome):'')+'</div></div>'+
+   '<div class="cartao"><div class="rotulo">Empresas de mudança</div><div class="big">'+S.cotacoes.length+'</div><div class="mini">'+cot+' com orçamento '+(cot>=3?'· três ou mais, pode comparar':'· meta: 3')+'</div></div>'+
+   '<div class="cartao"><div class="rotulo">Orçamento previsto</div><div class="big">'+brl(t.previsto)+'</div><div class="mini">gasto até agora '+brl(t.real)+'</div></div></div>';
+  var f=FASES.map(function(f){var n=f[2].length,d=f[2].filter(function(_,i){return S.check.done[f[0]+i]}).length;return '<div class="row" style="margin:8px 0"><span style="width:190px">'+esc(f[1])+'</span><div class="sp">'+barra(Math.round(d/n*100))+'</div><span class="mini" style="width:44px;text-align:right">'+d+'/'+n+'</span></div>'}).join('');
+  h+='<div class="cartao" style="margin-top:12px"><h3>Por fase</h3>'+f+'</div>';
+  $('#geral').innerHTML=h;
+}
+
+function estrelas(n){n=+n||0;return '<span class="est" aria-label="nota '+n+' de 5">'+'★'.repeat(n)+'☆'.repeat(5-n)+'</span>'}
+function rImoveis(){
+  var l=S.imoveis.slice().sort(function(a,b){return (b.nota||0)-(a.nota||0)});
+  var h='<div class="row" style="margin-bottom:12px"><button class="btn" data-novo="imovel">+ Imóvel</button><span class="mini">Compare preço, preço/m², condomínio e o que pesa a favor e contra.</span></div>';
+  if(!l.length)h+='<div class="cartao vazio">Nenhum imóvel ainda. Comece pelos que você já viu ou salvou.</div>';
+  else{
+    h+='<div class="cartao scroll"><table><thead><tr><th>Imóvel</th><th class="n">Preço</th><th class="n">m²</th><th class="n">R$/m²</th><th class="n">Cond.+IPTU</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody>'+
+    l.map(function(i){var p=num(i.preco),a=num(i.area);return '<tr><td><b>'+esc(i.nome)+'</b><div class="mini">'+esc(i.bairro||'')+(i.quartos?' · '+esc(i.quartos)+' q':'')+(i.vagas?' · '+esc(i.vagas)+' vaga(s)':'')+'</div>'+(i.link?'<a class="mini" href="'+esc(i.link)+'" target="_blank" rel="noopener noreferrer">anúncio ↗</a>':'')+'</td>'+
+      '<td class="n">'+(p?brl(p):'—')+'</td><td class="n">'+(a||'—')+'</td><td class="n">'+(p&&a?brl(p/a):'—')+'</td><td class="n">'+brl(num(i.condominio)+num(i.iptu))+'</td><td>'+estrelas(i.nota)+'</td>'+
+      '<td><span class="tag'+(i.status==='escolhido'?' ok':'')+(i.status==='descartado'?' no':'')+'">'+esc(ST_IMV[i.status]||'')+'</span></td><td class="n"><button class="btn sec" data-edit="imovel:'+esc(i.id)+'">Editar</button></td></tr>'+
+      (i.pros||i.contras||i.contato||i.visita?'<tr><td colspan="8" class="mini">'+(i.pros?'＋ '+esc(i.pros)+'  ':'')+(i.contras?'－ '+esc(i.contras)+'  ':'')+(i.visita?'· visita '+esc(i.visita.split('-').reverse().join('/'))+'  ':'')+(i.contato?'· '+esc(i.contato):'')+'</td></tr>':'');}).join('')+'</tbody></table></div>';
+  }
+  $('#imoveis').innerHTML=h;
+}
+
+function rChecklist(){
+  var h='';
+  var grupos=FASES.map(function(f){return {nome:f[1],it:f[2].map(function(t,i){return {id:f[0]+i,t:t}})}});
+  if(S.check.extra.length)grupos.push({nome:'Meus itens',it:S.check.extra.map(function(e){return {id:e.id,t:e.t,extra:true}})});
+  grupos.forEach(function(g){
+    var d=g.it.filter(function(i){return S.check.done[i.id]}).length;
+    h+='<div class="cartao fase"><h3>'+esc(g.nome)+' <span class="tag'+(d===g.it.length?' ok':'')+'">'+d+'/'+g.it.length+'</span></h3>'+
+      g.it.map(function(i){var f=S.check.done[i.id];return '<label class="item'+(f?' feito':'')+'"><input type="checkbox" data-chk="'+esc(i.id)+'"'+(f?' checked':'')+'><span>'+esc(i.t)+'</span>'+(i.extra?'<button class="x" data-rm="'+esc(i.id)+'" aria-label="Remover">✕</button>':'')+'</label>'}).join('')+'</div>';
+  });
+  h+='<form id="addItem" class="row"><input id="novoItem" placeholder="Adicionar um passo seu" style="flex:1;min-width:200px;font:inherit;padding:10px;border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink)"><button class="btn" type="submit">Adicionar</button></form>';
+  $('#checklist').innerHTML=h;
+}
+
+function rCotacoes(){
+  var l=S.cotacoes.slice().sort(function(a,b){return (num(a.preco)||9e9)-(num(b.preco)||9e9)});
+  var h='<div class="row" style="margin-bottom:12px"><button class="btn" data-novo="cotacao">+ Empresa</button><span class="mini">Peça pelo menos 3 orçamentos, com o mesmo inventário de móveis.</span></div>';
+  if(!l.length)h+='<div class="cartao vazio">Nenhuma empresa ainda. Anote o contato de quem você encontrar.</div>';
+  else h+='<div class="grid">'+l.map(function(c){return '<div class="cartao"><div class="row"><h3>'+esc(c.empresa)+'</h3><span class="sp"></span><span class="tag'+(c.status==='contratada'?' ok':'')+(c.status==='descartada'?' no':'')+'">'+esc(ST_COT[c.status]||'')+'</span></div>'+
+    '<div class="big" style="margin:6px 0">'+(num(c.preco)?brl(num(c.preco)):'—')+'</div>'+
+    (c.contato?'<div class="mini">'+esc(c.contato)+'</div>':'')+(c.data?'<div class="mini">Data: '+esc(c.data.split('-').reverse().join('/'))+'</div>':'')+(c.inclui?'<div class="mini">Inclui: '+esc(c.inclui)+'</div>':'')+(c.notas?'<div class="mini">'+esc(c.notas)+'</div>':'')+
+    '<div class="row" style="margin-top:10px"><button class="btn sec" data-edit="cotacao:'+esc(c.id)+'">Editar</button></div></div>'}).join('')+'</div>';
+  $('#cotacoes').innerHTML=h;
+}
+
+function rOrcamento(){
+  var t=totais(), meta=num(S.cfg.entrada), valor=num(S.cfg.valor), pctRes=t.previsto?Math.min(100,Math.round(t.real/t.previsto*100)):0;
+  var h='<div class="grid"><div class="cartao"><div class="rotulo">Previsto</div><div class="big">'+brl(t.previsto)+'</div></div>'+
+    '<div class="cartao"><div class="rotulo">Já gasto</div><div class="big">'+brl(t.real)+'</div>'+barra(pctRes)+'</div>'+
+    '<div class="cartao"><div class="rotulo">Meta de entrada</div><div class="big">'+(meta?brl(meta):'—')+'</div><button class="btn sec" data-cfg="1" style="margin-top:6px">Definir meta</button><div class="mini" style="margin-top:6px">'+(valor?'Imóvel de '+brl(valor):'')+'</div></div></div>';
+  h+='<div class="row" style="margin:14px 0"><button class="btn" data-novo="orc">+ Item</button>'+(S.orc.length?'':'<button class="btn sec" data-padrao="1">Adicionar itens comuns</button>')+'</div>';
+  if(S.orc.length)h+='<div class="cartao scroll"><table><thead><tr><th>Item</th><th class="n">Previsto</th><th class="n">Real</th><th class="n">Diferença</th><th></th></tr></thead><tbody>'+
+    S.orc.slice().sort(function(a,b){return (a.ordem||0)-(b.ordem||0)}).map(function(o){var d=num(o.real)-num(o.previsto);return '<tr><td>'+esc(o.item)+(o.nota?'<div class="mini">'+esc(o.nota)+'</div>':'')+'</td><td class="n">'+brl(num(o.previsto))+'</td><td class="n">'+(o.real!==''&&o.real!=null?brl(num(o.real)):'—')+'</td><td class="n" style="color:'+(o.real?(d>0?'var(--t-bad)':'var(--t-ok)'):'inherit')+'">'+(o.real?(d>0?'+':'')+brl(d):'')+'</td><td class="n"><button class="btn sec" data-edit="orc:'+esc(o.id)+'">Editar</button></td></tr>'}).join('')+
+    '<tr><td><b>Total</b></td><td class="n"><b>'+brl(t.previsto)+'</b></td><td class="n"><b>'+brl(t.real)+'</b></td><td></td><td></td></tr></tbody></table></div>';
+  $('#orcamento').innerHTML=h;
+}
+function renderAll(){rGeral();rImoveis();rChecklist();rCotacoes();rOrcamento()}
+
+/* ---------- formulários ---------- */
+var FORMS={
+  imovel:{col:'mud_imoveis',titulo:'Imóvel',campos:[['nome','Nome / endereço','text','full'],['bairro','Bairro','text'],['link','Link do anúncio','url'],['preco','Preço (R$)','text'],['area','Área (m²)','text'],['quartos','Quartos','text'],['vagas','Vagas','text'],['condominio','Condomínio (R$/mês)','text'],['iptu','IPTU (R$/mês)','text'],['status','Status','sel:'+JSON.stringify(ST_IMV)],['nota','Nota (0–5)','text'],['visita','Data da visita','date'],['contato','Corretor / contato','text'],['pros','A favor','text','full'],['contras','Contra','text','full']],vazio:{status:'interesse',nota:'0'}},
+  cotacao:{col:'mud_cotacoes',titulo:'Empresa de mudança',campos:[['empresa','Empresa','text','full'],['contato','Contato (telefone/WhatsApp)','text','full'],['preco','Orçamento (R$)','text'],['data','Data da mudança','date'],['status','Status','sel:'+JSON.stringify(ST_COT),'full'],['inclui','O que inclui (embalagem, montagem, seguro)','text','full'],['notas','Observações','text','full']],vazio:{status:'contatar'}},
+  orc:{col:'mud_orcamento',titulo:'Item do orçamento',campos:[['item','Item','text','full'],['previsto','Previsto (R$)','text'],['real','Real (R$)','text'],['nota','Observação','text','full']],vazio:{}}
+};
+var dlg=$('#dlg'),frm=$('#frm'),atual=null;
+function abre(tipo,doc){
+  var F=FORMS[tipo];atual={tipo:tipo,id:doc?doc.id:uid()};var v=doc||F.vazio;
+  frm.innerHTML='<h3 class="full">'+esc(F.titulo)+'</h3>'+F.campos.map(function(c){
+    var val=esc(v[c[0]]==null?'':v[c[0]]),cls=c[3]||'';
+    if(c[2].indexOf('sel:')===0){var o=JSON.parse(c[2].slice(4));return '<label class="'+cls+'">'+esc(c[1])+'<select name="'+c[0]+'">'+Object.keys(o).map(function(k){return '<option value="'+k+'"'+(v[c[0]]===k?' selected':'')+'>'+esc(o[k])+'</option>'}).join('')+'</select></label>'}
+    return '<label class="'+cls+'">'+esc(c[1])+'<input name="'+c[0]+'" type="'+c[2]+'" value="'+val+'"></label>'}).join('')+
+    '<div class="row full" style="margin-top:6px"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button><span class="sp"></span>'+(doc?'<button class="btn sec" type="button" id="apaga" style="color:var(--t-bad);border-color:var(--t-bad)">Apagar</button>':'')+'</div>';
+  dlg.showModal();
+  $('#cancela').onclick=function(){dlg.close()};
+  if(doc)$('#apaga').onclick=function(){if(confirm('Apagar este item?')){del(FORMS[tipo].col,doc.id);dlg.close()}};
+}
+frm.addEventListener('submit',function(e){
+  e.preventDefault();var F=FORMS[atual.tipo],d={};
+  F.campos.forEach(function(c){d[c[0]]=(frm.elements[c[0]].value||'').trim()});
+  if(atual.tipo==='orc'){var ex=S.orc.filter(function(o){return o.id===atual.id})[0];d.ordem=ex&&ex.ordem!=null?ex.ordem:S.orc.length}
+  save(F.col,atual.id,d);dlg.close();
+});
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button');if(!t)return;
+  if(t.dataset.novo)abre(t.dataset.novo);
+  else if(t.dataset.edit){var p=t.dataset.edit.split(':'),L={imovel:S.imoveis,cotacao:S.cotacoes,orc:S.orc}[p[0]];abre(p[0],L.filter(function(x){return x.id===p[1]})[0])}
+  else if(t.dataset.fazer){S.check.done[t.dataset.fazer]=true;saveCheck()}
+  else if(t.dataset.rm){S.check.extra=S.check.extra.filter(function(x){return x.id!==t.dataset.rm});delete S.check.done[t.dataset.rm];saveCheck()}
+  else if(t.dataset.padrao){ORC_PADRAO.forEach(function(n,i){save('mud_orcamento','pad'+i,{item:n,previsto:'',real:'',nota:'',ordem:i})})}
+  else if(t.dataset.cfg){var v=prompt('Meta de entrada em R$ (ex.: 75000)',S.cfg.entrada||'');if(v!==null){var w=prompt('Valor do imóvel em R$ (opcional)',S.cfg.valor||'');S.cfg.entrada=String(num(v));S.cfg.valor=w?String(num(w)):'';saveCfg()}}
+});
+document.addEventListener('change',function(e){var c=e.target.closest('[data-chk]');if(!c)return;if(c.checked)S.check.done[c.dataset.chk]=true;else delete S.check.done[c.dataset.chk];saveCheck()});
+document.addEventListener('submit',function(e){if(e.target.id!=='addItem')return;e.preventDefault();var v=$('#novoItem').value.trim();if(!v)return;S.check.extra.push({id:'x'+uid(),t:v});saveCheck()});
+$('#tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
+
+/* ---------- dados ---------- */
+function lista(snap){return snap.docs.map(function(d){var o=d.data();o.id=d.id;return o})}
+claude.use('db').then(function(d){
+  db=d;
+  db.collection('mud_imoveis').onSnapshot(function(s){S.imoveis=lista(s);rGeral();rImoveis()});
+  db.collection('mud_cotacoes').onSnapshot(function(s){S.cotacoes=lista(s);rGeral();rCotacoes()});
+  db.collection('mud_orcamento').onSnapshot(function(s){S.orc=lista(s);rGeral();rOrcamento()});
+  db.doc('mud_checklist/main').onSnapshot(function(s){var v=s.exists?s.data():{};S.check={done:v.done||{},extra:v.extra||[]};rGeral();rChecklist()});
+  db.doc('mud_config/main').onSnapshot(function(s){S.cfg=s.exists?s.data():{entrada:'75000',valor:'300000'};rGeral();rOrcamento()});
+});
+renderAll();
+})();
+</script>
+<script src="assets/modulo.js"></script>
+</body>
+</html>

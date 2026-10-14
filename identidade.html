@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Identidade — três direções</title>
+<title>Identidade — rosa, roxa ou verde</title>
 <link rel="stylesheet" href="assets/tema.css">
 <style>
 *{box-sizing:border-box}
@@ -18,61 +18,66 @@ body{margin:0;background:#111;font-family:system-ui,sans-serif}
 .nome{display:flex;align-items:center;gap:12px}
 .nome h1{font-size:28px}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-.sw{display:flex;gap:0;height:64px;border-radius:var(--raio);overflow:hidden;border:1px solid var(--line)}
-.sw div{flex:1;display:flex;align-items:flex-end;padding:6px;font:500 10px var(--f-mono)}
+.sw{display:flex;height:56px;border-radius:var(--raio);overflow:hidden;border:1px solid var(--line)}
+.sw div{flex:1}
 .leg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font:400 10px var(--f-mono);color:var(--muted);margin-top:6px}
-.capa{min-height:260px;display:flex;flex-direction:column;justify-content:space-between;padding:22px;background:var(--accent);color:var(--accent-ink);border-radius:var(--raio);position:relative;overflow:hidden}
-.capa h2{font-size:40px;max-width:11ch}
-.capa .rotulo{color:inherit;opacity:.75}
-.capa svg.fundo{position:absolute;right:-30px;bottom:-30px;width:220px;opacity:.28}
-.hab{display:grid;gap:10px}
-.hab .linha{display:flex;align-items:center;gap:10px;font-size:15px}
-.hab .barra{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
-.hab .barra i{display:block;height:100%;background:var(--accent)}
-.hab .v{font:500 12px var(--f-mono);color:var(--muted);width:42px;text-align:right}
-.doc h2{font-size:30px;margin-bottom:6px}
-.doc p{margin:8px 0;color:var(--muted)}
-.doc table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
-.doc td,.doc th{padding:6px 0;border-bottom:1px solid var(--line);text-align:left}
-.doc th{font:500 10px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.avs{display:flex;gap:16px;align-items:center}
+.capa{min-height:240px;display:flex;flex-direction:column;justify-content:space-between;padding:22px;background:radial-gradient(60% 120% at 100% 100%,color-mix(in srgb,var(--accent2) 45%,transparent) 0,transparent 60%),linear-gradient(120deg,var(--realce),var(--pastel));color:var(--ink);border-radius:var(--raio);border-left:10px solid var(--accent);position:relative;overflow:hidden}
+.capa h2{font-size:38px;max-width:12ch}
+.capa .rotulo{color:var(--muted)}
+.capa svg.fundo{position:absolute;right:-30px;bottom:-30px;width:210px;opacity:.35;color:var(--accent)}
 .av{display:grid;place-items:center;background:var(--accent);border-radius:50%}
-.tipo .gr{font-family:var(--f-titulo);font-weight:var(--peso-titulo);letter-spacing:var(--titulo-tracking);font-size:56px;line-height:1}
-.tipo p{margin:8px 0 0}
+.avs{display:flex;gap:14px;align-items:center}
+
+/* ---------- recompensa e evolução ---------- */
+.rec{display:grid;gap:14px}
+.rec h3{font-size:26px}
+.faixa{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--raio);background:var(--realce);border-left:3px solid var(--accent2)}
+.faixa b{font-family:var(--f-titulo);font-size:18px;font-weight:600}
+.faixa small{display:block;color:var(--muted);font-size:13px}
+.selo{flex:none;width:38px;height:38px;display:grid;place-items:center;background:var(--accent2);color:var(--ink);font:600 13px var(--f-mono)}
+.sem{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.sem div{aspect-ratio:1;display:grid;place-items:center;border:1px solid var(--line);font:500 11px var(--f-mono);color:var(--muted);background:var(--surface)}
+.sem div.f{background:var(--pastel);color:var(--ink);border-color:var(--accent)}
+.sem div.p{background:repeating-linear-gradient(45deg,var(--pastel) 0 4px,transparent 4px 8px);border-style:dashed} /* dia de pausa: não quebra a sequência */
+.sem div.h{border-color:var(--accent);color:var(--accent);font-weight:600}
+.met{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
+.met .n{font-family:var(--f-titulo);font-size:34px;line-height:1}
+.met .d{font:500 12px var(--f-mono);color:var(--ok)}
+.met .l{grid-column:1/-1;color:var(--muted);font-size:13px}
+.spark{width:100%;height:46px}
+.spark path.l{fill:none;stroke:var(--accent);stroke-width:2}
+.spark path.a{fill:var(--pastel);opacity:.6}
+.spark circle{fill:var(--accent2)}
+.barra{height:8px;background:var(--line);overflow:hidden}
+.barra i{display:block;height:100%;background:var(--accent)}
+.marcos{display:flex;gap:8px;flex-wrap:wrap}
+.marcos span{font:500 12px var(--f-mono);padding:6px 10px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+.marcos span.on{border-color:var(--accent2);color:var(--ink);background:var(--realce)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .9s ease-out}@keyframes cresce{from{width:0}}}
+
 .reacao{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .reacao button{font:500 14px var(--f-texto);padding:10px 14px;border-radius:var(--raio);border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .reacao button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .resumo{font-size:14px;color:var(--muted)}
-
-/* composição própria de cada direção */
-[data-tema=arquitetura] .capa{border-left:10px solid var(--ink)}
-[data-tema=arquitetura] .capa h2{font-size:38px}
-[data-tema=atmosfera] .capa{background:radial-gradient(120% 90% at 85% 110%,var(--accent2) 0,transparent 55%),var(--accent)}
-[data-tema=atmosfera] .capa h2{font-size:54px;font-style:italic;font-weight:400}
-[data-tema=atmosfera] .nome h1{font-size:36px;font-style:italic}
-[data-tema=atmosfera] .tipo .gr{font-style:italic;font-size:64px}
-[data-tema=precisao] .capa{background:linear-gradient(var(--accent) 0 0),var(--accent);background-image:repeating-linear-gradient(0deg,transparent 0 31px,rgba(255,255,255,.07) 31px 32px),repeating-linear-gradient(90deg,transparent 0 31px,rgba(255,255,255,.07) 31px 32px)}
-[data-tema=precisao] .cartao{border-top:3px solid var(--accent)}
-[data-tema=precisao] .capa h2{font-size:34px}
 </style>
 </head>
 <body>
 <div class="bar">
   <strong>Identidade</strong>
-  <button data-d="arquitetura" aria-pressed="true">1 · Arquitetura</button>
-  <button data-d="atmosfera" aria-pressed="false">2 · Atmosfera</button>
-  <button data-d="precisao" aria-pressed="false">3 · Precisão</button>
+  <button data-d="rosa" aria-pressed="true">A · Rosa</button>
+  <button data-d="roxa" aria-pressed="false">B · Roxa</button>
+  <button data-d="verde" aria-pressed="false">C · Verde</button>
   <span class="sp"></span>
   <button data-m="claro" aria-pressed="true">Claro</button>
   <button data-m="escuro" aria-pressed="false">Escuro</button>
 </div>
 
-<div class="stage t grao" id="st" data-tema="arquitetura" data-modo="claro">
+<div class="stage t" id="st" data-tema="rosa" data-modo="claro">
 <div class="wrap">
 
   <header class="top">
     <div class="nome">
-      <svg class="marca" id="m1" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><use href="#marca"/></svg>
+      <svg class="marca" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><use href="#marca"/></svg>
       <div><h1>Eloabe Costa</h1><div class="rotulo" id="sub"></div></div>
     </div>
     <div class="avs" aria-label="Avatar em vários tamanhos">
@@ -87,57 +92,62 @@ body{margin:0;background:#111;font-family:system-ui,sans-serif}
     <div class="leg" id="leg"></div>
   </div>
 
+  <!-- Início: o que muda é a sensação de progresso, não só a cor -->
+  <article class="cartao rec" aria-label="Início — evolução">
+    <div class="rotulo">Hoje · quarta, 14 de outubro</div>
+    <h3>Você já fez 3 coisas hoje.</h3>
+    <div class="faixa"><div class="selo">PR</div>
+      <div><b>Novo recorde no supino inclinado</b><small>1RM estimado 16,8 kg · antes 15,6 kg (+7%)</small></div></div>
+
+    <div class="g2" style="gap:14px">
+      <div>
+        <div class="rotulo" style="margin-bottom:8px">Sequência · hábitos</div>
+        <div class="sem" aria-label="Semana">
+          <div class="f">S</div><div class="f">T</div><div class="p">Q</div><div class="f">Q</div><div class="f">S</div><div class="h">S</div><div>D</div>
+        </div>
+        <p class="resumo" style="margin:8px 0 0"><b style="color:var(--ink)">5 dias seguidos.</b> Um dia de pausa por semana não quebra a sequência.</p>
+      </div>
+      <div class="met">
+        <span class="rotulo">Esta semana vs. anterior</span><span></span>
+        <span class="n">4 treinos</span><span class="d">▲ +1</span>
+        <svg class="spark" viewBox="0 0 200 46" preserveAspectRatio="none" aria-label="Carga ao longo das sessões">
+          <path class="a" d="M0 46 L0 34 L40 30 L80 32 L120 22 L160 18 L200 8 L200 46Z"/>
+          <path class="l" d="M0 34 L40 30 L80 32 L120 22 L160 18 L200 8"/><circle cx="200" cy="8" r="4"/></svg>
+        <span class="l">Carga média, últimas 6 sessões</span>
+      </div>
+    </div>
+
+    <div>
+      <div style="display:flex;justify-content:space-between" class="rotulo"><span>Entrada do imóvel</span><span>R$ 9.980 de R$ 60.000</span></div>
+      <div class="barra" style="margin:6px 0"><i style="width:17%"></i></div>
+      <p class="resumo" style="margin:0">Falta uma sexta de revisão para fechar a semana. Sem cobrança — só o próximo passo.</p>
+    </div>
+
+    <div>
+      <div class="rotulo" style="margin-bottom:8px">Marcos</div>
+      <div class="marcos"><span class="on">1ª sessão de treino</span><span class="on">3 dias seguidos</span><span class="on">1º recorde</span><span>7 dias seguidos</span><span>10 candidaturas na semana</span><span>R$ 10 mil guardados</span></div>
+    </div>
+  </article>
+
   <div class="g2">
     <article class="capa" aria-label="Capa de projeto">
       <div class="rotulo">Projeto · 2026</div>
-      <h2 id="capaT"></h2>
+      <h2>Pipeline de dados</h2>
       <div class="rotulo">Eloabe Costa — dados &amp; sistemas</div>
       <svg class="fundo" viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="4" width="28" height="28" fill="currentColor"/><rect x="16" y="16" width="28" height="28" fill="currentColor"/></svg>
     </article>
-
-    <article class="cartao hab" aria-label="Painel de hábitos">
-      <div class="rotulo">Hábitos · hoje</div>
-      <h3 style="font-size:26px">Cinco de sete</h3>
-      <div class="linha">Água <div class="barra"><i style="width:100%"></i></div><span class="v">3 / 3 L</span></div>
-      <div class="linha">Livro <div class="barra"><i style="width:60%"></i></div><span class="v">6 / 10</span></div>
-      <div class="linha">Skincare <div class="barra"><i style="width:100%"></i></div><span class="v">2 / 2</span></div>
-      <div class="linha">Academia <div class="barra"><i style="width:80%"></i></div><span class="v">4 / 5</span></div>
+    <article class="cartao">
+      <div class="rotulo">Sua reação</div>
+      <h3 style="font-size:24px;margin:6px 0">Esta paleta me dá vontade de abrir?</h3>
+      <div class="resumo" id="placar"></div>
+      <div class="reacao" id="rx"><button data-v="sim">Quero muito</button><button data-v="talvez">Talvez</button><button data-v="nao">Não é minha cara</button></div>
       <hr class="regua">
       <div style="display:flex;gap:8px"><button class="btn">Registrar</button><button class="btn sec">Ver semana</button></div>
     </article>
   </div>
-
-  <div class="g2">
-    <article class="cartao doc" aria-label="Documento">
-      <div class="rotulo">Relatório · v1.2</div>
-      <h2>Arquitetura do pipeline</h2>
-      <hr class="regua">
-      <p>Ingestão incremental, camadas bronze e prata, e testes de qualidade a cada carga. Texto corrido em tamanho de leitura, com títulos que carregam a personalidade.</p>
-      <table><tr><th>Etapa</th><th>Latência</th><th>Status</th></tr>
-        <tr><td>Ingestão</td><td>4 min</td><td>ok</td></tr>
-        <tr><td>Transformação</td><td>11 min</td><td>ok</td></tr>
-        <tr><td>Publicação</td><td>2 min</td><td>atenção</td></tr></table>
-    </article>
-
-    <article class="cartao tipo" aria-label="Tipografia">
-      <div class="rotulo">Tipografia</div>
-      <div class="gr" id="gr">Aa Ágil</div>
-      <p id="fontes" class="rotulo" style="margin-top:12px"></p>
-      <p>Texto de leitura em português, com acentuação, números 0123456789 e <code style="font-family:var(--f-mono);font-size:13px">código_em_mono()</code>.</p>
-      <hr class="regua">
-      <div class="rotulo">Reação</div>
-      <div class="resumo">“Quero que meus projetos, documentos e meu computador tenham essa aparência.”</div>
-      <div class="reacao" id="rx">
-        <button data-v="sim">Quero muito</button><button data-v="talvez">Talvez</button><button data-v="nao">Não é a minha cara</button>
-      </div>
-    </article>
-  </div>
-
-  <div class="resumo" id="placar"></div>
 </div>
 </div>
 
-<!-- símbolo: dois planos deslocados; no cruzamento, um quarto de círculo recortado -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <g id="marca">
     <rect class="p1" x="4" y="4" width="28" height="28"/>
@@ -147,32 +157,25 @@ body{margin:0;background:#111;font-family:system-ui,sans-serif}
   </g></defs></svg>
 
 <script>
-var D={
- arquitetura:{sub:'Arquitetura · carvão, musgo, ardósia, marfim',capa:'Pipeline de dados',fontes:'Fraunces (títulos) · Hanken Grotesk (texto)',
-  cores:[['--bg','fundo'],['--surface','superfície'],['--ink','tinta'],['--muted','apoio'],['--line','linha'],['--accent','musgo'],['--accent2','ardósia']]},
- atmosfera:{sub:'Atmosfera · osso, ameixa, vinho, cobre',capa:'O que o dado esconde',fontes:'Instrument Serif (títulos) · Manrope (texto)',
-  cores:[['--bg','osso'],['--surface','superfície'],['--ink','tinta'],['--muted','apoio'],['--line','linha'],['--accent','ameixa'],['--accent2','cobre']]},
- precisao:{sub:'Precisão · azul-noite, petróleo, cinza esverdeado',capa:'Observabilidade',fontes:'Schibsted Grotesk · JetBrains Mono (dados)',
-  cores:[['--bg','fundo'],['--surface','superfície'],['--ink','tinta'],['--muted','apoio'],['--line','linha'],['--accent','petróleo'],['--accent2','noite']]}
-};
-var st=document.getElementById('st'), cur='arquitetura', modo='claro', votos={};
-try{votos=JSON.parse(localStorage.getItem('id-votos')||'{}')}catch(e){}
-function hex(v){var c=getComputedStyle(st).getPropertyValue(v).trim();return c.toUpperCase()}
+var D={rosa:'A · Rosa — branco, rosa-chiclete suave, âmbar',roxa:'B · Roxa — branco, lavanda, âmbar',verde:'C · Verde — branco, menta, âmbar'};
+var N=[['--t-bg','fundo'],['--t-surface','superfície'],['--t-realce','realce'],['--t-pastel','pastel'],['--t-line','linha'],['--t-accent','destaque'],['--t-accent2','recompensa']];
+var st=document.getElementById('st'),cur='rosa',modo='claro',votos={};
+try{votos=JSON.parse(localStorage.getItem('id-votos3')||'{}')}catch(e){}
+function hex(v){return getComputedStyle(st).getPropertyValue(v).trim().toUpperCase()}
 function pinta(){
-  st.dataset.tema=cur; st.dataset.modo=modo; var d=D[cur];
-  document.getElementById('sub').textContent=d.sub;
-  document.getElementById('capaT').textContent=d.capa;
-  document.getElementById('fontes').textContent=d.fontes;
-  document.getElementById('sw').innerHTML=d.cores.map(function(c){return '<div style="background:var('+c[0]+')"></div>'}).join('');
-  document.getElementById('leg').innerHTML=d.cores.map(function(c){return '<span>'+c[1]+'<br>'+hex(c[0])+'</span>'}).join('');
+  st.dataset.tema=cur;st.dataset.modo=modo;
+  document.getElementById('sub').textContent=D[cur];
+  document.getElementById('sw').innerHTML=N.map(function(c){return '<div style="background:var('+c[0]+')"></div>'}).join('');
+  document.getElementById('leg').innerHTML=N.map(function(c){return '<span>'+c[1]+'<br>'+hex(c[0])+'</span>'}).join('');
   document.querySelectorAll('[data-d]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.d===cur)});
   document.querySelectorAll('[data-m]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.m===modo)});
   document.querySelectorAll('#rx button').forEach(function(b){b.setAttribute('aria-pressed',votos[cur]===b.dataset.v)});
-  var n={sim:'Quero muito',talvez:'Talvez',nao:'Não é a minha cara'};
-  document.getElementById('placar').textContent='Suas reações: '+Object.keys(D).map(function(k){return k+' → '+(n[votos[k]]||'—')}).join('  ·  ');
+  var n={sim:'Quero muito',talvez:'Talvez',nao:'Não é minha cara'};
+  document.getElementById('placar').textContent=Object.keys(D).map(function(k){return k+': '+(n[votos[k]]||'—')}).join('  ·  ');
 }
 document.querySelector('.bar').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.d)cur=b.dataset.d;if(b.dataset.m)modo=b.dataset.m;pinta()});
-document.getElementById('rx').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;votos[cur]=b.dataset.v;try{localStorage.setItem('id-votos',JSON.stringify(votos))}catch(x){}pinta()});
+document.getElementById('rx').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;votos[cur]=b.dataset.v;try{localStorage.setItem('id-votos3',JSON.stringify(votos))}catch(x){}pinta()});
+var h=(location.hash||'').slice(1).split('-');if(D[h[0]])cur=h[0];if(h[1]==='escuro')modo='escuro';
 pinta();
 </script>
 </body>

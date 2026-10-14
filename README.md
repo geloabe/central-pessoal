@@ -25,6 +25,14 @@ npm run backup            # gera dados/backup-AAAA-MM-DD.json (também aceito pe
 ```
 Hábitos, Grimório e Financeiro (ajustes) dependem de exportações do navegador antigo (`habitos.json`, `grimorio.json`, `financeiro-ajustes.json`, formato `{ "dados": { chave: valor } }`).
 
+## Login e celular
+- Você entra **uma vez** em cada navegador/aparelho: o Supabase guarda a sessão e renova o token sozinho. Só pede senha de novo se você clicar em "Sair" ou limpar os dados do navegador.
+- No celular, abra o site e use **Adicionar à tela inicial**: vira um app com ícone próprio, e o Safari do iPhone deixa de apagar a sessão por inatividade.
+- Requer internet (não há modo offline).
+
+## Identidade visual
+Tema lavanda em `assets/tema.css` (claro por padrão; o escuro segue o sistema). Cada módulo tem cor e ícone próprios (`assets/modulos.css`, `assets/modulo.js`); ajustes finos ficam em `assets/extras.css`. `identidade.html` compara as paletas.
+
 ## Limitações conhecidas
 - Funções de IA da Rota Internacional (analisar vaga, ATS com IA, correção de inglês) ficam desligadas: dependiam da IA do claude.ai. Para religar, use uma Edge Function do Supabase chamando uma API de LLM (chave nunca no front-end).
 - Plano alimentar: cardápio reconstruído do `CONTEXTO.md`; o PDF original não estava no pacote.

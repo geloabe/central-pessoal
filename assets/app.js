@@ -13,7 +13,7 @@
   'use strict';
 
   var cfg = window.APP_CONFIG || {};
-  var SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+  var SUPABASE_JS = 'assets/vendor/supabase-2.45.4.js'; // hospedado junto do site (versão fixa)
 
   /* ---------- esconde a página até autenticar ---------- */
   var hide = document.createElement('style');
@@ -21,6 +21,15 @@
   hide.textContent = 'html.app-locked body>*:not(#app-login){visibility:hidden!important}';
   document.head.appendChild(hide);
   document.documentElement.classList.add('app-locked');
+
+  /* app instalável: ícone e cor da barra do celular */
+  [['link', {rel: 'manifest', href: 'manifest.webmanifest'}],
+   ['link', {rel: 'apple-touch-icon', href: 'assets/icon-180.png'}],
+   ['meta', {name: 'theme-color', content: '#7440DB'}],
+   ['meta', {name: 'apple-mobile-web-app-capable', content: 'yes'}],
+   ['meta', {name: 'apple-mobile-web-app-title', content: 'Central'}]].forEach(function (t) {
+    var e = document.createElement(t[0]); Object.keys(t[1]).forEach(function (k) { e.setAttribute(k, t[1][k]); }); document.head.appendChild(e);
+  });
 
   var resolveReady;
   window.__appReady = new Promise(function (r) { resolveReady = r; });
@@ -83,10 +92,11 @@
     if (document.getElementById('app-logout')) return;
     var b = document.createElement('button');
     b.id = 'app-logout'; b.type = 'button'; b.textContent = 'Sair';
-    b.style.cssText = 'position:fixed;top:8px;right:8px;z-index:9999;font:12px system-ui,sans-serif;padding:4px 10px;' +
-      'border-radius:999px;border:1px solid rgba(128,128,128,.4);background:rgba(128,128,128,.15);color:inherit;cursor:pointer;opacity:.7';
+    var faixa = document.querySelector('.faixa-modulo');
+    b.style.cssText = (faixa ? '' : 'position:fixed;top:8px;right:8px;z-index:9999;') +
+      'font:12px system-ui,sans-serif;padding:4px 10px;border-radius:2px;border:1px solid rgba(128,128,128,.4);background:rgba(255,255,255,.35);color:inherit;cursor:pointer';
     b.addEventListener('click', async function () { await sb.auth.signOut(); location.reload(); });
-    document.body.appendChild(b);
+    if (faixa) faixa.appendChild(b); else document.body.appendChild(b);
   }
 
   var started = false;
@@ -96,6 +106,7 @@
     var el = document.getElementById('app-login'); if (el) el.style.display = 'none';
     document.documentElement.classList.remove('app-locked');
     addLogout();
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
     if (!started) { started = true; resolveReady(); }
   }
 

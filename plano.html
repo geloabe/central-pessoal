@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>document.documentElement.dataset.pg="plano"</script>
+<link rel="stylesheet" href="assets/tema.css">
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <title>Plano alimentar</title>
 <style>
-:root{--bg:#F3F2EE;--surface:#fff;--ink:#1C1B19;--muted:#6A6760;--line:#E1DED6;--accent:#D9577E;--ok:#1F8A5B;
-  --f:system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#141412;--surface:#1D1C1A;--ink:#EEECE6;--muted:#A39F96;--line:#302E2A;--accent:#F08AA8;--ok:#5CCB95;color-scheme:dark}}
+:root{--f:var(--f-texto)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f)}
 main{max-width:720px;margin:0 auto;padding:16px 16px 64px}
@@ -38,11 +38,14 @@ th{color:var(--muted);font-weight:500}
 td button{background:none;border:0;color:var(--muted);cursor:pointer}
 .scroll{overflow-x:auto}
 .status{font-size:13px;color:var(--muted);min-height:1.2em}
+h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
+nav button[aria-selected=true]{background:var(--t-accent);border-color:var(--t-accent);color:var(--t-accent-ink)}
+.card{border-radius:var(--raio)}nav button,form.m input,form.m textarea,form.m button{border-radius:var(--raio)}
 </style>
+<link rel="stylesheet" href="assets/modulos.css">
 </head>
 <body>
 <main>
-  <a class="back" href="index.html">← Central</a>
   <h1>Plano alimentar</h1>
   <p class="sub">Ganho de massa muscular · tudo sem lactose · treino às 13h</p>
 
@@ -156,5 +159,6 @@ td button{background:none;border:0;color:var(--muted);cursor:pointer}
   claude.use('db').then(function(d){ db=d; db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'}); });
 })();
 </script>
+<script src="assets/modulo.js"></script>
 </body>
 </html>

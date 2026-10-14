@@ -1,64 +1,45 @@
-/* Central Pessoal — sistema visual com três direções.
-   Troque a direção com <html data-tema="arquitetura|atmosfera|precisao">
-   e o modo com data-modo="claro|escuro" (sem atributo, segue o sistema).
-   Todo componente usa só estes tokens: trocar a direção muda o universo inteiro. */
+/* Central Pessoal — tema: Fraunces + Hanken Grotesk, cantos retos, fundo branco, tons pastel.
+   Três paletas: data-tema="rosa|roxa|verde" (sem atributo = roxa/lavanda). Claro é o padrão; escuro (suave, nunca preto)
+   segue o sistema, ou force com data-modo="claro|escuro". Tokens --t-*; os nomes curtos são apelidos. */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&family=Schibsted+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ---------- 1 · Arquitetura: carvão, musgo, ardósia, marfim ---------- */
-:root, [data-tema="arquitetura"]{
-  --f-titulo:"Fraunces",Georgia,serif; --f-texto:"Hanken Grotesk",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
-  --peso-titulo:600; --raio:2px; --titulo-tracking:-.015em;
-  --bg:#EEEBE3; --surface:#F7F5EF; --ink:#1F2421; --muted:#5E655F; --line:#D5D2C7;
-  --accent:#3F5B4A; --accent-ink:#F7F5EF; --accent2:#8A9A8E; --realce:#DCE3DA;
-}
-[data-tema="arquitetura"][data-modo="escuro"]{
-  --bg:#171A18; --surface:#202521; --ink:#ECE9DF; --muted:#A2A89F; --line:#333A35;
-  --accent:#8FB19A; --accent-ink:#171A18; --accent2:#5B7566; --realce:#26302A; color-scheme:dark}
+:root{--f-titulo:"Fraunces",Georgia,serif;--f-texto:"Hanken Grotesk",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,monospace;--raio:2px;--titulo-tracking:-.015em}
 
-/* ---------- 2 · Atmosfera: osso, ameixa, vinho, cobre envelhecido ---------- */
-[data-tema="atmosfera"]{
-  --f-titulo:"Instrument Serif",Georgia,serif; --f-texto:"Manrope",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
-  --peso-titulo:400; --raio:10px; --titulo-tracking:-.01em;
-  --bg:#EFE9E2; --surface:#F8F4EE; --ink:#231A1D; --muted:#6B5E62; --line:#DBD0C8;
-  --accent:#5B2740; --accent-ink:#F8F4EE; --accent2:#A8633F; --realce:#E8D9D8;
-}
-[data-tema="atmosfera"][data-modo="escuro"]{
-  --bg:#171214; --surface:#211A1D; --ink:#EFE7DE; --muted:#B1A3A6; --line:#382C31;
-  --accent:#C57A98; --accent-ink:#171214; --accent2:#C98757; --realce:#2C1F26; color-scheme:dark}
-
-/* ---------- 3 · Precisão: azul-noite, petróleo, cinza esverdeado ---------- */
-[data-tema="precisao"]{
-  --f-titulo:"Schibsted Grotesk",system-ui,sans-serif; --f-texto:"Schibsted Grotesk",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
-  --peso-titulo:700; --raio:6px; --titulo-tracking:-.025em;
-  --bg:#E9EDEE; --surface:#F6F8F8; --ink:#0F1C24; --muted:#52646C; --line:#CBD5D8;
-  --accent:#1D4E5F; --accent-ink:#F6F8F8; --accent2:#0F2A44; --realce:#BFE3DC;
-}
-[data-tema="precisao"][data-modo="escuro"]{
-  --bg:#0C161D; --surface:#13232D; --ink:#E4EEF0; --muted:#8FA5AD; --line:#223641;
-  --accent:#6FC1C0; --accent-ink:#0C161D; --accent2:#7C9BC4; --realce:#17303A; color-scheme:dark}
-
+[data-tema="rosa"]{--t-bg:#FFFFFF;--t-surface:#FFF9FB;--t-ink:#3B2A33;--t-muted:#8C7480;--t-line:#F3DEE6;--t-accent:#BF4F80;--t-accent-ink:#FFFFFF;--t-accent2:#F2B66B;--t-realce:#FDEAF1;--t-pastel:#F7C6D8;--t-ok:#3F9A72;--t-bad:#D2566B;--t-c3:#8466CC}
+[data-tema="rosa"][data-modo="escuro"]{--t-bg:#241A20;--t-surface:#2E2229;--t-ink:#FBEAF1;--t-muted:#CDAFBD;--t-line:#493540;--t-accent:#F29BBB;--t-accent-ink:#241A20;--t-accent2:#F7C98B;--t-realce:#3A2832;--t-pastel:#5A3646;--t-ok:#7FD6AE;--t-bad:#F59AA8;--t-c3:#B9A3F0;color-scheme:dark}
+:root,[data-tema="roxa"]{--t-bg:#FFFFFF;--t-surface:#FAF7FF;--t-ink:#241A3D;--t-muted:#7461A0;--t-line:#E3D7F8;--t-accent:#7440DB;--t-accent-ink:#FFFFFF;--t-accent2:#F5A524;--t-realce:#EFE6FE;--t-pastel:#D2BFF7;--t-ok:#1F9D6B;--t-bad:#D93B5F;--t-c3:#3D6FE0}
+[data-tema="roxa"][data-modo="escuro"]{--t-bg:#1E1633;--t-surface:#2A1F47;--t-ink:#F4EEFF;--t-muted:#C2B2EC;--t-line:#43346B;--t-accent:#B79CFF;--t-accent-ink:#1E1633;--t-accent2:#FFC561;--t-realce:#352858;--t-pastel:#51408A;--t-ok:#5FDDAA;--t-bad:#FF8FA6;--t-c3:#8FB0FF;color-scheme:dark}
+:root[data-modo="escuro"]{--t-bg:#1E1633;--t-surface:#2A1F47;--t-ink:#F4EEFF;--t-muted:#C2B2EC;--t-line:#43346B;--t-accent:#B79CFF;--t-accent-ink:#1E1633;--t-accent2:#FFC561;--t-realce:#352858;--t-pastel:#51408A;--t-ok:#5FDDAA;--t-bad:#FF8FA6;--t-c3:#8FB0FF;color-scheme:dark}
+[data-tema="verde"]{--t-bg:#FFFFFF;--t-surface:#F9FCFA;--t-ink:#24352D;--t-muted:#6E8478;--t-line:#DCEDE4;--t-accent:#357E5D;--t-accent-ink:#FFFFFF;--t-accent2:#F2B66B;--t-realce:#EAF6EF;--t-pastel:#CBE8D8;--t-ok:#357E5D;--t-bad:#D2566B;--t-c3:#4F7BD6}
+[data-tema="verde"][data-modo="escuro"]{--t-bg:#18221D;--t-surface:#212E27;--t-ink:#EAF6EF;--t-muted:#A9C4B6;--t-line:#34493E;--t-accent:#7FD0A8;--t-accent-ink:#18221D;--t-accent2:#F7C98B;--t-realce:#2A3B32;--t-pastel:#3E5B4B;--t-ok:#7FD0A8;--t-bad:#F59AA8;--t-c3:#8FB0F5;color-scheme:dark}
 @media (prefers-color-scheme:dark){
-  [data-tema="arquitetura"]:not([data-modo]){--bg:#171A18;--surface:#202521;--ink:#ECE9DF;--muted:#A2A89F;--line:#333A35;--accent:#8FB19A;--accent-ink:#171A18;--accent2:#5B7566;--realce:#26302A;color-scheme:dark}
-  [data-tema="atmosfera"]:not([data-modo]){--bg:#171214;--surface:#211A1D;--ink:#EFE7DE;--muted:#B1A3A6;--line:#382C31;--accent:#C57A98;--accent-ink:#171214;--accent2:#C98757;--realce:#2C1F26;color-scheme:dark}
-  [data-tema="precisao"]:not([data-modo]){--bg:#0C161D;--surface:#13232D;--ink:#E4EEF0;--muted:#8FA5AD;--line:#223641;--accent:#6FC1C0;--accent-ink:#0C161D;--accent2:#7C9BC4;--realce:#17303A;color-scheme:dark}
+ [data-tema="rosa"]:not([data-modo]){--t-bg:#241A20;--t-surface:#2E2229;--t-ink:#FBEAF1;--t-muted:#CDAFBD;--t-line:#493540;--t-accent:#F29BBB;--t-accent-ink:#241A20;--t-accent2:#F7C98B;--t-realce:#3A2832;--t-pastel:#5A3646;--t-ok:#7FD6AE;--t-bad:#F59AA8;--t-c3:#B9A3F0;color-scheme:dark}
+ :root:not([data-tema]):not([data-modo]),[data-tema="roxa"]:not([data-modo]){--t-bg:#1E1633;--t-surface:#2A1F47;--t-ink:#F4EEFF;--t-muted:#C2B2EC;--t-line:#43346B;--t-accent:#B79CFF;--t-accent-ink:#1E1633;--t-accent2:#FFC561;--t-realce:#352858;--t-pastel:#51408A;--t-ok:#5FDDAA;--t-bad:#FF8FA6;--t-c3:#8FB0FF;color-scheme:dark}
+ [data-tema="verde"]:not([data-modo]){--t-bg:#18221D;--t-surface:#212E27;--t-ink:#EAF6EF;--t-muted:#A9C4B6;--t-line:#34493E;--t-accent:#7FD0A8;--t-accent-ink:#18221D;--t-accent2:#F7C98B;--t-realce:#2A3B32;--t-pastel:#3E5B4B;--t-ok:#7FD0A8;--t-bad:#F59AA8;--t-c3:#8FB0F5;color-scheme:dark}
 }
+
+/* apelidos curtos, valem em :root e em qualquer elemento que receba um tema */
+:root,[data-tema],.t{--bg:var(--t-bg);--surface:var(--t-surface);--ink:var(--t-ink);--muted:var(--t-muted);--line:var(--t-line);
+  --accent:var(--t-accent);--accent-ink:var(--t-accent-ink);--accent2:var(--t-accent2);--realce:var(--t-realce);--pastel:var(--t-pastel);--ok:var(--t-ok)}
 
 /* ---------- base ---------- */
-.t{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-texto);position:relative}
-/* granulação quase imperceptível: dá materialidade sem custo de cansaço visual */
-.t.grao::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.t h1,.t h2,.t h3{font-family:var(--f-titulo);font-weight:var(--peso-titulo);letter-spacing:var(--titulo-tracking);line-height:1.1;margin:0}
-.t .rotulo{font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.t .cartao{background:var(--surface);border:1px solid var(--line);border-radius:var(--raio);padding:18px}
-.t .regua{height:1px;background:var(--line);border:0;margin:14px 0;position:relative}
-.t .regua::after{content:"";position:absolute;left:0;top:-1px;width:36px;height:3px;background:var(--accent)} /* divisor de assinatura */
-.t .btn{font:600 14px var(--f-texto);padding:10px 16px;border-radius:var(--raio);border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
-.t .btn.sec{background:transparent;color:var(--accent)}
-.t :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-@media (prefers-reduced-motion:no-preference){.t .btn{transition:transform .15s,box-shadow .15s}.t .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -8px var(--accent)}}
+.t{background:var(--t-bg);color:var(--t-ink);font:16px/1.55 var(--f-texto);position:relative}
+.t h1,.t h2,.t h3{font-family:var(--f-titulo);font-weight:600;letter-spacing:var(--titulo-tracking);line-height:1.1;margin:0}
+.t .rotulo{font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--t-muted)}
+.t .cartao{background:var(--t-surface);border:1px solid var(--t-line);border-radius:var(--raio);padding:18px}
+.t .regua{height:1px;background:var(--t-line);border:0;margin:14px 0;position:relative}
+.t .regua::after{content:"";position:absolute;left:0;top:-1px;width:36px;height:3px;background:var(--t-accent)}
+.t .btn{font:600 14px var(--f-texto);padding:10px 16px;border-radius:var(--raio);border:1px solid var(--t-accent);background:var(--t-accent);color:var(--t-accent-ink);cursor:pointer}
+.t .btn.sec{background:transparent;color:var(--t-accent)}
+.t :focus-visible{outline:2px solid var(--t-accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.t .btn{transition:transform .15s,box-shadow .15s}.t .btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px var(--t-accent)}}
 
-/* ---------- símbolo: dois planos que se cruzam; o cruzamento tem um recorte circular ---------- */
+/* faixa de destaque: degradê pastel com brilho âmbar, texto na tinta (leitura confortável) */
+.t .destaque{color:var(--t-ink);border-radius:var(--raio);position:relative;overflow:hidden;
+  background:radial-gradient(60% 120% at 100% 100%,color-mix(in srgb,var(--t-accent2) 45%,transparent) 0,transparent 60%),
+             linear-gradient(120deg,var(--t-realce),var(--t-pastel))}
+
+/* símbolo */
 .marca{display:inline-block;vertical-align:middle}
-.marca .p1{fill:var(--ink)} .marca .p2{fill:var(--accent)} .marca .x{fill:var(--accent2)} .marca .c{fill:var(--bg)}
+#marca .p1{fill:var(--t-ink)} #marca .p2{fill:var(--t-accent)} #marca .x{fill:var(--t-accent2)} #marca .c{fill:var(--t-bg)}
