@@ -46,3 +46,8 @@ html[data-pg="rota"] .btn.primary{background:var(--t-accent);color:var(--t-accen
 html[data-pg="habitos"] header.top{background:color-mix(in srgb,var(--t-surface) 94%,transparent);border-bottom:1px solid var(--t-line)}
 html[data-pg="habitos"] nav.tabs button.active{color:var(--t-accent);border-bottom-color:var(--t-accent)}
 html[data-pg="habitos"] .brand h1{color:var(--t-ink)}
+
+/* ---------- Campos de digitar: borda com 3:1 de contraste (WCAG 1.4.11), em vez da linha decorativa de 1,4:1 ---------- */
+html[data-pg="treino"] .set-input{border-color:var(--t-borda)}
+html[data-pg="mudanca"] form.f input,html[data-pg="mudanca"] form.f select,html[data-pg="mudanca"] form.f textarea,html[data-pg="mudanca"] #addItem input{border-color:var(--t-borda)}
+html[data-pg="plano"] form.m input,html[data-pg="plano"] form.m textarea{border-color:var(--t-borda)}
