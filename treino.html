@@ -7,7 +7,7 @@
 <script src="assets/app.js"></script>
 
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Acompanhamento de Treino</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -384,6 +384,71 @@
     font-size: 12px;
     padding: 30px 0;
   }
+
+  /* ---------- uso na academia ---------- */
+  .header { display: none; }
+  .view-switch { padding: 10px 16px 0 16px; }
+  .view-btn { padding: 11px 8px; font-size: 14px; }
+  .tabs { padding: 10px 16px; gap: 6px; max-width: 640px; margin: 0 auto; }
+  .tab-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 112px; padding: 8px 12px; border-radius: 12px; text-align: left; line-height: 1.2; }
+  .tab-btn .t1 { font-size: 13px; }
+  .tab-btn .t2 { font-size: 11.5px; font-weight: 500; opacity: .85; }
+  .tab-btn.sug:not(.active) { outline: 2px solid var(--t-accent); outline-offset: -2px; }
+  .topo { margin-top: 4px; }
+  .data-hoje { font-size: 13px; color: var(--text-muted); }
+  .data-hoje #progTxt { font-weight: 600; color: var(--text); text-transform: none; }
+  .desc-linha { display: flex; align-items: center; gap: 6px; margin: 8px 0 2px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
+  .chip { font: inherit; font-size: 13px; min-height: 36px; padding: 4px 12px; border: 1px solid var(--t-borda); background: var(--t-bg); color: var(--t-ink); cursor: pointer; border-radius: var(--raio); }
+  .chip.on { background: var(--t-accent); border-color: var(--t-accent); color: var(--t-accent-ink); }
+  .troca-de { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+  .last-time { font-size: 13px; }
+  .cols, .srow { display: grid; grid-template-columns: 28px 64px 1fr 1fr 52px; gap: 8px; align-items: center; }
+  .cols.timed, .srow.timed { grid-template-columns: 28px 64px 1fr 52px; }
+  .cols { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); padding: 2px 0 4px; }
+  .cols span { text-align: center; }
+  .srow { padding: 7px 4px; margin: 0 -4px; border-top: 1px solid var(--t-line); border-radius: var(--raio); transition: background .2s; }
+  .srow.done { background: color-mix(in srgb, var(--t-ok) 14%, var(--t-surface)); }
+  html[data-pg="treino"] .srow .set-input { width: 100%; min-width: 0; font-size: 20px; min-height: 50px; text-align: center; padding: 6px 4px; }
+  html[data-pg="treino"] .srow .set-input.pre { border-style: dashed; color: var(--text-muted); background: var(--t-realce); }
+  .srow.done .set-input { border-color: var(--t-ok); background: transparent; color: var(--t-ink); }
+  .srow .prev { font: 500 13px var(--f-mono); color: var(--text-muted); background: none; border: 0; padding: 0; min-height: 44px; text-align: center; cursor: pointer; }
+  .srow .prev:disabled { cursor: default; opacity: .6; }
+  .chk { width: 52px; height: 50px; border: 2px solid var(--t-borda); background: var(--t-bg); color: transparent; font-size: 26px; font-weight: 700; cursor: pointer; border-radius: var(--raio); padding: 0; }
+  .chk[aria-pressed="true"] { background: var(--t-ok); border-color: var(--t-ok); color: #fff; }
+  .srow.pr { background: color-mix(in srgb, var(--t-accent2) 22%, var(--t-surface)); }
+  .pr-badge { grid-column: 1 / -1; font-size: 13px; font-weight: 600; color: var(--t-ink); padding: 2px 4px 0; }
+  .acoes { display: flex; gap: 6px; margin-top: 8px; }
+  .mini-btn { flex: 1; font: 600 13.5px var(--f-texto); min-height: 44px; border: 1px solid var(--t-borda); background: var(--t-bg); color: var(--t-ink); cursor: pointer; border-radius: var(--raio); padding: 0 6px; }
+  .mini-btn:disabled { opacity: .4; cursor: default; }
+  .ex-card.pulado { opacity: .75; }
+  .pulado-linha { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 14px; color: var(--text-muted); }
+  .pulado-linha .mini-btn { flex: none; padding: 0 14px; }
+  .save-bar { z-index: 5; border-top: 1px solid var(--t-line); padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .dock { display: none; margin-bottom: 8px; background: var(--t-realce); border: 1px solid var(--t-line); border-radius: var(--raio); overflow: hidden; }
+  .dock.on { display: block; }
+  .dock-bar { height: 5px; background: var(--t-line); }
+  .dock-bar i { display: block; height: 100%; width: 0; background: var(--t-accent); transition: width .25s linear; }
+  .dock-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; font-size: 15px; font-weight: 600; flex-wrap: wrap; }
+  .dock-row #dockTreino { font: 600 14px var(--f-mono); color: var(--text-muted); }
+  .dock-row #dockRest { flex: 1; min-width: 100px; }
+  .dock-row #dockBtns { display: flex; gap: 6px; }
+  .dock-row button { font: 600 14px var(--f-texto); min-height: 40px; min-width: 52px; border: 1px solid var(--t-borda); background: var(--t-bg); color: var(--t-ink); cursor: pointer; border-radius: var(--raio); }
+  .dock.fim { background: var(--t-ok); border-color: var(--t-ok); color: #fff; }
+  .dock.fim .dock-row #dockTreino { color: #fff; }
+  .dock.fim .dock-bar { background: rgba(255,255,255,.35); }
+  .dock.fim .dock-bar i { background: #fff; }
+  .toast { position: fixed; left: 16px; right: 16px; top: 70px; z-index: 20; max-width: 560px; margin: 0 auto; padding: 12px 16px; background: var(--t-accent2); color: #3B2A33; font-weight: 700; border-radius: var(--raio); text-align: center; opacity: 0; transform: translateY(-8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .toast.on { opacity: 1; transform: none; }
+  #swapDlg { border: 1px solid var(--t-line); background: var(--t-surface); color: var(--t-ink); border-radius: var(--raio); padding: 18px; width: min(460px, 94vw); }
+  #swapDlg::backdrop { background: rgba(40,30,60,.35); }
+  #swapDlg h3 { margin: 0 0 6px; font-family: var(--f-titulo); }
+  .mini-p { font-size: 13px; color: var(--text-muted); margin: 0 0 10px; }
+  #swapSel { width: 100%; font-size: 16px; min-height: 48px; padding: 8px; border: 1px solid var(--t-borda); background: var(--t-bg); color: var(--t-ink); border-radius: var(--raio); }
+  .acoes-dlg { display: flex; gap: 8px; margin-top: 14px; }
+  .acoes-dlg button { flex: 1; min-height: 46px; font: 600 15px var(--f-texto); border-radius: var(--raio); cursor: pointer; border: 1px solid var(--t-accent); }
+  .btn-ok { background: var(--t-accent); color: var(--t-accent-ink); }
+  .btn-no { background: transparent; color: var(--t-accent); }
+
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -406,7 +471,12 @@
   </div>
 
   <div class="save-bar">
-    <button class="save-btn" id="saveBtn">💗 Salvar sessão de hoje</button>
+    <div class="dock" id="dock" aria-live="polite">
+      <div class="dock-bar"><i id="dockBar"></i></div>
+      <div class="dock-row"><span id="dockTreino"></span><span id="dockRest"></span>
+        <span id="dockBtns"><button type="button" data-d="menos" aria-label="Menos 15 segundos">−15</button><button type="button" data-d="mais" aria-label="Mais 15 segundos">+15</button><button type="button" data-d="fim">Pular</button></span></div>
+    </div>
+    <button class="save-btn" id="saveBtn">Salvar treino</button>
     <div class="save-status" id="saveStatus"></div>
   </div>
 
@@ -415,6 +485,9 @@
     <div class="history-list" id="historyList" style="display:none;"></div>
   </div>
 </div>
+
+<div class="toast" id="toast" role="status"></div>
+<dialog id="swapDlg"><form method="dialog" id="swapForm"><h3>Trocar exercício</h3><p class="mini-p">Use quando a máquina estiver ocupada. As séries começam com a última carga desse exercício.</p><select id="swapSel"></select><div class="acoes-dlg"><button value="ok" class="btn-ok">Trocar</button><button value="cancel" class="btn-no" formnovalidate>Cancelar</button></div></form></dialog>
 
 <div id="recordsView" class="content" style="display:none;"></div>
 
@@ -527,21 +600,149 @@ const EX_INDEX = buildExerciseIndex();
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 // ===================== ESTADO =====================
+const WORKOUT_NAMES = { A: 'Peito · Ombro', B: 'Quadríceps', C: 'Costas · Bíceps', D: 'Posterior · Glúteo' };
+const LS_DRAFT = 'treino-rascunho-v1', LS_REST = 'treino-descanso';
 let currentView = "workout"; // workout | records | evolution
 let currentTab = "A";
+let userPickedTab = false;
 let currentEvoExId = null;
 let db = null;
 let allSessions = []; // cache das últimas sessões carregadas
-let currentInputs = {}; // { exId: [{weight, reps, done}, ...] }
 let evoChart = null;
+let T = {};           // estado por treino: { slots, sets:{chave:[{weight,reps,time,done,pre,pr}]}, touched, savedToday }
+let workStart = null; // ms do primeiro ✓ do treino
+let rest = null;      // { end, dur, done }
+let restDefault = 90;
+let audioCtx = null;
+let bestCache = {};
 
-function todayISO() {
-  const d = new Date();
-  return d.toISOString().slice(0,10);
-}
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+function pad2(n) { return String(n).padStart(2, '0'); }
+function H(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function num(v) { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isNaN(n) ? 0 : n; }
+function fmt(sec) { sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ':' + pad2(sec % 60); }
+function todayISO() { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
 function todayLabel() {
   const d = new Date();
   return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+}
+function isTimed(target) { return /\d\s*s(\/|\s|$)/.test(target || ''); }
+function diasAtras(iso) {
+  const p = iso.split('-').map(Number), a = new Date(p[0], p[1] - 1, p[2]), h = new Date();
+  return Math.round((new Date(h.getFullYear(), h.getMonth(), h.getDate()) - a) / 864e5);
+}
+function quando(iso) { const n = diasAtras(iso); return n <= 0 ? 'hoje' : n === 1 ? 'ontem' : 'há ' + n + ' dias'; }
+
+// ---------- histórico: última vez e recorde ----------
+function lastLog(exId) {
+  let legacy = null;
+  for (const sess of allSessions) {
+    const log = sess.exercises && sess.exercises[exId];
+    if (!log) continue;
+    if (log.some(s => s.done && (s.weight || s.time))) return { log, sess, legacy: false };
+    if (!legacy && log.some(s => s.weight || s.time)) legacy = { log, sess, legacy: true };
+  }
+  return legacy;
+}
+function prevOf(f, i) {
+  const ok = s => s && (s.weight || s.time) && (f.legacy || s.done);
+  if (ok(f.log[i])) return f.log[i];
+  for (let j = f.log.length - 1; j >= 0; j--) if (ok(f.log[j])) return f.log[j];
+  return null;
+}
+function bestEst(exId) {
+  if (!(exId in bestCache)) {
+    let b = 0;
+    allSessions.forEach(s => {
+      if (s.dateISO === todayISO()) return; // a sessão de hoje não conta como "recorde anterior"
+      ((s.exercises && s.exercises[exId]) || []).forEach(x => {
+        if (!x.done) return;
+        const e = est1RM(x.weight, x.reps);
+        if (e && e > b) b = e;
+      });
+    });
+    bestCache[exId] = b;
+  }
+  return bestCache[exId];
+}
+function recalcPR(t, sl) {
+  const sets = t.sets[sl.key];
+  if (isTimed(EX_INDEX[sl.id].target)) { sets.forEach(s => s.pr = false); return; }
+  const hist = bestEst(sl.id);
+  let run = hist;
+  sets.forEach(s => {
+    s.pr = false;
+    if (!s.done) return;
+    const e = est1RM(s.weight, s.reps);
+    if (!e) return;
+    if (hist > 0 && e > run + 0.05) s.pr = true;
+    if (e > run) run = e;
+  });
+}
+function recalcAll(t) { t.slots.forEach(sl => recalcPR(t, sl)); }
+
+// ---------- montagem do estado de cada treino ----------
+function newSets(exId, n) {
+  const timed = isTimed(EX_INDEX[exId].target);
+  const f = lastLog(exId);
+  return Array.from({ length: n }, (_, i) => {
+    const p = f ? prevOf(f, i) : null;
+    return {
+      weight: p && !timed ? (p.weight || '') : '',
+      reps: p && !timed ? (p.reps || '') : '',
+      time: p && timed ? (p.time || '') : '',
+      done: false, pre: !!p, pr: false,
+    };
+  });
+}
+function buildTab(letter) {
+  const slots = [];
+  WORKOUTS[letter].sections.forEach(sec => sec.exercises.forEach(ex =>
+    slots.push({ key: ex.id, id: ex.id, cls: sec.cls, sec: sec.title, target: ex.target, skipped: false })));
+  const saved = allSessions.find(s => s.treino === letter && s.dateISO === todayISO());
+  const t = { slots, sets: {}, touched: false, savedToday: !!saved };
+  slots.forEach(sl => {
+    const n = setCount(sl.target);
+    const info = saved && saved.slotsInfo && saved.slotsInfo[sl.key];
+    if (info) { if (info.id && EX_INDEX[info.id]) sl.id = info.id; sl.skipped = !!info.skipped; }
+    const log = saved && saved.exercises && saved.exercises[sl.id];
+    t.sets[sl.key] = log
+      ? log.map(s => ({ weight: s.weight || '', reps: s.reps || '', time: s.time || '', done: !!s.done, pre: false, pr: false }))
+      : newSets(sl.id, n);
+  });
+  recalcAll(t);
+  return t;
+}
+function ensure(letter) { if (!T[letter]) T[letter] = buildTab(letter); return T[letter]; }
+function slotOf(key) { return T[currentTab].slots.find(s => s.key === key); }
+
+function nextTab() {
+  const ks = Object.keys(WORKOUTS);
+  if (!allSessions.length) return 'A';
+  const i = ks.indexOf(allSessions[0].treino);
+  return ks[(i + 1) % ks.length] || 'A';
+}
+
+// ---------- rascunho (sobrevive a recarregar a página) ----------
+function saveDraft() {
+  const tabs = {};
+  Object.keys(T).forEach(l => { if (T[l].touched) tabs[l] = { slots: T[l].slots, sets: T[l].sets }; });
+  if (!Object.keys(tabs).length) { lsDel(LS_DRAFT); return; }
+  lsSet(LS_DRAFT, JSON.stringify({ date: todayISO(), tab: currentTab, tabs, workStart }));
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(lsGet(LS_DRAFT) || 'null');
+    if (!d || d.date !== todayISO()) { lsDel(LS_DRAFT); return; }
+    Object.keys(d.tabs).forEach(l => {
+      if (!WORKOUTS[l]) return;
+      T[l] = { slots: d.tabs[l].slots, sets: d.tabs[l].sets, touched: true, savedToday: false };
+    });
+    if (WORKOUTS[d.tab]) { currentTab = d.tab; userPickedTab = true; }
+    workStart = d.workStart || null;
+  } catch (e) {}
 }
 
 // ===================== RENDER =====================
@@ -574,112 +775,101 @@ function switchView(view) {
 
 function renderTabs() {
   const tabsEl = document.getElementById('tabs');
+  const sug = nextTab();
   tabsEl.innerHTML = '';
   Object.keys(WORKOUTS).forEach(key => {
+    const last = allSessions.find(s => s.treino === key);
+    const t = T[key];
+    let sub = last ? quando(last.dateISO) : 'nunca feito';
+    if (t && t.touched) sub = 'em andamento';
+    else if (last && last.dateISO === todayISO()) sub = 'feito hoje ✓';
+    else if (key === sug) sub = 'próximo';
     const btn = document.createElement('button');
-    btn.className = 'tab-btn' + (key === currentTab ? ' active' : '');
-    btn.textContent = 'Treino ' + key;
-    btn.onclick = () => { currentTab = key; initInputsForTab(); renderContent(); };
+    btn.className = 'tab-btn' + (key === currentTab ? ' active' : '') + (key === sug ? ' sug' : '');
+    btn.innerHTML = `<span class="t1">${key} · ${WORKOUT_NAMES[key]}</span><span class="t2">${sub}</span>`;
+    btn.onclick = () => { currentTab = key; userPickedTab = true; ensure(key); renderTabs(); renderContent(); saveDraft(); };
     tabsEl.appendChild(btn);
   });
 }
 
-function lastSessionExerciseLog(exId) {
-  for (const sess of allSessions) {
-    if (sess.treino !== currentTab) continue;
-    const log = sess.exercises && sess.exercises[exId];
-    if (log && log.some(s => s.weight)) return log;
+function cardHTML(sl, t, lastCache) {
+  const ex = EX_INDEX[sl.id];
+  const orig = EX_INDEX[sl.key];
+  const swapped = sl.id !== sl.key;
+  const head = `<div class="ex-top">
+      <div class="ex-name">${H(ex.name)}${swapped ? `<div class="troca-de">no lugar de ${H(orig.name)}</div>` : ''}</div>
+      <div class="ex-target">${H(sl.target)}</div>
+    </div>`;
+  if (sl.skipped) {
+    return `<div class="ex-card ${sl.cls} pulado" data-key="${sl.key}">${head}
+      <div class="pulado-linha">Pulado hoje <button class="mini-btn" data-act="unskip" data-key="${sl.key}">Desfazer</button></div></div>`;
   }
-  return null;
-}
-
-function initInputsForTab() {
-  currentInputs = {};
-  const workout = WORKOUTS[currentTab];
-  workout.sections.forEach(sec => {
-    sec.exercises.forEach(ex => {
-      const n = setCount(ex.target);
-      const lastLog = lastSessionExerciseLog(ex.id);
-      currentInputs[ex.id] = Array.from({length: n}, (_, i) => {
-        const prev = lastLog && lastLog[i] ? lastLog[i] : null;
-        return {
-          weight: prev ? prev.weight : '',
-          reps: prev ? prev.reps : '',
-          done: false,
-          prefilled: !!prev,
-        };
-      });
-    });
+  const timed = isTimed(ex.target);
+  const f = lastCache[sl.id] !== undefined ? lastCache[sl.id] : (lastCache[sl.id] = lastLog(sl.id));
+  let ultima = '';
+  if (f) {
+    const p = prevOf(f, 999) || null;
+    if (p) ultima = `<div class="last-time">Última vez (${quando(f.sess.dateISO)}): <b>${timed ? H(p.time) + ' s' : H(p.weight) + ' kg × ' + H(p.reps || '?')}</b></div>`;
+  }
+  const sets = t.sets[sl.key];
+  let rows = `<div class="cols${timed ? ' timed' : ''}"><span>Série</span><span>Anterior</span>${timed ? '<span>Segundos</span>' : '<span>kg</span><span>Reps</span>'}<span>✓</span></div>`;
+  sets.forEach((s, i) => {
+    const p = f ? prevOf(f, i) : null;
+    const prevTxt = p ? (timed ? p.time + ' s' : (p.weight || '–') + '×' + (p.reps || '–')) : '–';
+    const pc = s.pre ? ' pre' : '';
+    const campos = timed
+      ? `<input class="set-input${pc}" type="text" inputmode="numeric" placeholder="seg" aria-label="Segundos da série ${i + 1}" value="${H(s.time)}" data-key="${sl.key}" data-i="${i}" data-field="time">`
+      : `<input class="set-input${pc}" type="text" inputmode="decimal" placeholder="kg" aria-label="Carga da série ${i + 1}" value="${H(s.weight)}" data-key="${sl.key}" data-i="${i}" data-field="weight">
+         <input class="set-input${pc}" type="text" inputmode="numeric" placeholder="reps" aria-label="Repetições da série ${i + 1}" value="${H(s.reps)}" data-key="${sl.key}" data-i="${i}" data-field="reps">`;
+    rows += `<div class="srow${timed ? ' timed' : ''}${s.done ? ' done' : ''}${s.pr ? ' pr' : ''}">
+      <span class="set-num">${i + 1}</span>
+      <button class="prev" type="button" data-act="prev" data-key="${sl.key}" data-i="${i}"${p ? '' : ' disabled'} aria-label="Usar valor anterior">${H(prevTxt)}</button>
+      ${campos}
+      <button class="chk" type="button" data-act="chk" data-key="${sl.key}" data-i="${i}" aria-pressed="${s.done}" aria-label="Série ${i + 1} concluída">✓</button>
+      ${s.pr ? '<div class="pr-badge">🏆 Recorde! Mais forte que qualquer treino anterior.</div>' : ''}
+    </div>`;
   });
+  return `<div class="ex-card ${sl.cls}" data-key="${sl.key}">${head}${ultima}
+    <div class="sets-wrap">${rows}</div>
+    <div class="acoes">
+      <button class="mini-btn" data-act="add" data-key="${sl.key}">＋ Série</button>
+      <button class="mini-btn" data-act="rem" data-key="${sl.key}"${sets.length <= 1 ? ' disabled' : ''}>－ Série</button>
+      <button class="mini-btn" data-act="swap" data-key="${sl.key}">Trocar</button>
+      <button class="mini-btn" data-act="skip" data-key="${sl.key}">Pular</button>
+    </div></div>`;
 }
 
-function lastLogFor(exId) {
-  // procura, nas sessões cacheadas do treino atual, o log mais recente desse exercício
-  for (const sess of allSessions) {
-    if (sess.treino !== currentTab) continue;
-    const log = sess.exercises && sess.exercises[exId];
-    if (log && log.some(s => s.weight)) {
-      const withWeight = log.filter(s => s.weight);
-      const last = withWeight[withWeight.length - 1];
-      return { weight: last.weight, reps: last.reps, date: sess.dateLabel || sess.dateISO };
-    }
-  }
-  return null;
+function progressoTxt() {
+  const t = T[currentTab];
+  let feitas = 0, total = 0;
+  t.slots.forEach(sl => { if (sl.skipped) return; t.sets[sl.key].forEach(s => { total++; if (s.done) feitas++; }); });
+  return feitas + ' de ' + total + ' séries';
 }
+function updateProgress() { const el = document.getElementById('progTxt'); if (el) el.textContent = progressoTxt(); }
 
 function renderContent() {
   const contentEl = document.getElementById('content');
+  const t = ensure(currentTab);
   const workout = WORKOUTS[currentTab];
-  let html = `<div class="section-label" style="margin-top:6px;">${workout.label}</div>
-  <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">${todayLabel()}</div>
-  <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">🎨 campos tracejados = valor da última vez, ainda não confirmado hoje — edite se mudar, ou deixe e só marque ✓</div>`;
-
-  workout.sections.forEach(sec => {
-    html += `<div class="section-label">${sec.title}</div>`;
-    sec.exercises.forEach(ex => {
-      const n = setCount(ex.target);
-      const last = lastLogFor(ex.id);
-      html += `<div class="ex-card ${sec.cls}">
-        <div class="ex-top">
-          <div class="ex-name">${ex.name}</div>
-          <div class="ex-target">${ex.target}</div>
-        </div>
-        ${last ? `<div class="last-time">Última vez: <b>${last.weight}kg × ${last.reps || '?'}</b></div>` : ''}
-        <div class="sets-wrap" data-exid="${ex.id}">`;
-      for (let i = 0; i < n; i++) {
-        const s = currentInputs[ex.id][i];
-        const preCls = s.prefilled ? ' prefilled' : '';
-        html += `<div class="set-row">
-          <span class="set-num">${i+1}</span>
-          <span class="set-label">kg</span>
-          <input class="set-input${preCls}" type="text" inputmode="decimal" placeholder="—" value="${s.weight}" data-exid="${ex.id}" data-idx="${i}" data-field="weight">
-          <span class="set-label">reps</span>
-          <input class="set-input${preCls}" type="text" inputmode="numeric" placeholder="—" value="${s.reps}" data-exid="${ex.id}" data-idx="${i}" data-field="reps">
-          <input class="set-check" type="checkbox" ${s.done ? 'checked' : ''} data-exid="${ex.id}" data-idx="${i}" data-field="done">
-        </div>`;
-      }
-      html += `</div></div>`;
-    });
+  const cache = {};
+  let html = `<div class="topo">
+      <div><div class="section-label" style="margin:4px 0 2px;">${H(workout.label)}</div>
+      <div class="data-hoje">${todayLabel()} · <span id="progTxt">${progressoTxt()}</span>${t.savedToday ? ' · já salvo hoje' : ''}</div></div>
+    </div>
+    <div class="desc-linha"><span>Descanso</span>${[60, 90, 120, 180].map(s => `<button class="chip${restDefault === s ? ' on' : ''}" data-act="rest-set" data-s="${s}">${s < 120 ? s + ' s' : (s / 60) + ' min'}</button>`).join('')}</div>`;
+  let sec = '';
+  t.slots.forEach(sl => {
+    if (sl.sec !== sec) { sec = sl.sec; html += `<div class="section-label">${H(sec)}</div>`; }
+    html += cardHTML(sl, t, cache);
   });
-
   contentEl.innerHTML = html;
-
-  contentEl.querySelectorAll('.set-input').forEach(inp => {
-    inp.addEventListener('input', e => {
-      const { exid, idx, field } = e.target.dataset;
-      currentInputs[exid][idx][field] = e.target.value;
-      currentInputs[exid][idx].prefilled = false;
-      e.target.classList.remove('prefilled');
-      const sibling = e.target.parentElement.querySelectorAll('.set-input');
-      sibling.forEach(s => s.classList.remove('prefilled'));
-    });
-  });
-  contentEl.querySelectorAll('.set-check').forEach(chk => {
-    chk.addEventListener('change', e => {
-      const { exid, idx, field } = e.target.dataset;
-      currentInputs[exid][idx][field] = e.target.checked;
-    });
-  });
+}
+function renderCard(key) {
+  const t = T[currentTab], sl = slotOf(key);
+  const el = document.querySelector('#content .ex-card[data-key="' + key + '"]');
+  if (!el) return renderContent();
+  el.outerHTML = cardHTML(sl, t, {});
+  updateProgress();
 }
 
 function renderHistory() {
@@ -692,10 +882,169 @@ function renderHistory() {
     const totalSets = Object.values(sess.exercises || {}).reduce((acc, log) => acc + log.filter(s => s.done).length, 0);
     return `<div class="hist-card">
       <div class="hist-date">Treino ${sess.treino} — ${sess.dateLabel || sess.dateISO}</div>
-      <div class="hist-summary">${totalSets} séries concluídas</div>
+      <div class="hist-summary">${totalSets} séries concluídas${sess.duracao ? ' · ' + sess.duracao + ' min' : ''}</div>
     </div>`;
   }).join('');
 }
+
+// ===================== INTERAÇÃO =====================
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('on'), 3500);
+}
+
+function beep() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    [0, 0.28].forEach(d => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime + d);
+      g.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + d + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + d + 0.22);
+      o.start(audioCtx.currentTime + d); o.stop(audioCtx.currentTime + d + 0.25);
+    });
+  } catch (e) {}
+  try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+}
+function prepareAudio() { // precisa nascer de um toque do usuário (regra do iOS)
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch (e) {}
+}
+function startRest() { rest = { end: Date.now() + restDefault * 1000, dur: restDefault, done: false }; tick(); }
+
+function tick() {
+  const d = document.getElementById('dock');
+  if (!d) return;
+  if (!workStart && !rest) { d.classList.remove('on'); return; }
+  d.classList.add('on');
+  const now = Date.now();
+  document.getElementById('dockTreino').textContent = workStart ? '⏱ ' + fmt((now - workStart) / 1000) : '';
+  const rt = document.getElementById('dockRest'), bar = document.getElementById('dockBar'), btns = document.getElementById('dockBtns');
+  if (rest) {
+    const left = (rest.end - now) / 1000;
+    btns.style.display = '';
+    if (left > 0) {
+      d.classList.remove('fim');
+      rt.textContent = 'Descanso ' + fmt(left);
+      bar.style.width = Math.min(100, (1 - left / rest.dur) * 100) + '%';
+    } else {
+      if (!rest.done) { rest.done = true; beep(); }
+      d.classList.add('fim');
+      rt.textContent = 'Descanso acabou: próxima série';
+      bar.style.width = '100%';
+    }
+  } else {
+    d.classList.remove('fim');
+    rt.textContent = '';
+    bar.style.width = '0';
+    btns.style.display = 'none';
+  }
+}
+setInterval(tick, 250);
+document.addEventListener('visibilitychange', tick);
+
+function toggleDone(key, i) {
+  const t = T[currentTab], sl = slotOf(key), s = t.sets[key][i];
+  s.done = !s.done;
+  s.pre = false;
+  t.touched = true;
+  if (s.done) {
+    prepareAudio();
+    if (!workStart) workStart = Date.now();
+    startRest();
+  }
+  recalcPR(t, sl);
+  renderCard(key);
+  if (s.done && s.pr) toast('🏆 Recorde em ' + EX_INDEX[sl.id].name + '!');
+  renderTabs();
+  saveDraft();
+}
+
+function openSwap(key) {
+  const t = T[currentTab], sl = slotOf(key);
+  const usados = new Set(t.slots.map(x => x.id));
+  const opts = Object.entries(EX_INDEX).filter(([id]) => !usados.has(id))
+    .sort((a, b) => a[1].name.localeCompare(b[1].name, 'pt-BR'));
+  const sel = document.getElementById('swapSel');
+  sel.innerHTML = (sl.id !== sl.key ? `<option value="${sl.key}">↺ Voltar ao original: ${H(EX_INDEX[sl.key].name)}</option>` : '') +
+    opts.map(([id, e]) => `<option value="${id}">${H(e.name)} (treino ${e.treino})</option>`).join('');
+  document.getElementById('swapDlg').dataset.key = key;
+  document.getElementById('swapDlg').showModal();
+}
+
+document.getElementById('swapForm').addEventListener('submit', e => {
+  const dlg = document.getElementById('swapDlg'), key = dlg.dataset.key;
+  const novo = document.getElementById('swapSel').value;
+  if (!novo || e.submitter && e.submitter.value === 'cancel') return;
+  const t = T[currentTab], sl = slotOf(key);
+  sl.id = novo;
+  t.sets[key] = newSets(novo, setCount(sl.target));
+  t.touched = true;
+  recalcPR(t, sl);
+  renderCard(key); renderTabs(); saveDraft();
+});
+
+const contentEl0 = document.getElementById('content');
+contentEl0.addEventListener('input', e => {
+  const inp = e.target.closest('.set-input'); if (!inp) return;
+  const t = T[currentTab], s = t.sets[inp.dataset.key][inp.dataset.i];
+  s[inp.dataset.field] = inp.value;
+  s.pre = false;
+  inp.parentElement.querySelectorAll('.set-input').forEach(x => x.classList.remove('pre'));
+  t.touched = true;
+  saveDraft();
+});
+contentEl0.addEventListener('focusin', e => {
+  const inp = e.target.closest('.set-input'); if (!inp) return;
+  setTimeout(() => { try { inp.select(); inp.setSelectionRange(0, 99); } catch (x) {} }, 0);
+});
+contentEl0.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act, key = b.dataset.key, i = +b.dataset.i;
+  const t = T[currentTab];
+  if (act === 'chk') return toggleDone(key, i);
+  if (act === 'rest-set') {
+    restDefault = +b.dataset.s; lsSet(LS_REST, String(restDefault));
+    document.querySelectorAll('.desc-linha .chip').forEach(c => c.classList.toggle('on', +c.dataset.s === restDefault));
+    return;
+  }
+  if (act === 'swap') return openSwap(key);
+  const sl = slotOf(key);
+  if (act === 'prev') {
+    const timed = isTimed(EX_INDEX[sl.id].target), f = lastLog(sl.id), p = f && prevOf(f, i);
+    if (!p) return;
+    const s = t.sets[key][i];
+    if (timed) s.time = p.time || ''; else { s.weight = p.weight || ''; s.reps = p.reps || ''; }
+    s.pre = false;
+  } else if (act === 'add') {
+    const sets = t.sets[key], l = sets[sets.length - 1] || { weight: '', reps: '', time: '' };
+    sets.push({ weight: l.weight, reps: l.reps, time: l.time, done: false, pre: !!(l.weight || l.time), pr: false });
+  } else if (act === 'rem') {
+    if (t.sets[key].length > 1) t.sets[key].pop();
+  } else if (act === 'skip') {
+    sl.skipped = true;
+  } else if (act === 'unskip') {
+    sl.skipped = false;
+  }
+  t.touched = true;
+  recalcPR(t, sl);
+  renderCard(key); renderTabs(); saveDraft();
+});
+
+document.getElementById('dock').addEventListener('click', e => {
+  const b = e.target.closest('[data-d]'); if (!b || !rest) return;
+  if (b.dataset.d === 'menos') { rest.end -= 15000; rest.done = false; }
+  else if (b.dataset.d === 'mais') { rest.end += 15000; rest.done = false; rest.dur += 15; }
+  else rest = null;
+  tick();
+});
 
 // ===================== RECORDES =====================
 function est1RM(weight, reps) {
@@ -916,7 +1265,13 @@ async function loadSessions() {
   } catch (err) {
     allSessions = [];
   }
-  initInputsForTab();
+  bestCache = {};
+  // treinos já mexidos hoje ficam como estão; os demais recebem os valores da última sessão
+  Object.keys(WORKOUTS).forEach(l => {
+    if (!T[l] || !T[l].touched) T[l] = buildTab(l); else recalcAll(T[l]);
+  });
+  if (!userPickedTab) currentTab = nextTab();
+  renderTabs();
   renderContent();
   renderHistory();
   if (currentView === 'records') renderRecords();
@@ -926,29 +1281,54 @@ async function loadSessions() {
 async function saveSession() {
   const statusEl = document.getElementById('saveStatus');
   const btn = document.getElementById('saveBtn');
+  const letter = currentTab, t = T[letter];
+
+  // séries preenchidas por você, mas sem ✓: pergunta antes de descartar
+  let pend = 0;
+  t.slots.forEach(sl => { if (!sl.skipped) t.sets[sl.key].forEach(s => { if (!s.done && !s.pre && (s.weight || s.reps || s.time)) pend++; }); });
+  if (pend && confirm(pend + (pend === 1 ? ' série preenchida está sem ✓.' : ' séries preenchidas estão sem ✓.') + '\nContar como feitas?')) {
+    t.slots.forEach(sl => { if (!sl.skipped) t.sets[sl.key].forEach(s => { if (!s.done && !s.pre && (s.weight || s.reps || s.time)) s.done = true; }); });
+    t.slots.forEach(sl => recalcPR(t, sl));
+    renderContent();
+  }
+
+  const exercises = {}, slotsInfo = {};
+  let feitas = 0, exFeitos = 0, prs = 0;
+  t.slots.forEach(sl => {
+    slotsInfo[sl.key] = { id: sl.id, skipped: !!sl.skipped };
+    if (sl.skipped) return;
+    const sets = t.sets[sl.key].map(s => s.done
+      ? { weight: s.weight || '', reps: s.reps || '', time: s.time || '', done: true }
+      : { weight: '', reps: '', time: '', done: false });
+    const n = sets.filter(s => s.done).length;
+    if (n) { feitas += n; exFeitos++; prs += t.sets[sl.key].filter(s => s.pr).length; }
+    exercises[sl.id] = sets;
+  });
+  if (!feitas) {
+    statusEl.textContent = 'Marque pelo menos uma série com ✓ antes de salvar.';
+    setTimeout(() => { statusEl.textContent = ''; }, 5000);
+    return;
+  }
+  const dur = workStart ? Math.max(1, Math.round((Date.now() - workStart) / 60000)) : 0;
   const payload = {
-    treino: currentTab,
-    dateISO: todayISO(),
-    dateLabel: todayLabel(),
-    timestamp: Date.now(),
-    exercises: JSON.parse(JSON.stringify(currentInputs)),
+    treino: letter, dateISO: todayISO(), dateLabel: todayLabel(), timestamp: Date.now(),
+    exercises, slotsInfo, duracao: dur,
   };
   btn.disabled = true;
   statusEl.textContent = 'salvando…';
   try {
-    if (db) {
-      const docId = 'sess_' + Date.now();
-      await db.doc('sessions/' + docId).set(payload);
-      statusEl.textContent = '✅ sessão salva!';
-      await loadSessions();
-    } else {
-      statusEl.textContent = 'armazenamento indisponível nesta visualização — abra o artifact publicado pra salvar.';
-    }
+    if (!db) throw new Error('sem banco');
+    await db.doc('sessions/sess_' + payload.dateISO + '_' + letter).set(payload);
+    statusEl.textContent = '✅ Salva: ' + feitas + ' séries · ' + exFeitos + ' exercícios' + (dur ? ' · ' + dur + ' min' : '') + (prs ? ' · ' + prs + (prs === 1 ? ' recorde 🏆' : ' recordes 🏆') : '');
+    t.touched = false; t.savedToday = true;
+    workStart = null; rest = null; tick();
+    saveDraft();
+    await loadSessions();
   } catch (err) {
-    statusEl.textContent = 'não consegui salvar agora — tenta de novo em instantes.';
+    statusEl.textContent = 'Não consegui salvar agora. Seus dados continuam aqui: tente de novo.';
   }
   btn.disabled = false;
-  setTimeout(() => { statusEl.textContent = ''; }, 4000);
+  setTimeout(() => { statusEl.textContent = ''; }, 9000);
 }
 
 // ===================== INIT =====================
@@ -960,10 +1340,13 @@ document.getElementById('historyToggle').addEventListener('click', () => {
   document.getElementById('historyToggle').textContent = show ? 'Esconder histórico ▴' : 'Ver histórico de sessões ▾';
 });
 
+restDefault = parseInt(lsGet(LS_REST), 10) || 90;
+loadDraft();
+ensure(currentTab);
 renderViewSwitch();
 renderTabs();
-initInputsForTab();
 renderContent();
+tick();
 
 (async () => {
   try {
@@ -971,11 +1354,7 @@ renderContent();
   } catch (err) {
     db = null;
   }
-  if (db) {
-    await loadSessions();
-  } else {
-    document.getElementById('saveStatus').textContent = '';
-  }
+  if (db) await loadSessions();
 })();
 </script>
 </body>

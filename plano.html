@@ -144,7 +144,7 @@ h1,h2,h3{font-family:var(--f-titulo);letter-spacing:var(--titulo-tracking)}
       <p>Serve como <b>jantar ocasional</b>. <b>Não</b> serve de pré-treino: gordura demais para digerir em 1 h.</p></div>
     <div class="card"><h3>Proteína</h3><p>O plano chega a ~170–180 g por dia (≈ 2,5 g/kg). A faixa que a pesquisa sustenta para ganhar músculo é 1,6–2,2 g/kg (110–150 g). Você tem folga: se algum dia faltar ovo ou whey, não faz diferença.</p></div>
     <div class="card"><h3>Horários e água</h3>
-      <p>Se o treino mudar de horário, mantenha o pré-treino 1 h antes e a refeição principal até 1h30 depois. Se o almoço atrasar, tome a vitamina logo ao sair do treino.</p>
+      <p>Se o treino mudar de horário, mantenha o almoço 1 h antes e a vitamina logo depois do treino (em até 1 h). O resto das refeições se encaixa em volta.</p>
       <p><b>Água:</b> cerca de 2,4 L por dia (35 ml por kg).</p></div>
     <div class="card"><h3>Intolerância à lactose</h3><p>Leite, iogurte, queijo e whey sempre na versão zero lactose. Hambúrguer industrializado: confira o rótulo.</p></div>
   </section>
@@ -213,19 +213,19 @@ var IDEIAS=[
    {h:'07:30',n:'Café da manhã',ops:[
      {n:'Ovos',it:[['3 unidades','Ovos mexidos ou cozidos',216,19,1,14],['2 fatias (50 g)','Pão integral',120,6,22,2],['1 média (130 g)','Fruta (banana, maçã ou mamão)',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]},
      {n:'Frango',it:[['100 g','Frango desfiado',160,31,0,4],['1 unidade (50 g)','Wrap integral',150,4,24,4],['1 média (130 g)','Fruta',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]},I('omelete-muffin'),I('crepioca'),I('overnight')]},
-   {h:'12:00',n:'Pré-treino',tag:'1 h antes do treino',ops:[
+   {h:'10:00',n:'Lanche da manhã',ops:[
      {n:'Fruta + pão',it:[['1 média','Banana',90,1,23,0],['2 fatias (50 g)','Pão integral ou torrada',120,6,22,2]]},
      {n:'Ovos + fruta',it:[['2 unidades','Ovos mexidos simples',144,13,1,10],['1 média','Banana',90,1,23,0]]}]},
+   {h:'12:00',n:'Almoço',tag:'1 h antes do treino',obs:'Se o treino pesar no estômago, coma o arroz e a proteína primeiro e deixe a salada e a tangerina para depois. Outras proteínas e trocas: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0],['100 g','Feijão cozido',77,5,14,1],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0],['à vontade','Folhas',10,1,2,0],['1 unidade','Tangerina, depois',40,1,10,0]]},
    {treino:'13:00',txt:'Treino'},
-   {h:'14:30',n:'Almoço',obs:'Primeira refeição depois do treino. Outras proteínas e trocas de carboidrato: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0],['100 g','Feijão cozido',77,5,14,1],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0],['à vontade','Folhas',10,1,2,0],['1 unidade','Tangerina, depois',40,1,10,0]]},
-   {h:'17:30',n:'Lanche da tarde',ops:[
+   {h:'14:30',n:'Pós-treino',tag:'logo depois do treino',ops:[
      {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
      {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2],['2 unidades','Ovos (ou 80 g de frango)',144,13,1,10],['1 média','Fruta',80,1,19,0]]}]},
-   {h:'20:30',n:'Jantar',tag:'escolha uma opção',ops:[
+   {h:'19:00',n:'Jantar',tag:'escolha uma opção',ops:[
      {n:'Hambúrguer',it:[['1 pão (60 g)','Pão de hambúrguer',170,5,31,3],['1 unidade (100 g pronto)','Hambúrguer caseiro de patinho (125 g crus)',220,33,0,9],['60 g','Alface, tomate e cebola',15,1,3,0],['150 g','Batata assada, cozida ou na airfryer',130,3,30,0],['1 fatia (20 g)','Queijo zero lactose',60,4,1,4,true]],obs:'No máximo 1 colher de chá de maionese. Se for hambúrguer pronto, escolha um de ~100 g e sem lactose.'},
      {n:'Lanche',it:[['1 unidade (50 g)','Wrap integral',150,4,24,4],['100 g','Frango desfiado ou atum',160,31,0,4],['60 g','Vegetais',15,1,3,0],['1 colher de chá','Azeite',36,0,0,4]],obs:'Ou 2 fatias de pão integral com ovos, frango ou atum no lugar do wrap.'},
      {n:'Prato',it:[['60 g','Arroz cozido',77,2,17,0],['50 g','Feijão cozido',39,2,7,0],['120 g','Proteína (frango, carne magra ou peixe)',192,37,0,4],['150 g','Legumes e salada',50,2,11,0]]},I('pizza-wrap'),I('strogonoff')]},
-   {h:'22:30',n:'Ceia',ops:[
+   {h:'22:00',n:'Ceia',ops:[
      {n:'Iogurte',it:[['170 g','Iogurte zero lactose com canela',100,6,13,3]]},
      {n:'Mingau',it:[['200 ml','Leite zero lactose',122,6,10,7],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
      {n:'Ovos',it:[['1 a 2 unidades','Ovos cozidos',108,10,1,7]]},I('sorvete-banana')]}
@@ -236,7 +236,7 @@ var IDEIAS=[
   function lista(it){return '<ul class="it">'+it.map(function(x){return '<li'+(x[6]?' class="op"':'')+'><span class="q">'+E(x[0])+'</span><span>'+E(x[1])+(x[6]?' <i>(opcional, +'+x[2]+' kcal)</i>':'')+'</span></li>'}).join('')+'</ul>'}
 
   /* ---- Dia ---- */
-  var KEY='plano-escolhas',esc={};
+  var KEY='plano-escolhas-v2',esc={};
   try{esc=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
   function sel(i){var r=REF[i];return r.ops?r.ops[Math.min(esc[i]||0,r.ops.length-1)]:r}
   function proxima(){var n=new Date(),m=n.getHours()*60+n.getMinutes(),r=-1;REF.forEach(function(x,i){if(!x.h||r>=0)return;var p=x.h.split(':');if(+p[0]*60+ +p[1]>=m-30)r=i});return r}
