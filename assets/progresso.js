@@ -98,8 +98,14 @@
   function rota(d, hoje) {
     var apps = d.apps || [], meta = Math.max(1, num((d.profile || {}).weeklyGoal) || 10);
     var ini = segunda(hoje), ant = addDias(ini, -7), fim = addDias(ini, 7);
+    var cont = {}, melhor = 0;
+    apps.forEach(function (a) { if (!a.appliedAt) return; var k = iso(segunda(parse(a.appliedAt))); cont[k] = (cont[k] || 0) + 1; });
+    Object.keys(cont).forEach(function (k) { if (cont[k] > melhor) melhor = cont[k]; });
+    var ws = segunda(hoje), seguidas = 0; // semana atual só entra na conta quando a meta já foi batida
+    if ((cont[iso(ws)] || 0) < meta) ws = addDias(ws, -7);
+    while ((cont[iso(ws)] || 0) >= meta && seguidas < 520) { seguidas++; ws = addDias(ws, -7); }
     return { semana: na(apps, 'appliedAt', ini, fim), anterior: na(apps, 'appliedAt', ant, ini), meta: meta, total: apps.length,
-      hoje: apps.filter(function (a) { return a.appliedAt === iso(hoje); }).length };
+      hoje: apps.filter(function (a) { return a.appliedAt === iso(hoje); }).length, melhorSemana: melhor, semanasMeta: seguidas };
   }
 
   /* ---------- Água: meta diária, sequência de dias bons ---------- */
@@ -164,7 +170,8 @@
   function mudanca(d) {
     var m = d.mud || {}, ch = m.check || {}, done = ch.done || {}, extra = (ch.extra || []).length;
     var total = FASES_N.reduce(function (a, b) { return a + b; }, 0) + extra, n = Object.keys(done).filter(function (k) { return done[k]; }).length;
-    return { pct: total ? Math.round(n / total * 100) : 0, feitos: n, total: total, imoveis: (m.imoveis || []).length, cotacoes: (m.cotacoes || []).length };
+    return { pct: total ? Math.round(n / total * 100) : 0, feitos: n, total: total, imoveis: (m.imoveis || []).length, cotacoes: (m.cotacoes || []).length,
+      escolhido: (m.imoveis || []).some(function (i) { return i.status === 'escolhido'; }), contratada: (m.cotacoes || []).some(function (c) { return c.status === 'contratada'; }) };
   }
 
   /* ---------- Desafios ---------- */
@@ -200,12 +207,18 @@
     add('g3', '3 dias de estudo no Grimório', p.grimorio.sequencia >= 3);
     add('r1', '1ª candidatura', p.rota.total >= 1);
     add('r10', 'Meta semanal de candidaturas batida', p.rota.semana >= p.rota.meta);
+    add('r2', '2 semanas seguidas na meta de candidaturas', p.rota.semanasMeta >= 2);
     add('f10', '10% da entrada do imóvel', p.financeiro.pct >= 10);
     add('f25', '25% da entrada do imóvel', p.financeiro.pct >= 25);
     add('f50', 'Metade da entrada do imóvel', p.financeiro.pct >= 50);
+    add('f75', '75% da entrada do imóvel', p.financeiro.pct >= 75);
+    add('f100', 'Entrada do imóvel completa', p.financeiro.pct >= 100);
     add('m1', '1º imóvel anotado', p.mudanca.imoveis >= 1);
     add('m3', '3 orçamentos de mudança', p.mudanca.cotacoes >= 3);
     add('m50', 'Metade do checklist da mudança', p.mudanca.pct >= 50);
+    add('mesc', 'Imóvel escolhido', p.mudanca.escolhido);
+    add('mcon', 'Empresa de mudança contratada', p.mudanca.contratada);
+    add('m100', 'Checklist da mudança concluído', p.mudanca.pct >= 100);
     add('a1', '1º dia bom na alimentação', p.refeicoes.diasBons >= 1);
     add('a3', '3 dias seguidos na alimentação', p.refeicoes.sequencia >= 3);
     add('a7', '7 dias seguidos na alimentação', p.refeicoes.sequencia >= 7);

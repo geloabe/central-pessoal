@@ -620,8 +620,13 @@ function dailyStreak(habit){
   let streak = 0;
   // se hoje ainda não bateu a meta, começa a contar de ontem (não zera o que já foi feito antes)
   if(!metGoal(habit, isoDate(d))) d = addDays(d, -1);
-  while(metGoal(habit, isoDate(d))){
-    streak++; d = addDays(d, -1);
+  // regra de pausa (a mesma da Central): uma falha isolada não quebra; duas em menos de 7 dias quebram
+  let ultima = null, guarda = 0;
+  while(guarda++ < 800){
+    if(metGoal(habit, isoDate(d))){ streak++; }
+    else if(streak > 0 && (ultima === null || (ultima - d)/864e5 >= 7)){ ultima = new Date(d); }
+    else break;
+    d = addDays(d, -1);
   }
   return streak;
 }
@@ -865,7 +870,7 @@ function renderRoutine(){
         </div>
         <div class="qty-block">
           <button class="qty-btn" data-action="qty-dec" data-habit="${h.id}">−</button>
-          <span class="qty-value-tag" data-action="qty-edit" data-habit="${h.id}" title="Clique para corrigir">${v}${h.unit}</span>
+          <span class="qty-value-tag" data-action="qty-edit" data-habit="${h.id}" title="Clique para corrigir">${v}${h.unit.length>1?' ':''}${h.unit}</span>
           <button class="qty-btn" data-action="qty-inc" data-habit="${h.id}">+</button>
         </div>
       </div>`;
@@ -1212,7 +1217,7 @@ function renderRecords(){
       tagClass = 'hit'; tagHtml = 'feito';
     } else {
       tagClass = r.v >= r.h.target ? 'hit' : 'miss';
-      tagHtml = r.v + r.h.unit;
+      tagHtml = r.v + (r.h.unit.length>1?' ':'') + r.h.unit;
     }
     return `<div class="record-row">
       <div class="rec-left"><span class="rec-date">${U.fmtDateShort(d)}</span><span class="rec-habit">${esc(r.h.name)}</span></div>

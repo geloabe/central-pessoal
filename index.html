@@ -70,6 +70,12 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
 .agua .bts button{font:600 15px var(--f-texto);min-height:52px;border:1px solid var(--t-c3);background:transparent;color:var(--t-ink);cursor:pointer;border-radius:var(--raio)}
 .agua .bts button.pri{background:var(--t-c3);color:#fff}
 .agua .desf{margin-top:8px;font:500 13px var(--f-texto);min-height:40px;border:0;background:none;color:var(--t-muted);text-decoration:underline;cursor:pointer}
+
+.parahoje{margin-top:12px}
+.parahoje .rotulo{margin-bottom:6px}
+.parahoje .chips{display:flex;gap:8px;flex-wrap:wrap}
+.parahoje a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1px solid var(--t-borda);background:var(--t-surface);color:var(--t-ink);text-decoration:none;font:600 14px var(--f-texto);border-radius:var(--raio)}
+.parahoje a.ok{border-color:var(--t-ok);color:var(--t-ok)}
 </style>
 <link rel="stylesheet" href="assets/mobile.css">
 </head>
@@ -87,6 +93,8 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
     <p id="sub"></p>
     <div id="pr"></div>
   </section>
+
+  <section class="parahoje" id="parahoje" aria-label="Para hoje"></section>
 
   <section class="agua" id="agua" aria-label="Água de hoje"></section>
 
@@ -174,12 +182,21 @@ function render(p){
     card('habitos','habitos.html','Hábitos',h.ativo?'<div class="num">'+h.sequencia+' <small>dia'+(h.sequencia===1?'':'s')+' seguidos</small></div>'+sem+'<div class="mini">Hoje: '+h.feitosHoje+' de '+h.totalHoje+(h.pausas?' · '+h.pausas+' pausa'+(h.pausas>1?'s':'')+' usada'+(h.pausas>1?'s':''):'')+'</div>'+
         '<div class="mini">'+(h.emRisco?'Hoje ainda dá tempo de manter os '+h.sequencia+' dias.':h.sequencia===0&&h.melhor>0?'Recomeço — sua melhor sequência foi de '+h.melhor+' dias.':h.melhor>h.sequencia?'Melhor sequência: '+h.melhor+' dias.':'')+'</div>':'<div class="mini">Comece o check-in de hoje.</div>'),
     card('grimorio','grimorio.html','Grimório','<div class="num">'+p.grimorio.sequencia+' <small>dia'+(p.grimorio.sequencia===1?'':'s')+' de estudo</small></div><div class="mini">'+(p.grimorio.total?p.grimorio.total+' dias com registro':'Seu caderno de estudo e prática.')+'</div>'),
-    card('rota','rota-internacional.html','Rota Internacional','<div class="num">'+p.rota.semana+' <small>de '+p.rota.meta+' candidaturas</small></div>'+barra(rotaPct)+delta(p.rota.semana,p.rota.anterior)),
+    card('rota','rota-internacional.html','Rota Internacional','<div class="num">'+p.rota.semana+' <small>de '+p.rota.meta+' candidaturas</small></div>'+barra(rotaPct)+delta(p.rota.semana,p.rota.anterior)+(p.rota.melhorSemana>p.rota.semana||p.rota.semanasMeta?'<div class="mini">'+(p.rota.semanasMeta?p.rota.semanasMeta+' semana'+(p.rota.semanasMeta===1?'':'s')+' seguida'+(p.rota.semanasMeta===1?'':'s')+' na meta · ':'')+'melhor semana: '+p.rota.melhorSemana+'</div>':'')),
     card('financeiro','financeiro.html','Financeiro','<div class="num">'+p.financeiro.pct+'% <small>da entrada</small></div>'+barra(p.financeiro.pct)+'<div class="mini">'+brl(p.financeiro.guardado)+' de '+brl(p.financeiro.meta)+'</div>'),
     card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
     card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>')
   ];
   renderAgua(p);
+  (function(){
+    var l=[], r=p.refeicoes, hb=p.habitos, ds=p.desafios;
+    if(r.hoje<6) l.push(['plano.html','🍽️',r.hoje?'Refeições: '+r.hoje+' de 6':'Marcar as refeições']);
+    if(!hb.ativo||hb.feitosHoje<hb.totalHoje) l.push(['habitos.html','✅',hb.ativo?'Hábitos: '+hb.feitosHoje+' de '+hb.totalHoje:'Check-in de hábitos']);
+    if(ds.ativos&&ds.hoje<ds.ativos) l.push(['desafios.html','🎯','Desafio: falta marcar hoje']);
+    var el=$('#parahoje');
+    if(!l.length){el.innerHTML='<div class="rotulo">Para hoje</div><div class="chips"><a class="ok" href="#">✓ Tudo em dia hoje</a></div>';return}
+    el.innerHTML='<div class="rotulo">Para hoje · toque para ir</div><div class="chips">'+l.slice(0,3).map(function(x){return '<a href="'+x[0]+'"><span aria-hidden="true">'+x[1]+'</span>'+esc(x[2])+'</a>'}).join('')+'</div>';
+  })();
   $('#cards').innerHTML=cards.join('');
 
   var feitos=p.marcos.filter(function(m){return m.ok}), faltam=p.marcos.filter(function(m){return !m.ok}).slice(0,4);
