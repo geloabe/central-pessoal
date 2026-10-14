@@ -71,6 +71,7 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
 .agua .bts button.pri{background:var(--t-c3);color:#fff}
 .agua .desf{margin-top:8px;font:500 13px var(--f-texto);min-height:40px;border:0;background:none;color:var(--t-muted);text-decoration:underline;cursor:pointer}
 </style>
+<link rel="stylesheet" href="assets/mobile.css">
 </head>
 <body class="t">
 <main>
@@ -104,6 +105,7 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
 
 <script src="assets/modulo.js"></script>
 <script src="assets/progresso.js"></script>
+<script src="assets/integracoes.js"></script>
 <script>
 (function(){
 'use strict';
@@ -137,7 +139,7 @@ async function carregar(){
     seguro(db.collection('refeicoes').get().then(docs),[]),
     seguro(db.collection('agua').get().then(docs),[])
   ]);
-  return {sessions:r[0],habitos:{config:json(r[1]),records:json(r[2])||{}},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
+  return {sessions:r[0],habitos:{config:json(r[1]),records:CP_INT.mesclar(json(r[2])||{},r[17],r[0])},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
     fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17]};
 }
 
@@ -224,6 +226,7 @@ $('#agua').addEventListener('click',function(e){
   var d=aguaDoc();
   if(b.dataset.desf){var u=d.log.pop();d.ml=Math.max(0,d.ml-(u||0))}
   else{var ml=+b.dataset.ml;if(ml<0){var v=prompt('Quantos ml você bebeu?','300');ml=Math.round(+String(v||'').replace(',','.'));if(!ml||ml<0||ml>3000)return}d.ml+=ml;d.log.push(ml)}
+  CP_INT.mesclar(DADOS.habitos.records,DADOS.agua,[]);
   salvaAgua(d);render(CP_PROG.calcular(DADOS,new Date()));
 });
 carregar().then(function(d){DADOS=d;render(CP_PROG.calcular(d,new Date()));avaliacao(d)},function(e){

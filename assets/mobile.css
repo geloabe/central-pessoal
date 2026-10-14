@@ -1,0 +1,48 @@
+/* Camada de uso no celular, compartilhada por todos os módulos (iPhone 12: 390 px).
+   Regras: campos com 16 px (o Safari dá zoom abaixo disso), alvos de toque de pelo menos 40–44 px,
+   caixas de marcar maiores. Só vale em telas estreitas. */
+@media (max-width: 700px) {
+  /* campos de formulário: sem zoom ao focar */
+  html[data-pg] input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),
+  html[data-pg] select,
+  html[data-pg] textarea { font-size: 16px; }
+  html[data-pg] input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),
+  html[data-pg] select { min-height: 44px; }
+
+  /* faixa do módulo: voltar e sair com área de toque de verdade */
+  .faixa-modulo { padding-top: 4px; padding-bottom: 4px; }
+  .faixa-modulo a { display: inline-flex; align-items: center; min-height: 44px; padding-right: 8px; white-space: nowrap; }
+  #app-logout { min-height: 44px; min-width: 64px; padding: 0 14px; }
+
+  /* caixas de marcar */
+  html[data-pg] input[type=checkbox], html[data-pg] input[type=radio] { width: 22px; height: 22px; flex: none; }
+
+  /* botões e abas em geral */
+  html[data-pg] button, html[data-pg] .btn, html[data-pg] summary { min-height: 40px; }
+  html[data-pg] summary { display: flex; align-items: center; min-height: 44px; }
+  html[data-pg] nav button, html[data-pg] .tab, html[data-pg] .tab-btn, html[data-pg] [role=tab] { min-height: 44px; }
+
+  /* Hábitos */
+  html[data-pg="habitos"] .check-btn { width: 48px; height: 48px; }
+  html[data-pg="habitos"] .qty-btn,
+  html[data-pg="habitos"] .period-arrow { width: 44px; height: 44px; font-size: 20px; }
+  html[data-pg="habitos"] .filter-select { min-height: 44px; }
+
+  /* Grimório */
+  html[data-pg="grimorio"] .topic-del { min-width: 44px; min-height: 44px; font-size: 20px; }
+  html[data-pg="grimorio"] .track-del { min-height: 44px; padding: 0 10px; }
+  html[data-pg="grimorio"] .theme-toggle { min-height: 44px; }
+
+  /* Rota Internacional */
+  html[data-pg="rota"] .lvbtn { min-height: 44px; }
+  html[data-pg="rota"] .tab { min-height: 44px; }
+
+  /* Financeiro */
+  html[data-pg="financeiro"] .tag-edit { font-size: 16px; min-height: 44px; }
+  html[data-pg="financeiro"] .grid > * { min-width: 0; }
+  html[data-pg="financeiro"] .grid.cols-3, html[data-pg="financeiro"] .grid.cols-4 { grid-template-columns: 1fr 1fr; }
+  html[data-pg="financeiro"] .scenario-card { padding: 14px 16px; }
+  html[data-pg="financeiro"] .scenario-card .big { font-size: 22px; overflow-wrap: anywhere; }
+  html[data-pg="financeiro"] .mini-trend-card, html[data-pg="financeiro"] .chart-wrap { min-width: 0; max-width: 100%; }
+  html[data-pg="financeiro"] a[href^="#"] { display: inline-flex; align-items: center; min-height: 44px; }
+}
