@@ -530,7 +530,7 @@
 /* ================= CONFIG PADRÃO ================= */
 const DEFAULT_CONFIG = {
   habits: [
-    { id:'cuidados_bucais', name:'Cuidados bucais', kind:'quantity', freq:'day', target:3, unit:'x', step:1 },
+    { id:'cuidados_bucais', name:'Saúde bucal (escovar e fio dental)', kind:'quantity', freq:'day', target:3, unit:'x', step:1 },
     { id:'skincare_manha', name:'Skincare (manhã)', kind:'boolean', freq:'day', target:1, unit:null, step:null },
     { id:'skincare_noite', name:'Skincare (noite)', kind:'boolean', freq:'day', target:1, unit:null, step:null },
     { id:'omega3', name:'Ômega 3', kind:'boolean', freq:'day', target:1, unit:null, step:null }
@@ -846,16 +846,10 @@ const SUGESTOES = [
     why:'Ritual de hidratação sem açúcar. O efeito do cravo na saúde ainda é pouco estudado em pessoas, então vale mais pelo hábito. Use 1 ou 2 cravos e, se tomar anticoagulante, pergunte ao médico.' },
   { id:'respirar', name:'Respirar ou meditar (5 min)', kind:'boolean', freq:'week', target:3, unit:null, step:null,
     why:'Pausa curta para baixar o estresse e treinar o foco. Cinco minutos já contam.' },
-  { id:'fio_dental', name:'Fio dental', kind:'boolean', freq:'day', target:1, unit:null, step:null,
-    why:'A escova não limpa entre os dentes. É o passo que mais falta na rotina bucal e leva 1 minuto.' },
   { id:'pesar_medidas', name:'Registrar peso e medidas', kind:'boolean', freq:'week', target:1, unit:null, step:null,
     why:'Na recomposição corporal o peso sozinho engana. Uma vez por semana, no mesmo dia e horário, mostra a tendência. Dá para anotar na aba Medidas do Plano alimentar.' },
   { id:'preparar_semana', name:'Preparar a semana (frutas, marmitas)', kind:'boolean', freq:'week', target:1, unit:null, step:null,
     why:'Deixar tangerina descascada, frango desfiado e arroz prontos tira a preguiça do meio da semana e protege o plano alimentar.' },
-  { id:'coisa_boa', name:'Anotar uma coisa boa do dia', kind:'boolean', freq:'week', target:3, unit:null, step:null,
-    why:'Uma linha basta. Olhar para o que deu certo ajuda o humor e combina com o jeito de comemorar pequenas vitórias.' },
-  { id:'prazer', name:'Fazer algo só por prazer (30 min)', kind:'boolean', freq:'week', target:2, unit:null, step:null,
-    why:'Jogo, série, música, desenho, qualquer coisa sem meta. Descanso de verdade também faz parte da saúde.' },
   { id:'pausa_ativa', name:'Pausa para alongar pescoço e ombros', kind:'boolean', freq:'week', target:3, unit:null, step:null,
     why:'Quem passa horas no computador acumula tensão no pescoço e nos ombros. Dois minutos de pausa aliviam.' },
   { id:'social', name:'Falar com um amigo ou familiar', kind:'boolean', freq:'week', target:2, unit:null, step:null,

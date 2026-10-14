@@ -73,7 +73,7 @@
   var FORA = ['academia', 'agua', 'livro'];
   // mesmos hábitos que o Hábitos usa quando ainda não há configuração salva
   var CONFIG_PADRAO = { habits: [
-    { id: 'cuidados_bucais', name: 'Cuidados bucais', kind: 'quantity', freq: 'day', target: 3, unit: 'x', step: 1 },
+    { id: 'cuidados_bucais', name: 'Saúde bucal (escovar e fio dental)', kind: 'quantity', freq: 'day', target: 3, unit: 'x', step: 1 },
     { id: 'skincare_manha', name: 'Skincare (manhã)', kind: 'boolean', freq: 'day', target: 1, unit: null, step: null },
     { id: 'skincare_noite', name: 'Skincare (noite)', kind: 'boolean', freq: 'day', target: 1, unit: null, step: null },
     { id: 'omega3', name: 'Ômega 3', kind: 'boolean', freq: 'day', target: 1, unit: null, step: null }] };
