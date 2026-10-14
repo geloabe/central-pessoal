@@ -54,25 +54,31 @@
   function bateu(h, v) { return h.kind === 'boolean' ? !!v : num(v) >= h.target; }
   function habitos(d, hoje) {
     var cfg = (d.habitos && d.habitos.config) || null, rec = (d.habitos && d.habitos.records) || {};
-    if (!cfg) return { ativo: false, feitosHoje: 0, totalHoje: 0, sequencia: 0, pausas: 0 };
+    if (!cfg) return { ativo: false, feitosHoje: 0, totalHoje: 0, sequencia: 0, pausas: 0, melhor: 0, emRisco: false, semana: [] };
     var diarios = habitosDiarios(cfg);
     function feitos(dia) { var r = rec[dia] || {}; return diarios.filter(function (h) { return bateu(h, r[h.id]); }).length; }
     function bom(dia) { return diarios.length ? feitos(dia) >= Math.ceil(diarios.length / 2) : false; }
-    var dt = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-    if (!bom(iso(dt))) dt = addDias(dt, -1); // o dia de hoje ainda pode virar: não zera a sequência durante o dia
-    var seq = 0, pausas = 0, ultimaPausa = null, guarda = 0;
-    while (guarda++ < 800) {
-      if (bom(iso(dt))) { seq++; }
-      else {
-        // pausa: só vale se não houve outra pausa nos 6 dias seguintes a este (janela de 7 dias)
-        if (seq > 0 && (ultimaPausa === null || (ultimaPausa - dt) / DIA >= 7)) { pausas++; ultimaPausa = new Date(dt.getTime()); }
+    // sequência que termina em `fim` (um dia bom). Uma falha isolada vira "pausa"; duas falhas em menos de 7 dias quebram.
+    function corrida(fim) {
+      var dt = new Date(fim.getFullYear(), fim.getMonth(), fim.getDate()), seq = 0, pausas = 0, ultima = null, set = {}, guarda = 0;
+      while (guarda++ < 800) {
+        if (bom(iso(dt))) { seq++; }
+        else if (seq > 0 && (ultima === null || (ultima - dt) / DIA >= 7)) { pausas++; ultima = new Date(dt.getTime()); set[iso(dt)] = 1; }
         else break;
+        dt = addDias(dt, -1);
       }
-      dt = addDias(dt, -1);
+      return { seq: seq, pausas: pausas, set: set };
     }
-    var semana = []; var ini = segunda(hoje);
-    for (var i = 0; i < 7; i++) { var dia = addDias(ini, i), k = iso(dia); semana.push({ dia: k, feito: bom(k), futuro: dia > hoje, hoje: k === iso(hoje) }); }
-    return { ativo: true, feitosHoje: feitos(iso(hoje)), totalHoje: diarios.length, sequencia: seq, pausas: pausas, semana: semana };
+    var h0 = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+    var fim = bom(iso(h0)) ? h0 : addDias(h0, -1); // hoje ainda pode virar: não zera a sequência durante o dia
+    var atual = corrida(fim);
+    // melhor sequência já alcançada: o maior valor entre todos os dias bons do histórico
+    var melhor = atual.seq, datas = Object.keys(rec).sort();
+    datas.forEach(function (k) { if (bom(k)) { var c = corrida(parse(k)).seq; if (c > melhor) melhor = c; } });
+    var semana = [], ini = segunda(hoje);
+    for (var i = 0; i < 7; i++) { var dia = addDias(ini, i), k = iso(dia); semana.push({ dia: k, feito: bom(k), pausa: !!atual.set[k], futuro: dia > hoje, hoje: k === iso(hoje) }); }
+    return { ativo: true, feitosHoje: feitos(iso(hoje)), totalHoje: diarios.length, sequencia: atual.seq, pausas: atual.pausas,
+      melhor: melhor, emRisco: !bom(iso(h0)) && atual.seq > 0, semana: semana };
   }
 
   /* ---------- Grimório: dias seguidos com registro ---------- */

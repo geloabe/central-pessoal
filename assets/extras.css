@@ -24,7 +24,7 @@ html[data-pg="treino"] .set-check,html[data-pg="treino"] .ex-card.bonus .set-che
 html[data-pg="treino"] .save-btn{padding:16px;font-size:16px}
 
 /* ---------- Mudança ---------- */
-html[data-pg="mudanca"]:not(#a):not(#b),.m-mudanca{--m:#C76B4E;--t-accent:#C76B4E}
+html[data-pg="mudanca"]:not(#a):not(#b),.m-mudanca{--m:#AB5C43;--t-accent:#AB5C43}
 @media (prefers-color-scheme:dark){html[data-pg="mudanca"]:not([data-modo="claro"]):not(#a):not(#b),.m-mudanca{--m:#F2A388;--t-accent:#F2A388}}
 html[data-modo="escuro"][data-pg="mudanca"]:not(#a):not(#b){--m:#F2A388;--t-accent:#F2A388}
 

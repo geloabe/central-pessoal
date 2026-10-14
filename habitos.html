@@ -1401,5 +1401,14 @@ TR.goals = renderGoals;
 })();
 </script>
 
+<script>
+/* no celular as abas rolam para o lado: mantém a aba ativa visível */
+(function(){
+  var nav=document.getElementById('tabs-nav'); if(!nav||!window.MutationObserver) return;
+  function centra(){var a=nav.querySelector('button.active'); if(a&&a.scrollIntoView) a.scrollIntoView({inline:'center',block:'nearest'})}
+  new MutationObserver(centra).observe(nav,{attributes:true,subtree:true,attributeFilter:['class']});
+  setTimeout(centra,400);
+})();
+</script>
 </body>
 </html>
