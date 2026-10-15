@@ -396,6 +396,10 @@
   .tab-btn.sug:not(.active) { outline: 2px solid var(--t-accent); outline-offset: -2px; }
   .topo { margin-top: 4px; }
   .data-hoje { font-size: 13px; color: var(--text-muted); }
+  .data-linha { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 6px; font-size: 14px; }
+  .data-linha input[type=date] { font-size: 16px; min-height: 44px; padding: 0 10px; border: 1px solid var(--border, #ddd6f0); border-radius: 8px; background: transparent; color: inherit; }
+  .retro-aviso { margin: 4px 0 8px; padding: 10px 12px; border-left: 4px solid var(--accent, #6b4fd1); background: rgba(107,79,209,.08); font-size: 13px; border-radius: 6px; }
+  .dica-serie { font-size: 12px; color: var(--text-muted); margin: 2px 0 6px; }
   .data-hoje #progTxt { font-weight: 600; color: var(--text); text-transform: none; }
   .desc-linha { display: flex; align-items: center; gap: 6px; margin: 8px 0 2px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
   .chip { font: inherit; font-size: 13px; min-height: 36px; padding: 4px 12px; border: 1px solid var(--t-borda); background: var(--t-bg); color: var(--t-ink); cursor: pointer; border-radius: var(--raio); }
@@ -625,6 +629,13 @@ function H(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&'
 function num(v) { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isNaN(n) ? 0 : n; }
 function fmt(sec) { sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ':' + pad2(sec % 60); }
 function todayISO() { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+let sessDate = null; // data escolhida para um treino retroativo (null = hoje)
+function curISO() { return sessDate || todayISO(); }
+function isoLabel(iso) {
+  const p = iso.split('-').map(Number);
+  return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+}
+function curLabel() { return sessDate ? isoLabel(sessDate) : todayLabel(); }
 function todayLabel() {
   const d = new Date();
   return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
@@ -640,6 +651,7 @@ function quando(iso) { const n = diasAtras(iso); return n <= 0 ? 'hoje' : n === 
 function lastLog(exId) {
   let legacy = null;
   for (const sess of allSessions) {
+    if (sessDate && sess.dateISO >= sessDate) continue;
     const log = sess.exercises && sess.exercises[exId];
     if (!log) continue;
     if (log.some(s => s.done && (s.weight || s.time))) return { log, sess, legacy: false };
@@ -657,7 +669,7 @@ function bestEst(exId) {
   if (!(exId in bestCache)) {
     let b = 0;
     allSessions.forEach(s => {
-      if (s.dateISO === todayISO()) return; // a sessão de hoje não conta como "recorde anterior"
+      if (s.dateISO >= curISO()) return; // a sessão do dia (ou depois dele) não conta como "recorde anterior"
       ((s.exercises && s.exercises[exId]) || []).forEach(x => {
         if (!x.done) return;
         const e = est1RM(x.weight, x.reps);
@@ -702,7 +714,7 @@ function buildTab(letter) {
   const slots = [];
   WORKOUTS[letter].sections.forEach(sec => sec.exercises.forEach(ex =>
     slots.push({ key: ex.id, id: ex.id, cls: sec.cls, sec: sec.title, target: ex.target, skipped: false })));
-  const saved = allSessions.find(s => s.treino === letter && s.dateISO === todayISO());
+  const saved = allSessions.find(s => s.treino === letter && s.dateISO === curISO());
   const t = { slots, sets: {}, touched: false, savedToday: !!saved };
   slots.forEach(sl => {
     const n = setCount(sl.target);
@@ -731,7 +743,7 @@ function saveDraft() {
   const tabs = {};
   Object.keys(T).forEach(l => { if (T[l].touched) tabs[l] = { slots: T[l].slots, sets: T[l].sets }; });
   if (!Object.keys(tabs).length) { lsDel(LS_DRAFT); return; }
-  lsSet(LS_DRAFT, JSON.stringify({ date: todayISO(), tab: currentTab, tabs, workStart }));
+  lsSet(LS_DRAFT, JSON.stringify({ date: todayISO(), retro: sessDate, tab: currentTab, tabs, workStart }));
 }
 function loadDraft() {
   try {
@@ -741,6 +753,7 @@ function loadDraft() {
       if (!WORKOUTS[l]) return;
       T[l] = { slots: d.tabs[l].slots, sets: d.tabs[l].sets, touched: true, savedToday: false };
     });
+    sessDate = d.retro && d.retro < todayISO() ? d.retro : null;
     if (WORKOUTS[d.tab]) { currentTab = d.tab; userPickedTab = true; }
     workStart = d.workStart || null;
   } catch (e) {}
@@ -855,8 +868,13 @@ function renderContent() {
   const cache = {};
   let html = `<div class="topo">
       <div><div class="section-label" style="margin:4px 0 2px;">${H(workout.label)}</div>
-      <div class="data-hoje">${todayLabel()} · <span id="progTxt">${progressoTxt()}</span>${t.savedToday ? ' · já salvo hoje' : ''}</div></div>
+      <div class="data-hoje">${curLabel()} · <span id="progTxt">${progressoTxt()}</span>${t.savedToday ? (sessDate ? ' · já salvo nesta data' : ' · já salvo hoje') : ''}</div></div>
     </div>
+    <div class="data-linha"><label for="dataTreino">Data do treino</label>
+      <input type="date" id="dataTreino" value="${curISO()}" max="${todayISO()}">
+      ${sessDate ? '<button class="mini-btn" data-act="hoje" type="button">Voltar para hoje</button>' : ''}</div>
+    ${sessDate ? '<div class="retro-aviso">Preenchendo um treino de outro dia. Ele entra no histórico, nos recordes e nas sequências na data escolhida.</div>' : ''}
+    <div class="dica-serie">A 1ª série preenche as outras. Mude qualquer uma se precisar.</div>
     <div class="desc-linha"><span>Descanso</span>${[60, 90, 120, 180].map(s => `<button class="chip${restDefault === s ? ' on' : ''}" data-act="rest-set" data-s="${s}">${s < 120 ? s + ' s' : (s / 60) + ' min'}</button>`).join('')}</div>`;
   let sec = '';
   t.slots.forEach(sl => {
@@ -957,9 +975,11 @@ function toggleDone(key, i) {
   s.pre = false;
   t.touched = true;
   if (s.done) {
-    prepareAudio();
-    if (!workStart) workStart = Date.now();
-    startRest();
+    if (!sessDate) {
+      prepareAudio();
+      if (!workStart) workStart = Date.now();
+      startRest();
+    }
   }
   recalcPR(t, sl);
   renderCard(key);
@@ -992,13 +1012,37 @@ document.getElementById('swapForm').addEventListener('submit', e => {
   renderCard(key); renderTabs(); saveDraft();
 });
 
+function trocaData(v) {
+  if (!v || v > todayISO()) return;
+  const novo = v === todayISO() ? null : v;
+  if (novo === sessDate) return;
+  const sujo = Object.keys(T).some(l => T[l].touched);
+  if (sujo && !confirm('Trocar a data descarta o que você preencheu e ainda não salvou. Continuar?')) { renderContent(); return; }
+  sessDate = novo;
+  Object.keys(T).forEach(l => delete T[l]);
+  Object.keys(bestCache).forEach(k => delete bestCache[k]);
+  workStart = null; rest = null; lsDel(LS_DRAFT);
+  renderTabs(); renderContent(); tick();
+}
 const contentEl0 = document.getElementById('content');
+contentEl0.addEventListener('change', e => { if (e.target && e.target.id === 'dataTreino') trocaData(e.target.value); });
 contentEl0.addEventListener('input', e => {
   const inp = e.target.closest('.set-input'); if (!inp) return;
   const t = T[currentTab], s = t.sets[inp.dataset.key][inp.dataset.i];
-  s[inp.dataset.field] = inp.value;
+  const campo = inp.dataset.field, idx = +inp.dataset.i;
+  s[campo] = inp.value;
   s.pre = false;
   inp.parentElement.querySelectorAll('.set-input').forEach(x => x.classList.remove('pre'));
+  if (idx > 0) s['m_' + campo] = true; // você mexeu nesta série: deixa de acompanhar a 1ª
+  else if (inp.value) {
+    // a 1ª série vale para as outras que ainda não foram feitas nem editadas à mão
+    t.sets[inp.dataset.key].forEach((o, j) => {
+      if (j === 0 || o.done || o['m_' + campo]) return;
+      o[campo] = inp.value; o.pre = false;
+      const alvo = document.querySelector('#content .ex-card[data-key="' + inp.dataset.key + '"] .set-input[data-i="' + j + '"][data-field="' + campo + '"]');
+      if (alvo) { alvo.value = inp.value; alvo.classList.remove('pre'); }
+    });
+  }
   t.touched = true;
   saveDraft();
 });
@@ -1010,6 +1054,7 @@ contentEl0.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const act = b.dataset.act, key = b.dataset.key, i = +b.dataset.i;
   const t = T[currentTab];
+  if (act === 'hoje') return trocaData(todayISO());
   if (act === 'chk') return toggleDone(key, i);
   if (act === 'rest-set') {
     restDefault = +b.dataset.s; lsSet(LS_REST, String(restDefault));
@@ -1024,6 +1069,12 @@ contentEl0.addEventListener('click', e => {
     const s = t.sets[key][i];
     if (timed) s.time = p.time || ''; else { s.weight = p.weight || ''; s.reps = p.reps || ''; }
     s.pre = false;
+    if (i > 0) { s.m_weight = s.m_reps = s.m_time = true; }
+    else t.sets[key].forEach((o, j) => {
+      if (j === 0 || o.done) return;
+      if (timed) { if (!o.m_time) o.time = s.time; } else { if (!o.m_weight) o.weight = s.weight; if (!o.m_reps) o.reps = s.reps; }
+      o.pre = false;
+    });
   } else if (act === 'add') {
     const sets = t.sets[key], l = sets[sets.length - 1] || { weight: '', reps: '', time: '' };
     sets.push({ weight: l.weight, reps: l.reps, time: l.time, done: false, pre: !!(l.weight || l.time), pr: false });
@@ -1310,9 +1361,10 @@ async function saveSession() {
     setTimeout(() => { statusEl.textContent = ''; }, 5000);
     return;
   }
-  const dur = workStart ? Math.max(1, Math.round((Date.now() - workStart) / 60000)) : 0;
+  const dur = !sessDate && workStart ? Math.max(1, Math.round((Date.now() - workStart) / 60000)) : 0;
   const payload = {
-    treino: letter, dateISO: todayISO(), dateLabel: todayLabel(), timestamp: Date.now(),
+    treino: letter, dateISO: curISO(), dateLabel: curLabel(),
+    timestamp: sessDate ? new Date(+sessDate.slice(0, 4), +sessDate.slice(5, 7) - 1, +sessDate.slice(8, 10), 12).getTime() : Date.now(),
     exercises, slotsInfo, duracao: dur,
   };
   btn.disabled = true;
