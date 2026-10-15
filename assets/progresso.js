@@ -107,10 +107,8 @@
   /* ---------- Grimório: dias seguidos com registro ---------- */
   function grimorio(d, hoje) {
     var datas = {}; ((d.grimorio && d.grimorio.entries) || []).forEach(function (e) { if (e.date) datas[String(e.date).slice(0, 10)] = 1; });
-    var dt = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-    if (!datas[iso(dt)]) dt = addDias(dt, -1);
-    var seq = 0; while (datas[iso(dt)]) { seq++; dt = addDias(dt, -1); }
-    return { total: Object.keys(datas).length, sequencia: seq, hoje: !!datas[iso(hoje)] };
+    var ks = Object.keys(datas).sort(), sq = sequencia(function (k) { return !!datas[k]; }, ks, hoje); // mesma regra de pausa dos outros módulos
+    return { total: ks.length, sequencia: sq.seq, melhor: sq.melhor, pausas: sq.pausas, emRisco: sq.emRisco, hoje: !!datas[iso(hoje)] };
   }
 
   /* ---------- Rota: candidaturas na semana ---------- */
@@ -280,6 +278,6 @@
     return { saude: s, vida: o };
   }
 
-  var api = { agua: agua, AGUA_META: AGUA_META, AGUA_BOM: AGUA_BOM, refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
+  var api = { sequencia: sequencia, agua: agua, AGUA_META: AGUA_META, AGUA_BOM: AGUA_BOM, refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_PROG = api;
 })(typeof window !== 'undefined' ? window : globalThis);

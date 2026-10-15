@@ -220,6 +220,15 @@
   button.ghost:hover{color:var(--gold); border-color:var(--gold);}
 
   .today-tracks{margin-top:18px; display:flex; flex-wrap:wrap; gap:8px;}
+
+  button.track-chip{font:inherit;cursor:pointer;min-height:44px;background:transparent;color:inherit}
+  .next-lista{display:grid;gap:8px;margin:12px 0 4px}
+  .next-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border, #ddd6f0);border-radius:10px}
+  .next-row>div{flex:1;min-width:0}
+  .next-row small{display:block;font-size:12px;opacity:.7}
+  .next-row b{font-weight:600;font-size:14px;line-height:1.35;display:block}
+  .next-row button{flex:none;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--teal, #6b4fd1);background:transparent;color:var(--teal, #6b4fd1);font-weight:600;cursor:pointer}
+  .filtro-ent{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-bottom:12px}
   .track-chip{
     font-size:.78rem;
     padding:5px 11px;
@@ -375,6 +384,7 @@
 <link rel="stylesheet" href="assets/mobile.css">
 <script src="assets/rascunho.js" defer></script>
 <script src="assets/modulo.js"></script>
+<script src="assets/progresso.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -413,6 +423,7 @@
       </div>
       <div class="msg-strip" id="dailyMsg"></div>
       <div class="today-tracks" id="todayTracks"></div>
+      <div class="next-lista" id="nextTopics"></div>
       <button class="primary" id="openQuickLog">Registrar estudo de hoje</button>
     </div>
 
@@ -460,7 +471,7 @@
         <div class="row2">
           <div>
             <label>Data</label>
-            <input type="text" id="d-date" placeholder="AAAA-MM-DD">
+            <input type="date" id="d-date">
           </div>
           <div>
             <label>Tradição</label>
@@ -491,6 +502,8 @@
 
     <div class="card">
       <h2>Registros</h2>
+      <div class="filtro-ent"><select id="ent-trad" aria-label="Filtrar por tradição"><option value="">Todas as tradições</option><option>Umbanda</option><option>Baralho Cigano</option><option>Hoodoo</option><option>Outra</option></select><input type="text" id="ent-busca" placeholder="Buscar nas anotações" aria-label="Buscar nas anotações"></div>
+      <div class="mini-cont" id="entCont" style="font-size:12px;opacity:.7;margin:-4px 0 8px"></div>
       <div id="entriesList"></div>
     </div>
   </section>
@@ -504,7 +517,7 @@
         <div class="row2">
           <div>
             <label>Data</label>
-            <input type="text" id="sn-date" placeholder="AAAA-MM-DD">
+            <input type="date" id="sn-date">
           </div>
           <div>
             <label>Sensação ao acordar</label>
@@ -731,29 +744,20 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
   function getEntries(){ return load('grimorio_entries', []); }
   function setEntries(list){ save('grimorio_entries', list); }
 
-  function computeStreak(entries){
-    const days = Array.from(new Set(entries.map(e=>e.date))).sort().reverse();
-    if(days.length === 0) return 0;
-    const today = todayISO();
-    const yest = new Date(Date.now() - 86400000);
-    const yestISO = yest.getFullYear()+'-'+String(yest.getMonth()+1).padStart(2,'0')+'-'+String(yest.getDate()).padStart(2,'0');
-    if(days[0] !== today && days[0] !== yestISO) return 0;
-    let streak = 1;
-    let cursor = new Date(days[0]+'T00:00:00');
-    for(let i=1;i<days.length;i++){
-      const prevExpected = new Date(cursor.getTime() - 86400000);
-      const prevExpectedISO = prevExpected.getFullYear()+'-'+String(prevExpected.getMonth()+1).padStart(2,'0')+'-'+String(prevExpected.getDate()).padStart(2,'0');
-      if(days[i] === prevExpectedISO){
-        streak++;
-        cursor = prevExpected;
-      } else break;
-    }
-    return streak;
+  function streakInfo(entries){
+    const datas = {};
+    entries.forEach(function(e){ if(e.date) datas[String(e.date).slice(0,10)] = 1; });
+    return window.CP_PROG.sequencia(function(k){ return !!datas[k]; }, Object.keys(datas).sort(), new Date());
+  }
+  function diasNaSemana(entries){
+    const d = new Date(); d.setDate(d.getDate() - ((d.getDay()+6)%7));
+    const ini = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    return new Set(entries.filter(function(e){ return e.date >= ini; }).map(function(e){ return e.date; })).size;
   }
 
   function renderHoje(){
     const entries = getEntries();
-    const streak = computeStreak(entries);
+    const info = streakInfo(entries), streak = info.seq;
     document.getElementById('streakCount').textContent = streak;
     document.getElementById('streakLabel').textContent = streak === 1 ? 'dia seguido de estudo' : 'dias seguidos de estudo';
 
@@ -768,6 +772,10 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
     } else {
       msg = 'Uma sequência sólida — o estudo virou hábito, não esforço.';
     }
+    if(info.pausas) msg += ' Um dia sem registro no meio não quebra a sequência.';
+    if(info.melhor > streak) msg += ' Melhor sequência: '+info.melhor+' dias.';
+    const sem = diasNaSemana(entries);
+    if(sem) msg += ' · '+sem+(sem === 1 ? ' dia' : ' dias')+' nesta semana';
     msgEl.textContent = msg;
 
     const today = todayISO();
@@ -775,19 +783,63 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
     const chipsHost = document.getElementById('todayTracks');
     chipsHost.innerHTML = '';
     TRADITION_KEYS.forEach(function(t){
-      const chip = document.createElement('span');
+      const chip = document.createElement('button');
+      chip.type = 'button'; chip.dataset.t = t;
       chip.className = 'track-chip' + (todaySet.has(t) ? ' done' : '');
+      chip.setAttribute('aria-pressed', todaySet.has(t));
       chip.textContent = (todaySet.has(t) ? '✓ ' : '') + t;
       chipsHost.appendChild(chip);
     });
+    renderNext();
   }
 
+  /* próximo tópico de cada trilha: uma escolha a menos para decidir */
+  function renderNext(){
+    const host = document.getElementById('nextTopics'); if(!host) return;
+    const data = getTracks(); host.innerHTML = '';
+    TRADITION_KEYS.forEach(function(t){
+      const tr = data[t]; if(!tr) return;
+      const nx = tr.topics.find(function(x){ return !x.done; });
+      const row = document.createElement('div'); row.className = 'next-row';
+      if(!nx){ row.innerHTML = '<div><small>'+escapeHTML(t)+'</small><b>Trilha concluída ✓</b></div>'; }
+      else row.innerHTML = '<div><small>Próximo em '+escapeHTML(t)+'</small><b>'+escapeHTML(nx.label)+'</b></div><button type="button" data-next="'+escapeHTML(t)+'" data-id="'+nx.id+'">Estudei</button>';
+      host.appendChild(row);
+    });
+  }
+  document.getElementById('nextTopics').addEventListener('click', function(e){
+    const b = e.target.closest('[data-next]'); if(!b) return;
+    const t = b.dataset.next, data = getTracks(), tr = data[t];
+    const topic = tr && tr.topics.find(function(x){ return x.id === b.dataset.id; });
+    if(!topic) return;
+    topic.done = true; setTracks(data);
+    addEntry(t, 'Estudo', 'Concluí: '+topic.label, todayISO());
+    renderTracks();
+    document.getElementById('dailyMsg').textContent = '✓ '+topic.label+' concluído e registrado no diário.';
+  });
+  document.getElementById('todayTracks').addEventListener('click', function(e){
+    const b = e.target.closest('[data-t]'); if(!b) return;
+    const t = b.dataset.t, today = todayISO(), all = getEntries();
+    const mine = all.filter(function(x){ return x.date === today && x.tradition === t; });
+    let msg;
+    if(!mine.length){ addEntry(t, 'Estudo', '', today); msg = '✓ '+t+' registrado hoje. Dá para acrescentar uma anotação depois no Diário.'; }
+    else if(mine.every(function(x){ return !x.text; })){ setEntries(all.filter(function(x){ return !(x.date === today && x.tradition === t && !x.text); })); renderEntries(); renderHoje(); msg = 'Registro de '+t+' desfeito.'; }
+    else msg = 'Já existe uma anotação de '+t+' hoje. Para apagar, use o Diário.';
+    document.getElementById('dailyMsg').textContent = msg;
+  });
+
   function renderEntries(){
-    const entries = getEntries().slice().sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+    const todos = getEntries().slice().sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+    const fT = document.getElementById('ent-trad').value, fQ = document.getElementById('ent-busca').value.trim().toLowerCase();
+    const entries = todos.filter(function(e){ return (!fT || e.tradition === fT) && (!fQ || (e.text||'').toLowerCase().indexOf(fQ) >= 0); });
     const host = document.getElementById('entriesList');
     host.innerHTML = '';
-    if(entries.length === 0){
+    document.getElementById('entCont').textContent = todos.length ? (entries.length === todos.length ? todos.length+' registros' : entries.length+' de '+todos.length+' registros') : '';
+    if(todos.length === 0){
       host.innerHTML = '<p class="empty">Nenhum registro ainda. O primeiro parágrafo é sempre o mais difícil de escrever.</p>';
+      return;
+    }
+    if(entries.length === 0){
+      host.innerHTML = '<p class="empty">Nada encontrado com esse filtro.</p>';
       return;
     }
     entries.forEach(function(e){
@@ -840,6 +892,9 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
     document.getElementById('ql-text').value = '';
     document.getElementById('quickLogCard').style.display = 'none';
   });
+
+  document.getElementById('ent-trad').addEventListener('change', renderEntries);
+  document.getElementById('ent-busca').addEventListener('input', renderEntries);
 
   /* diário form */
   document.getElementById('d-date').value = todayISO();
