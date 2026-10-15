@@ -276,7 +276,7 @@ details.calc summary{cursor:pointer;font-weight:600;min-height:44px;display:flex
       <p>Serve como <b>jantar ocasional</b>. <b>Não</b> serve de pré-treino: gordura demais para digerir em 1 h.</p></div>
     <div class="card"><h3>Proteína</h3><p>O plano chega a ~185 g por dia (≈ 2,7 g/kg). A faixa que a pesquisa sustenta para ganhar músculo é 1,6–2,2 g/kg (110–150 g). Você tem folga: se algum dia faltar ovo ou whey, não faz diferença.</p></div>
     <div class="card"><h3>Horários e água</h3>
-      <p>No Dia, escolha “Treino neste dia: 13h ou 22h”. Com treino às 22h, o almoço vai para 13:00, o jantar para 18:30 e um pré-treino leve entra às 20:30, no lugar da ceia. A vitamina continua logo depois do treino. Em outro horário, mantenha o almoço 1 h antes e a vitamina em até 1 h depois.</p>
+      <p>No Dia, escolha “Treino neste dia: 13h ou 22h”. Com treino às 22h, o almoço vai para 13:00, o jantar para 18:30 e um pré-treino leve entra às 20:30, no lugar da ceia. No pós-treino, a vitamina vira “Whey sem barulho” (sem liquidificador), com os mesmos números. Em outro horário, mantenha o almoço 1 h antes e a vitamina em até 1 h depois.</p>
       <p><b>Água:</b> meta de 3 L por dia. Marque na tela inicial da Central, aos poucos, a cada copo ou garrafa.</p></div>
     <div class="card"><h3>Intolerância à lactose</h3><p>Leite, iogurte, queijo e whey sempre na versão zero lactose. Hambúrguer industrializado: confira o rótulo.</p></div>
   </section>
@@ -346,7 +346,11 @@ var IDEIAS=[
    {treino:'13:00',txt:'Treino',_h:{d:'13:00',n:'22:00'}},
    {h:'14:30',key:'pos',n:'Pós-treino',tag:'logo depois do treino',ops:[
      {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
-     {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]],['2 unidades','Ovos',144,13,1,10,false,[['Ovos','2 unidades','Ovos',144,13,1,10],['Frango','80 g','Frango desfiado',128,25,0,3]]],['1 média','Fruta',80,1,19,0]]}]},
+     {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]],['2 unidades','Ovos',144,13,1,10,false,[['Ovos','2 unidades','Ovos',144,13,1,10],['Frango','80 g','Frango desfiado',128,25,0,3]]],['1 média','Fruta',80,1,19,0]]}],
+     /* treino às 22h: sem liquidificador, para não fazer barulho em casa */
+     opsNoite:[
+       {n:'Whey sem barulho',obs:'Sem liquidificador: dissolva o whey em um pouco do leite com garfo ou colher (ou num shaker, devagar e com a tampa bem fechada), junte o resto do leite, a banana amassada com garfo e a aveia. Mesmos números da vitamina. Dica: deixe a banana amassada e o leite gelado prontos da tarde.',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana amassada no garfo',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
+       {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]],['2 unidades','Ovos',144,13,1,10,false,[['Ovos','2 unidades','Ovos',144,13,1,10],['Frango','80 g','Frango desfiado',128,25,0,3]]],['1 média','Fruta',80,1,19,0]]}]},
    {h:'19:00',key:'jantar',sobremesa:true,n:'Jantar',tag:'escolha uma opção',ops:[
      {n:'Prato',fj:1,obs:'Feijão fica desligado por padrão no jantar. Sem ele, o carboidrato aumenta para repor (dá para desligar isso). Purê: batata cozida amassada com um pouco de leite desnatado (de preferência zero lactose) e 1 colher de chá de manteiga.',it:[['115 g','Arroz cozido',147,3,32,0,false,[['Arroz','80 g','Arroz cozido',102,2,22,0],['Purê','150 g','Purê de batata',135,3,22,4],['Macarrão','70 g','Macarrão cozido',111,4,21,1]],[['Arroz','115 g','Arroz cozido',147,3,32,0],['Purê','215 g','Purê de batata',194,4,32,6],['Macarrão','105 g','Macarrão cozido',166,6,32,1]]],['70 g','Feijão cozido',54,3,10,0,true],['150 g','Proteína (frango, carne magra ou peixe)',240,47,0,5],['150 g','Legumes e salada',50,2,11,0,'on']]}]},
    {h:'22:00',key:'ceia',n:'Ceia',ops:[
@@ -429,7 +433,7 @@ var IDEIAS=[
   function optOn(i,o,k){var v=esc['o|'+i+'|'+o.n+'|'+k];return v==null?!!(o.it[k]&&o.it[k][6]==='on'):v===1}
   function compOn(i,o){return esc['c|'+i+'|'+o.n]!==0}
   function itensOf(i,o){var semF=o.fj!=null&&!optOn(i,o,o.fj),comp=semF&&compOn(i,o);return o.it.map(function(x,k){var isOpt=x[6]===true||x[6]==='on',b=x,j=0;if(x[7]){var L=(comp&&x[8])?x[8]:x[7];j=Math.min(altIdx(i,o,k),L.length-1);var a=L[j];b=[a[1],a[2],a[3],a[4],a[5],a[6]]}return [b[0],b[1],b[2],b[3],b[4],b[5],isOpt&&!optOn(i,o,k),x[7]||null,j,k,isOpt,x[6]==='on']})}
-  function opsOf(i){var r=REF[i];if(!r.ops)return null;return r.ops.concat(IDEIAS.filter(function(x){return votos[x.id]==='sim'&&x.onde.indexOf(r.key)>=0}).map(function(x){return I(x.id)}))}
+  function opsOf(i){var r=REF[i];if(!r.ops)return null;return (r.opsNoite&&noite(diaSel)?r.opsNoite:r.ops).concat(IDEIAS.filter(function(x){return votos[x.id]==='sim'&&x.onde.indexOf(r.key)>=0}).map(function(x){return I(x.id)}))}
   function sel(i){var r=REF[i];if(!r.ops)return r;var l=opsOf(i);return l.filter(function(x){return x.n===esc[i]})[0]||l[0]}
   function proxima(){var n=new Date(),m=n.getHours()*60+n.getMinutes(),r=-1;eachRef(function(x,i){if(!x.h||r>=0)return;var p=x.h.split(':');if(+p[0]*60+ +p[1]>=m-30)r=i});return r}
   /* rolagem automática: leva à refeição da hora, sem brigar com quem já está rolando */
