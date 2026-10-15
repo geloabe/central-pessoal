@@ -425,6 +425,9 @@
   .tab-btn.sug:not(.active) { outline: 2px solid var(--t-accent); outline-offset: -2px; }
   .topo { margin-top: 4px; }
   .data-hoje { font-size: 13px; color: var(--text-muted); }
+  .local-switch { display: flex; gap: 8px; padding: 10px 16px 0; max-width: 640px; margin: 0 auto; }
+  .local-switch button { flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid #f0dde4; background: var(--card-bg); color: var(--text); font: 600 14px 'Poppins', sans-serif; cursor: pointer; }
+  .local-switch button.on { background: var(--purple); border-color: var(--purple); color: #fff; }
   .data-linha { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 6px; font-size: 14px; }
   .data-linha input[type=date] { font-size: 16px; min-height: 44px; padding: 0 10px; border: 1px solid var(--border, #ddd6f0); border-radius: 8px; background: transparent; color: inherit; }
   .retro-aviso { margin: 4px 0 8px; padding: 10px 12px; border-left: 4px solid var(--accent, #6b4fd1); background: rgba(107,79,209,.08); font-size: 13px; border-radius: 6px; }
@@ -498,6 +501,7 @@
 <div class="view-switch" id="viewSwitch"></div>
 
 <div id="workoutView">
+  <div class="local-switch" id="localSwitch"></div>
   <div class="tabs" id="tabs"></div>
 
   <div class="content" id="content">
@@ -563,10 +567,6 @@ const WORKOUTS = {
         {id:"B4", name:"Extensora", target:"4×12–15"},
         {id:"B5", name:"Panturrilha em pé", target:"4×10–15"},
       ]},
-      { title: "Bônus Braços (superset)", cls: "bonus", exercises: [
-        {id:"B6", name:"Rosca direta (barra reta ou W)", target:"2×12–15"},
-        {id:"B7", name:"Tríceps testa com halter", target:"2×12–15"},
-      ]},
     ]
   },
   C: {
@@ -580,10 +580,6 @@ const WORKOUTS = {
         {id:"C5", name:"Rosca martelo", target:"3×10–12"},
         {id:"C6", name:"Rosca de punho na barra (flexores)", target:"3×15–20"},
         {id:"C7", name:"Rosca de punho inversa (extensores)", target:"2×15–20"},
-      ]},
-      { title: "Bônus Peito & Panturrilha", cls: "bonus", exercises: [
-        {id:"C8", name:"Crucifixo unilateral no cabo (crossover)", target:"2×15"},
-        {id:"C9", name:"Panturrilha em pé", target:"2×15–20"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
         {id:"CORE1", name:"Abdominal remador", target:"3×12–15"},
@@ -606,9 +602,87 @@ const WORKOUTS = {
         {id:"D6", name:"Cadeira abdutora", target:"3×15–20"},
         {id:"D7", name:"Panturrilha sentado", target:"4×12–15"},
       ]},
+    ]
+  },
+  HA: {
+    label: "Treino A em casa — Peito, Tríceps & Ombro",
+    sections: [
+      { title: "Bloco principal", cls: "main", exercises: [
+        {id:"HA1", name:"Flexão de braços (apoie os joelhos se precisar)", target:"4×8–15"},
+        {id:"HA2", name:"Flexão com pés elevados (cadeira ou sofá)", target:"3×8–12"},
+        {id:"HA3", name:"Flexão diamante (mãos juntas)", target:"3×8–12"},
+        {id:"HA4", name:"Mergulho entre duas cadeiras (tríceps)", target:"3×10–15"},
+        {id:"HA5", name:"Flexão pike (quadril alto, foco no ombro)", target:"3×8–12"},
+        {id:"HA6", name:"Prancha com toque no ombro", target:"3×10/lado"},
+        {id:"HA7", name:"Superman em Y-T-W no chão (ombro posterior)", target:"3×10–12"},
+      ]},
+      { title: "Core / Abdômen", cls: "core", exercises: [
+        {id:"HK1", name:"Elevação de pernas deitado", target:"3×12–15"},
+        {id:"HK2", name:"Rotação de tronco sentado (russian twist) sem peso", target:"3×12/lado"},
+        {id:"HK3", name:"Prancha lateral", target:"3×20–30s/lado"},
+        {id:"HK4", name:"Prancha (frontal)", target:"2×30–45s"},
+        {id:"HK5", name:"Dead bug (braço e perna opostos)", target:"3×10/lado"},
+      ]},
+    ]
+  },
+  HB: {
+    label: "Treino B em casa — Quadríceps",
+    sections: [
+      { title: "Bloco principal", cls: "main", exercises: [
+        {id:"HB1", name:"Agachamento livre (descida lenta de 3 s)", target:"4×12–20"},
+        {id:"HB2", name:"Agachamento búlgaro (pé de trás no sofá)", target:"3×10–12/perna"},
+        {id:"HB3", name:"Afundo caminhando", target:"3×10–12/perna"},
+        {id:"HB4", name:"Cadeira invisível na parede", target:"3×30–45s"},
+        {id:"HB5", name:"Panturrilha em pé unilateral num degrau", target:"4×12–20/perna"},
+      ]},
+    ]
+  },
+  HC: {
+    label: "Treino C em casa — Costas, Bíceps & Antebraço",
+    sections: [
+      { title: "Bloco principal", cls: "main", exercises: [
+        {id:"HC1", name:"Remada invertida debaixo de uma mesa firme", target:"4×8–12"},
+        {id:"HC2", name:"Superman com pausa de 2 s", target:"3×12–15"},
+        {id:"HC3", name:"Rosca de bíceps com toalha (resistência com a outra mão)", target:"3×10–12/braço"},
+        {id:"HC4", name:"Remada unilateral apoiada na cadeira (opcional: mochila com livros)", target:"3×10–12/lado"},
+        {id:"HC5", name:"Apertar e segurar a toalha (antebraço)", target:"3×20–30s"},
+      ]},
+      { title: "Core / Abdômen", cls: "core", exercises: [
+        {id:"HK1", name:"Elevação de pernas deitado", target:"3×12–15"},
+        {id:"HK2", name:"Rotação de tronco sentado (russian twist) sem peso", target:"3×12/lado"},
+        {id:"HK3", name:"Prancha lateral", target:"3×20–30s/lado"},
+        {id:"HK4", name:"Prancha (frontal)", target:"2×30–45s"},
+        {id:"HK5", name:"Dead bug (braço e perna opostos)", target:"3×10/lado"},
+      ]},
+    ]
+  },
+  HD: {
+    label: "Treino D em casa — Posterior de Coxa & Glúteo",
+    sections: [
+      { title: "Bloco principal", cls: "main", exercises: [
+        {id:"HD1", name:"Ponte de glúteo unilateral", target:"3×10–12/perna"},
+        {id:"HD2", name:"Elevação pélvica com as costas apoiadas no sofá", target:"4×12–15"},
+        {id:"HD3", name:"Stiff unilateral sem peso", target:"3×10–12/perna"},
+        {id:"HD4", name:"Flexora deslizando (toalha ou meia no chão)", target:"3×8–12"},
+        {id:"HD5", name:"Agachamento sumô com pausa", target:"3×15–20"},
+        {id:"HD6", name:"Abdução de quadril deitado de lado", target:"3×15–20/lado"},
+      ]},
+    ]
+  },
+  HX: {
+    label: "Bônus em casa — Braços, Peito, Panturrilha & Ombro",
+    sections: [
+      { title: "Bônus Braços", cls: "bonus", exercises: [
+        {id:"HX1", name:"Mergulho no sofá (tríceps)", target:"2×12–15"},
+        {id:"HX2", name:"Rosca de bíceps com toalha", target:"2×12–15/braço"},
+      ]},
+      { title: "Bônus Peito & Panturrilha", cls: "bonus", exercises: [
+        {id:"HX3", name:"Flexão declinada (pés no sofá)", target:"2×10–15"},
+        {id:"HX4", name:"Panturrilha em pé unilateral num degrau", target:"2×15–20/perna"},
+      ]},
       { title: "Bônus Ombro", cls: "bonus", exercises: [
-        {id:"D8", name:"Elevação lateral", target:"3×15–20"},
-        {id:"D9", name:"Face pull / crucifixo invertido", target:"2×15–20"},
+        {id:"HX5", name:"Flexão pike", target:"3×8–12"},
+        {id:"HX6", name:"Superman em Y-T-W no chão", target:"2×12–15"},
       ]},
     ]
   },
@@ -628,13 +702,25 @@ function buildExerciseIndex() {
       });
     });
   });
+  // exercícios dos antigos blocos "bônus" da academia: ficam só no histórico
+  [['B6', 'Rosca direta (barra reta ou W)', '2×12–15', 'B'], ['B7', 'Tríceps testa com halter', '2×12–15', 'B'],
+   ['C8', 'Crucifixo unilateral no cabo (crossover)', '2×15', 'C'], ['C9', 'Panturrilha em pé', '2×15–20', 'C'],
+   ['D8', 'Elevação lateral', '3×15–20', 'D'], ['D9', 'Face pull / crucifixo invertido', '2×15–20', 'D']].forEach(l => {
+    if (!idx[l[0]]) idx[l[0]] = { name: l[1], treino: l[3], target: l[2] };
+  });
   return idx;
 }
 const EX_INDEX = buildExerciseIndex();
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 // ===================== ESTADO =====================
-const WORKOUT_NAMES = { A: 'Peito · Ombro', B: 'Quadríceps', C: 'Costas · Bíceps', D: 'Posterior · Glúteo' };
+const WORKOUT_NAMES = { A: 'Peito · Ombro', B: 'Quadríceps', C: 'Costas · Bíceps', D: 'Posterior · Glúteo',
+  HA: 'Peito · Ombro', HB: 'Quadríceps', HC: 'Costas · Bíceps', HD: 'Posterior · Glúteo', HX: 'Braços · peito · ombro' };
+let LOCAL = (function () { try { return localStorage.getItem('treino-local') === 'casa' ? 'casa' : 'academia'; } catch (e) { return 'academia'; } })();
+const isCasa = k => /^H/.test(k);
+const tabLetra = k => k === 'HX' ? 'Bônus' : k.replace(/^H/, '');
+const rotuloTreino = k => k === 'HX' ? 'Bônus em casa' : isCasa(k) ? 'Treino ' + k.slice(1) + ' em casa' : 'Treino ' + k;
+const chavesLocal = () => Object.keys(WORKOUTS).filter(k => isCasa(k) === (LOCAL === 'casa'));
 const LS_DRAFT = 'treino-rascunho-v1', LS_REST = 'treino-descanso';
 let currentView = "workout"; // workout | records | evolution
 let currentTab = "A";
@@ -761,11 +847,23 @@ function ensure(letter) { if (!T[letter]) T[letter] = buildTab(letter); return T
 function slotOf(key) { return T[currentTab].slots.find(s => s.key === key); }
 
 function nextTab() {
-  const ks = Object.keys(WORKOUTS);
-  if (!allSessions.length) return 'A';
-  const i = ks.indexOf(allSessions[0].treino);
-  return ks[(i + 1) % ks.length] || 'A';
+  // o rodízio A→B→C→D vale para os dois lugares: um treino em casa conta como o treino da letra
+  const gym = ['A', 'B', 'C', 'D'], ult = allSessions.find(x => x.treino !== 'HX');
+  let prox = 'A';
+  if (ult) prox = gym[(gym.indexOf(ult.treino.replace(/^H/, '')) + 1) % 4] || 'A';
+  return LOCAL === 'casa' ? 'H' + prox : prox;
 }
+function renderLocal() {
+  const el = document.getElementById('localSwitch'); if (!el) return;
+  el.innerHTML = ['academia', 'casa'].map(v => `<button type="button" class="${LOCAL === v ? 'on' : ''}" data-local="${v}" aria-pressed="${LOCAL === v}">${v === 'academia' ? 'Academia' : 'Em casa'}</button>`).join('');
+}
+document.getElementById('localSwitch').addEventListener('click', e => {
+  const b = e.target.closest('[data-local]'); if (!b || b.dataset.local === LOCAL) return;
+  LOCAL = b.dataset.local;
+  try { localStorage.setItem('treino-local', LOCAL); } catch (x) {}
+  userPickedTab = false; currentTab = nextTab(); ensure(currentTab);
+  renderLocal(); renderTabs(); renderContent();
+});
 
 // ---------- rascunho (sobrevive a recarregar a página) ----------
 function saveDraft() {
@@ -783,7 +881,7 @@ function loadDraft() {
       T[l] = { slots: d.tabs[l].slots, sets: d.tabs[l].sets, touched: true, savedToday: false };
     });
     sessDate = d.retro && d.retro < todayISO() ? d.retro : null;
-    if (WORKOUTS[d.tab]) { currentTab = d.tab; userPickedTab = true; }
+    if (WORKOUTS[d.tab]) { currentTab = d.tab; userPickedTab = true; LOCAL = isCasa(d.tab) ? 'casa' : 'academia'; }
     workStart = d.workStart || null;
   } catch (e) {}
 }
@@ -820,7 +918,7 @@ function renderTabs() {
   const tabsEl = document.getElementById('tabs');
   const sug = nextTab();
   tabsEl.innerHTML = '';
-  Object.keys(WORKOUTS).forEach(key => {
+  chavesLocal().forEach(key => {
     const last = allSessions.find(s => s.treino === key);
     const t = T[key];
     let sub = last ? quando(last.dateISO) : 'nunca feito';
@@ -829,7 +927,7 @@ function renderTabs() {
     else if (key === sug) sub = 'próximo';
     const btn = document.createElement('button');
     btn.className = 'tab-btn' + (key === currentTab ? ' active' : '') + (key === sug ? ' sug' : '');
-    btn.innerHTML = `<span class="t1">${key} · ${WORKOUT_NAMES[key]}</span><span class="t2">${sub}</span>`;
+    btn.innerHTML = `<span class="t1">${tabLetra(key)} · ${WORKOUT_NAMES[key]}</span><span class="t2">${sub}</span>`;
     btn.onclick = () => { currentTab = key; userPickedTab = true; ensure(key); renderTabs(); renderContent(); saveDraft(); };
     tabsEl.appendChild(btn);
   });
@@ -931,7 +1029,7 @@ function renderHistory() {
   listEl.innerHTML = allSessions.slice(0, 15).map(sess => {
     const totalSets = Object.values(sess.exercises || {}).reduce((acc, log) => acc + log.filter(s => s.done).length, 0);
     return `<div class="hist-card">
-      <div class="hist-date">Treino ${sess.treino} — ${sess.dateLabel || sess.dateISO}</div>
+      <div class="hist-date">${rotuloTreino(sess.treino)} — ${sess.dateLabel || sess.dateISO}</div>
       <div class="hist-summary">${totalSets} séries concluídas${sess.duracao ? ' · ' + sess.duracao + ' min' : ''}</div>
     </div>`;
   }).join('');
@@ -1006,11 +1104,9 @@ function toggleDone(key, i) {
   s.pre = false;
   t.touched = true;
   if (s.done) {
-    if (!sessDate) {
-      prepareAudio();
-      if (!workStart) workStart = Date.now();
-      startRest();
-    }
+    prepareAudio();
+    if (!sessDate && !workStart) workStart = Date.now();
+    startRest();
   }
   recalcPR(t, sl);
   renderCard(key);
@@ -1022,11 +1118,11 @@ function toggleDone(key, i) {
 function openSwap(key) {
   const t = T[currentTab], sl = slotOf(key);
   const usados = new Set(t.slots.map(x => x.id));
-  const opts = Object.entries(EX_INDEX).filter(([id]) => !usados.has(id))
+  const opts = Object.entries(EX_INDEX).filter(([id, e]) => !usados.has(id) && isCasa(e.treino) === isCasa(currentTab))
     .sort((a, b) => a[1].name.localeCompare(b[1].name, 'pt-BR'));
   const sel = document.getElementById('swapSel');
   sel.innerHTML = (sl.id !== sl.key ? `<option value="${sl.key}">↺ Voltar ao original: ${H(EX_INDEX[sl.key].name)}</option>` : '') +
-    opts.map(([id, e]) => `<option value="${id}">${H(e.name)} (treino ${e.treino})</option>`).join('');
+    opts.map(([id, e]) => `<option value="${id}">${H(e.name)} (${rotuloTreino(e.treino).toLowerCase()})</option>`).join('');
   document.getElementById('swapDlg').dataset.key = key;
   document.getElementById('swapDlg').showModal();
 }
@@ -1198,7 +1294,7 @@ function renderRecords() {
   Object.keys(WORKOUTS).forEach(treino => {
     const groupEntries = entries.filter(([exId]) => EX_INDEX[exId]?.treino === treino);
     if (!groupEntries.length) return;
-    html += `<div class="pr-group-label" style="margin-top:14px;">Treino ${treino}</div>`;
+    html += `<div class="pr-group-label" style="margin-top:14px;">${rotuloTreino(treino)}</div>`;
     groupEntries.forEach(([exId, r]) => {
       html += `<div class="pr-card">
         <div>
@@ -1237,7 +1333,7 @@ function exercisesWithHistory() {
   const ids = new Set();
   allSessions.forEach(sess => {
     Object.entries(sess.exercises || {}).forEach(([exId, log]) => {
-      if (log.some(s => s.done && s.weight)) ids.add(exId);
+      if (log.some(s => s.done && (s.weight || s.reps || s.time))) ids.add(exId);
     });
   });
   return [...ids];
@@ -1282,7 +1378,11 @@ function sugestao(exId) {
   }
   if (!a.min) return null;
   const W = Math.max(...sets.map(x => x.w)), at = sets.filter(x => x.w === W), minR = Math.min(...at.map(x => x.r));
-  if (W <= 0) return null;
+  if (W <= 0) { // só peso do corpo: progride por repetições e por variação mais difícil
+    const mr = Math.min(...sets.map(x => x.r));
+    if (sets.length >= a.sets && mr >= a.max) return { kind: 'subir', txt: a.max + '+ reps, com a variação mais difícil', why: 'Você chegou a ' + a.max + ' reps em todas as séries. Dificulte: descida mais lenta (3 s), pausa de 2 s embaixo, pés mais altos, ou +2 reps.' };
+    return { kind: 'reps', txt: Math.min(a.max, mr + 1) + ' ou mais reps em cada série', why: 'Uma repetição a mais por série. Quando todas chegarem a ' + a.max + ', dificulte o movimento.' };
+  }
   if (at.length >= a.sets && minR >= a.max) {
     const inc = W >= 20 ? 2.5 : 1;
     return { kind: 'subir', w: W + inc, txt: kg(W + inc) + ' kg × ' + a.min + '–' + a.max, why: 'Na última vez você fez ' + at.length + ' séries de ' + minR + ' ou mais com ' + kg(W) + ' kg: chegou ao topo da faixa. Hora de subir a carga.' };
@@ -1417,7 +1517,7 @@ function renderEvolution() {
     const groupIds = available.filter(id => EX_INDEX[id]?.treino === treino);
     if (!groupIds.length) return;
     const group = document.createElement('optgroup');
-    group.label = 'Treino ' + treino;
+    group.label = rotuloTreino(treino);
     groupIds.forEach(id => {
       const opt = document.createElement('option');
       opt.value = id; opt.textContent = EX_INDEX[id]?.name || id;
@@ -1435,9 +1535,10 @@ function renderEvolution() {
 function drawEvoChart() {
   const id = currentEvoExId, ex = EX_INDEX[id], h = histEx(id), a = parseAlvo(ex.target);
   const graf = document.getElementById('evoGraf'); if (!graf) return;
-  const timed = a.timed;
+  const timed = a.timed, corpo = !timed && h.every(x => x.W === 0);
   graf.innerHTML = svgGraf('linha', h.map(x => dm(x.iso)), timed
     ? [{ data: h.map(x => x.tmin), cor: '#F19FB8', nome: 'Menor tempo (s)' }]
+    : corpo ? [{ data: h.map(x => x.reps), cor: '#F19FB8', nome: 'Total de repetições' }, { data: h.map(x => Math.max(...x.sets.map(y => y.r))), cor: '#C3A3E0', dash: true, nome: 'Melhor série (reps)' }]
     : [{ data: h.map(x => x.W), cor: '#F19FB8', nome: 'Carga máxima (kg)' }, { data: h.map(x => Math.round(x.e1 * 10) / 10), cor: '#C3A3E0', dash: true, nome: '1RM estimado (kg)' }]);
 
   // sugestão para o próximo treino
@@ -1446,7 +1547,14 @@ function drawEvoChart() {
 
   // números principais
   const statsEl = document.getElementById('evoStats'), first = h[0], last = h[h.length - 1];
-  if (!timed && first && last) {
+  if (corpo && first && last) {
+    const pct = first.reps > 0 ? Math.round((last.reps / first.reps - 1) * 100) : 0;
+    statsEl.innerHTML = `
+      <div class="stat-box"><div class="stat-num">${first.reps}</div><div class="stat-label">reps no 1º treino</div></div>
+      <div class="stat-box"><div class="stat-num">${last.reps}</div><div class="stat-label">reps no mais recente</div></div>
+      <div class="stat-box"><div class="stat-num">${pct >= 0 ? '+' : ''}${pct}%</div><div class="stat-label">evolução</div></div>
+      <div class="stat-box"><div class="stat-num">${Math.max(...h.map(x => x.reps))}</div><div class="stat-label">melhor total</div></div>`;
+  } else if (!timed && first && last) {
     const pct = first.e1 > 0 ? Math.round((last.e1 / first.e1 - 1) * 100) : 0, melhor = Math.max(...h.map(x => x.e1));
     statsEl.innerHTML = `
       <div class="stat-box"><div class="stat-num">${kg(first.W)} kg</div><div class="stat-label">primeiro treino</div></div>
@@ -1462,10 +1570,10 @@ function drawEvoChart() {
     const pctc = sugTot ? Math.round(exe / sugTot * 100) : 0;
     let st = '<span class="st novo">primeiro</span>';
     if (antes) {
-      const ref = timed ? [x.tmin, antes.tmin] : [x.e1, antes.e1];
+      const ref = timed ? [x.tmin, antes.tmin] : (corpo ? [x.reps, antes.reps] : [x.e1, antes.e1]);
       st = ref[0] > ref[1] * 1.005 ? '<span class="st up">↑ evoluiu</span>' : ref[0] < ref[1] * 0.995 ? '<span class="st dn">↓ abaixo</span>' : '<span class="st igual">= manteve</span>';
     }
-    const txtSets = x.sets.map(y => timed ? y.t + ' s' : kg(y.w) + '×' + y.r).join(' · ');
+    const txtSets = x.sets.map(y => timed ? y.t + ' s' : (y.w > 0 ? kg(y.w) + '×' + y.r : y.r + ' reps')).join(' · ');
     return `<div class="evo-lin"><div class="evo-lin-d">${dm(x.iso)}</div><div class="evo-lin-s">${H(txtSets)}</div>
       <div class="evo-lin-r">${timed ? '' : `<span>${exe}/${sugTot} reps</span>`}<div class="evo-bar"><i style="width:${Math.min(100, pctc)}%"></i></div></div>${st}</div>`;
   }).join('');
@@ -1486,6 +1594,7 @@ async function loadSessions() {
     if (!T[l] || !T[l].touched) T[l] = buildTab(l); else recalcAll(T[l]);
   });
   if (!userPickedTab) currentTab = nextTab();
+  renderLocal();
   renderTabs();
   renderContent();
   renderHistory();
