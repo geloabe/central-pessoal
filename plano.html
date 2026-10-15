@@ -346,7 +346,7 @@ var IDEIAS=[
      {n:'Prato',fj:1,obs:'Feijão fica desligado por padrão no jantar. Sem ele, o carboidrato aumenta para repor (dá para desligar isso). Purê: batata cozida amassada com um pouco de leite desnatado (de preferência zero lactose) e 1 colher de chá de manteiga.',it:[['115 g','Arroz cozido',147,3,32,0,false,[['Arroz','80 g','Arroz cozido',102,2,22,0],['Purê','150 g','Purê de batata',135,3,22,4],['Macarrão','70 g','Macarrão cozido',111,4,21,1]],[['Arroz','115 g','Arroz cozido',147,3,32,0],['Purê','215 g','Purê de batata',194,4,32,6],['Macarrão','105 g','Macarrão cozido',166,6,32,1]]],['70 g','Feijão cozido',54,3,10,0,true],['150 g','Proteína (frango, carne magra ou peixe)',240,47,0,5],['150 g','Legumes e salada',50,2,11,0,'on']]}]},
    {h:'22:00',key:'ceia',n:'Ceia',ops:[
      {n:'Iogurte',obs:'O de garrafa zero lactose e zero açúcar (Batavo Pense Zero, Itambé Fit e parecidos) tem cerca de 26 kcal e 3 g de proteína por 100 g, bem menos calórico que o natural. Se ainda der fome, tome um segundo copo ou coma um ovo cozido. Confira no rótulo que diz zero lactose.',it:[['200 g (1 copo)','Iogurte zero lactose e zero açúcar (garrafa)',52,6,8,0,false,[['Garrafa zero','200 g (1 copo)','Iogurte zero lactose e zero açúcar (garrafa)',52,6,8,0],['Natural','170 g','Iogurte natural zero lactose',100,6,13,3]]]]},
-     {n:'Mingau',it:[['200 ml','Leite zero lactose',122,6,10,7],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
+     {n:'Mingau',obs:'Leve ao fogo baixo mexendo por 3 a 4 minutos, até engrossar. Pitada de canela e, se quiser, uma gota de baunilha. Fica cremoso, bem diferente de leite com aveia solta.',it:[['200 ml','Leite zero lactose',122,6,10,7],['2 colheres de sopa (30 g)','Aveia em flocos',110,4,18,2],['a gosto','Canela',0,0,0,0],['1 colher de chá (7 g)','Mel',20,0,5,0,true]]},
      {n:'Ovos',it:[['1 a 2 unidades','Ovos cozidos',108,10,1,7]]}]}
   ];
 
@@ -468,21 +468,42 @@ var IDEIAS=[
   function estadoRef(){return P.refeicoes({refeicoes:regList()},new Date())}
   function copia(o){return o?JSON.parse(JSON.stringify(o)):null}
   function garante(k){if(!reg[k])reg[k]={date:k,feitas:{},extras:[]};reg[k].feitas=reg[k].feitas||{};reg[k].extras=reg[k].extras||[];return reg[k]}
-  function salvaDia(k){
-    var d=reg[k];
-    if(d&&!Object.keys(d.feitas||{}).length&&!(d.extras||[]).length){delete reg[k];if(db)db.doc('refeicoes/'+k).delete()}
-    else if(db&&d)db.doc('refeicoes/'+k).set(d);
-    renderDia();renderDias();
+  /* Gravação do registro diário: a tela muda na hora e o banco recebe a MESMA mudança numa fila, aplicada sobre o
+     documento mais recente (nunca sobrescreve com uma cópia velha). Enquanto há gravação pendente, atualizações
+     vindas do banco são ignoradas para não apagar o que acabou de ser marcado. */
+  var pend=0,fila=Promise.resolve(),bloqueioAte=0,recTimer=null;
+  function vazio(d){return !Object.keys(d.feitas||{}).length&&!(d.extras||[]).length}
+  function aplica(k,fn){var d=garante(k);fn(d)}
+  function fecha(k){var d=reg[k];if(d&&vazio(d))delete reg[k]}
+  function persiste(k,fn){
+    if(!db)return;
+    pend++;bloqueioAte=Date.now()+4000;
+    fila=fila.then(async function(){
+      try{
+        var ref=db.doc('refeicoes/'+k),cur=await ref.get(),d=cur.exists?cur.data():{date:k,feitas:{},extras:[]};
+        d.feitas=d.feitas||{};d.extras=d.extras||[];d.date=d.date||k;
+        fn(d);
+        if(vazio(d))await ref.delete();else await ref.set(d);
+      }catch(e){console.error('registro não salvou',e)}
+      pend--;bloqueioAte=Date.now()+4000;
+      if(!pend){clearTimeout(recTimer);recTimer=setTimeout(reconcilia,4200)}
+    });
   }
+  async function reconcilia(){ // depois da última gravação, confere com o banco (começa depois de tudo gravado)
+    if(pend||!db)return;
+    try{var sn=await db.collection('refeicoes').get();if(pend)return;reg={};sn.docs.forEach(function(d){var o=d.data();reg[o.date||d.id]=o});renderDia();renderDias()}catch(e){console.error(e)}
+  }
+  function muda(k,fn,calado){aplica(k,fn);persiste(k,fn);fecha(k);if(!calado){renderDia();renderDias()}}
   function snapshot(i){var o=sel(i),sb=sob(i),its=itensOf(i,o),t=soma(its.concat(sb?sb.it:[])),al=its.filter(function(x){return x[7]}).map(function(x){return x[7][x[8]][0]}).concat(its.filter(function(x){return x[10]&&!x[6]&&!x[11]}).map(function(x){return '+ '+x[1].split(' ')[0].toLowerCase()})).concat(its.filter(function(x){return x[10]&&x[6]&&x[11]}).map(function(x){return 'sem '+x[1].split(' ')[0].toLowerCase()}));return {op:o.n+(al.length?' ('+al.join(', ')+')':'')+(sb?' + '+sb.n:''),kcal:Math.round(t[0]),p:Math.round(t[1]),c:Math.round(t[2]),g:Math.round(t[3])}}
-  function snapDone(i){var d=reg[diaSel],key=REF[i]&&REF[i].key;if(d&&key&&d.feitas&&d.feitas[key]&&!d.feitas[key].livre){d.feitas[key]=snapshot(i);if(db)db.doc('refeicoes/'+diaSel).set(d)}}
+  function snapDone(i){var d=reg[diaSel],key=REF[i]&&REF[i].key;if(d&&key&&d.feitas&&d.feitas[key]&&!d.feitas[key].livre){var sn=snapshot(i);muda(diaSel,function(x){if(x.feitas[key]&&!x.feitas[key].livre)x.feitas[key]=sn},true)}}
   function toast(msg,rec){var el=document.getElementById('toast');el.textContent=msg;el.className='toast on'+(rec?' rec':'');clearTimeout(toast._t);toast._t=setTimeout(function(){el.classList.remove('on')},3800)}
 
   function alterna(i){
-    var key=REF[i].key,antesDoc=copia(reg[diaSel]),antes=estadoRef(),d=garante(diaSel);
-    if(d.feitas[key])delete d.feitas[key];else d.feitas[key]=snapshot(i);
+    var key=REF[i].key,antesDoc=copia(reg[diaSel]),antes=estadoRef(),d=garante(diaSel),desliga=!!d.feitas[key],sn=desliga?null:snapshot(i);
+    var fn=function(x){if(desliga)delete x.feitas[key];else x.feitas[key]=sn};
+    aplica(diaSel,fn);
     var depois=estadoRef(),da=P.refDia(antesDoc),db_=P.refDia(reg[diaSel]);
-    salvaDia(diaSel);
+    persiste(diaSel,fn);fecha(diaSel);renderDia();renderDias();
     var msg=null,rec=false;
     if(depois.melhor>antes.melhor&&depois.sequencia===depois.melhor&&antes.melhor>0){msg='🏆 Nova melhor sequência: '+depois.sequencia+' dias seguidos';rec=true}
     else if(db_.completo&&!da.completo)msg='Dia completo: as 6 refeições feitas 🎉';
@@ -516,10 +537,10 @@ var IDEIAS=[
     if(e.submitter&&e.submitter.value==='cancel')return;
     var nome=exFrm.elements.nome.value.trim(),kcal=Math.max(0,Math.round(+exFrm.elements.kcal.value||0));
     if(!nome)return;
-    var d=garante(diaSel),antes=estadoRef();
-    if(exTipo==='alcool'){var q=Math.max(1,Math.round(+exFrm.elements.qtd.value||1));d.extras.push({id:'x'+Date.now().toString(36),tipo:'alcool',nome:nome+(q>1?' ×'+q:''),kcal:kcal*q})}
-    else{var slot=exFrm.elements.slot.value;if(slot)d.feitas[slot]={op:'Livre: '+nome,kcal:kcal,p:0,c:0,g:0,livre:true};else d.extras.push({id:'x'+Date.now().toString(36),tipo:'livre',nome:nome,kcal:kcal})}
-    salvaDia(diaSel);
+    var fn,idx='x'+Date.now().toString(36);
+    if(exTipo==='alcool'){var q=Math.max(1,Math.round(+exFrm.elements.qtd.value||1)),ea={id:idx,tipo:'alcool',nome:nome+(q>1?' ×'+q:''),kcal:kcal*q};fn=function(x){if(!x.extras.some(function(e){return e.id===idx}))x.extras.push(ea)}}
+    else{var slot=exFrm.elements.slot.value;if(slot){var fl={op:'Livre: '+nome,kcal:kcal,p:0,c:0,g:0,livre:true};fn=function(x){x.feitas[slot]=fl}}else{var el2={id:idx,tipo:'livre',nome:nome,kcal:kcal};fn=function(x){if(!x.extras.some(function(e){return e.id===idx}))x.extras.push(el2)}}}
+    muda(diaSel,fn);
     toast(exTipo==='alcool'?'Bebida registrada. O dia inteiro fica visível.':'Refeição livre registrada. Sem compensar.');
   });
   function docDia(k){return reg[k]?reg[k]:{date:k,feitas:{},extras:[]}}
@@ -555,7 +576,7 @@ var IDEIAS=[
   document.getElementById('extras').addEventListener('click',function(e){
     var b=e.target.closest('button');if(!b)return;
     if(b.dataset.ex)return abreExtra(b.dataset.ex);
-    if(b.dataset.exdel){var d=garante(diaSel);d.extras=d.extras.filter(function(x){return x.id!==b.dataset.exdel});salvaDia(diaSel)}
+    if(b.dataset.exdel){var xid=b.dataset.exdel;muda(diaSel,function(x){x.extras=x.extras.filter(function(e){return e.id!==xid})})}
   });
 
   /* ---- aba Dias: análise por dia ---- */
@@ -730,7 +751,7 @@ var IDEIAS=[
   claude.use('db').then(function(d){
     db=d;
     carregaCompras();
-    db.collection('refeicoes').onSnapshot(function(sn){reg={};sn.docs.forEach(function(d){var o=d.data();reg[o.date||d.id]=o});renderDia();renderDias();setTimeout(rolarAuto,150)});
+    db.collection('refeicoes').onSnapshot(function(sn){if(pend>0||Date.now()<bloqueioAte)return;reg={};sn.docs.forEach(function(d){var o=d.data();reg[o.date||d.id]=o});renderDia();renderDias();setTimeout(rolarAuto,150)});
     db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'});
     db.doc('plano_ideias/main').get().then(function(s){if(s.exists){votos=s.data().votos||{};renderIdeias();renderDia()}});
   });
