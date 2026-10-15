@@ -16,7 +16,7 @@ main{max-width:960px;margin:0 auto;padding:16px 16px 64px;padding-bottom:calc(64
 header.top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 header.top h1{font-size:22px}
 .sp{flex:1}
-.destaque{padding:22px 20px}
+.destaque{padding:22px 20px;margin-top:26px}
 .destaque h2{font-size:clamp(28px,7vw,40px);max-width:18ch}
 .destaque p{margin:8px 0 0;color:var(--t-muted)}
 .pr{display:flex;gap:12px;align-items:center;margin-top:16px;padding:12px 14px;background:var(--t-surface);border-left:4px solid var(--t-accent2);border:1px solid var(--t-line);border-left-width:4px}
@@ -77,6 +77,15 @@ a.mod .go{margin-left:auto;color:var(--t-muted);font-size:18px}
 .parahoje a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1px solid var(--t-borda);background:var(--t-surface);color:var(--t-ink);text-decoration:none;font:600 14px var(--f-texto);border-radius:var(--raio)}
 .parahoje a.ok{border-color:var(--t-ok);color:var(--t-ok)}
 
+@media (max-width:700px){
+.grid{grid-template-columns:1fr 1fr;gap:10px}
+a.mod{min-height:0;padding:12px;gap:8px}
+a.mod h3{font-size:16px}
+a.mod .ic{width:28px;height:28px}
+a.mod .go,a.mod .sem,a.mod .mini,a.mod .up,a.mod .dn{display:none}
+.num{font-size:24px}
+.num small{display:block;margin-top:2px}
+}
 .hoje-lista{display:grid;gap:8px}
 a.lin{display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 14px;background:var(--t-surface);border:1px solid var(--t-line);border-left:4px solid var(--t-borda);border-radius:var(--raio);color:inherit;text-decoration:none}
 a.lin.ok{border-left-color:var(--t-ok)}
@@ -117,6 +126,9 @@ a.meta.ok .l span:last-child{color:var(--t-ok);font-weight:700}
     <span class="sp"></span>
   </header>
 
+  <h2 class="sec rotulo" style="margin-top:0">Seus painéis</h2>
+  <div class="grid" id="cards"></div>
+
   <section class="destaque" aria-live="polite">
     <div class="rotulo" style="color:var(--t-muted)">Hoje</div>
     <h2 id="titulo">Carregando…</h2>
@@ -135,9 +147,6 @@ a.meta.ok .l span:last-child{color:var(--t-ok);font-weight:700}
   <div id="metas"></div>
 
   <div id="aval"></div>
-
-  <h2 class="sec rotulo">Seus painéis</h2>
-  <div class="grid" id="cards"></div>
 
   <h2 class="sec rotulo">Marcos</h2>
   <div class="marcos" id="marcos"></div>
