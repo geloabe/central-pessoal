@@ -318,6 +318,16 @@
   .topic input[type=checkbox]{margin-top:3px; accent-color:var(--wine);}
   .topic-label{font-size:.9rem; line-height:1.4;}
   .topic-label.checked{color:var(--text-muted); text-decoration:line-through;}
+  .fase{display:block;font-weight:400;opacity:.65;font-size:12px;font-family:'Work Sans',sans-serif}
+  .livros{margin:8px 0 10px;border:1px solid var(--border, #ddd6f0);border-radius:10px;padding:2px 12px}
+  .livros summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;font-size:.95rem}
+  .livros h4{margin:10px 0 2px;font-size:.9rem;color:var(--gold)}
+  .livro{display:flex;gap:10px;align-items:flex-start;padding:8px 0;min-height:44px;cursor:pointer}
+  .livro input{margin-top:3px;flex:none;width:20px;height:20px}
+  .livro small{color:var(--text-muted);font-size:.8rem;line-height:1.4}
+  .livro em{font-style:normal;font-size:.75rem;margin-left:4px;white-space:nowrap}
+  .livro em.ok{color:var(--teal, #6b4fd1)}
+  .livro em.conf{color:var(--wine, #8b3a4a)}
   .track-note{
     font-size:.8rem;
     color:var(--text-muted);
@@ -567,7 +577,7 @@
   <section class="panel" id="panel-trilhas">
     <div class="card">
       <h2>Trilhas de estudo</h2>
-      <p class="muted">Eu organizei cada caminho em uma ordem de estudo: primeiro fundamentos, depois a base técnica, depois a prática e, por fim, a ética e o discernimento. Escolha poucas trilhas em foco (botão Foco) e deixe as outras esperando. Elas aparecem na aba Hoje com o próximo tópico. Marque o que já estudou, acrescente os seus próprios checkpoints e crie novas trilhas.</p>
+      <p class="muted">As trilhas seguem cinco fases: 1) régua e fundamentos, 2) a Umbanda como âncora, que continua o tempo todo, 3) base filosófica, 4) divinação e símbolos, 5) magia prática e histórica. Comece pela Fundamentos da Magia e pela Umbanda, e deixe as outras esperando (botão Foco). As trilhas em foco aparecem na aba Hoje com o próximo tópico. Em cada trilha, a seção Leituras separa os livros curtos para começar dos que ficam para depois. O selo “registro confirmado” quer dizer que achei o livro em catálogo ou editora; o resto, confira antes de comprar. Marque o que já estudou e acrescente os seus próprios checkpoints.</p>
       <p class="muted">Um aviso de quem já andou por muitas casas: livros são mapa e prática é território. Em religiões vivas como a Umbanda, quem ensina é a casa. Em práticas com ervas, fogo ou metais, a segurança vem antes da curiosidade.</p>
       <div class="form-grid">
         <div class="row2">
@@ -1002,9 +1012,231 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
 
   /* ---------- trilhas ---------- */
   const DEFAULT_TRACKS = {
+  "Fundamentos da Magia": {
+    "foco": true,
+    "fase": "Fase 1 · Régua e fundamentos",
+    "note": "Antes de qualquer técnica, a régua. Já vi muita gente colecionar mil sistemas sem nunca perguntar o que é magia. Esta trilha é curta de propósito: em cada tema você aprende a perguntar de onde veio, como funciona por dentro e se funciona de fato. Uma tarefa por semana, sempre com uma leitura curta e uma pergunta aplicada à sua prática na Umbanda. Só abra um sistema novo depois de entregar o resumo e a prática do atual.",
+    "topics": [
+      {
+        "label": "Régua · O que é magia e por que a palavra é polêmica",
+        "detail": "A palavra nasceu como acusação: o magos persa visto pelos gregos, depois a magia demoníaca dos teólogos cristãos. Antes de aprender técnicas, aprenda a história do termo. Leitura curta: Hanegraaff, \"Western Esotericism: A Guide for the Perplexed\", capítulos 1 a 3."
+      },
+      {
+        "label": "Régua · Esoterismo ocidental não é uma tradição única",
+        "detail": "É um campo de correntes diferentes (hermetismo, cabala cristã, alquimia, rosacruzes, teosofia, ocultismo moderno) que a academia estuda desde os anos 1990. Segundo Faivre, o que as une são características como correspondências, natureza viva, imaginação e mediações, experiência de transmutação e transmissão (confira a fonte, que não consegui verificar). Quem diz \"tradição de 5 mil anos\" quase sempre está vendendo algo."
+      },
+      {
+        "label": "Teorias · Frazer: simpatia e contágio",
+        "detail": "Semelhante atrai semelhante, e o que esteve em contato continua ligado. É a origem da ideia de \"magia como ciência que falhou\", hoje muito criticada. Útil como vocabulário, não como explicação final."
+      },
+      {
+        "label": "Teorias · Hubert e Mauss: magia como fato social",
+        "detail": "\"Esboço de uma teoria geral da magia\" (1902-04): magia vista como ação ritual mais privada, à margem da religião oficial, e que só existe porque um grupo acredita nela. Está em português em \"Sociologia e Antropologia\" (Cosac Naify, 2003; reedição Ubu, 2021)."
+      },
+      {
+        "label": "Teorias · Malinowski: magia diante da incerteza",
+        "detail": "Nas ilhas Trobriand, a magia aparece onde o risco é alto e o resultado incerto (pesca em mar aberto, mas não na lagoa segura). Mostra a função emocional e social do rito."
+      },
+      {
+        "label": "Teorias · Tambiah: o rito como ato que faz coisas",
+        "detail": "Tambiah (1990) defende que a eficácia ritual é performativa: o rito muda a situação social e simbólica, e não deve ser julgado como ciência errada. Livro curto (187 páginas) e a melhor ponte para quem tem formação técnica."
+      },
+      {
+        "label": "Mapa · Correspondência, símbolo e intenção",
+        "detail": "Quase toda tradição usa analogia (cor, planta, planeta, número), símbolos e uma intenção declarada. Exercício: escolha uma correspondência (por exemplo, uma cor) e compare como ela aparece na Umbanda, no hoodoo e na Wicca. Anote numa tabela no diário: tradição, uso, fonte."
+      },
+      {
+        "label": "Mapa · Ritual, purificação e limites",
+        "detail": "Sequência, espaço, tempo, gesto e palavra. Preparação (banho, jejum, abstinência) e proteção (fechamento, regras, proibições). Compare uma abertura de gira, um círculo wiccano e uma limpeza de hoodoo."
+      },
+      {
+        "label": "Mapa · Mediação, reciprocidade e transmissão",
+        "detail": "Espíritos, santos, anjos, egrégoras. Oferenda e retribuição (obrigação dos dois lados). Linhagem, iniciação e sigilo. Compare oferenda e firmeza na Umbanda com altares de ancestrais no hoodoo."
+      },
+      {
+        "label": "Evidência · O que se sabe e o que não se sabe",
+        "detail": "Astrologia, numerologia, tarô, runas e radiestesia não têm comprovação de poder preditivo em testes controlados. Têm valor histórico, simbólico e de autorreflexão. Separe sempre três perguntas: de onde veio, como funciona por dentro e se prediz de fato. A terceira tem resposta negativa, e dizer isso não tira o valor das outras duas."
+      },
+      {
+        "label": "Evidência · Por que a prática parece razoável a quem a faz",
+        "detail": "Luhrmann mostrou, em estudo de campo, como a prática ritual muda a atenção e a interpretação de quem pratica, sem ninguém ser tolo. Conheça o viés de confirmação e o efeito ideomotor. Jung serve como linguagem de símbolo e imaginação, mas reduz a magia a processo psíquico e é criticado; use-o como uma lente entre várias."
+      },
+      {
+        "label": "História · Magia medieval e renascentista",
+        "detail": "Magia natural (forças ocultas da natureza), astrológica, angélica e demoníaca. Kieckhefer, \"Magic in the Middle Ages\", é a porta de entrada. Ficino, Agrippa e Paracelso ficam para depois, via comentadores."
+      },
+      {
+        "label": "Ética · Sinais vermelhos em grupos e mestres",
+        "detail": "Obediência total e proibição de questionar. Isolamento da família, do trabalho ou do tratamento. Cobrança alta e crescente por \"limpezas\" e graus. Medo constante que só o mestre resolve. Pedido de sexo, segredos, fotos ou acesso financeiro. Desestímulo a médicos e remédios. Linhagem que não resiste a uma verificação simples. Ameaça a quem sai."
+      },
+      {
+        "label": "Ética · Saúde mental e prática intensa",
+        "detail": "Jejum, privação de sono, transe e meditação prolongada podem agravar ansiedade, mania e dissociação. Pare e procure ajuda se tiver mais de 3 noites de insônia, ideias de missão especial ou de perseguição, vozes persistentes ou confusão entre simbólico e literal. Magia e religião não substituem tratamento. Mantenha acompanhamento e medicação e avise sua equipe de saúde sobre o que pratica. Com TDAH, cuidado com o hiperfoco: não deixe a prática tirar sono, trabalho e relações."
+      },
+      {
+        "label": "Ética · Respeito às tradições de comunidades",
+        "detail": "Umbanda, hoodoo e outras tradições afrodiaspóricas pertencem a povos com história de opressão. Estude por fontes de dentro e por pesquisa acadêmica, credite quem ensinou e não misture elementos fora de contexto."
+      },
+      {
+        "label": "Método · Seu ciclo semanal",
+        "detail": "Segunda, 35 min: um capítulo, com 3 perguntas anotadas. Quarta, 30 min: resumo de 10 linhas com suas palavras e uma comparação com a sua prática. Quinta, 25 a 40 min: prática curta registrada. Sábado, 40 min: diário da semana e escolha do foco seguinte. Um livro ativo e um de reserva, sem comprar nada durante o mês. Termine cada sessão escrevendo a primeira tarefa da próxima."
+      },
+      {
+        "label": "Marco · Explicar em 10 minutos",
+        "detail": "Sem consultar, explique as quatro teorias (Frazer, Hubert e Mauss, Malinowski, Tambiah) e três contrastes entre tradições, e mostre 12 semanas de diário com uma prática estável. Só então avance de fase."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Wouter Hanegraaff",
+        "t": "Western Esotericism: A Guide for the Perplexed",
+        "ano": "2013",
+        "n": "224 páginas. A melhor primeira leitura do campo.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Hubert e Mauss",
+        "t": "Esboço de uma teoria geral da magia (em Sociologia e Antropologia)",
+        "ano": "1902-04; Cosac Naify 2003, Ubu 2021",
+        "n": "Ensaio curto, em português.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Stanley Tambiah",
+        "t": "Magic, Science, Religion, and the Scope of Rationality",
+        "ano": "1990",
+        "n": "187 páginas. Tradução em português: não confirmei.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Richard Kieckhefer",
+        "t": "Magic in the Middle Ages",
+        "ano": "1989",
+        "n": "Magia natural, necromancia e teurgia medievais. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Ronald Hutton",
+        "t": "The Triumph of the Moon",
+        "ano": "1999",
+        "n": "História da Wicca e do neopaganismo. Português: não encontrei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Tanya Luhrmann",
+        "t": "Persuasions of the Witch's Craft",
+        "ano": "1989",
+        "n": "Por que a prática ritual parece razoável a quem a faz.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Alex Owen",
+        "t": "The Place of Enchantment: British Occultism and the Culture of the Modern",
+        "ano": "2004",
+        "n": "Magia na Inglaterra e a cultura do ocultismo moderno.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Wouter Hanegraaff",
+        "t": "Esotericism and the Academy: Rejected Knowledge in Western Culture",
+        "ano": "2012",
+        "n": "Para o segundo momento, quando você quiser a história do próprio conceito.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Stuart Clark",
+        "t": "Thinking with Demons",
+        "ano": "1997",
+        "n": "Cerca de 800 páginas. Nível avançado.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Kocku von Stuckrad",
+        "t": "Western Esotericism: A Brief History of Secret Knowledge",
+        "ano": "2005 (edição não confirmada)",
+        "n": "Título e autor confirmados; ano e edição, não.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Egil Asprem",
+        "t": "Arguing with Angels: Enochian Magic and Modern Occulture",
+        "ano": "2012",
+        "n": "Como se estuda um sistema mágico moderno.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Alison Butler",
+        "t": "Victorian Occultism and the Making of Modern Magic",
+        "ano": "2011",
+        "n": "Sobre a Golden Dawn.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Marco Pasi",
+        "t": "Aleister Crowley and the Temptation of Politics",
+        "ano": "2014",
+        "n": "Crowley com rigor acadêmico.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Hanegraaff (org.)",
+        "t": "Dictionary of Gnosis and Western Esotericism",
+        "ano": "2005",
+        "n": "Obra de consulta.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Antoine Faivre",
+        "t": "Access to Western Esotericism",
+        "ano": "1994",
+        "n": "Não confirmei na busca; confira antes de comprar.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Frazer e Malinowski",
+        "t": "O Ramo de Ouro; Magia, Ciência e Religião",
+        "ano": "clássicos",
+        "n": "Existem em português, mas não confirmei as edições.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Peter Carroll",
+        "t": "Liber Null & Psychonaut",
+        "ano": "1987",
+        "n": "Magia do caos. Prática, não acadêmica.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Phil Hine",
+        "t": "Condensed Chaos",
+        "ano": "1995",
+        "n": "Magia do caos. Prática, não acadêmica.",
+        "c": 1,
+        "q": "d"
+      }
+    ]
+  },
   "Umbanda": {
     "foco": true,
-    "note": "Aqui o livro dá o mapa e a casa dá o chão. A Umbanda só se completa na prática viva: terreiro, dirigente, corrente e anos de convívio. Cada casa tem seus fundamentos, então anote o que aprende e confira com o seu dirigente antes de tratar como regra.",
+    "fase": "Fase 2 · Âncora (continua o tempo todo)",
+    "note": "Aqui o livro dá o mapa e a casa dá o chão. A Umbanda só se completa na prática viva: terreiro, dirigente, corrente e anos de convívio. Cada casa tem seus fundamentos, então anote o que aprende e confira com o seu dirigente antes de tratar como regra. Os autores divergem entre si: leia mais de uma vertente e diga sempre de quem é cada ideia.",
     "topics": [
       {
         "label": "Fundamentos · O que é a Umbanda",
@@ -1012,11 +1244,23 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
       },
       {
         "label": "Fundamentos · História: Zélio de Moraes e as raízes",
-        "detail": "Anúncio em 15 de novembro de 1908, em Niterói, pelo Caboclo das Sete Encruzilhadas. Raízes: cultos bantos e iorubás, espiritismo kardecista, catolicismo popular e tradições indígenas. Leitura: \"História da Umbanda\", Alexandre Cumino; \"A Morte Branca do Feiticeiro Negro\", Renato Ortiz."
+        "detail": "Anúncio em 15 de novembro de 1908, em Niterói, pelo Caboclo das Sete Encruzilhadas, por Zélio Fernandino de Moraes. A academia trata essa data como mito fundador e prefere falar em um longo processo (macumba carioca, cabula, kardecismo, catolicismo popular). Casas de linha \"sagrada\" defendem 1908; a linha omolocô tende a ver formação gradual. Leitura: \"História da Umbanda\", Alexandre Cumino (Madras, 2011), lembrando que ele é discípulo de Rubens Saraceni."
       },
       {
         "label": "Fundamentos · Vertentes e por que os livros divergem",
-        "detail": "Umbanda Branca, Esotérica (W. W. da Matta e Silva, \"Umbanda de Todos Nós\"), Sagrada (Rubens Saraceni), Omolocô, Traçada e outras. Entender a vertente da sua casa evita confusão ao comparar livros e terreiros."
+        "detail": "Umbanda Branca ou de mesa, Esotérica (W. W. da Matta e Silva, \"Umbanda de Todos Nós\"), Iniciática (Rivas Neto), Sagrada (Rubens Saraceni), Omolocô, Traçada e outras. Divergem em pontos centrais: o número e a ordem das sete linhas, o que é linha e o que é falange, se Exu é guardião subordinado ou força autônoma, e se orixá é divindade, vibração ou linha de trabalho. Saraceni e Matta e Silva são muito seguidos e muito criticados. Entender a vertente da sua casa evita confusão ao comparar livros e terreiros."
+      },
+      {
+        "label": "Fundamentos · Umbanda, Candomblé e Quimbanda: o que é cada uma",
+        "detail": "Candomblé (nações Ketu, Jeje e Angola) tem hierarquia, iniciação e línguas litúrgicas próprias (iorubá, fon, kikongo e kimbundu), e não é Umbanda. Quimbanda é religião própria com Exus e Pombagiras. Alguns umbandistas a rejeitam; outros trabalham com Exu dentro da Umbanda. Saber distinguir é pré-requisito para falar de \"orixá\" com precisão."
+      },
+      {
+        "label": "Fundamentos · Jurema, catimbó e pajelança",
+        "detail": "Matrizes indígenas e nordestinas, presentes em Caboclos e Mestres. Há quem trate a Jurema como parte da Umbanda e quem a trate como religião autônoma."
+      },
+      {
+        "label": "Fundamentos · A leitura acadêmica da Umbanda",
+        "detail": "Renato Ortiz propôs o \"embranquecimento\": a Umbanda teria ganho aceitação perdendo conteúdo negro e mágico. A tese é muito citada e muito criticada. Simas e Rufino, em \"Fogo no mato\", defendem a macumba como saber próprio. Leia as duas posições e note onde elas discordam."
       },
       {
         "label": "Cosmologia · Orixás: origem iorubá e lugar na Umbanda",
@@ -1024,11 +1268,11 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
       },
       {
         "label": "Cosmologia · As sete linhas e as falanges",
-        "detail": "Organização das correntes espirituais de trabalho por linhas e falanges. Varia muito entre escolas. Leitura: \"As Sete Linhas de Umbanda\", Rubens Saraceni, lida com atenção à vertente que ele propõe."
+        "detail": "Organização das correntes espirituais de trabalho por linhas e falanges. Varia muito entre escolas e autores. Compare mais de um autor antes de tratar qualquer organização como regra. Leitura de dentro: Rubens Saraceni, pela Madras (confira títulos e edições no catálogo da editora)."
       },
       {
         "label": "Cosmologia · Os guias: Caboclos, Pretos-Velhos, Crianças, Baianos, Boiadeiros, Marinheiros",
-        "detail": "Quem são, que arquétipo cada um traz, que tipo de trabalho faz e como se manifesta. Leitura: \"Doutrina e Teologia de Umbanda Sagrada\", Rubens Saraceni."
+        "detail": "Quem são, que arquétipo cada um traz, que tipo de trabalho faz e como se manifesta. Isso varia por casa e por vertente: aprenda primeiro com o seu terreiro. Leitura de dentro: autores umbandistas como Saraceni e Matta e Silva, lidos com atenção à vertente de cada um."
       },
       {
         "label": "Cosmologia · Exus e Pombagiras: guardiões e trabalhadores",
@@ -1067,6 +1311,10 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
         "detail": "A influência de Allan Kardec (\"O Livro dos Espíritos\") e as diferenças e pontos de contato com Candomblé, Quimbanda e catolicismo. Respeite a diversidade sem misturar fundamentos que você ainda não entende."
       },
       {
+        "label": "Ética · Tradição e sincretismo de internet",
+        "detail": "Tabelas de orixá, signo, cristal e tarô sem fonte, atribuições copiadas entre sites e \"Umbanda e Wicca\" vendidas como a mesma coisa. Pergunte sempre: quem afirma, com base em quê, e a casa onde essa pessoa pratica aceita isso? Equivalências como \"orixá = sefirá\" são construções de autores específicos, não herança de terreiro. Estude como teologia de um autor, citando o nome dele."
+      },
+      {
         "label": "Ética · Racismo religioso e liberdade de culto",
         "detail": "As religiões de matriz africana são alvo de preconceito e violência. Conheça a Constituição (liberdade religiosa) e a decisão do STF de 2019 que considerou constitucional o sacrifício ritual de animais nessas religiões."
       },
@@ -1074,10 +1322,1034 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
         "label": "Meu caminho · Registro e orientação",
         "detail": "Seu Orixá de cabeça e seus guias são identificados na sua casa, em conversa com o dirigente, e não por teste de internet. Registre o que sente nas giras e leve dúvidas ao dirigente em vez de decidir sozinho."
       }
+    ],
+    "livros": [
+      {
+        "a": "Luiz Antonio Simas e Luiz Rufino",
+        "t": "Fogo no mato: a ciência encantada das macumbas",
+        "ano": "2018 (Mórula)",
+        "n": "Ensaio curto (124 páginas na primeira edição), mais filosófico que histórico.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Alexandre Cumino",
+        "t": "História da Umbanda: uma religião brasileira",
+        "ano": "2011 (Madras)",
+        "n": "Cerca de 400 páginas. Acessível, mas escrito por discípulo de Saraceni.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Diana DeGroat Brown",
+        "t": "Umbanda: Religion and Politics in Urban Brazil",
+        "ano": "1986 (Columbia UP 1994)",
+        "n": "Em inglês. Cobre a Umbanda dos anos 1920 aos 1970.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Renato Ortiz",
+        "t": "A morte branca do feiticeiro negro",
+        "ano": "1978 (Vozes; reed. 2011)",
+        "n": "Tese do embranquecimento, muito debatida.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Lísias Negrão",
+        "t": "Entre a cruz e a encruzilhada",
+        "ano": "1996 (Edusp)",
+        "n": "A formação do campo umbandista em São Paulo.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "W. W. da Matta e Silva",
+        "t": "Umbanda de Todos Nós",
+        "ano": "Ícone, 2007",
+        "n": "Fundador da Umbanda Esotérica. Datas originais divergem entre fontes.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "W. W. da Matta e Silva",
+        "t": "Umbanda e o Poder da Mediunidade",
+        "ano": "Ícone, 2007",
+        "n": "Mesma linha esotérica.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Rubens Saraceni",
+        "t": "Obras doutrinárias (Madras)",
+        "ano": "vários",
+        "n": "Títulos e anos exatos não confirmei. Muito seguido e muito criticado.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Francisco Rivas Neto",
+        "t": "Umbanda Sagrada: Religião, Ciência, Natureza, Saber",
+        "ano": "ano e editora não confirmados",
+        "n": "Umbanda Iniciática.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Allan Kardec",
+        "t": "O Livro dos Espíritos; O Livro dos Médiuns",
+        "ano": "clássicos",
+        "n": "A Umbanda herda o vocabulário. Edição: não verifiquei.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Reginaldo Prandi",
+        "t": "Mitologia dos orixás",
+        "ano": "2001 (Companhia das Letras)",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Pierre Verger",
+        "t": "Orixás: deuses iorubás na África e no Novo Mundo",
+        "ano": "1981",
+        "n": "Fonte clássica para o Candomblé, não para a Umbanda. Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Luiz Rufino",
+        "t": "Pedagogia das encruzilhadas",
+        "ano": "2019 (Mórula)",
+        "n": "Confirmado apenas por menção.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Pai Rodney William",
+        "t": "Apropriação cultural",
+        "ano": "2019 (Pólen)",
+        "n": "Sobre o debate de apropriação. Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Neoplatonismo, Teurgia e Gnosticismo": {
+    "foco": false,
+    "fase": "Fase 3 · Base filosófica",
+    "note": "Este é o pré-requisito mais esquecido. A metafísica que o hermetismo renascentista, a cabala cristã e a alquimia simbólica usam vem daqui. Teurgia não é magia para conseguir coisas: é rito que age sobre a alma porque os deuses são a causa, e não porque o homem os force. Leia Plotino e Jâmblico antes do Corpus Hermeticum, e o texto ficará legível.",
+    "topics": [
+      {
+        "label": "Base · Por que o neoplatonismo vem primeiro",
+        "detail": "Platão, Plotino, Jâmblico e Proclo dão o vocabulário de emanação, hierarquia espiritual e retorno que as tradições posteriores reaproveitam. Sem isso, o hermetismo e a cabala cristã parecem coleções de símbolos soltos."
+      },
+      {
+        "label": "Plotino · O Uno, o Intelecto e a Alma",
+        "detail": "A realidade como emanação: do Uno vem o Intelecto (Nous), dele a Alma, dela o mundo. Dois movimentos: procissão (próodos, descer) e retorno (epistrophé, subir)."
+      },
+      {
+        "label": "Plotino · Contemplação acima do rito",
+        "detail": "Plotino desconfia da magia ritual e prioriza a contemplação. É o contraponto honesto de Jâmblico, e confundir os dois é erro comum."
+      },
+      {
+        "label": "Jâmblico · Teurgia: o rito que salva a alma",
+        "detail": "Em \"Sobre os Mistérios\", Jâmblico defende contra Porfírio que o rito não coage os deuses: a alma encarnada precisa dele para subir. Os synthemata (sinais divinos presentes na matéria) são o que o rito usa."
+      },
+      {
+        "label": "Jâmblico · Deuses, daimones e almas",
+        "detail": "Hierarquia de seres entre o divino e o humano. Para estudo comparado, observe como uma tradição pensa a mediação, sem afirmar equivalência com guias ou falanges de outra."
+      },
+      {
+        "label": "Oráculos Caldaicos e Proclo",
+        "detail": "Textos e comentadores que consolidam a teurgia tardia. Leitura de apoio, depois do básico."
+      },
+      {
+        "label": "Hermetismo antigo e neoplatonismo: dois caminhos",
+        "detail": "São tradições contemporâneas e distintas. Misturar tudo num só \"ensinamento antigo\" apaga as diferenças que importam."
+      },
+      {
+        "label": "Gnosticismo · Demiurgo, Plêroma e centelha divina",
+        "detail": "Mito do criador imperfeito (demiurgo), da plenitude divina (Plêroma), de Sofia e da centelha que quer voltar. Contraste útil com o hermetismo: o cosmos é bom ou é prisão?"
+      },
+      {
+        "label": "Gnosticismo · Nag Hammadi e os vários grupos",
+        "detail": "A biblioteca encontrada em 1945. Setianos, valentinianos e maniqueus são grupos distintos. A própria categoria \"gnosticismo\" é discutida (Michael Williams, Karen King). Não trate como \"o esoterismo verdadeiro\" nem como cristianismo suprimido."
+      },
+      {
+        "label": "Ética · Teurgia não é magia de obter",
+        "detail": "Aprenda a diferença entre rito como caminho de salvação da alma e rito como técnica de obter coisas. Essa distinção protege você de vender ou comprar promessas."
+      },
+      {
+        "label": "Prática · Uma página de comparação",
+        "detail": "Escreva uma página: o que a ideia de rito como ação do divino, e não como coerção, muda no jeito de olhar para a gira? É comparação de ideias, não genealogia histórica."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Plotino",
+        "t": "Enéadas (tratado I.6, \"Sobre o Belo\", como primeiro trecho)",
+        "ano": "séc. III",
+        "n": "Comece só por um tratado curto. Edições em português: não confirmei.",
+        "c": 0,
+        "q": "i"
+      },
+      {
+        "a": "Gregory Shaw",
+        "t": "Theurgy and the Soul: The Neoplatonism of Iamblichus",
+        "ano": "1995 (2ª ed. 2014)",
+        "n": "A melhor porta de entrada para a teurgia. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Clarke, Dillon e Hershbell",
+        "t": "Iamblichus: On the Mysteries",
+        "ano": "2003",
+        "n": "Tradução com texto grego. Alguns estudiosos duvidam da autoria direta de Jâmblico.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Michael Williams",
+        "t": "Rethinking \"Gnosticism\"",
+        "ano": "1996",
+        "n": "Crítica da categoria. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Karen King",
+        "t": "What Is Gnosticism?",
+        "ano": "2003",
+        "n": "Título confirmado; ano e editora de memória.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Hans Jonas",
+        "t": "The Gnostic Religion",
+        "ano": "1958",
+        "n": "Clássico, confirmado só em fonte fraca.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Hermetismo e Cabala": {
+    "foco": false,
+    "fase": "Fase 3 · Base filosófica",
+    "note": "Aqui mora o esqueleto de boa parte do ocultismo ocidental. Estude com o espírito de quem separa três coisas: o texto antigo, a releitura moderna e a prática atual. Cabala judaica, cabala cristã e Qabalah hermética são caminhos diferentes, e confundi-los gera muito erro. Ordem que recomendo: neoplatonismo, depois hermetismo, depois a cabala judaica, e só então a cristã e a hermética. Se inverter, você aprende a hermética achando que é a judaica.",
+    "topics": [
+      {
+        "label": "Hermetismo · Origens: Hermes Trismegisto no Egito helenístico",
+        "detail": "Os textos herméticos (Corpus Hermeticum, Asclépio, Poimandres) são greco-egípcios, dos séculos I a III. \"Hermes Trismegisto\" é figura sincrética (Thoth mais Hermes). Isaac Casaubon já mostrou em 1614 que não são do Egito remoto: não há \"sabedoria faraônica de 5 mil anos\". Comece só pelo Poimandres (Corpus Hermeticum I). Leitura: \"Hermetica\", Brian Copenhaver."
+      },
+      {
+        "label": "Hermetismo · A Tábua de Esmeralda",
+        "detail": "Texto curto, de origem árabe medieval (a atestação mais antiga costuma ser situada entre os séculos VIII e IX). Muito citado pela alquimia e pelo hermetismo. Cuidado com a ideia de \"sabedoria egípcia de milênios\": a origem é medieval."
+      },
+      {
+        "label": "Hermetismo · O Caibalion e os sete princípios",
+        "detail": "Mentalismo, correspondência, vibração, polaridade, ritmo, causa e efeito, gênero. Atenção: o livro é de 1908, publicado pela Yogi Publication Society e atribuído (sem prova formal) a William Walker Atkinson, do círculo do New Thought. Os sete princípios não aparecem nos textos antigos. Leia como documento histórico."
+      },
+      {
+        "label": "Hermetismo · O Renascimento hermético",
+        "detail": "Marsilio Ficino traduz o Corpus em 1463. Depois vêm Pico della Mirandola, Cornélio Agrippa (\"De Occulta Philosophia\") e Giordano Bruno, que fixam o mapa moderno da magia natural. Atenção a Frances Yates (\"Giordano Bruno e a tradição hermética\"): clássico, mas a tese de uma \"tradição hermética\" como motor da ciência foi muito criticada por Hanegraaff e outros."
+      },
+      {
+        "label": "Hermetismo · Gnose e ascensão da alma",
+        "detail": "Poimandres (CH I): a revelação, o homem como ser divino e mortal. CH XIII: o renascimento. A alma sobe pelas esferas planetárias devolvendo o que recebeu. É aqui que a astrologia entra no hermetismo."
+      },
+      {
+        "label": "Cabala · Origens judaicas",
+        "detail": "Torá, Sefer Yetzirah, Zohar (século XIII) e Isaac Luria. Leitura de referência acadêmica: \"As Grandes Correntes da Mística Judaica\", Gershom Scholem. Segundo Moshe Idel, há uma corrente teosófico-teúrgica e outra extática. O lurianismo (século XVI) traz tsimtsum, shevirat ha-kelim e tikkun. Cabala não é \"esoterismo universal\": é método de leitura da Torá e das mitzvot, com gematria, notarikon e temurá. Livro para depois: Idel, \"Cabala: novas perspectivas\" (Perspectiva)."
+      },
+      {
+        "label": "Cabala · A Árvore da Vida",
+        "detail": "Os dez Sephirot, os 22 caminhos, os três pilares. Cada Sephirah é um atributo divino e um estágio da descida e da subida do espírito. Leitura: \"The Mystical Qabalah\", Dion Fortune. A leitura de Dion Fortune é da Qabalah hermética, não da cabala judaica."
+      },
+      {
+        "label": "Cabala · Os quatro mundos",
+        "detail": "Atziluth, Briah, Yetzirah e Assiah: níveis de emanação, do divino ao material. Cada mundo tem uma Árvore própria."
+      },
+      {
+        "label": "Cabala · Hebraico, letras e gematria",
+        "detail": "As 22 letras como forças criadoras e a soma numérica das palavras. Mais de um sistema de gematria existe. Estudar o básico do alfabeto já abre o sistema."
+      },
+      {
+        "label": "Cabala · Três cabalas diferentes",
+        "detail": "Judaica, cristã (Pico, Reuchlin) e hermética (Qabalah, da Golden Dawn). Cada uma tem objetivos e regras próprias. Uma boa prática é sempre dizer de qual você está falando. Estude a judaica antes da hermética. Livros do Kabbalah Centre e \"cabala para celebridades\" não são cabala histórica. Estudo sério da judaica pede hebraico e comunidade."
+      },
+      {
+        "label": "Síntese · Correspondências com Tarô e Astrologia",
+        "detail": "Sistema da Golden Dawn que liga os Arcanos Maiores às letras hebraicas e aos caminhos da Árvore, e os planetas aos Sephirot. Leitura: \"A Garden of Pomegranates\", Israel Regardie. A ligação do Tarô com as letras hebraicas é do século XIX (Lévi e Golden Dawn), muito posterior à cabala judaica."
+      },
+      {
+        "label": "Prática · Meditação sobre os Sephirot e diário mágico",
+        "detail": "Escolha um Sephirah por semana, medite sobre seu atributo, anote sonhos e coincidências. O diário é o mais antigo instrumento de qualquer mago."
+      },
+      {
+        "label": "Prática · O Pentagrama Menor de Banimento",
+        "detail": "Ritual básico da Golden Dawn, com os quatro quadrantes e os arcanjos. Estude a estrutura e o sentido antes de praticar. Leitura: Regardie, \"The Golden Dawn\"."
+      },
+      {
+        "label": "Ética · Misticismo comercial e estudo sério",
+        "detail": "Cuidado com \"Cabala\" vendida como produto. Cabala judaica pede estudo com mestres e com a Torá. Para a hermética, escolha autores com fontes e um método."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Corpus Hermeticum Graecum",
+        "t": "Edição bilíngue de David Pessoa de Lira",
+        "ano": "ISBN 9786557362600",
+        "n": "Leia só o Poimandres (CH I) primeiro. A editora não confirmei.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Aryeh Kaplan",
+        "t": "Sefer Yetzirah: The Book of Creation",
+        "ano": "1990 (rev. 1997)",
+        "n": "Texto curto. Kaplan é de perspectiva ortodoxa e prática, e a academia o trata com reserva.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Brian Copenhaver",
+        "t": "Hermetica",
+        "ano": "1992",
+        "n": "320 páginas, tradução em inglês. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Garth Fowden",
+        "t": "The Egyptian Hermes",
+        "ano": "1986",
+        "n": "Abordagem histórica. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Frances Yates",
+        "t": "Giordano Bruno e a tradição hermética",
+        "ano": "1964",
+        "n": "Existe edição brasileira (Cultrix), não confirmei. Leia com cautela.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Gershom Scholem",
+        "t": "As grandes correntes da mística judaica",
+        "ano": "1941; Perspectiva 1972",
+        "n": "Clássico, denso.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Moshe Idel",
+        "t": "Cabala: novas perspectivas",
+        "ano": "1988; Perspectiva 2000",
+        "n": "ISBN 8527302136. Denso.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Moshe Idel",
+        "t": "Cabala, Cabalismo e Cabalistas",
+        "ano": "Perspectiva, 2020",
+        "n": "Mais recente.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Gershom Scholem",
+        "t": "On the Kabbalah and Its Symbolism",
+        "ano": "1972",
+        "n": "Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Dion Fortune",
+        "t": "The Mystical Qabalah",
+        "ano": "1935",
+        "n": "Cabala hermética. Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Israel Regardie",
+        "t": "A Garden of Pomegranates; The Golden Dawn",
+        "ano": "clássicos",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Atribuído a W. W. Atkinson",
+        "t": "O Caibalion",
+        "ano": "1908",
+        "n": "Documento histórico do New Thought. Autoria provável confirmada.",
+        "c": 1,
+        "q": "d"
+      }
+    ]
+  },
+  "Astrologia": {
+    "foco": false,
+    "fase": "Fase 4 · Divinação e símbolos",
+    "note": "Astrologia é uma linguagem simbólica de mais de dois mil anos. Estudada como símbolo e autoconhecimento, ela ensina muito. Como previsão, não tem comprovação científica, e um bom mago diz isso logo de início. Aprenda o alfabeto antes de tentar ler frases. Tempo realista para uma base sólida: 18 a 24 meses. Deixe rodando em segundo plano, com cerca de 1 hora por semana.",
+    "topics": [
+      {
+        "label": "Fundamentos · O que é astrologia e visão crítica",
+        "detail": "Sistema simbólico que relaciona posições dos astros a temas humanos. Não há comprovação científica de poder preditivo. Use como espelho simbólico, e não como sentença. História: a observação do céu vem da Mesopotâmia, mas o horóscopo individual (mapa com ascendente) surge no Egito helenizado, por volta do século I a.C. Ptolomeu e Valente sistematizam nos séculos I e II. Passa pelo mundo árabe e medieval e chega a William Lilly (século XVII). Renasce no século XX como astrologia psicológica. Mitos: \"o signo solar define a pessoa\"; \"o 13º signo (Ofiúco) invalida a astrologia\" (confunde constelação com o signo tropical, que é uma divisão de 30 graus a partir do equinócio); \"os astros causam\" (a tradição fala em significação, não em causa física)."
+      },
+      {
+        "label": "Fundamentos · Astrologia tradicional e moderna: duas linguagens",
+        "detail": "A helenística ou tradicional é técnica, preditiva e quase fatalista, com dignidades, seitas e lotes. A moderna ou psicológica (Leo, Rudhyar, junguianos) trata o mapa como retrato de tendências. Estude as duas, para não confundir uma com a outra."
+      },
+      {
+        "label": "Fundamentos · Zodíaco tropical e sideral",
+        "detail": "O zodíaco tropical (ocidental) segue as estações. O sideral (védico) segue as estrelas fixas. Cada um dá um mapa diferente. Escolha um e estude a fundo."
+      },
+      {
+        "label": "Fundamentos · Sol, Lua e Ascendente",
+        "detail": "Os três pontos centrais do mapa: identidade, emoções e a máscara social. Descubra o seu mapa em astro.com (grátis)."
+      },
+      {
+        "label": "Fundamentos · Os doze signos, elementos e qualidades",
+        "detail": "Fogo, terra, ar e água; cardinal, fixo e mutável. Leitura: \"Astrology, Psychology and the Four Elements\", Stephen Arroyo."
+      },
+      {
+        "label": "Fundamentos · Os planetas",
+        "detail": "Pessoais (Mercúrio, Vênus, Marte), sociais (Júpiter, Saturno) e transpessoais (Urano, Netuno, Plutão). Cada planeta como uma função psicológica."
+      },
+      {
+        "label": "Estrutura · As doze casas e os sistemas de casas",
+        "detail": "As casas mostram onde cada energia atua na vida. Placidus, Signos Inteiros, Koch e outros dão resultados um pouco diferentes."
+      },
+      {
+        "label": "Estrutura · Aspectos e orbes",
+        "detail": "Conjunção, oposição, trígono, quadratura e sextil. Os orbes definem a força de cada aspecto. Leitura: \"Planets in Transit\", Robert Hand (também útil nos trânsitos)."
+      },
+      {
+        "label": "Estrutura · Dignidades, regentes e seita",
+        "detail": "Domicílio, exaltação, detrimento e queda; mapa diurno e noturno. Base da astrologia tradicional. Leituras: \"Ancient Astrology in Theory and Practice\", Demetra George; \"Hellenistic Astrology\", Chris Brennan."
+      },
+      {
+        "label": "Estrutura · Nodos, Quíron e Lilith",
+        "detail": "Pontos sensíveis do mapa que falam de propósito, ferida e sombra. Estude como complementos e não como protagonistas."
+      },
+      {
+        "label": "Leitura · Sintetizar um mapa",
+        "detail": "Procurar ênfases de elemento e qualidade, aspectos mais fortes, o regente do Ascendente, stelliums e a forma geral do mapa. Fazer um resumo de uma página."
+      },
+      {
+        "label": "Tempo · Trânsitos e retrogradações",
+        "detail": "Como os planetas em movimento ativam o mapa natal. Observe com um diário."
+      },
+      {
+        "label": "Tempo · Revolução solar e progressões",
+        "detail": "Mapa do aniversário e a evolução simbólica do mapa ao longo da vida."
+      },
+      {
+        "label": "Relações · Sinastria e mapa composto",
+        "detail": "Como dois mapas dialogam. Ótimo exercício para estudar casos conhecidos."
+      },
+      {
+        "label": "Prática · Diário astrológico",
+        "detail": "Registrar trânsitos, humor e eventos por 90 dias. Comparar com honestidade, buscando também o que contradiz a leitura."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Stephen Arroyo",
+        "t": "Astrologia, Psicologia e os Quatro Elementos",
+        "ano": "Pensamento, 2ª ed. 2013",
+        "n": "Em português. Astrologia moderna e psicológica.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Nicholas Campion",
+        "t": "The Dawn of Astrology",
+        "ano": "2008",
+        "n": "Volume 1 da história cultural da astrologia ocidental. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Chris Brennan",
+        "t": "Hellenistic Astrology: The Study of Fate and Fortune",
+        "ano": "2017",
+        "n": "A melhor porta para a técnica tradicional. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Stephen Tester",
+        "t": "A History of Western Astrology",
+        "ano": "1987",
+        "n": "História acadêmica. Português: não encontrei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "James Holden",
+        "t": "A History of Horoscopic Astrology",
+        "ano": "2006",
+        "n": "Editora e ano variam entre registros.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Robert Hand",
+        "t": "Planets in Transit",
+        "ano": "1976",
+        "n": "Trânsitos. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Demetra George",
+        "t": "Ancient Astrology in Theory and Practice",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Ptolomeu, Valente e Lilly",
+        "t": "Tetrabiblos; Anthology (trad. Mark Riley); Christian Astrology (1647)",
+        "ano": "clássicos",
+        "n": "Não busquei edições.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Tarô": {
+    "foco": false,
+    "fase": "Fase 4 · Divinação e símbolos",
+    "note": "O Tarô é um espelho de 78 faces. Antes de tentar prever o que for, aprenda a descrever o que a carta mostra. Quem lê bem descreve a imagem, a história, o símbolo e só depois interpreta. Evite decorar significados prontos. Tempo realista: 8 a 12 meses, depois de uma base de astrologia.",
+    "topics": [
+      {
+        "label": "Fundamentos · História do Tarô",
+        "detail": "Nasce como jogo de cartas (tarocchi) na Itália do século XV (Visconti-Sforza). Só no fim do século XVIII (Court de Gébelin, Etteilla) ganha o uso esotérico. A Golden Dawn organiza as correspondências, e o baralho Rider-Waite-Smith (1909) as populariza. Mitos a evitar: \"tarô egípcio\", \"tarô dos ciganos\" e \"milenar\". A origem \"egípcia\" é invenção francesa do século XVIII (Court de Gébelin e Etteilla). Leitura histórica rigorosa: Decker, Depaulis e Dummett, \"A Wicked Pack of Cards\"."
+      },
+      {
+        "label": "Fundamentos · Qual baralho estudar",
+        "detail": "Marselha (estilo tradicional, poucas imagens nos menores), Rider-Waite-Smith (cenas em todas as cartas) e Thoth (simbolismo da Golden Dawn). Escolha um para os primeiros meses. Leitura: \"78 Degrees of Wisdom\", Rachel Pollack."
+      },
+      {
+        "label": "Arcanos Maiores · O Louco a O Carro (0 a VII)",
+        "detail": "A jornada do herói: o Louco, o Mago, a Sacerdotisa, a Imperatriz, o Imperador, o Hierofante, os Enamorados e o Carro."
+      },
+      {
+        "label": "Arcanos Maiores · A Força a Temperança (VIII a XIV)",
+        "detail": "Força, Eremita, Roda da Fortuna, Justiça, Enforcado, Morte e Temperança."
+      },
+      {
+        "label": "Arcanos Maiores · O Diabo a O Mundo (XV a XXI)",
+        "detail": "Diabo, Torre, Estrela, Lua, Sol, Julgamento e Mundo."
+      },
+      {
+        "label": "Arcanos Menores · Naipes e elementos",
+        "detail": "Paus, copas, espadas e ouros. Elemento, estação e tema de cada um. Os elementos variam entre tradições."
+      },
+      {
+        "label": "Arcanos Menores · Numerologia do Ás ao Dez",
+        "detail": "Cada número como etapa da história do naipe."
+      },
+      {
+        "label": "Arcanos Menores · Cartas da Corte",
+        "detail": "Pajem, Cavaleiro, Rainha e Rei como pessoas, estilos e fases."
+      },
+      {
+        "label": "Leitura · Métodos de tiragem",
+        "detail": "Uma carta, três cartas, ferradura e cruz celta. Comece por tiragens curtas."
+      },
+      {
+        "label": "Leitura · Perguntas bem formuladas",
+        "detail": "Perguntas abertas (\"O que preciso saber sobre...?\") rendem mais que sim ou não."
+      },
+      {
+        "label": "Leitura · Cartas invertidas",
+        "detail": "Decida se vai usar e como. Estude com e sem."
+      },
+      {
+        "label": "Ética · Ler para outros",
+        "detail": "Pedir permissão, evitar afirmar saúde, morte e gravidez como fato e nunca substituir médico, advogado ou psicólogo."
+      },
+      {
+        "label": "Síntese · Tarô, psicologia e Cabala",
+        "detail": "Arquétipos junguianos, \"A Via do Tarô\" (Jodorowsky e Marianne Costa) e as correspondências cabalísticas. Leitura: \"Tarot for Your Self\", Mary K. Greer."
+      },
+      {
+        "label": "Prática · Carta do dia e diário de leituras",
+        "detail": "Uma carta por dia durante 78 dias, com anotações. Revisar as leituras depois de um mês."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Rachel Pollack",
+        "t": "Setenta e Oito Graus de Sabedoria",
+        "ano": "Pensamento; e-book 2022",
+        "n": "Em português. ISBN do e-book 9788531522536. Edição impressa: não confirmei.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Decker, Depaulis e Dummett",
+        "t": "A Wicked Pack of Cards: The Origins of the Occult Tarot",
+        "ano": "1996",
+        "n": "A história rigorosa do tarô. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Alejandro Jodorowsky e Marianne Costa",
+        "t": "A Via do Tarô",
+        "ano": "2004 (espanhol)",
+        "n": "Edição em português: não confirmei.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "A. E. Waite",
+        "t": "The Pictorial Key to the Tarot",
+        "ano": "1910",
+        "n": "Não busquei.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Mary K. Greer",
+        "t": "Tarot for Your Self",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Michael Dummett",
+        "t": "The Game of Tarot",
+        "ano": "1980",
+        "n": "Citado em registro de outro livro; não confirmei.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Numerologia": {
+    "foco": false,
+    "fase": "Fase 4 · Divinação e símbolos",
+    "note": "Números são o idioma mais antigo do símbolo. A numerologia que se popularizou hoje é moderna e variada, e cada escola calcula de um jeito. Escolha um sistema, calcule com disciplina e trate o resultado como espelho, não como destino. Estude a história real (aritmologia pitagórica, gematria) como parte principal; o sistema moderno de nome e data se aprende rápido. Tempo realista: 3 a 5 meses. Não encontrei fonte acadêmica confirmada sobre a numerologia moderna.",
+    "topics": [
+      {
+        "label": "Fundamentos · História e sistemas",
+        "detail": "Números simbólicos existem desde os pitagóricos, no platonismo e na gematria hebraica (e na isopsefia grega). A numerologia de nome e data de nascimento, como se pratica hoje, é do início do século XX, nos Estados Unidos (L. Dow Balliett, Julia Seton, depois Juno Jordan), e usa o alfabeto inglês: não é milenar. A atribuição \"caldeia\" não tem base sólida. Sistemas modernos: pitagórico, caldeu e cabalístico. Escolha um para aprender e depois compare."
+      },
+      {
+        "label": "Fundamentos · Os números de 1 a 9",
+        "detail": "Cada número como um arquétipo: 1 início, 2 dualidade, 3 expressão, 4 estrutura, 5 mudança, 6 cuidado, 7 busca, 8 poder, 9 conclusão. Leitura: \"Numerology: Key to Your Inner Self\", Hans Decoz."
+      },
+      {
+        "label": "Cálculo · Redução e números mestres",
+        "detail": "Como reduzir um número a um dígito e quando manter 11, 22 e 33. Verifique o método usado pelo livro que você segue. Os números mestres 11, 22 e 33 são invenção moderna."
+      },
+      {
+        "label": "Cálculo · Caminho de Vida",
+        "detail": "Calculado a partir da data de nascimento. Leitura: \"The Life You Were Born to Live\", Dan Millman."
+      },
+      {
+        "label": "Cálculo · Expressão ou Destino",
+        "detail": "Calculado com o nome completo de nascimento. Atenção às variações de grafia."
+      },
+      {
+        "label": "Cálculo · Alma e Personalidade",
+        "detail": "Alma pelas vogais e Personalidade pelas consoantes do nome."
+      },
+      {
+        "label": "Ciclos · Ano, mês e dia pessoais",
+        "detail": "Calcule seus ciclos e compare com o que viveu."
+      },
+      {
+        "label": "Ciclos · Pináculos e Desafios",
+        "detail": "Os quatro grandes períodos da vida e os desafios de cada um."
+      },
+      {
+        "label": "Ciclos · Lições kármicas e dívidas cármicas",
+        "detail": "Números ausentes no nome e os números 13, 14, 16 e 19."
+      },
+      {
+        "label": "Síntese · Numerologia, Tarô e Cabala",
+        "detail": "Os arcanos de 1 a 22, as letras hebraicas e os números. Faça uma tabela própria de correspondências."
+      },
+      {
+        "label": "Prática · Seu mapa e o de cinco pessoas",
+        "detail": "Calcule o mapa numerológico completo seu e de cinco pessoas que você conhece bem. Anote onde acertou e onde errou."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Walter Burkert",
+        "t": "Lore and Science in Ancient Pythagoreanism",
+        "ano": "1972",
+        "n": "Sugestão para a história da aritmologia. Não confirmei.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Hans Decoz",
+        "t": "Numerology: Key to Your Inner Self",
+        "ano": "ano não confirmado",
+        "n": "Prática. Não confirmei.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Dan Millman",
+        "t": "The Life You Were Born to Live",
+        "ano": "ano não confirmado",
+        "n": "Prática. Não confirmei.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Geomancia": {
+    "foco": false,
+    "fase": "Fase 4 · Divinação e símbolos",
+    "note": "Pequena e elegante: 16 figuras de pontos, uma estrutura de mapa e um parentesco curioso com outros oráculos. Estude depois de ter uma base de astrologia, porque as casas e os planetas já ficam familiares. Tempo realista: 3 a 4 meses.",
+    "topics": [
+      {
+        "label": "Fundamentos · O que é geomancia",
+        "detail": "Do árabe ilm al-raml, \"ciência da areia\". Origem árabe, chega à Europa medieval (atribuída a Gerardo de Cremona, século XII). Atenção: alguns autores usam \"geomancia\" também para feng shui e linhas de energia, o que é outra coisa."
+      },
+      {
+        "label": "Figuras · As 16 figuras de pontos",
+        "detail": "Cada figura é feita de quatro linhas de um ou dois pontos. Aprenda os nomes, os elementos e o sentido de cada uma, um grupo de quatro por vez."
+      },
+      {
+        "label": "Mapa · Mães, filhas, sobrinhas, testemunhas e juiz",
+        "detail": "As quatro mães vêm do sorteio, as filhas surgem delas, e o mapa se completa com sobrinhas, testemunhas e juiz. A lógica binária combina bem com quem trabalha com dados."
+      },
+      {
+        "label": "Casas · As 12 casas e a ligação com a astrologia",
+        "detail": "O mapa de 12 casas lembra o mapa astrológico, e as figuras têm planetas e signos. Por isso a astrologia vem antes."
+      },
+      {
+        "label": "Leitura · Sua primeira leitura passo a passo",
+        "detail": "Faça uma leitura simples, anote pergunta, mapa, interpretação e o que aconteceu depois. Repita por 30 dias e compare com o acaso."
+      },
+      {
+        "label": "Comparação · Ifá, Sikidy e búzios",
+        "detail": "Estudiosos apontam parentesco estrutural entre a geomancia e sistemas binários como o Ifá e o Sikidy de Madagascar. Não afirme origem comum sem fonte. O jogo de búzios é oráculo religioso, ligado ao culto e ao axé do sacerdote, e não equivale a tarô ou geomancia. Na Umbanda, o oráculo é assunto de cada casa e do dirigente."
+      },
+      {
+        "label": "Ética · Limites do uso",
+        "detail": "Não use para decidir saúde, dinheiro ou relacionamentos. Nenhum oráculo substitui profissional."
+      }
+    ],
+    "livros": [
+      {
+        "a": "John Michael Greer",
+        "t": "Earth Divination, Earth Magic",
+        "ano": "1999",
+        "n": "Não confirmei na busca; confira antes de comprar.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Stephen Skinner",
+        "t": "Geomancy in Theory and Practice",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Runas": {
+    "foco": false,
+    "fase": "Fase 4 · Divinação e símbolos",
+    "note": "As runas são letras antes de serem oráculo. O uso como adivinhação, como conhecemos, é em boa parte moderno. Estude o que as fontes antigas dizem, o que as releituras acrescentaram e o que você quer fazer com isso. Rejeite a apropriação extremista: o símbolo é do estudo, não do ódio.",
+    "topics": [
+      {
+        "label": "Fundamentos · O que são as runas",
+        "detail": "Sistema de escrita germânico, em uso desde cerca do século II. Há inscrições com sentido ritual, mas a adivinhação com runas é majoritariamente moderna. Tácito (\"Germania\") descreve sorteios com varetas, sem citar runas. A leitura oracular moderna vem de ocultistas alemães do século XIX e XX (Guido von List, Karl Spiesberger) e se populariza com Ralph Blum em 1982. Não existe fonte antiga que descreva adivinhação com 24 runas como se vende hoje."
+      },
+      {
+        "label": "Fundamentos · O Futhark Antigo",
+        "detail": "As 24 runas, divididas em três aettir (grupos de oito): de Freyr, de Hagal e de Tyr."
+      },
+      {
+        "label": "Significados · Aett de Freyr (Fehu a Wunjo)",
+        "detail": "Fehu, Uruz, Thurisaz, Ansuz, Raidho, Kenaz, Gebo e Wunjo."
+      },
+      {
+        "label": "Significados · Aett de Hagal (Hagalaz a Sowilo)",
+        "detail": "Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Perthro, Algiz e Sowilo."
+      },
+      {
+        "label": "Significados · Aett de Tyr (Tiwaz a Othala)",
+        "detail": "Tiwaz, Berkano, Ehwaz, Mannaz, Laguz, Ingwaz, Dagaz e Othala."
+      },
+      {
+        "label": "Fontes · Poemas rúnicos",
+        "detail": "Os poemas rúnicos (inglês antigo, norueguês e islandês) são a principal fonte dos significados. Para o contexto mitológico em português: a Edda em Prosa de Snorri (Barbudânia, 2014)."
+      },
+      {
+        "label": "Fontes · Odin e as runas",
+        "detail": "No Hávamál (estrofes 138 a 145), Odin se sacrifica durante nove noites e conquista as runas."
+      },
+      {
+        "label": "Fontes · Outros alfabetos rúnicos",
+        "detail": "Futhorc anglo-saxão e Futhark Novo, ou Jovem, com 16 runas. Leitura: \"Runes\", R. I. Page."
+      },
+      {
+        "label": "Prática · Métodos de leitura",
+        "detail": "Runa do dia, três runas e a cruz rúnica. Evite listas de \"significados fixos\" sem contexto."
+      },
+      {
+        "label": "Prática · Bind runes e galdr",
+        "detail": "Combinar runas para um propósito e cantar as runas. Leitura de entrada: \"Futhark\", Edred Thorsson. O \"Livro das Runas\" de Ralph Blum é uma obra moderna que inventou a runa em branco, e é criticado por isso."
+      },
+      {
+        "label": "Ética · Apropriação extremista",
+        "detail": "Símbolos rúnicos foram usados pelo nazismo e por grupos atuais. Estude com rigor histórico e rejeite o uso como ideologia de ódio. Panorama acadêmico: Nicholas Goodrick-Clarke, \"Black Sun\" (2002). Regra prática: se o autor liga runas a \"raça\", \"sangue\" ou \"tradição nórdica pura\", descarte."
+      },
+      {
+        "label": "Prática · Seu conjunto de runas",
+        "detail": "Faça ou compre um conjunto, dedique de forma simples e registre as leituras."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Snorri Sturluson",
+        "t": "Edda em Prosa (Prólogo, Gylfaginning, Skáldskaparmál)",
+        "ano": "Barbudânia, 2014",
+        "n": "Em português. Há também traduções acadêmicas da USP.",
+        "c": 1,
+        "q": "i"
+      },
+      {
+        "a": "Nicholas Goodrick-Clarke",
+        "t": "Black Sun",
+        "ano": "2002 (NYU Press)",
+        "n": "Sobre o uso extremista de símbolos, inclusive runas.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "R. I. Page",
+        "t": "Runes",
+        "ano": "1987 (British Museum Press)",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Nigel Pennick",
+        "t": "Magical Alphabets; The Secret Lore of Runes",
+        "ano": "1992; 1991",
+        "n": "Existência confirmada. Praticante, não acadêmico: nunca use como prova histórica.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Carolyne Larrington",
+        "t": "The Poetic Edda",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Edred Thorsson",
+        "t": "Futhark",
+        "ano": "ano não confirmado",
+        "n": "Prática. Não confirmei.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Radiestesia e Pêndulo": {
+    "foco": false,
+    "fase": "Fase 4 · Divinação e símbolos",
+    "note": "O pêndulo mostra o que a sua mente já sabe, ou acha que sabe, e não o que o mundo escondeu. Os experimentos controlados não mostram que ele detecte nada fora de você. Use como ferramenta de reflexão e vá além das crenças: teste, anote e descubra seus limites. Tempo realista: 1 a 2 meses. É o tema com a melhor explicação científica.",
+    "topics": [
+      {
+        "label": "Fundamentos · História",
+        "detail": "Rabdomancia com varinhas (séculos XV e XVI), radiestesia francesa e o Abbé Mermet. Leitura: \"Principles and Practice of Radiesthesia\", Mermet."
+      },
+      {
+        "label": "Fundamentos · Visão crítica: efeito ideomotor",
+        "detail": "Michel-Eugène Chevreul (1833) e William Carpenter (1852) mostraram que pequenos movimentos musculares inconscientes movem o pêndulo. Experimentos controlados de rabdomancia (como os de Scheunen, na Alemanha) não mostraram acerto acima do acaso."
+      },
+      {
+        "label": "Prática · Escolha e cuidado do pêndulo",
+        "detail": "Material, peso e cordão. Escolha o que for confortável para você."
+      },
+      {
+        "label": "Prática · Calibração",
+        "detail": "Defina como o pêndulo indica sim, não, talvez e não sei. Repita por vários dias."
+      },
+      {
+        "label": "Prática · Boas perguntas e viés",
+        "detail": "Perguntas fechadas e neutras. Peça a alguém para esconder um objeto e compare seus acertos com o acaso."
+      },
+      {
+        "label": "Prática · Gráficos e tabelas radiestésicas",
+        "detail": "Semicírculos, percentuais e listas. Úteis como ferramenta de reflexão, não como diagnóstico."
+      },
+      {
+        "label": "Ética · Limites do uso",
+        "detail": "Nunca use para decidir saúde, dinheiro ou relacionamentos. Não substitua profissionais."
+      },
+      {
+        "label": "Prática · Diário de 30 dias",
+        "detail": "Anote pergunta, resposta, estado emocional e o resultado real depois. Veja o que seus dados dizem."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Abbé Mermet",
+        "t": "Principles and Practice of Radiesthesia",
+        "ano": "década de 1930",
+        "n": "Não confirmei na busca. Leia criticamente, junto com literatura sobre efeito ideomotor.",
+        "c": 0,
+        "q": "d"
+      }
+    ]
+  },
+  "Ordens e Egrégoras": {
+    "foco": false,
+    "fase": "Fase 5 · Magia prática e histórica",
+    "note": "Eu passei por muitas casas e vi egrégoras que elevam e outras que sufocam. Egrégora é a ideia de uma mente coletiva criada por um grupo que ritualiza e pensa junto. Estude as ordens como quem conhece um mapa: o que cada uma ensina, de onde vem, o que cobra e como sair com liberdade.",
+    "topics": [
+      {
+        "label": "Fundamentos · O que é egrégora",
+        "detail": "Termo do grego egrḗgoroi (\"vigilantes\", presente no Livro de Enoque). No ocultismo moderno passou a significar a mente coletiva de um grupo ritual. É conceito simbólico, sem comprovação científica. Pode ser lido também como cultura e identidade de grupo."
+      },
+      {
+        "label": "Fundamentos · O mapa do esoterismo ocidental",
+        "detail": "Hermetismo, Cabala, Alquimia, Astrologia, magia, Rosacrucianismo, Maçonaria, Teosofia. Leituras: \"Western Esotericism: A Guide for the Perplexed\" e \"Esotericism and the Academy\", Wouter Hanegraaff. Faivre (\"Access to Western Esotericism\") também é citado na área, mas não consegui confirmar a edição."
+      },
+      {
+        "label": "História · Mistérios antigos e neoplatonismo",
+        "detail": "Elêusis, Isis, Mitra. Plotino e Jâmblico (\"Sobre os Mistérios\") formam a base filosófica da teurgia, a magia ritual com os deuses."
+      },
+      {
+        "label": "História · Renascimento: Ficino, Agrippa, Dee",
+        "detail": "A magia natural e a cabala cristã renascentista moldam o ocultismo posterior. John Dee, na Inglaterra, une matemática, astrologia e angelologia."
+      },
+      {
+        "label": "Ordens · Rosacruzes",
+        "detail": "A Fama Fraternitatis (1614), a Confessio (1615) e as Núpcias Químicas (1616) criaram o mito rosacruz. Ordens modernas: AMORC, Lectorium Rosicrucianum e outras. Leitura: \"The Rosicrucians\", Christopher McIntosh."
+      },
+      {
+        "label": "Ordens · Maçonaria",
+        "detail": "Maçonaria especulativa, com a Grande Loja de Londres em 1717. Graus, ritos (Escocês Antigo e Aceito, York, Moderno) e simbolismo. É fraternal e iniciática, e não se diz religião."
+      },
+      {
+        "label": "Ordens · Martinismo e Eliphas Lévi",
+        "detail": "Louis-Claude de Saint-Martin, Papus e a Ordem Martinista. Éliphas Lévi, em \"Dogma e Ritual da Alta Magia\", influenciou todo o ocultismo posterior."
+      },
+      {
+        "label": "Ordens · Teosofia e derivados",
+        "detail": "Helena Blavatsky funda a Sociedade Teosófica em 1875. Obras: \"Ísis Sem Véu\" e \"A Doutrina Secreta\". Derivados: Antroposofia (Steiner) e a Escola Arcana (Alice Bailey). Leia com atenção às críticas."
+      },
+      {
+        "label": "Ordens · Golden Dawn",
+        "detail": "Fundada em 1888 por Westcott, Woodman e Mathers. Estruturou graus, rituais e correspondências usadas até hoje por quase todo ocultista ocidental. Leitura: \"The Golden Dawn\", Israel Regardie."
+      },
+      {
+        "label": "Ordens · Thelema, A∴A∴ e O.T.O.",
+        "detail": "Aleister Crowley e o \"Liber AL\" (1904). Sistema com forte linguagem ritual e polêmicas. Estude com senso crítico e conheça as fontes primárias."
+      },
+      {
+        "label": "Ordens · Wicca e neopaganismo",
+        "detail": "Gerald Gardner nos anos 1950, Doreen Valiente. Leitura de contexto histórico: \"The Triumph of the Moon\", Ronald Hutton."
+      },
+      {
+        "label": "Ordens · Espiritismo e as religiões brasileiras",
+        "detail": "Allan Kardec em 1857. Dialoga com Umbanda, Candomblé e outras tradições. Veja a trilha Umbanda."
+      },
+      {
+        "label": "Ordens · A Umbanda e o ocultismo europeu: o que é história",
+        "detail": "Kardecismo, teosofia e ocultismo europeu entraram na Umbanda do século XX, sobretudo na linha esotérica. A literatura afirma a influência de Teosofia e Rosacruz, mas não consegui confirmar fontes específicas. Equivalências como \"orixá = sefirá\" ou \"Exu = demônio hermético\" são construções de autores umbandistas. Estude como teologia de cada autor, não como prova de que a Umbanda descende do hermetismo ou da cabala."
+      },
+      {
+        "label": "Discernimento · Como avaliar um grupo ou ordem",
+        "detail": "Sinais de saúde: transparência de custos, liberdade para sair, crítica permitida, linhagem verificável. Sinais de alerta: isolamento, pressão por dinheiro, promessas absolutas, culto à pessoa."
+      },
+      {
+        "label": "Discernimento · Praticar sozinho ou em grupo",
+        "detail": "Escrever o que você busca antes de procurar qualquer ordem. Visitar, observar e esperar antes de decidir. Registrar sentimentos depois de cada contato."
+      }
+    ],
+    "livros": [
+      {
+        "a": "Christopher McIntosh",
+        "t": "The Rosicrucians",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Israel Regardie",
+        "t": "The Golden Dawn",
+        "ano": "clássico",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
+      },
+      {
+        "a": "Alison Butler",
+        "t": "Victorian Occultism and the Making of Modern Magic",
+        "ano": "2011",
+        "n": "Rigoroso, sobre a Golden Dawn.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Marco Pasi",
+        "t": "Aleister Crowley and the Temptation of Politics",
+        "ano": "2014",
+        "n": "Para Thelema com rigor.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Ronald Hutton",
+        "t": "The Triumph of the Moon",
+        "ano": "1999",
+        "n": "Wicca e neopaganismo.",
+        "c": 1,
+        "q": "d"
+      },
+      {
+        "a": "Nicholas Goodrick-Clarke",
+        "t": "The Occult Roots of Nazism",
+        "ano": "1985",
+        "n": "Mencionado nas buscas; não confirmei.",
+        "c": 0,
+        "q": "d"
+      }
     ]
   },
   "Hoodoo": {
     "foco": true,
+    "fase": "Fase 5 · Magia prática e histórica",
     "note": "Hoodoo, também chamado conjure ou rootwork, é a magia popular afro-americana do sul dos Estados Unidos. É cultura viva de um povo, não uma lista de receitas exóticas. Estude a história primeiro, credite as fontes e comece pela limpeza e pela proteção antes de qualquer trabalho.",
     "topics": [
       {
@@ -1136,304 +2408,53 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
         "label": "Ética · Fontes confiáveis e produtos",
         "detail": "Desconfie de receitas soltas e de lojas que vendem pós e óleos sem origem clara. Dê preferência a autores com pesquisa e a praticantes com reputação."
       }
-    ]
-  },
-  "Hermetismo e Cabala": {
-    "foco": false,
-    "note": "Aqui mora o esqueleto de boa parte do ocultismo ocidental. Estude com o espírito de quem separa três coisas: o texto antigo, a releitura moderna e a prática atual. Cabala judaica, cabala cristã e Qabalah hermética são caminhos diferentes, e confundi-los gera muito erro.",
-    "topics": [
+    ],
+    "livros": [
       {
-        "label": "Hermetismo · Origens: Hermes Trismegisto no Egito helenístico",
-        "detail": "Os textos herméticos (Corpus Hermeticum, Asclépio, Poimandres) nasceram entre os séculos I e III. Leitura: \"Hermetica\", Brian Copenhaver."
+        "a": "catherine yronwode",
+        "t": "Hoodoo Herb and Root Magic",
+        "ano": "2002",
+        "n": "Manual prático de referência. Não confirmei na busca.",
+        "c": 0,
+        "q": "i"
       },
       {
-        "label": "Hermetismo · A Tábua de Esmeralda",
-        "detail": "Texto curto, de origem árabe medieval, com a frase \"o que está embaixo é como o que está em cima\". É a base filosófica da alquimia e do hermetismo."
+        "a": "Yvonne Chireau",
+        "t": "Black Magic: Religion and the African American Conjuring Tradition",
+        "ano": "2003",
+        "n": "Estudo acadêmico. Português: não confirmei.",
+        "c": 1,
+        "q": "d"
       },
       {
-        "label": "Hermetismo · O Caibalion e os sete princípios",
-        "detail": "Mentalismo, correspondência, vibração, polaridade, ritmo, causa e efeito, gênero. Atenção: o livro é de 1908 (atribuído aos \"Três Iniciados\"), não é texto antigo, e a autoria é debatida."
+        "a": "Harry Middleton Hyatt",
+        "t": "Hoodoo-Conjuration-Witchcraft-Rootwork",
+        "ano": "5 volumes, 1970-78",
+        "n": "Fonte de campo, não manual.",
+        "c": 1,
+        "q": "d"
       },
       {
-        "label": "Hermetismo · O Renascimento hermético",
-        "detail": "Marsilio Ficino traduz o Corpus em 1463. Depois vêm Pico della Mirandola, Cornélio Agrippa (\"De Occulta Philosophia\") e Giordano Bruno, que fixam o mapa moderno da magia natural."
+        "a": "Zora Neale Hurston",
+        "t": "Mules and Men",
+        "ano": "1935",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
       },
       {
-        "label": "Cabala · Origens judaicas",
-        "detail": "Torá, Sefer Yetzirah, Zohar (século XIII) e Isaac Luria. Leitura de referência acadêmica: \"As Grandes Correntes da Mística Judaica\", Gershom Scholem."
-      },
-      {
-        "label": "Cabala · A Árvore da Vida",
-        "detail": "Os dez Sephirot, os 22 caminhos, os três pilares. Cada Sephirah é um atributo divino e um estágio da descida e da subida do espírito. Leitura: \"The Mystical Qabalah\", Dion Fortune."
-      },
-      {
-        "label": "Cabala · Os quatro mundos",
-        "detail": "Atziluth, Briah, Yetzirah e Assiah: níveis de emanação, do divino ao material. Cada mundo tem uma Árvore própria."
-      },
-      {
-        "label": "Cabala · Hebraico, letras e gematria",
-        "detail": "As 22 letras como forças criadoras e a soma numérica das palavras. Mais de um sistema de gematria existe. Estudar o básico do alfabeto já abre o sistema."
-      },
-      {
-        "label": "Cabala · Três cabalas diferentes",
-        "detail": "Judaica, cristã (Pico, Reuchlin) e hermética (Qabalah, da Golden Dawn). Cada uma tem objetivos e regras próprias. Uma boa prática é sempre dizer de qual você está falando."
-      },
-      {
-        "label": "Síntese · Correspondências com Tarô e Astrologia",
-        "detail": "Sistema da Golden Dawn que liga os Arcanos Maiores às letras hebraicas e aos caminhos da Árvore, e os planetas aos Sephirot. Leitura: \"A Garden of Pomegranates\", Israel Regardie."
-      },
-      {
-        "label": "Prática · Meditação sobre os Sephirot e diário mágico",
-        "detail": "Escolha um Sephirah por semana, medite sobre seu atributo, anote sonhos e coincidências. O diário é o mais antigo instrumento de qualquer mago."
-      },
-      {
-        "label": "Prática · O Pentagrama Menor de Banimento",
-        "detail": "Ritual básico da Golden Dawn, com os quatro quadrantes e os arcanjos. Estude a estrutura e o sentido antes de praticar. Leitura: Regardie, \"The Golden Dawn\"."
-      },
-      {
-        "label": "Ética · Misticismo comercial e estudo sério",
-        "detail": "Cuidado com \"Cabala\" vendida como produto. Cabala judaica pede estudo com mestres e com a Torá. Para a hermética, escolha autores com fontes e um método."
-      }
-    ]
-  },
-  "Ordens e Egrégoras": {
-    "foco": false,
-    "note": "Eu passei por muitas casas e vi egrégoras que elevam e outras que sufocam. Egrégora é a ideia de uma mente coletiva criada por um grupo que ritualiza e pensa junto. Estude as ordens como quem conhece um mapa: o que cada uma ensina, de onde vem, o que cobra e como sair com liberdade.",
-    "topics": [
-      {
-        "label": "Fundamentos · O que é egrégora",
-        "detail": "Termo do grego egrḗgoroi (\"vigilantes\", presente no Livro de Enoque). No ocultismo moderno passou a significar a mente coletiva de um grupo ritual. É conceito simbólico, sem comprovação científica. Pode ser lido também como cultura e identidade de grupo."
-      },
-      {
-        "label": "Fundamentos · O mapa do esoterismo ocidental",
-        "detail": "Hermetismo, Cabala, Alquimia, Astrologia, magia, Rosacrucianismo, Maçonaria, Teosofia. Leituras: \"Access to Western Esotericism\", Antoine Faivre; \"Esotericism and the Academy\", Wouter Hanegraaff."
-      },
-      {
-        "label": "História · Mistérios antigos e neoplatonismo",
-        "detail": "Elêusis, Isis, Mitra. Plotino e Jâmblico (\"Sobre os Mistérios\") formam a base filosófica da teurgia, a magia ritual com os deuses."
-      },
-      {
-        "label": "História · Renascimento: Ficino, Agrippa, Dee",
-        "detail": "A magia natural e a cabala cristã renascentista moldam o ocultismo posterior. John Dee, na Inglaterra, une matemática, astrologia e angelologia."
-      },
-      {
-        "label": "Ordens · Rosacruzes",
-        "detail": "A Fama Fraternitatis (1614), a Confessio (1615) e as Núpcias Químicas (1616) criaram o mito rosacruz. Ordens modernas: AMORC, Lectorium Rosicrucianum e outras. Leitura: \"The Rosicrucians\", Christopher McIntosh."
-      },
-      {
-        "label": "Ordens · Maçonaria",
-        "detail": "Maçonaria especulativa, com a Grande Loja de Londres em 1717. Graus, ritos (Escocês Antigo e Aceito, York, Moderno) e simbolismo. É fraternal e iniciática, e não se diz religião."
-      },
-      {
-        "label": "Ordens · Martinismo e Eliphas Lévi",
-        "detail": "Louis-Claude de Saint-Martin, Papus e a Ordem Martinista. Éliphas Lévi, em \"Dogma e Ritual da Alta Magia\", influenciou todo o ocultismo posterior."
-      },
-      {
-        "label": "Ordens · Teosofia e derivados",
-        "detail": "Helena Blavatsky funda a Sociedade Teosófica em 1875. Obras: \"Ísis Sem Véu\" e \"A Doutrina Secreta\". Derivados: Antroposofia (Steiner) e a Escola Arcana (Alice Bailey). Leia com atenção às críticas."
-      },
-      {
-        "label": "Ordens · Golden Dawn",
-        "detail": "Fundada em 1888 por Westcott, Woodman e Mathers. Estruturou graus, rituais e correspondências usadas até hoje por quase todo ocultista ocidental. Leitura: \"The Golden Dawn\", Israel Regardie."
-      },
-      {
-        "label": "Ordens · Thelema, A∴A∴ e O.T.O.",
-        "detail": "Aleister Crowley e o \"Liber AL\" (1904). Sistema com forte linguagem ritual e polêmicas. Estude com senso crítico e conheça as fontes primárias."
-      },
-      {
-        "label": "Ordens · Wicca e neopaganismo",
-        "detail": "Gerald Gardner nos anos 1950, Doreen Valiente. Leitura de contexto histórico: \"The Triumph of the Moon\", Ronald Hutton."
-      },
-      {
-        "label": "Ordens · Espiritismo e as religiões brasileiras",
-        "detail": "Allan Kardec em 1857. Dialoga com Umbanda, Candomblé e outras tradições. Veja a trilha Umbanda."
-      },
-      {
-        "label": "Discernimento · Como avaliar um grupo ou ordem",
-        "detail": "Sinais de saúde: transparência de custos, liberdade para sair, crítica permitida, linhagem verificável. Sinais de alerta: isolamento, pressão por dinheiro, promessas absolutas, culto à pessoa."
-      },
-      {
-        "label": "Discernimento · Praticar sozinho ou em grupo",
-        "detail": "Escrever o que você busca antes de procurar qualquer ordem. Visitar, observar e esperar antes de decidir. Registrar sentimentos depois de cada contato."
-      }
-    ]
-  },
-  "Astrologia": {
-    "foco": false,
-    "note": "Astrologia é uma linguagem simbólica de mais de dois mil anos. Estudada como símbolo e autoconhecimento, ela ensina muito. Como previsão, não tem comprovação científica, e um bom mago diz isso logo de início. Aprenda o alfabeto antes de tentar ler frases.",
-    "topics": [
-      {
-        "label": "Fundamentos · O que é astrologia e visão crítica",
-        "detail": "Sistema simbólico que relaciona posições dos astros a temas humanos. Não há comprovação científica de poder preditivo. Use como espelho simbólico, e não como sentença."
-      },
-      {
-        "label": "Fundamentos · Zodíaco tropical e sideral",
-        "detail": "O zodíaco tropical (ocidental) segue as estações. O sideral (védico) segue as estrelas fixas. Cada um dá um mapa diferente. Escolha um e estude a fundo."
-      },
-      {
-        "label": "Fundamentos · Sol, Lua e Ascendente",
-        "detail": "Os três pontos centrais do mapa: identidade, emoções e a máscara social. Descubra o seu mapa em astro.com (grátis)."
-      },
-      {
-        "label": "Fundamentos · Os doze signos, elementos e qualidades",
-        "detail": "Fogo, terra, ar e água; cardinal, fixo e mutável. Leitura: \"Astrology, Psychology and the Four Elements\", Stephen Arroyo."
-      },
-      {
-        "label": "Fundamentos · Os planetas",
-        "detail": "Pessoais (Mercúrio, Vênus, Marte), sociais (Júpiter, Saturno) e transpessoais (Urano, Netuno, Plutão). Cada planeta como uma função psicológica."
-      },
-      {
-        "label": "Estrutura · As doze casas e os sistemas de casas",
-        "detail": "As casas mostram onde cada energia atua na vida. Placidus, Signos Inteiros, Koch e outros dão resultados um pouco diferentes."
-      },
-      {
-        "label": "Estrutura · Aspectos e orbes",
-        "detail": "Conjunção, oposição, trígono, quadratura e sextil. Os orbes definem a força de cada aspecto. Leitura: \"Planets in Transit\", Robert Hand (também útil nos trânsitos)."
-      },
-      {
-        "label": "Estrutura · Dignidades, regentes e seita",
-        "detail": "Domicílio, exaltação, detrimento e queda; mapa diurno e noturno. Base da astrologia tradicional. Leituras: \"Ancient Astrology in Theory and Practice\", Demetra George; \"Hellenistic Astrology\", Chris Brennan."
-      },
-      {
-        "label": "Estrutura · Nodos, Quíron e Lilith",
-        "detail": "Pontos sensíveis do mapa que falam de propósito, ferida e sombra. Estude como complementos e não como protagonistas."
-      },
-      {
-        "label": "Leitura · Sintetizar um mapa",
-        "detail": "Procurar ênfases de elemento e qualidade, aspectos mais fortes, o regente do Ascendente, stelliums e a forma geral do mapa. Fazer um resumo de uma página."
-      },
-      {
-        "label": "Tempo · Trânsitos e retrogradações",
-        "detail": "Como os planetas em movimento ativam o mapa natal. Observe com um diário."
-      },
-      {
-        "label": "Tempo · Revolução solar e progressões",
-        "detail": "Mapa do aniversário e a evolução simbólica do mapa ao longo da vida."
-      },
-      {
-        "label": "Relações · Sinastria e mapa composto",
-        "detail": "Como dois mapas dialogam. Ótimo exercício para estudar casos conhecidos."
-      },
-      {
-        "label": "Prática · Diário astrológico",
-        "detail": "Registrar trânsitos, humor e eventos por 90 dias. Comparar com honestidade, buscando também o que contradiz a leitura."
-      }
-    ]
-  },
-  "Numerologia": {
-    "foco": false,
-    "note": "Números são o idioma mais antigo do símbolo. A numerologia que se popularizou hoje é moderna e variada, e cada escola calcula de um jeito. Escolha um sistema, calcule com disciplina e trate o resultado como espelho, não como destino.",
-    "topics": [
-      {
-        "label": "Fundamentos · História e sistemas",
-        "detail": "Pitágoras, gematria e isopsefia. Sistemas modernos: pitagórico, caldeu e cabalístico. Escolha um para aprender e depois compare."
-      },
-      {
-        "label": "Fundamentos · Os números de 1 a 9",
-        "detail": "Cada número como um arquétipo: 1 início, 2 dualidade, 3 expressão, 4 estrutura, 5 mudança, 6 cuidado, 7 busca, 8 poder, 9 conclusão. Leitura: \"Numerology: Key to Your Inner Self\", Hans Decoz."
-      },
-      {
-        "label": "Cálculo · Redução e números mestres",
-        "detail": "Como reduzir um número a um dígito e quando manter 11, 22 e 33. Verifique o método usado pelo livro que você segue."
-      },
-      {
-        "label": "Cálculo · Caminho de Vida",
-        "detail": "Calculado a partir da data de nascimento. Leitura: \"The Life You Were Born to Live\", Dan Millman."
-      },
-      {
-        "label": "Cálculo · Expressão ou Destino",
-        "detail": "Calculado com o nome completo de nascimento. Atenção às variações de grafia."
-      },
-      {
-        "label": "Cálculo · Alma e Personalidade",
-        "detail": "Alma pelas vogais e Personalidade pelas consoantes do nome."
-      },
-      {
-        "label": "Ciclos · Ano, mês e dia pessoais",
-        "detail": "Calcule seus ciclos e compare com o que viveu."
-      },
-      {
-        "label": "Ciclos · Pináculos e Desafios",
-        "detail": "Os quatro grandes períodos da vida e os desafios de cada um."
-      },
-      {
-        "label": "Ciclos · Lições kármicas e dívidas cármicas",
-        "detail": "Números ausentes no nome e os números 13, 14, 16 e 19."
-      },
-      {
-        "label": "Síntese · Numerologia, Tarô e Cabala",
-        "detail": "Os arcanos de 1 a 22, as letras hebraicas e os números. Faça uma tabela própria de correspondências."
-      },
-      {
-        "label": "Prática · Seu mapa e o de cinco pessoas",
-        "detail": "Calcule o mapa numerológico completo seu e de cinco pessoas que você conhece bem. Anote onde acertou e onde errou."
-      }
-    ]
-  },
-  "Tarô": {
-    "foco": false,
-    "note": "O Tarô é um espelho de 78 faces. Antes de tentar prever o que for, aprenda a descrever o que a carta mostra. Quem lê bem descreve a imagem, a história, o símbolo e só depois interpreta. Evite decorar significados prontos.",
-    "topics": [
-      {
-        "label": "Fundamentos · História do Tarô",
-        "detail": "Nasce como jogo de cartas (tarocchi) na Itália do século XV (Visconti-Sforza). Só no fim do século XVIII (Court de Gébelin, Etteilla) ganha o uso esotérico. A Golden Dawn organiza as correspondências, e o baralho Rider-Waite-Smith (1909) as populariza."
-      },
-      {
-        "label": "Fundamentos · Qual baralho estudar",
-        "detail": "Marselha (estilo tradicional, poucas imagens nos menores), Rider-Waite-Smith (cenas em todas as cartas) e Thoth (simbolismo da Golden Dawn). Escolha um para os primeiros meses. Leitura: \"78 Degrees of Wisdom\", Rachel Pollack."
-      },
-      {
-        "label": "Arcanos Maiores · O Louco a O Carro (0 a VII)",
-        "detail": "A jornada do herói: o Louco, o Mago, a Sacerdotisa, a Imperatriz, o Imperador, o Hierofante, os Enamorados e o Carro."
-      },
-      {
-        "label": "Arcanos Maiores · A Força a Temperança (VIII a XIV)",
-        "detail": "Força, Eremita, Roda da Fortuna, Justiça, Enforcado, Morte e Temperança."
-      },
-      {
-        "label": "Arcanos Maiores · O Diabo a O Mundo (XV a XXI)",
-        "detail": "Diabo, Torre, Estrela, Lua, Sol, Julgamento e Mundo."
-      },
-      {
-        "label": "Arcanos Menores · Naipes e elementos",
-        "detail": "Paus, copas, espadas e ouros. Elemento, estação e tema de cada um. Os elementos variam entre tradições."
-      },
-      {
-        "label": "Arcanos Menores · Numerologia do Ás ao Dez",
-        "detail": "Cada número como etapa da história do naipe."
-      },
-      {
-        "label": "Arcanos Menores · Cartas da Corte",
-        "detail": "Pajem, Cavaleiro, Rainha e Rei como pessoas, estilos e fases."
-      },
-      {
-        "label": "Leitura · Métodos de tiragem",
-        "detail": "Uma carta, três cartas, ferradura e cruz celta. Comece por tiragens curtas."
-      },
-      {
-        "label": "Leitura · Perguntas bem formuladas",
-        "detail": "Perguntas abertas (\"O que preciso saber sobre...?\") rendem mais que sim ou não."
-      },
-      {
-        "label": "Leitura · Cartas invertidas",
-        "detail": "Decida se vai usar e como. Estude com e sem."
-      },
-      {
-        "label": "Ética · Ler para outros",
-        "detail": "Pedir permissão, evitar afirmar saúde, morte e gravidez como fato e nunca substituir médico, advogado ou psicólogo."
-      },
-      {
-        "label": "Síntese · Tarô, psicologia e Cabala",
-        "detail": "Arquétipos junguianos, \"A Via do Tarô\" (Jodorowsky e Marianne Costa) e as correspondências cabalísticas. Leitura: \"Tarot for Your Self\", Mary K. Greer."
-      },
-      {
-        "label": "Prática · Carta do dia e diário de leituras",
-        "detail": "Uma carta por dia durante 78 dias, com anotações. Revisar as leituras depois de um mês."
+        "a": "Stephanie Rose Bird",
+        "t": "Sticks, Stones, Roots & Bones",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
       }
     ]
   },
   "Ervas e Magia Natural": {
     "foco": false,
+    "fase": "Fase 5 · Magia prática e histórica",
     "note": "Planta é farmácia e é veneno, conforme a dose e a pessoa. Antes de qualquer ritual vem a identificação segura. Eu já vi mais gente se machucar por vaidade botânica do que por qualquer maldição. Aprenda a espécie, o nome científico e o limite.",
     "topics": [
       {
@@ -1488,15 +2509,26 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
         "label": "Prática · Canteiro ou vasos de ervas",
         "detail": "Comece com três ervas seguras. Registre crescimento, usos e observações."
       }
+    ],
+    "livros": [
+      {
+        "a": "Pierre Verger",
+        "t": "Ewé: O Uso das Plantas na Sociedade Iorubá",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca. Aprenda com a sua casa.",
+        "c": 0,
+        "q": "d"
+      }
     ]
   },
   "Alquimia": {
     "foco": false,
-    "note": "A alquimia tem duas faces: a do laboratório e a da alma. Hoje, o caminho seguro é o simbólico e o histórico. Os metais e ácidos dos antigos intoxicam de verdade. Estude as imagens, os textos e o processo interior, e deixe o fogo para quem tem laboratório e formação.",
+    "fase": "Fase 5 · Magia prática e histórica",
+    "note": "A alquimia tem duas faces: a do laboratório e a da alma. Hoje, o caminho seguro é o simbólico e o histórico. Os metais e ácidos dos antigos intoxicam de verdade. Estude as imagens, os textos e o processo interior, e deixe o fogo para quem tem laboratório e formação. Deixe a alquimia para o fim: ela precisa de hermetismo, neoplatonismo e filosofia natural.",
     "topics": [
       {
         "label": "Fundamentos · História da alquimia",
-        "detail": "Egito helenístico (Zósimo), mundo árabe (Jabir ibn Hayyan), Europa medieval, Paracelso e até Newton. Leitura: \"The Secrets of Alchemy\", Lawrence Principe."
+        "detail": "Egito helenístico (Zósimo), mundo árabe (Jabir ibn Hayyan), Europa medieval, Paracelso e até Newton. Leitura: \"The Secrets of Alchemy\", Lawrence Principe. Lawrence Principe mostra que a alquimia histórica era laboratório e filosofia natural, e não só metáfora espiritual (leitura de Jung, Eliade). Também não é \"proto-química boba\"."
       },
       {
         "label": "Fundamentos · Três alquimias",
@@ -1524,7 +2556,7 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
       },
       {
         "label": "Psique · Jung e a individuação",
-        "detail": "\"Psicologia e Alquimia\", Carl Jung. A Grande Obra como processo de integração da personalidade."
+        "detail": "\"Psicologia e Alquimia\", Carl Jung. A Grande Obra como processo de integração da personalidade. Ressalva: Jung reduz a magia a processo psíquico e é criticado por esses estudiosos."
       },
       {
         "label": "Psique · Alquimia e ofício",
@@ -1532,108 +2564,59 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
       },
       {
         "label": "Prática · Segurança",
-        "detail": "Não manipule mercúrio, arsênico, enxofre ou ácidos sem treinamento. Para experimentar, prefira espagíria com plantas e tinturas simples, em condições seguras."
+        "detail": "Não manipule mercúrio, arsênico, enxofre ou ácidos sem treinamento. Para experimentar, prefira espagíria com plantas e tinturas simples, em condições seguras. Mercúrio, antimônio, arsênico e chumbo são tóxicos, com vapores, queimaduras e risco de explosão. \"Ouro potável\" e \"elixires\" já mataram: não ingira nada."
       },
       {
         "label": "Prática · Seu processo pessoal",
         "detail": "Escreva sobre uma fase de morte e renascimento da sua vida em termos de nigredo, albedo e rubedo."
       }
-    ]
-  },
-  "Runas": {
-    "foco": false,
-    "note": "As runas são letras antes de serem oráculo. O uso como adivinhação, como conhecemos, é em boa parte moderno. Estude o que as fontes antigas dizem, o que as releituras acrescentaram e o que você quer fazer com isso. Rejeite a apropriação extremista: o símbolo é do estudo, não do ódio.",
-    "topics": [
+    ],
+    "livros": [
       {
-        "label": "Fundamentos · O que são as runas",
-        "detail": "Sistema de escrita germânico, em uso desde cerca do século II. Há inscrições com sentido ritual, mas a adivinhação com runas é majoritariamente moderna. Tácito (\"Germania\") descreve sorteios com varetas, sem citar runas."
+        "a": "Lawrence Principe",
+        "t": "The Secrets of Alchemy",
+        "ano": "2013 (U. Chicago Press)",
+        "n": "Cerca de 281 páginas. Português: não confirmei.",
+        "c": 1,
+        "q": "i"
       },
       {
-        "label": "Fundamentos · O Futhark Antigo",
-        "detail": "As 24 runas, divididas em três aettir (grupos de oito): de Freyr, de Hagal e de Tyr."
+        "a": "Carl Jung",
+        "t": "Psicologia e Alquimia",
+        "ano": "clássico",
+        "n": "Leitura psicológica, não história da alquimia. Edição: não confirmei.",
+        "c": 0,
+        "q": "d"
       },
       {
-        "label": "Significados · Aett de Freyr (Fehu a Wunjo)",
-        "detail": "Fehu, Uruz, Thurisaz, Ansuz, Raidho, Kenaz, Gebo e Wunjo."
+        "a": "Mircea Eliade",
+        "t": "Ferreiros e Alquimistas",
+        "ano": "clássico",
+        "n": "História das religiões. Não confirmei.",
+        "c": 0,
+        "q": "d"
       },
       {
-        "label": "Significados · Aett de Hagal (Hagalaz a Sowilo)",
-        "detail": "Hagalaz, Nauthiz, Isa, Jera, Eihwaz, Perthro, Algiz e Sowilo."
+        "a": "Titus Burckhardt",
+        "t": "Alchemy: Science of the Cosmos, Science of the Soul",
+        "ano": "clássico",
+        "n": "Não confirmei.",
+        "c": 0,
+        "q": "d"
       },
       {
-        "label": "Significados · Aett de Tyr (Tiwaz a Othala)",
-        "detail": "Tiwaz, Berkano, Ehwaz, Mannaz, Laguz, Ingwaz, Dagaz e Othala."
-      },
-      {
-        "label": "Fontes · Poemas rúnicos",
-        "detail": "Os poemas rúnicos (inglês antigo, norueguês e islandês) são a principal fonte dos significados. Tradução: \"The Poetic Edda\", Carolyne Larrington, para o contexto."
-      },
-      {
-        "label": "Fontes · Odin e as runas",
-        "detail": "No Hávamál (estrofes 138 a 145), Odin se sacrifica durante nove noites e conquista as runas."
-      },
-      {
-        "label": "Fontes · Outros alfabetos rúnicos",
-        "detail": "Futhorc anglo-saxão e Futhark Novo, ou Jovem, com 16 runas. Leitura: \"Runes\", R. I. Page."
-      },
-      {
-        "label": "Prática · Métodos de leitura",
-        "detail": "Runa do dia, três runas e a cruz rúnica. Evite listas de \"significados fixos\" sem contexto."
-      },
-      {
-        "label": "Prática · Bind runes e galdr",
-        "detail": "Combinar runas para um propósito e cantar as runas. Leitura de entrada: \"Futhark\", Edred Thorsson. O \"Livro das Runas\" de Ralph Blum é uma obra moderna que inventou a runa em branco, e é criticado por isso."
-      },
-      {
-        "label": "Ética · Apropriação extremista",
-        "detail": "Símbolos rúnicos foram usados pelo nazismo e por grupos atuais. Estude com rigor histórico e rejeite o uso como ideologia de ódio."
-      },
-      {
-        "label": "Prática · Seu conjunto de runas",
-        "detail": "Faça ou compre um conjunto, dedique de forma simples e registre as leituras."
-      }
-    ]
-  },
-  "Radiestesia e Pêndulo": {
-    "foco": false,
-    "note": "O pêndulo mostra o que a sua mente já sabe, ou acha que sabe, e não o que o mundo escondeu. Os experimentos controlados não mostram que ele detecte nada fora de você. Use como ferramenta de reflexão e vá além das crenças: teste, anote e descubra seus limites.",
-    "topics": [
-      {
-        "label": "Fundamentos · História",
-        "detail": "Rabdomancia com varinhas (séculos XV e XVI), radiestesia francesa e o Abbé Mermet. Leitura: \"Principles and Practice of Radiesthesia\", Mermet."
-      },
-      {
-        "label": "Fundamentos · Visão crítica: efeito ideomotor",
-        "detail": "Michael Chevreul (1833) e William Carpenter (1852) mostraram que pequenos movimentos musculares inconscientes movem o pêndulo. Experimentos controlados de rabdomancia (como os de Scheunen, na Alemanha) não mostraram acerto acima do acaso."
-      },
-      {
-        "label": "Prática · Escolha e cuidado do pêndulo",
-        "detail": "Material, peso e cordão. Escolha o que for confortável para você."
-      },
-      {
-        "label": "Prática · Calibração",
-        "detail": "Defina como o pêndulo indica sim, não, talvez e não sei. Repita por vários dias."
-      },
-      {
-        "label": "Prática · Boas perguntas e viés",
-        "detail": "Perguntas fechadas e neutras. Peça a alguém para esconder um objeto e compare seus acertos com o acaso."
-      },
-      {
-        "label": "Prática · Gráficos e tabelas radiestésicas",
-        "detail": "Semicírculos, percentuais e listas. Úteis como ferramenta de reflexão, não como diagnóstico."
-      },
-      {
-        "label": "Ética · Limites do uso",
-        "detail": "Nunca use para decidir saúde, dinheiro ou relacionamentos. Não substitua profissionais."
-      },
-      {
-        "label": "Prática · Diário de 30 dias",
-        "detail": "Anote pergunta, resposta, estado emocional e o resultado real depois. Veja o que seus dados dizem."
+        "a": "William Newman",
+        "t": "Atoms and Alchemy",
+        "ano": "ano não confirmado",
+        "n": "Não pesquisei.",
+        "c": 0,
+        "q": "d"
       }
     ]
   },
   "Baralho Cigano": {
     "foco": false,
+    "fase": "Em pausa",
     "note": "Em pausa, guardado para quando você voltar. O Lenormand tem lógica própria, mais direta que o Tarô, e se aprende por combinações de cartas vizinhas.",
     "topics": [
       {
@@ -1659,6 +2642,16 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
       {
         "label": "Registro e revisão das próprias leituras",
         "detail": ""
+      }
+    ],
+    "livros": [
+      {
+        "a": "Renata Taño Berreta",
+        "t": "Baralho Cigano: Introdução ao Lenormand Brasileiro",
+        "ano": "ano não confirmado",
+        "n": "Não confirmei na busca.",
+        "c": 0,
+        "q": "d"
       }
     ]
   }
@@ -1719,12 +2712,13 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
   }
   function setTracks(data){ save('grimorio_tracks', data); }
 
+  const livrosAbertos = new Set();
   function renderTracks(){
     const data = getTracks();
     const host = document.getElementById('tracksHost');
     host.innerHTML = '';
     Object.keys(data).sort(function(a, b){ const ord = Object.keys(DEFAULT_TRACKS), ia = ord.indexOf(a), ib = ord.indexOf(b); return ((data[b].foco ? 1 : 0) - (data[a].foco ? 1 : 0)) || ((ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib)); }).forEach(function(name){
-      const track = data[name];
+      const track = data[name], def = DEFAULT_TRACKS[name] || {};
       const total = track.topics.length;
       const done = track.topics.filter(t=>t.done).length;
       const pct = total ? Math.round((done/total)*100) : 0;
@@ -1732,12 +2726,31 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
       const wrap = document.createElement('div');
       wrap.className = 'track';
       wrap.innerHTML =
-        '<div class="track-head"><h3>'+escapeHTML(name)+(track.foco ? '' : ' <small class="fora-foco">fora do foco</small>')+'</h3>' +
+        '<div class="track-head"><h3>'+escapeHTML(name)+(track.foco ? '' : ' <small class="fora-foco">fora do foco</small>')+(def.fase ? '<small class="fase">'+escapeHTML(def.fase)+'</small>' : '')+'</h3>' +
           '<div class="track-head-right"><span class="track-pct">'+done+'/'+total+'</span>' +
           '<button class="foco-btn'+(track.foco ? ' on' : '')+'" data-foco="'+escapeHTML(name)+'" aria-pressed="'+(!!track.foco)+'">'+(track.foco ? '★ Em foco' : '☆ Foco')+'</button>' +
           '<button class="track-del" data-track="'+escapeHTML(name)+'">remover trilha</button></div></div>' +
         '<div class="bar"><div class="bar-fill" style="width:'+pct+'%"></div></div>' +
         (track.note ? '<p class="track-note">'+escapeHTML(track.note)+'</p>' : '');
+
+      if(def.livros && def.livros.length){
+        const lidos = track.lidos || {};
+        const ini = def.livros.filter(function(l){ return l.q === 'i'; }), dep = def.livros.filter(function(l){ return l.q !== 'i'; });
+        const nLidos = def.livros.filter(function(l){ return lidos[l.a+'|'+l.t]; }).length;
+        const item = function(l){
+          const key = l.a+'|'+l.t;
+          return '<label class="livro"><input type="checkbox" data-track="'+escapeHTML(name)+'" data-livro="'+escapeHTML(key)+'" '+(lidos[key]?'checked':'')+'>' +
+            '<span><b>'+escapeHTML(l.t)+'</b> · '+escapeHTML(l.a)+' ('+escapeHTML(l.ano)+')<br><small>'+escapeHTML(l.n)+' <em class="'+(l.c?'ok':'conf')+'">'+(l.c?'✓ registro confirmado':'confira antes de comprar')+'</em></small></span></label>';
+        };
+        const det = document.createElement('details');
+        det.className = 'livros';
+        det.open = livrosAbertos.has(name);
+        det.addEventListener('toggle', function(){ if(det.open) livrosAbertos.add(name); else livrosAbertos.delete(name); });
+        det.innerHTML = '<summary>Leituras · '+ini.length+' para começar · '+dep.length+' para depois · '+nLidos+' lidas</summary>' +
+          (ini.length ? '<h4>Para começar (curtas)</h4>'+ini.map(item).join('') : '') +
+          (dep.length ? '<h4>Para depois</h4>'+dep.map(item).join('') : '');
+        wrap.appendChild(det);
+      }
 
       track.topics.forEach(function(topic){
         const row = document.createElement('label');
@@ -1769,6 +2782,13 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
       cb.addEventListener('change', function(){
         const data = getTracks();
         const track = data[cb.dataset.track];
+        if(cb.dataset.livro !== undefined){
+          track.lidos = track.lidos || {};
+          if(cb.checked) track.lidos[cb.dataset.livro] = true; else delete track.lidos[cb.dataset.livro];
+          setTracks(data);
+          renderTracks();
+          return;
+        }
         const topic = track.topics.find(t=>t.id === cb.dataset.id);
         if(topic){ topic.done = cb.checked; }
         setTracks(data);
