@@ -276,7 +276,7 @@ details.calc summary{cursor:pointer;font-weight:600;min-height:44px;display:flex
       <p>Serve como <b>jantar ocasional</b>. <b>Não</b> serve de pré-treino: gordura demais para digerir em 1 h.</p></div>
     <div class="card"><h3>Proteína</h3><p>O plano chega a ~185 g por dia (≈ 2,7 g/kg). A faixa que a pesquisa sustenta para ganhar músculo é 1,6–2,2 g/kg (110–150 g). Você tem folga: se algum dia faltar ovo ou whey, não faz diferença.</p></div>
     <div class="card"><h3>Horários e água</h3>
-      <p>No Dia, escolha “Treino neste dia: 13h ou 22h”. Com treino às 22h (você sai às 22:00 e volta perto da meia-noite), o almoço vai para 13:00, o jantar para 19:30 e um pré-treino leve entra às 21:15, no lugar da ceia. O pós-treino fica para 00:15, ao chegar em casa. No pós-treino, a vitamina vira um “Whey leve” (sem liquidificador e sem peso para dormir, cerca de 210 kcal), ou ovos cozidos com fruta. Em outro horário, mantenha o almoço 1 h antes e a vitamina em até 1 h depois.</p>
+      <p>No Dia, escolha “Treino neste dia: 13h ou 22h”. Com treino às 22h (você sai às 22:00 e volta perto da meia-noite), o almoço vai para 13:00, um lanche da tarde entra às 16:30 e o jantar vai para 19:30, antes de você sair. Não há ceia nesses dias. O pós-treino fica para 00:15, ao chegar em casa. No pós-treino, a vitamina vira um “Whey leve” (sem liquidificador e sem peso para dormir, cerca de 210 kcal), ou ovos cozidos com fruta. Em outro horário, mantenha o almoço 1 h antes e a vitamina em até 1 h depois.</p>
       <p><b>Água:</b> meta de 3 L por dia. Marque na tela inicial da Central, aos poucos, a cada copo ou garrafa.</p></div>
     <div class="card"><h3>Intolerância à lactose</h3><p>Leite, iogurte, queijo e whey sempre na versão zero lactose. Hambúrguer industrializado: confira o rótulo.</p></div>
   </section>
@@ -357,16 +357,17 @@ var IDEIAS=[
      {n:'Iogurte',obs:'O de garrafa zero lactose e zero açúcar (Batavo Pense Zero, Itambé Fit e parecidos) tem cerca de 26 kcal e 3 g de proteína por 100 g, bem menos calórico que o natural. Se ainda der fome, tome um segundo copo ou coma um ovo cozido. Confira no rótulo que diz zero lactose.',it:[['200 g (1 copo)','Iogurte zero lactose e zero açúcar (garrafa)',52,6,8,0,false,[['Garrafa zero','200 g (1 copo)','Iogurte zero lactose e zero açúcar (garrafa)',52,6,8,0],['Natural','170 g','Iogurte natural zero lactose',100,6,13,3]]]]},
      {n:'Mingau',obs:'Leve ao fogo baixo mexendo por 3 a 4 minutos, até engrossar. Pitada de canela e, se quiser, uma gota de baunilha. Fica cremoso, bem diferente de leite com aveia solta.',it:[['200 ml','Leite zero lactose',122,6,10,7],['2 colheres de sopa (30 g)','Aveia em flocos',110,4,18,2],['a gosto','Canela',0,0,0,0],['1 colher de chá (7 g)','Mel',20,0,5,0,true]]},
      {n:'Ovos',obs:'Se estiver sem fome, 1 ovo já serve (72 kcal, 6 g de proteína).',it:[['2 unidades','Ovos cozidos',144,13,1,10]]}]},
-   /* só nos dias de treino às 22h: ocupa o lugar da ceia, antes do treino */
-   {h:'21:15',key:'pre',n:'Pré-treino',tag:'antes de sair para o treino',off:true,ops:[
-     {n:'Fruta + pão',obs:'Carboidrato fácil de digerir e pouca gordura. Se o treino for logo depois de uma refeição maior, fique só com a banana.',it:[['1 média','Banana',90,1,23,0],['2 fatias (50 g)','Pão integral ou torrada',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral ou torrada',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]]]},
-     {n:'Ovos + fruta',it:[['2 unidades','Ovos mexidos simples',144,13,1,10],['1 média','Banana',90,1,23,0]]}]}
+   /* só nos dias de treino às 22h: lanche da tarde, para não passar horas sem comer entre o almoço e o jantar */
+   {h:'16:30',key:'tarde',n:'Lanche da tarde',off:true,ops:[
+     {n:'Iogurte + fruta + aveia',obs:'Leve e fácil de levar. Iogurte natural zero lactose.',it:[['170 g','Iogurte zero lactose natural',100,6,13,3],['1 média','Fruta',80,1,19,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
+     {n:'Fruta + pão',it:[['1 média','Banana',90,1,23,0],['2 fatias (50 g)','Pão integral ou torrada',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral ou torrada',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]]]},
+     {n:'Ovos + fruta',it:[['2 unidades','Ovos mexidos simples',144,13,1,10],['1 média','Fruta',80,1,19,0]]}]}
   ];
 
   /* ---- horário do treino por dia: 13h (padrão) ou 22h ---- */
   var TN_KEY='plano-treino-noite',tn={};
   try{tn=JSON.parse(localStorage.getItem(TN_KEY)||'{}')||{}}catch(e){tn={}}
-  var NOITE={cafe:['07:30'],lanche1:['10:00'],almoco:['13:00',''],jantar:['19:30','escolha uma opção · antes de sair'],pre:['21:15','antes de sair para o treino'],pos:['00:15','ao chegar em casa'],ceia:null};
+  var NOITE={cafe:['07:30'],lanche1:['10:00'],almoco:['13:00',''],jantar:['19:30','escolha uma opção · 2 h 30 antes de sair'],tarde:['16:30'],pos:['00:15','ao chegar em casa'],ceia:null};
   function noite(k){return tn[k]===1}
   function aplicaModo(k){
     var n=noite(k);
@@ -375,17 +376,17 @@ var IDEIAS=[
       if(!r._base)r._base={h:r.h,tag:r.tag,off:!!r.off};
       var o=NOITE[r.key];
       if(n){
-        if(r.key==='pre'){r.off=false;r.h=r._base.h;r.tag=r._base.tag}
+        if(r.key==='tarde'){r.off=false;r.h=r._base.h;r.tag=r._base.tag}
         else if(o===null){r.off=true}
         else if(o){r.off=false;r.h=o[0];r.tag=o.length>1?(o[1]||undefined):r._base.tag}
         else{r.off=false;r.h=r._base.h;r.tag=r._base.tag}
-      }else{r.off=(r.key==='pre');r.h=r._base.h;r.tag=r._base.tag}
+      }else{r.off=(r.key==='tarde');r.h=r._base.h;r.tag=r._base.tag}
     });
   }
   function minR(r){var q=(r.treino||r.h).split(':'),m=+q[0]*60+ +q[1];return m<240?m+1440:m} /* depois da meia-noite conta como fim do mesmo dia */
   function visiveis(){return REF.map(function(r,i){return i}).filter(function(i){return !REF[i].off}).sort(function(a,b){return minR(REF[a])-minR(REF[b])})}
   function eachRef(fn){visiveis().forEach(function(i){fn(REF[i],i)})}
-  function chavesDia(k){var n=noite(k);return REF.filter(function(r){return r.key&&(r.key==='pre'?n:!(n&&NOITE[r.key]===null))})}
+  function chavesDia(k){var n=noite(k);return REF.filter(function(r){return r.key&&(r.key==='tarde'?n:!(n&&NOITE[r.key]===null))})}
   function renderHrTreino(){
     var n=noite(diaSel),el=document.getElementById('hrTreino');
     el.innerHTML='<span>Treino neste dia:</span><button type="button" data-hr="d" aria-pressed="'+!n+'">13h</button><button type="button" data-hr="n" aria-pressed="'+n+'">22h</button>';
