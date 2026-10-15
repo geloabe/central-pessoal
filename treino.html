@@ -551,6 +551,7 @@ const WORKOUTS = {
       { title: "Core / Abdômen", cls: "core", exercises: [
         {id:"CORE1", name:"Abdominal remador", target:"3×12–15"},
         {id:"CORE2", name:"Elevação de pernas (no fim, suba o quadril)", target:"3×12–15"},
+        {id:"CORE3", name:"Rotação de tronco (russian twist): gire pelas costelas, quadril parado", target:"3×12/lado"},
         {id:"CORE6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
         {id:"CORE4", name:"Prancha lateral", target:"3×20–30s/lado"},
         {id:"CORE5", name:"Prancha (frontal)", target:"2×30–45s"},
@@ -584,6 +585,7 @@ const WORKOUTS = {
       { title: "Core / Abdômen", cls: "core", exercises: [
         {id:"CORE1", name:"Abdominal remador", target:"3×12–15"},
         {id:"CORE2", name:"Elevação de pernas (no fim, suba o quadril)", target:"3×12–15"},
+        {id:"CORE3", name:"Rotação de tronco (russian twist): gire pelas costelas, quadril parado", target:"3×12/lado"},
         {id:"CORE6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
         {id:"CORE4", name:"Prancha lateral", target:"3×20–30s/lado"},
         {id:"CORE5", name:"Prancha (frontal)", target:"2×30–45s"},
@@ -618,6 +620,7 @@ const WORKOUTS = {
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
         {id:"HK1", name:"Elevação de pernas deitado (no fim, suba o quadril)", target:"3×12–15"},
+        {id:"HK2", name:"Rotação de tronco sentado (russian twist), sem peso: gire pelas costelas", target:"3×12/lado"},
         {id:"HK6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
         {id:"HK3", name:"Prancha lateral", target:"3×20–30s/lado"},
         {id:"HK4", name:"Prancha (frontal)", target:"2×30–45s"},
@@ -649,6 +652,7 @@ const WORKOUTS = {
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
         {id:"HK1", name:"Elevação de pernas deitado (no fim, suba o quadril)", target:"3×12–15"},
+        {id:"HK2", name:"Rotação de tronco sentado (russian twist), sem peso: gire pelas costelas", target:"3×12/lado"},
         {id:"HK6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
         {id:"HK3", name:"Prancha lateral", target:"3×20–30s/lado"},
         {id:"HK4", name:"Prancha (frontal)", target:"2×30–45s"},
@@ -705,8 +709,7 @@ function buildExerciseIndex() {
   // exercícios dos antigos blocos "bônus" da academia: ficam só no histórico
   [['B6', 'Rosca direta (barra reta ou W)', '2×12–15', 'B'], ['B7', 'Tríceps testa com halter', '2×12–15', 'B'],
    ['C8', 'Crucifixo unilateral no cabo (crossover)', '2×15', 'C'], ['C9', 'Panturrilha em pé', '2×15–20', 'C'],
-   ['D8', 'Elevação lateral', '3×15–20', 'D'], ['D9', 'Face pull / crucifixo invertido', '2×15–20', 'D'],
-   ['CORE3', 'Rotação de tronco (russian twist)', '3×12/lado', 'A'], ['HK2', 'Rotação de tronco sentado (russian twist) sem peso', '3×12/lado', 'HA']].forEach(l => {
+   ['D8', 'Elevação lateral', '3×15–20', 'D'], ['D9', 'Face pull / crucifixo invertido', '2×15–20', 'D']].forEach(l => {
     if (!idx[l[0]]) idx[l[0]] = { name: l[1], treino: l[3], target: l[2] };
   });
   return idx;
