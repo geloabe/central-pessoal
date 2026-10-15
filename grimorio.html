@@ -221,6 +221,9 @@
 
   .today-tracks{margin-top:18px; display:flex; flex-wrap:wrap; gap:8px;}
 
+  .dia-linha{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 10px;font-size:13px}
+  .dia-linha input[type=date]{min-height:44px;padding:0 10px;border-radius:8px}
+  .dia-linha button[hidden]{display:none}
   button.track-chip{font:inherit;cursor:pointer;min-height:44px;background:transparent;color:inherit}
   .next-lista{display:grid;gap:8px;margin:12px 0 4px}
   .next-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border, #ddd6f0);border-radius:10px}
@@ -422,6 +425,7 @@
         </div>
       </div>
       <div class="msg-strip" id="dailyMsg"></div>
+      <div class="dia-linha"><label for="h-dia">Registrar para o dia</label><input type="date" id="h-dia"><button type="button" class="ghost" id="h-hoje" hidden>Voltar para hoje</button></div>
       <div class="today-tracks" id="todayTracks"></div>
       <div class="next-lista" id="nextTopics"></div>
       <button class="primary" id="openQuickLog">Registrar estudo de hoje</button>
@@ -744,6 +748,8 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
   function getEntries(){ return load('grimorio_entries', []); }
   function setEntries(list){ save('grimorio_entries', list); }
 
+  let diaEsc = null; // dia escolhido para registrar (null = hoje)
+  function diaSel(){ return diaEsc || todayISO(); }
   function streakInfo(entries){
     const datas = {};
     entries.forEach(function(e){ if(e.date) datas[String(e.date).slice(0,10)] = 1; });
@@ -778,7 +784,7 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
     if(sem) msg += ' · '+sem+(sem === 1 ? ' dia' : ' dias')+' nesta semana';
     msgEl.textContent = msg;
 
-    const today = todayISO();
+    const today = diaSel();
     const todaySet = new Set(entries.filter(e=>e.date===today).map(e=>e.tradition));
     const chipsHost = document.getElementById('todayTracks');
     chipsHost.innerHTML = '';
@@ -812,18 +818,18 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
     const topic = tr && tr.topics.find(function(x){ return x.id === b.dataset.id; });
     if(!topic) return;
     topic.done = true; setTracks(data);
-    addEntry(t, 'Estudo', 'Concluí: '+topic.label, todayISO());
+    addEntry(t, 'Estudo', 'Concluí: '+topic.label, diaSel());
     renderTracks();
     document.getElementById('dailyMsg').textContent = '✓ '+topic.label+' concluído e registrado no diário.';
   });
   document.getElementById('todayTracks').addEventListener('click', function(e){
     const b = e.target.closest('[data-t]'); if(!b) return;
-    const t = b.dataset.t, today = todayISO(), all = getEntries();
+    const t = b.dataset.t, today = diaSel(), all = getEntries(), quando = diaEsc ? 'em '+today.slice(8,10)+'/'+today.slice(5,7) : 'hoje';
     const mine = all.filter(function(x){ return x.date === today && x.tradition === t; });
     let msg;
-    if(!mine.length){ addEntry(t, 'Estudo', '', today); msg = '✓ '+t+' registrado hoje. Dá para acrescentar uma anotação depois no Diário.'; }
+    if(!mine.length){ addEntry(t, 'Estudo', '', today); msg = '✓ '+t+' registrado '+quando+'. Dá para acrescentar uma anotação depois no Diário.'; }
     else if(mine.every(function(x){ return !x.text; })){ setEntries(all.filter(function(x){ return !(x.date === today && x.tradition === t && !x.text); })); renderEntries(); renderHoje(); msg = 'Registro de '+t+' desfeito.'; }
-    else msg = 'Já existe uma anotação de '+t+' hoje. Para apagar, use o Diário.';
+    else msg = 'Já existe uma anotação de '+t+' '+(diaEsc ? 'nesse dia' : 'hoje')+'. Para apagar, use o Diário.';
     document.getElementById('dailyMsg').textContent = msg;
   });
 
@@ -888,11 +894,24 @@ window.__appReady.then(function(){ return window.appKV.load("grimorio_"); }).the
     const tradition = document.getElementById('ql-tradition').value;
     const type = document.getElementById('ql-type').value;
     const text = document.getElementById('ql-text').value;
-    addEntry(tradition, type, text, todayISO());
+    addEntry(tradition, type, text, diaSel());
     document.getElementById('ql-text').value = '';
     document.getElementById('quickLogCard').style.display = 'none';
   });
 
+  (function(){
+    const inp = document.getElementById('h-dia'), volta = document.getElementById('h-hoje');
+    inp.value = todayISO(); inp.max = todayISO();
+    function aplica(v){
+      if(!v || v > todayISO()) { inp.value = diaSel(); return; }
+      diaEsc = v === todayISO() ? null : v;
+      inp.value = diaSel(); volta.hidden = !diaEsc;
+      renderHoje();
+      if(diaEsc) document.getElementById('dailyMsg').textContent = 'Registrando para '+v.slice(8,10)+'/'+v.slice(5,7)+'. Os registros entram no diário nessa data.';
+    }
+    inp.addEventListener('change', function(){ aplica(inp.value); });
+    volta.addEventListener('click', function(){ aplica(todayISO()); });
+  })();
   document.getElementById('ent-trad').addEventListener('change', renderEntries);
   document.getElementById('ent-busca').addEventListener('input', renderEntries);
 
