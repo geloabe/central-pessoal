@@ -687,6 +687,25 @@ const WORKOUTS = {
       ]},
     ]
   },
+  HR: {
+    label: "Cardio em casa",
+    sections: [
+      { title: "Intervalado (esforço forte, 20 s de descanso)", cls: "bonus", exercises: [
+        {id:"HR1", name:"Polichinelo", target:"4×40s"},
+        {id:"HR2", name:"Corrida parada com joelhos altos", target:"4×30s"},
+        {id:"HR3", name:"Escalador (mountain climber)", target:"4×30s"},
+        {id:"HR4", name:"Agachamento com salto", target:"3×30s"},
+        {id:"HR5", name:"Burpee sem flexão", target:"3×30s"},
+      ]},
+      { title: "Baixo impacto (ritmo constante)", cls: "core", exercises: [
+        {id:"HR6", name:"Marcha acelerada no lugar", target:"3×60s"},
+        {id:"HR7", name:"Boxe no ar (sombra)", target:"4×60s"},
+        {id:"HR8", name:"Passo lateral com toque", target:"3×60s"},
+        {id:"HR9", name:"Subir e descer um degrau", target:"3×60s"},
+        {id:"HR10", name:"Pular corda imaginária", target:"4×45s"},
+      ]},
+    ]
+  },
 };
 
 function setCount(target) {
@@ -745,7 +764,17 @@ const COMO = {
   HD3: { p: ['Em pé numa perna só, com o joelho levemente dobrado e a outra perna solta.', 'Incline o tronco para a frente, levando a perna solta para trás, com as costas retas.', 'Desça até sentir o posterior da coxa alongar, ou até o tronco ficar paralelo ao chão.', 'Volte contraindo o glúteo e o posterior.'], e: 'Apoie uma mão numa parede para se equilibrar, se precisar.' },
   HD4: { p: ['Deite de barriga para cima, com os calcanhares sobre uma toalha ou meia no chão liso.', 'Suba o quadril, deixando o corpo em ponte.', 'Deslize os calcanhares para longe, esticando as pernas, e depois puxe-os de volta.', 'Mantenha o quadril alto o tempo todo.'], e: 'Funciona melhor em piso liso, e é mais difícil do que parece.' },
   HD5: { p: ['Pés bem abertos, mais que os ombros, com as pontas para fora.', 'Desça dobrando os joelhos na direção dos pés, com o tronco reto.', 'Faça uma pausa de 1 a 2 segundos embaixo.', 'Suba empurrando o chão e aperte o glúteo no topo.'], e: 'Os joelhos seguem a direção dos pés.' },
-  HD6: { p: ['Deite de lado, com a cabeça apoiada no braço e as pernas esticadas.', 'Dobre levemente a perna de baixo para ter estabilidade.', 'Suba a perna de cima até uns 45°, com o pé reto ou levemente voltado para o chão.', 'Desça devagar, sem encostar na outra perna.'], e: 'Quadril parado, sem rolar para trás.' }
+  HD6: { p: ['Deite de lado, com a cabeça apoiada no braço e as pernas esticadas.', 'Dobre levemente a perna de baixo para ter estabilidade.', 'Suba a perna de cima até uns 45°, com o pé reto ou levemente voltado para o chão.', 'Desça devagar, sem encostar na outra perna.'], e: 'Quadril parado, sem rolar para trás.' },
+  HR1: { p: ['Em pé, pés juntos e braços ao lado do corpo.', 'Salte abrindo as pernas e levando os braços acima da cabeça.', 'Salte de novo, voltando pés juntos e braços ao lado.', 'Mantenha o ritmo constante e aterrisse com os joelhos levemente dobrados.'], e: 'Baixo impacto: em vez de saltar, dê um passo para o lado com os braços subindo (polichinelo sem pulo).' },
+  HR2: { p: ['Em pé, corra no lugar levando os joelhos até a altura do quadril.', 'Braços acompanham o movimento, como numa corrida.', 'Mantenha o tronco reto e a barriga firme.', 'Aterrisse na ponta do pé, de forma leve.'], e: 'Mais leve: marche no lugar com os joelhos altos, sem saltar.' },
+  HR3: { p: ['Posição de prancha alta: mãos no chão sob os ombros e corpo em linha reta.', 'Leve um joelho em direção ao peito.', 'Troque rápido de perna, como se estivesse correndo na horizontal.', 'Mantenha o quadril baixo e a barriga firme.'], e: 'Mais leve: faça mais devagar, ou apoie as mãos no sofá.' },
+  HR4: { p: ['Pés na largura dos ombros, desça num agachamento até as coxas ficarem paralelas ao chão.', 'Empurre o chão e salte, esticando o corpo todo.', 'Aterrisse suave, com os joelhos dobrados, e já desça para o próximo.', 'Joelhos seguem a direção dos pés.'], e: 'Se doer o joelho ou o impacto incomodar, faça o agachamento sem salto, subindo na ponta dos pés.' },
+  HR5: { p: ['Em pé, agache e apoie as mãos no chão à frente dos pés.', 'Jogue os pés para trás, ficando em prancha alta.', 'Volte os pés para perto das mãos.', 'Levante e salte esticando os braços para cima. Isso é 1 repetição.'], e: 'Sem a flexão no meio, é mais fácil. Se precisar, dê um passo para trás em vez de saltar.' },
+  HR6: { p: ['Em pé, marche no lugar rápido, levando os joelhos a uns 90°.', 'Balance os braços junto, opostos às pernas.', 'Mantenha o tronco reto e respire de forma constante.', 'Aumente a velocidade aos poucos, como numa caminhada rápida.'], e: 'É a opção mais fácil para os dias de joelho ou impacto sensíveis. Ritmo de conversar com um pouco de esforço.' },
+  HR7: { p: ['Em pé, pés na largura dos ombros, um pé um pouco à frente, joelhos levemente dobrados.', 'Soque para a frente alternando os braços, girando levemente o quadril e o ombro.', 'Volte o braço ao rosto depois de cada soco.', 'Dê um leve passo de lado de vez em quando, como num treino de boxe.'], e: 'Para ficar mais forte, soque mais rápido e junte agachamentos curtos.' },
+  HR8: { p: ['Em pé, dê um passo largo para o lado direito.', 'Junte o pé esquerdo ao direito, tocando o chão.', 'Faça o mesmo para o lado esquerdo.', 'Mantenha os joelhos levemente dobrados e balance os braços junto.'], e: 'Mais intenso: aumente a velocidade ou agache a cada passo.' },
+  HR9: { p: ['Escolha um degrau firme, de uns 15 a 20 cm. Fique de frente para ele.', 'Suba com um pé e depois o outro, ficando em pé no degrau.', 'Desça um pé de cada vez.', 'Troque o pé que sobe primeiro a cada série ou a cada 30 segundos.'], e: 'Apoie a mão na parede se sentir desequilíbrio. Suba o ritmo para ficar mais intenso.' },
+  HR10: { p: ['Em pé, pés juntos e cotovelos perto do corpo, com as mãos como se segurassem uma corda.', 'Gire os pulsos como se girasse a corda.', 'Salte levemente, só um pouco do chão, na ponta dos pés.', 'Mantenha o ritmo constante, aterrissando suave.'], e: 'Mais leve: alterne um pé de cada vez, como se estivesse trotando.' }
 };
 COMO.HX1 = COMO.HA4; COMO.HX2 = COMO.HC3; COMO.HX3 = COMO.HA2;
 COMO.HX4 = COMO.HB5; COMO.HX5 = COMO.HA5; COMO.HX6 = COMO.HA7;
@@ -758,11 +787,11 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 // ===================== ESTADO =====================
 const WORKOUT_NAMES = { A: 'Peito · Ombro', B: 'Quadríceps', C: 'Costas · Bíceps', D: 'Posterior · Glúteo',
-  HA: 'Peito · Ombro', HB: 'Quadríceps', HC: 'Costas · Bíceps', HD: 'Posterior · Glúteo', HX: 'Braços · peito · ombro' };
+  HA: 'Peito · Ombro', HB: 'Quadríceps', HC: 'Costas · Bíceps', HD: 'Posterior · Glúteo', HX: 'Braços · peito · ombro', HR: 'Intervalos · baixo impacto' };
 let LOCAL = (function () { try { return localStorage.getItem('treino-local') === 'casa' ? 'casa' : 'academia'; } catch (e) { return 'academia'; } })();
 const isCasa = k => /^H/.test(k);
-const tabLetra = k => k === 'HX' ? 'Bônus' : k.replace(/^H/, '');
-const rotuloTreino = k => k === 'HX' ? 'Bônus em casa' : isCasa(k) ? 'Treino ' + k.slice(1) + ' em casa' : 'Treino ' + k;
+const tabLetra = k => k === 'HX' ? 'Bônus' : k === 'HR' ? 'Cardio' : k.replace(/^H/, '');
+const rotuloTreino = k => k === 'HX' ? 'Bônus em casa' : k === 'HR' ? 'Cardio em casa' : isCasa(k) ? 'Treino ' + k.slice(1) + ' em casa' : 'Treino ' + k;
 const chavesLocal = () => Object.keys(WORKOUTS).filter(k => isCasa(k) === (LOCAL === 'casa'));
 const LS_DRAFT = 'treino-rascunho-v1', LS_REST = 'treino-descanso';
 let currentView = "workout"; // workout | records | evolution
@@ -891,7 +920,7 @@ function slotOf(key) { return T[currentTab].slots.find(s => s.key === key); }
 
 function nextTab() {
   // o rodízio A→B→C→D vale para os dois lugares: um treino em casa conta como o treino da letra
-  const gym = ['A', 'B', 'C', 'D'], ult = allSessions.find(x => x.treino !== 'HX');
+  const gym = ['A', 'B', 'C', 'D'], ult = allSessions.find(x => x.treino !== 'HX' && x.treino !== 'HR');
   let prox = 'A';
   if (ult) prox = gym[(gym.indexOf(ult.treino.replace(/^H/, '')) + 1) % 4] || 'A';
   return LOCAL === 'casa' ? 'H' + prox : prox;
