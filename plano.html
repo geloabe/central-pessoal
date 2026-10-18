@@ -351,7 +351,7 @@ var IDEIAS=[
    {treino:'13:00',txt:'Treino',_h:{d:'13:00',n:'22:00'},_t:{d:'Treino',n:'Treino · você sai às 22:00 e volta perto da meia-noite'}},
    {h:'14:30',key:'pos',n:'Pós-treino',tag:'logo depois do treino',ops:[
      {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
-     {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]],['2 unidades','Ovos',144,13,1,10,false,[['Ovos','2 unidades','Ovos',144,13,1,10],['Frango','80 g','Frango desfiado',128,25,0,3]]],['1 média','Fruta',80,1,19,0]]}],
+     {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]],['2 unidades','Ovos',144,13,1,10,false,[['Ovos','2 unidades','Ovos',144,13,1,10],['Frango ou suíno','80 g de frango ou 90 g de suíno','Frango ou suíno desfiado',130,25,0,3.5]]],['1 média','Fruta',80,1,19,0]]}],
      /* treino às 22h: sem liquidificador, para não fazer barulho em casa */
      opsNoite:[
        {n:'Whey leve',obs:'Pouco volume e sem banana nem aveia, para não pesar na hora de dormir. Sem liquidificador: dissolva o whey com garfo ou colher em um pouco do leite e complete (ou use shaker devagar, com a tampa bem fechada). Prepare o copo e deixe o leite gelado antes de sair.',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['150 ml','Leite zero lactose',92,5,8,5]]},
@@ -407,7 +407,7 @@ var IDEIAS=[
   function chips(t){return '<div class="chips"><span class="k">'+Math.round(t[0])+' kcal</span><span>'+Math.round(t[1])+' g P</span><span>'+Math.round(t[2])+' g C</span><span>'+Math.round(t[3])+' g G</span></div>'}
   /* equivalente cru dos pesos cozidos (aproximado, arredondado de 5 em 5 g) */
   var CRU=[[/arroz cozido/i,0.4,'cru'],[/feij[aã]o cozido/i,0.45,'cru'],[/macarr[aã]o cozido/i,0.43,'cru'],[/^pur[eê]/i,1,'cru, em batata'],
-    [/frango desfiado|^prote[ií]na/i,1.33,'cru'],[/cenoura e beterraba/i,1.1,'cru'],[/patinho moída/i,1.3,'cru']];
+    [/(frango|su[ií]no)( ou su[ií]no)? desfiado|^prote[ií]na/i,1.33,'cru'],[/cenoura e beterraba/i,1.1,'cru'],[/patinho moída/i,1.3,'cru']];
   function cruH(q,nome){
     if(/crua?\b/i.test(q))return '';
     if(/patinho moída/i.test(nome)&&!/pronto/i.test(q))return '';
