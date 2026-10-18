@@ -209,6 +209,42 @@
              hoje: at.filter(function (e) { return e.feitoHoje; }).length, pct: at.length ? Math.round(at.reduce(function (a, e) { return a + e.pct; }, 0) / at.length) : 0 };
   }
 
+  /* ---------- Foco do dia e anotações rápidas ---------- */
+  // foco: um documento por dia {date, texto, passo, feito, dispensado}. "Hoje não" não conta contra ninguém: só esconde o cartão.
+  function foco(d, hoje) {
+    var l = (d.foco || []).filter(function (x) { return x && x.date; }), k = iso(hoje);
+    var h = l.filter(function (x) { return x.date === k; })[0] || null;
+    var pend = l.filter(function (x) { return x.date < k && x.texto && !x.feito && !x.dispensado && (hoje - parse(x.date)) / DIA <= 3; })
+      .sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0] || null;
+    return { hoje: h && h.texto ? h : null, feito: !!(h && h.feito && h.texto), dispensado: !!(h && h.dispensado), pendenteAnterior: pend,
+      concluidos: l.filter(function (x) { return x.feito && x.texto; }).length };
+  }
+  function captura(d) {
+    var ab = (d.captura || []).filter(function (x) { return x && x.texto && !x.feito; }).sort(function (a, b) { return (b.criado || '') < (a.criado || '') ? -1 : 1; });
+    return { abertas: ab, n: ab.length };
+  }
+
+  /* ---------- Ausência: há quantos dias não aparece nenhum registro ---------- */
+  // Usada só para acolher na volta ("nada ficou acumulado"); nunca para cobrar.
+  function ausencia(d, hoje) {
+    var ds = [];
+    function ad(v) { if (v) ds.push(String(v).slice(0, 10)); }
+    (d.sessions || []).forEach(function (x) { ad(x.dateISO); });
+    (d.refeicoes || []).forEach(function (x) { if (x && x.feitas && Object.keys(x.feitas).length) ad(x.date); });
+    (d.agua || []).forEach(function (x) { if (x && num(x.ml) > 0) ad(x.date); });
+    Object.keys((d.habitos && d.habitos.records) || {}).forEach(function (k) { if (Object.keys(d.habitos.records[k] || {}).length) ad(k); });
+    ((d.grimorio && d.grimorio.entries) || []).forEach(function (x) { ad(x.date); });
+    (d.apps || []).forEach(function (x) { ad(x.appliedAt); });
+    (d.desafios || []).forEach(function (x) { Object.keys(x.feitos || {}).forEach(function (k) { if (x.feitos[k]) ad(k); }); });
+    (d.foco || []).forEach(function (x) { if (x && x.feito) ad(x.date); });
+    (d.captura || []).forEach(function (x) { ad(x.criado); });
+    var h = iso(hoje);
+    ds = ds.filter(function (k) { return /^\d{4}-\d{2}-\d{2}$/.test(k) && k <= h; }).sort();
+    if (!ds.length) return { ultima: null, dias: null };
+    var u = ds[ds.length - 1];
+    return { ultima: u, dias: Math.round((parse(h) - parse(u)) / DIA) };
+  }
+
   /* ---------- Marcos: conquistas que se acendem aos poucos ---------- */
   function marcos(p) {
     var l = [];
@@ -250,12 +286,12 @@
   }
 
   function coisasHoje(p) {
-    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0);
+    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0) + (p.foco.feito ? 1 : 0);
   }
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), ausencia: ausencia(d, hoje) };
     p.metas = metas(p, d); p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
@@ -278,6 +314,6 @@
     return { saude: s, vida: o };
   }
 
-  var api = { sequencia: sequencia, agua: agua, AGUA_META: AGUA_META, AGUA_BOM: AGUA_BOM, refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, estado: estadoDesafio, iso: iso, e1rm: e1rm };
+  var api = { sequencia: sequencia, agua: agua, AGUA_META: AGUA_META, AGUA_BOM: AGUA_BOM, refeicoes: refeicoes, refDia: refDia, REF_N: REF_N, BOM_MIN: BOM_MIN, PROT_META: PROT_META, calcular: calcular, foco: foco, captura: captura, ausencia: ausencia, estado: estadoDesafio, iso: iso, e1rm: e1rm };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_PROG = api;
 })(typeof window !== 'undefined' ? window : globalThis);
