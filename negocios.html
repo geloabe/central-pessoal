@@ -81,6 +81,7 @@ ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
     <button role="tab" data-t="pipeline" aria-selected="false">Pipeline</button>
     <button role="tab" data-t="empresas" aria-selected="false">Empresas</button>
     <button role="tab" data-t="oport" aria-selected="false">Oportunidades</button>
+    <button role="tab" data-t="abordagem" aria-selected="false">Abordagem</button>
     <button role="tab" data-t="agenda" aria-selected="false">Agenda</button>
     <button role="tab" data-t="servicos" aria-selected="false">Serviços</button>
     <button role="tab" data-t="capac" aria-selected="false">Capacidade e receita</button>
@@ -90,6 +91,7 @@ ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
   <section id="pipeline"></section>
   <section id="empresas"></section>
   <section id="oport"></section>
+  <section id="abordagem"></section>
   <section id="agenda"></section>
   <section id="servicos"></section>
   <section id="capac"></section>
@@ -195,6 +197,38 @@ function saveEmp(e){var c=Object.assign({},e);delete c.id;return save('neg_empre
 function saveCfg(){return save('neg_config','main',S.cfg)}
 function log(empresaId,o){var id=uid(),d=Object.assign({empresaId:empresaId,data:hoje(),criado:Date.now()},o);return save('neg_atividades',id,d)}
 
+
+/* ---------- Por que esta empresa e como contatar ---------- */
+function porque(e){
+  var r=[],sv=e.servicos||[],f=(e.fatos||[]),ind=(e.indicios||[]);
+  if(e.unidades)r.push('Unidades registradas na pesquisa: '+e.unidades+' (confira a fonte antes de citar na conversa).');
+  else if(f.length)r.push('Fato verificado: '+(f[0].texto||f[0])+'.');
+  if(ind.length)r.push('Indício: '+(ind[0].texto||ind[0])+'.');
+  var o=(e.ofertas||[])[0];
+  if(o)r.push('Oferta a validar: '+o+' (hipótese, não necessidade confirmada).');
+  if(sv.indexOf('E')>=0||/posto|academia|facilities|superm|farm|clinica|labor|restaur/.test(norm((e.segmento||'')+(e.subsegmento||''))))r.push('Equipes em turnos: pode haver espaço para o piloto de escalas.');
+  if(e.porte==='pequeno'||e.porte==='médio')r.push('Porte '+e.porte+(e.porteBase?' ('+e.porteBase+')':'')+': mais fácil falar com o dono ou gestor.');
+  if(!r.length)r.push('Ainda sem evidência suficiente: pesquisa '+(e.pesquisa||'pendente')+'. Complete a pesquisa antes de abordar.');
+  if(e.pesquisa!=='verificada')r.push('Atenção: pesquisa '+(e.pesquisa||'pendente')+', pontuação provisória.');
+  return r;
+}
+function comoContatar(e){
+  var c=[],cp=e.contatosPublicos||[],pessoa=cp.filter(function(x){return x.nome&&x.funcao})[0];
+  if(pessoa)c.push('Quem: '+pessoa.nome+' ('+pessoa.funcao+'), publicado no site da empresa. Peça uma conversa de 15 minutos pelo canal institucional.');
+  else c.push('Quem: o decisor não está publicado. Pergunte quem cuida de operações, administrativo ou gestão e peça o encaminhamento.');
+  if(e.whatsapp)c.push('Canal principal: WhatsApp comercial '+e.whatsapp+' (mensagem curta, aba Abordagem personalizada).');
+  if(e.telefone)c.push((e.whatsapp?'Alternativa':'Canal principal')+': telefone '+e.telefone+' (use o roteiro de ligação de 2 minutos).');
+  if(e.email){var rh=cp.some(function(x){return x.canal===e.email&&/rh|recurso/i.test(x.funcao||'')})||/^(rh|recursoshumanos|trabalheconosco|vagas)@/i.test(e.email);
+    c.push((e.whatsapp||e.telefone?'Alternativa':'Canal principal')+': e-mail '+e.email+(rh?' — é e-mail de RH, não do decisor: use só para pedir encaminhamento.':'.'))}
+  if(!e.whatsapp&&!e.telefone&&!e.email){
+    if(e.linkedin)c.push('Canal: página institucional no LinkedIn; procure ali o sócio ou o gestor de operações.');
+    else c.push('Nenhum canal público registrado: procure o site oficial, o Google Maps (telefone) ou o LinkedIn da empresa. Tarefa de pesquisa antes de abordar.');
+  }
+  c.push('Primeiro passo: '+(proximaAcao(e)||'revisar a primeira mensagem')+'. Nada é enviado automaticamente.');
+  return c;
+}
+function bloco(titulo,l){return '<div class="mini" style="margin-top:6px"><b>'+esc(titulo)+'</b></div><ul class="l">'+l.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'}
+
 /* ---------- Painel ---------- */
 function rPainel(){
   var n=S.emp.length,cont=0,qual=0,pesq=0,pron=0,resp=0,diag=0,prop=0,neg=0,ganh=0,perd=0;
@@ -223,9 +257,9 @@ function rPainel(){
   h+='<div class="grid">'+
    card('Estimado (aberto)',brl(v.est),'soma dos valores estimados')+card('Ponderado',brl(v.pond),'estimado × probabilidade')+card('Proposto',brl(v.prop),'propostas enviadas')+card('Contratado',brl(v.contr),'oportunidades ganhas')+card('Recebido',brl(v.rec),'registrado por você','ok')+'</div>';
   // o que fazer agora
-  var prox=S.emp.filter(function(e){return e.aderente!=='nao'&&['ganha','perdida','nutricao'].indexOf(e.etapa)<0}).map(function(e){return {e:e,s:score(e)}}).sort(function(a,b){return b.s.total-a.s.total}).slice(0,6);
+  var prox=S.emp.filter(function(e){return e.aderente!=='nao'&&!ehIntermediario(e)&&['ganha','perdida','nutricao'].indexOf(e.etapa)<0}).map(function(e){return {e:e,s:score(e)}}).sort(function(a,b){return b.s.total-a.s.total}).slice(0,6);
   h+='<div class="grid2"><div class="cartao"><h3>Vale abordar primeiro</h3><div class="mini">Ordenado pela pontuação (provisória quando a pesquisa não está verificada).</div>'+
-    (prox.length?prox.map(function(x){return '<div class="item"><div style="flex:1"><b><a href="#" data-emp="'+esc(x.e.id)+'">'+esc(x.e.nome)+'</a></b> <span class="mini">'+esc(x.e.cidade||'')+' · '+esc(x.e.segmento||'')+'</span><div class="mini">'+esc(proximaAcao(x.e)||nomeEtapa(x.e.etapa))+'</div></div><span class="tag '+(x.s.prov?'amb':'ok')+'">'+x.s.total+(x.s.prov?' prov.':'')+'</span></div>'}).join(''):'<div class="vazio">Sem candidatas.</div>')+'</div>'+
+    (prox.length?prox.map(function(x){return '<div class="item"><div style="flex:1"><b><a href="#" data-emp="'+esc(x.e.id)+'">'+esc(x.e.nome)+'</a></b> <span class="mini">'+esc(x.e.cidade||'')+' · '+esc(x.e.segmento||'')+'</span><div class="mini"><b>Por quê:</b> '+esc(porque(x.e)[0])+'</div><div class="mini"><b>Como:</b> '+esc(comoContatar(x.e)[1]||'')+'</div><div class="mini"><a href="#" data-emp="'+esc(x.e.id)+'">ver detalhes e mensagem →</a></div></div><span class="tag '+(x.s.prov?'amb':'ok')+'">'+x.s.total+(x.s.prov?' prov.':'')+'</span></div>'}).join(''):'<div class="vazio">Sem candidatas.</div>')+'</div>'+
     '<div class="cartao"><h3>Atrasado</h3>'+(at.length?at.slice(0,8).map(function(a){var e=emp(a.empresaId);return '<div class="item"><div style="flex:1"><b>'+esc(a.txt)+'</b><div class="mini">'+esc(e?e.nome:'')+' · venceu em '+dBR(a.data)+'</div></div></div>'}).join(''):'<div class="vazio">Nada atrasado.</div>')+'</div></div>';
   h+='<div class="cartao"><h3>Perguntas rápidas</h3><div class="mini">Respondidas com os dados da central (sem IA externa).</div><div class="row" style="margin:8px 0">'+
     [['top','Quem abordar primeiro?'],['sobral','Sobral sem contato'],['seguir','Sem acompanhamento'],['cabem','Cabem na minha disponibilidade?'],['escalas','Podem ter escalas complexas'],['recorr','Maior potencial recorrente'],['semana','O que fazer esta semana?']].map(function(q){return '<button class="btn sec" data-q="'+q[0]+'">'+q[1]+'</button>'}).join('')+
@@ -253,7 +287,7 @@ function valores(){
 }
 function responde(q){
   var out='';
-  var ativos=S.emp.filter(function(e){return e.aderente!=='nao'&&['ganha','perdida'].indexOf(e.etapa)<0});
+  var ativos=S.emp.filter(function(e){return e.aderente!=='nao'&&!ehIntermediario(e)&&['ganha','perdida'].indexOf(e.etapa)<0});
   function lista(l,fn){return l.length?l.map(fn).join('\n'):'(nenhuma com os dados atuais)'}
   if(q==='top'){var l=ativos.map(function(e){return {e:e,s:score(e)}}).sort(function(a,b){return b.s.total-a.s.total}).slice(0,5);out='Maior pontuação (provisória se a pesquisa não está verificada):\n'+lista(l,function(x,i){return (S.emp.indexOf(x.e)>=0?'• ':'')+x.e.nome+' ('+x.e.cidade+') — '+x.s.total+(x.s.prov?' prov.':'')+' · '+(proximaAcao(x.e)||nomeEtapa(x.e.etapa))})}
   else if(q==='sobral'){var l2=ativos.filter(function(e){return /sobral/i.test(e.cidade||'')||e.regiao==='Sobral'}).filter(function(e){return !ultimoContato(e.id)});out='Empresas de Sobral ainda sem contato registrado:\n'+lista(l2,function(e){return '• '+e.nome+' — '+(proximaAcao(e)||nomeEtapa(e.etapa))})}
@@ -330,6 +364,7 @@ function rDetalhe(e){
    '<div class="grid2"><div>'+
     kv('Site',e.site&&urlOk(e.site)?'<a href="'+esc(e.site)+'" target="_blank" rel="noopener noreferrer">'+esc(dominio(e.site))+' ↗</a>':'—',true)+kv('Telefone institucional',esc(e.telefone||'—'),true)+kv('E-mail corporativo',esc(e.email||'—'),true)+kv('WhatsApp comercial',esc(e.whatsapp||'—'),true)+kv('LinkedIn',e.linkedin&&urlOk(e.linkedin)?'<a href="'+esc(e.linkedin)+'" target="_blank" rel="noopener noreferrer">perfil ↗</a>':'—',true)+
    '</div><div>'+kv('Unidades',esc(e.unidades||'não confirmado'),true)+kv('Porte estimado',esc(e.porte||'desconhecido')+(e.porteBase?' <span class="mini">('+esc(e.porteBase)+')</span>':''),true)+kv('Última verificação',e.verificadoEm?dBR(e.verificadoEm):'—',true)+kv('Próxima ação',esc(proximaAcao(e)||'—')+(e.proxData?' · '+dBR(e.proxData):''),true)+kv('Relacionamento',esc(e.relac||'sem contato'),true)+'</div></div></div>';
+  h+='<div class="cartao"><h3>Por que esta empresa e como contatar</h3><div class="grid2"><div>'+bloco('Por que abordar',porque(e))+'</div><div>'+bloco('Como contatar',comoContatar(e))+'</div></div></div>';
   // pontuação
   h+='<div class="grid2"><div class="cartao"><div class="row"><h3>Pontuação '+s.total+(s.prov?' <span class="tag amb">provisória</span>':'')+'</h3><span class="sp"></span><button class="btn sec" data-ajusta="'+esc(e.id)+'">Ajustar</button></div>'+
    Object.keys(s.det).map(function(k){var d=s.det[k];return '<div class="kv"><span>'+esc(PESO_NOME[k])+(d.manual?' <span class="tag">manual</span>':'')+'</span><b>'+d.v+' / '+d.w+'</b></div>'}).join('')+
@@ -340,6 +375,8 @@ function rDetalhe(e){
     (e.confirmados&&e.confirmados.length?'<div class="mini" style="margin-top:8px"><b>Problema confirmado pelo cliente</b></div><ul class="l">'+e.confirmados.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
     (e.obs?'<div class="mini" style="margin-top:8px">Obs.: '+esc(e.obs)+'</div>':'')+
     '<div class="mini" style="margin-top:8px"><b>Fontes</b></div><div class="mini">'+((e.fontes||[]).map(function(f){return '<a class="fonte" href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">'+esc(f.tipo||dominio(f.url))+' ↗</a>'+(f.dataConsulta?'<span class="mini">'+dBR(f.dataConsulta)+'</span> ':'')}).join('')||'sem fontes registradas')+'</div></div></div>';
+  var est=ESTRAT.filter(function(x){return x.id===estrategiaPara(e)})[0]||{nome:'Fora da estratégia atual',esforco:'—',quando:'Consultorias e software houses são intermediários (parceria técnica). Você escolheu abordar direto as empresas que compram; mantenho o registro, mas fora da fila de abordagem.'};
+  h+='<div class="cartao"><h3>Estratégia sugerida</h3><div><b>'+esc(est.nome)+'</b> <span class="tag">esforço '+esc(est.esforco)+'</span></div><div class="mini">'+esc(est.quando)+'</div></div>';
   // ofertas
   h+='<div class="cartao"><div class="row"><h3>Ofertas plausíveis</h3><span class="sp"></span><button class="btn sec" data-novo="opo:'+esc(e.id)+'">+ Oportunidade</button></div><div class="mini">Hipóteses de oferta, não necessidades confirmadas.</div><ul class="l">'+((e.ofertas||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')||'<li class="mini">nenhuma</li>')+'</ul>'+
    (ops.length?'<div class="scroll" style="margin-top:8px"><table><thead><tr><th>Oportunidade</th><th>Etapa</th><th class="n">Estimado</th><th class="n">Prob.</th></tr></thead><tbody>'+ops.map(function(o){return '<tr class="cl" data-edit="opo:'+esc(o.id)+'"><td>'+esc(servNome(o.servicoId)||o.problema||'(sem serviço)')+'</td><td>'+esc(nomeEtapa(o.etapa))+'</td><td class="n">'+brl(num(o.vEst))+'</td><td class="n">'+Math.round(probOp(o)*100)+'%</td></tr>'}).join('')+'</tbody></table></div>':'')+'</div>';
@@ -403,6 +440,53 @@ function rOport(){
   else h+='<div class="cartao scroll"><table><thead><tr><th>Empresa / serviço</th><th>Etapa</th><th class="n">Horas</th><th class="n">Estimado</th><th class="n">Proposto</th><th class="n">Contratado</th><th class="n">Prob.</th><th class="n">Ponderado</th><th>Próxima ação</th></tr></thead><tbody>'+
     l.map(function(o){var e=emp(o.empresaId);return '<tr class="cl" data-edit="opo:'+esc(o.id)+'"><td><b>'+esc(e?e.nome:'(empresa removida)')+'</b><div class="mini">'+esc(servNome(o.servicoId)||o.problema||'')+'</div></td><td>'+esc(nomeEtapa(o.etapa))+'</td><td class="n">'+(num(o.horas)||'—')+'</td><td class="n">'+brl(num(o.vEst))+'</td><td class="n">'+(num(o.vProp)?brl(num(o.vProp)):'—')+'</td><td class="n">'+(o.etapa==='ganha'?brl(num(o.vContr)):'—')+'</td><td class="n">'+Math.round(probOp(o)*100)+'%</td><td class="n">'+(emAberto(o)?brl(num(o.vEst)*probOp(o)):'—')+'</td><td>'+esc(o.proxAcao||'')+(o.proxData?'<div class="mini">'+dBR(o.proxData)+'</div>':'')+'</td></tr>'}).join('')+'</tbody></table></div><div class="mini" style="margin-top:6px">A probabilidade padrão vem da etapa (Configurações). Ajuste-a com evidências e com seu histórico real — não é previsão.</div>';
   $('#oport').innerHTML=h;
+}
+
+
+/* ---------- Estratégias de abordagem ---------- */
+var ESTRAT=[
+ {id:'dono',nome:'Contato direto com o dono ou gestor (empresa pequena ou média)',esforco:'médio',prazo:'2–6 semanas',
+  quando:'Sua estratégia preferida. Vale para empresas em que o dono ou gerente é acessível (Sobral, Itapipoca, redes regionais); para postos, redes e operações com turnos, abra com a pergunta sobre escalas. Funciona melhor com uma hipótese concreta e uma pergunta, não uma lista de serviços.',
+  como:['Pesquise 15 minutos antes: o que a empresa faz, quantas unidades, como parecem lidar com relatórios.','Sem nome do decisor publicado? Ligue ou mande WhatsApp ao canal institucional e pergunte quem cuida de operações ou gestão; use o roteiro de ligação da página da empresa.','Primeira mensagem curta (página da empresa → Abordagem personalizada): uma observação, uma pergunta, um pedido de 15 minutos.','Se houver resposta, marque o diagnóstico; se não, um único retorno em 7 dias.'],
+  cuidado:'Use só canal público e comercial. Contato geral não é o decisor: peça o encaminhamento.'},
+ {id:'escalas',nome:'Piloto de escalas para operações com turnos',esforco:'médio',prazo:'4–10 semanas',
+  quando:'Postos, redes de lojas, supermercados, farmácias, clínicas, academias e facilities com equipes em turnos. Venda um piloto pequeno (uma unidade) antes do sistema completo.',
+  como:['Abra com uma pergunta de diagnóstico: como a escala é montada hoje e quanto tempo leva.','Proponha um piloto delimitado: levantar regras, montar a escala de uma unidade e comparar horas de montagem e cobertura.','Deixe explícito que a validação trabalhista é feita por profissional competente.'],
+  cuidado:'Não garanta que uma escala gerada seja legal. Convenção coletiva, intervalos e horas extras precisam de validação externa.'},
+ {id:'diagnostico',nome:'Diagnóstico curto de entrada',esforco:'médio',prazo:'1–3 semanas',
+  quando:'Quando a empresa responde mas ainda não sabe o que quer. Reduz o risco para os dois lados e produz um escopo claro.',
+  como:['Conversa de 30 minutos com o roteiro de diagnóstico, seguida de um relatório curto com o que foi ouvido e o primeiro passo recomendado.','Prefira cobrar um valor pequeno e fixo, ou condicione o relatório a uma conversa de proposta, em vez de trabalhar de graça por tempo indefinido.','Termine com proposta de escopo, horas, prazo e valor.'],
+  cuidado:'Limite o esforço antes da contratação (por exemplo, 2 horas). Registre o problema confirmado, não só a hipótese.'},
+ {id:'presenca',nome:'Presença profissional mínima (LinkedIn e portfólio)',esforco:'baixo',prazo:'contínuo',
+  quando:'Como apoio às outras estratégias: quem receber sua mensagem vai olhar seu perfil. Não depende de vender o tempo todo.',
+  como:['Perfil com foco claro (automação de relatórios, integração de dados, escalas) e um caso resumido.','Um texto curto a cada duas semanas com um aprendizado genérico, sem dados de clientes ou do empregador.','Use o resultado de redução de 50 para 3 minutos como exemplo de capacidade, e não como promessa: o ganho depende do cliente.'],
+  cuidado:'Não exponha nada confidencial do emprego atual.'},
+ {id:'nutricao',nome:'Nutrição e retorno limitado',esforco:'baixo',prazo:'contínuo',
+  quando:'Sem resposta, resposta "agora não" ou projeto em pausa.',
+  como:['Um retorno respeitoso após cerca de 7 dias; depois mover para "Em nutrição".','Revisitar em 60 a 90 dias com uma novidade útil, não uma cobrança.','Parar se a pessoa pedir.'],
+  cuidado:'Ausência de resposta não é consentimento. Sem sequências insistentes.'}
+];
+function ehIntermediario(e){return /consultoria|software|bi$|erp|cloud|integra/.test(norm((e.segmento||'')+(e.subsegmento||'')))}
+function estrategiaPara(e){
+  // preferência declarada: contato direto com a empresa que compra; sem intermediários (consultorias, software houses, indicações).
+  return ehIntermediario(e)?'fora':'dono';
+}
+function rAbordagem(){
+  var c=cfg(),horas=num(c.horasSem),hPros=horas*0.4,novos=Math.max(2,Math.floor(hPros/0.5));
+  var h='<div class="aviso"><b>Princípio:</b> você não quer virar vendedor. Você escolheu abordar direto as empresas que compram, sem intermediários (indicações, parcerias, revendedores). A ideia é poucos contatos bem escolhidos, uma pergunta em vez de um discurso, e parar depois de um retorno. As estratégias estão ordenadas do menor para o maior esforço comercial.</div>';
+  h+='<div class="grid2"><div class="cartao"><h3>Ritmo sugerido</h3>'+kv('Horas por semana',esc(horas+' h'),true)+kv('Reservar para prospecção (~40%)',esc(hPros.toFixed(1)+' h'),true)+kv('Novos contatos por semana (~30 min cada)',esc(String(novos)),true)+
+   '<ul class="l"><li>1 h: pesquisar 2–3 empresas da fila.</li><li>1 h: revisar e enviar as mensagens que você aprovar.</li><li>30 min: retornos e registro de respostas.</li><li>O resto: entrega dos projetos em andamento.</li></ul><div class="mini" style="margin-top:6px">Se a ocupação passar de 80% (aba Capacidade), reduza novos contatos antes de aceitar projeto novo.</div></div>'+
+   '<div class="cartao"><h3>Regra de cadência</h3><ul class="l"><li>Dia 0: primeira mensagem.</li><li>Dia 7: um único retorno.</li><li>Sem resposta: mover para "Em nutrição" e revisitar em 60–90 dias.</li><li>Respondeu "agora não": registrar o motivo e a data para voltar.</li></ul><div class="mini" style="margin-top:6px">Nada é enviado automaticamente: você revisa e envia.</div></div></div>';
+  var cont={};S.emp.filter(function(e){return e.aderente!=='nao'}).forEach(function(e){var k=estrategiaPara(e);(cont[k]=cont[k]||[]).push(e)});
+  h+=ESTRAT.map(function(x){var l=(cont[x.id]||[]).map(function(e){return {e:e,s:score(e)}}).sort(function(a,b){return b.s.total-a.s.total});
+    return '<div class="cartao"><div class="row"><h3>'+esc(x.nome)+'</h3><span class="sp"></span><span class="tag">esforço '+esc(x.esforco)+'</span><span class="tag">'+esc(x.prazo)+'</span></div>'+
+     '<p style="margin:6px 0">'+esc(x.quando)+'</p><div class="mini"><b>Como fazer</b></div><ul class="l">'+x.como.map(function(t){return '<li>'+esc(t)+'</li>'}).join('')+'</ul>'+
+     '<div class="mini" style="margin-top:6px"><b>Cuidado:</b> '+esc(x.cuidado)+'</div>'+
+     (l.length?'<div class="mini" style="margin-top:8px"><b>Empresas sugeridas ('+l.length+')</b></div>'+l.slice(0,6).map(function(y){return '<span class="fonte"><a href="#" data-emp="'+esc(y.e.id)+'">'+esc(y.e.nome)+'</a> <span class="mini">'+y.s.total+(y.s.prov?'*':'')+'</span></span>'}).join(''):'')+'</div>'}).join('');
+  var fora=S.emp.filter(ehIntermediario);
+  if(fora.length)h+='<div class="cartao"><h3>Fora da estratégia atual</h3><div class="mini">Consultorias e software houses (parceria técnica) ficam registradas, mas fora da fila de abordagem. Se mudar de ideia, reative em Configurações do seu fluxo ou me peça.</div><div class="mini" style="margin-top:6px">'+fora.map(function(e){return '<a class="fonte" href="#" data-emp="'+esc(e.id)+'">'+esc(e.nome)+'</a>'}).join('')+'</div></div>';
+  h+='<div class="mini">* pontuação provisória. A estratégia sugerida usa segmento, porte e contatos públicos; é um ponto de partida, e você decide.</div>';
+  $('#abordagem').innerHTML=h;
 }
 
 /* ---------- Agenda ---------- */
@@ -592,7 +676,7 @@ $('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button
 
 /* ---------- dados ---------- */
 function lista(snap){return snap.docs.map(function(d){var o=d.data();o.id=d.id;return o})}
-function renderAll(){$('#tit').textContent=cfg().nome;rPainel();rPipeline();rEmpresas();rOport();rAgenda();rServicos();rCapac();rConfig()}
+function renderAll(){$('#tit').textContent=cfg().nome;rPainel();rPipeline();rEmpresas();rOport();rAbordagem();rAgenda();rServicos();rCapac();rConfig()}
 var tmr=null;function agenda(){clearTimeout(tmr);tmr=setTimeout(function(){var a=document.activeElement;if(a&&a.closest&&a.closest('#config form')&&a.tagName!=='BUTTON'){return}renderAll()},60)}
 claude.use('db').then(function(d){
   db=d;
