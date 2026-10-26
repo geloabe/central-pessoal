@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>document.documentElement.dataset.pg="imovel"</script>
+<link rel="stylesheet" href="assets/tema.css">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Imóvel</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:860px;margin:0 auto;padding:16px 16px 80px}
+h1{font-size:28px}
+.sub{color:var(--t-muted);margin:4px 0 16px}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:14px;padding:8px 14px;border-radius:var(--raio);border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+section{display:none}section.on{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.cartao h3{font-size:19px}
+.cartao+.cartao,.grid+.cartao,.cartao+.grid{margin-top:12px}
+.mini{font-size:13px;color:var(--t-muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+.tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em}
+.tag.ok{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.ruim{background:color-mix(in srgb,var(--t-bad) 16%,var(--t-surface));border-color:var(--t-bad)}
+.tag.no{opacity:.55;text-decoration:line-through}
+.barra{height:8px;background:var(--t-line);overflow:hidden}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+.aviso{border-left:4px solid var(--t-accent2);background:color-mix(in srgb,var(--t-accent2) 12%,var(--t-surface));padding:12px 14px;margin-bottom:12px;font-size:14px}
+.aviso.ruim{border-left-color:var(--t-bad);background:color-mix(in srgb,var(--t-bad) 9%,var(--t-surface))}
+.aviso.ok{border-left-color:var(--t-ok);background:color-mix(in srgb,var(--t-ok) 9%,var(--t-surface))}
+.big{font:600 28px var(--f-titulo);letter-spacing:var(--titulo-tracking)}
+.item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--t-line)}
+.item input{margin-top:4px;accent-color:var(--t-ok);width:18px;height:18px;flex:none}
+.item.feito span{color:var(--t-muted);text-decoration:line-through}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--t-line);vertical-align:top}
+th{font:500 10px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--t-muted)}
+td.n,th.n{text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+dialog{border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);padding:18px;width:min(560px,94vw);max-height:92vh;overflow:auto}
+dialog::backdrop{background:rgba(40,30,60,.35)}
+form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form.f label,.cal label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--t-muted)}
+form.f .full{grid-column:1/-1}
+form.f input,form.f select,form.f textarea,.cal input,.cal select{font:inherit;padding:8px;border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+form.f textarea{min-height:64px}
+.cal{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.vazio{padding:18px;text-align:center;color:var(--t-muted)}
+a{color:var(--t-accent)}
+details{border-top:1px solid var(--t-line);padding:8px 0}
+summary{cursor:pointer;font-weight:600}
+ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--t-line);font-size:14px}
+.kv b{white-space:nowrap}
+</style>
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
+<link rel="stylesheet" href="assets/mobile.css">
+<script src="assets/rascunho.js" defer></script>
+</head>
+<body class="t">
+<main>
+  <h1>Imóvel</h1>
+  <p class="sub">Consultor da primeira compra: o que faz sentido para a sua vida, quanto cabe de verdade e por onde começar.</p>
+
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-t="perfil" aria-selected="true">Perfil</button>
+    <button role="tab" data-t="capacidade" aria-selected="false">Quanto cabe</button>
+    <button role="tab" data-t="estrategias" aria-selected="false">Estratégias</button>
+    <button role="tab" data-t="construtoras" aria-selected="false">Construtoras</button>
+    <button role="tab" data-t="finalistas" aria-selected="false">Finalistas</button>
+    <button role="tab" data-t="plano" aria-selected="false">Plano de ação</button>
+  </nav>
+
+  <section id="perfil" class="on"></section>
+  <section id="capacidade"></section>
+  <section id="estrategias"></section>
+  <section id="construtoras"></section>
+  <section id="finalistas"></section>
+  <section id="plano"></section>
+</main>
+
+<dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
+
+<script>
+(function(){
+'use strict';
+var db=null, S={perfil:null,cap:null,constr:[],imv:[],plano:{done:{},extra:[]},estr:{}};
+var $=function(s,r){return (r||document).querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function num(v){var s=String(v==null?'':v).trim();if(/,/.test(s))s=s.replace(/\./g,'').replace(',','.');else if(/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');var n=parseFloat(s);return isNaN(n)?0:n}
+function brl(n){return (n<0?'−':'')+'R$ '+Math.round(Math.abs(n)).toLocaleString('pt-BR')}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function dataBR(d){return d?String(d).split('-').reverse().join('/'):''}
+function barra(p){p=Math.max(0,Math.min(100,p));return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
+function ehMRV(t){return /\bmrv\b/i.test(t||'')}
+
+/* ---------- 1. Perfil: ficha com status de cada informação ---------- */
+var ST_INFO={confirmado:'Confirmado',estimativa:'Estimativa',preferencia:'Preferência',desconhecido:'A descobrir'};
+var PERFIL_PADRAO=[
+ ['Capacidade financeira',[
+  ['renda','Renda bruta mensal','R$ 6.500','estimativa','Banco não aceita automaticamente a renda bruta: depende da comprovação.'],
+  ['vinculo','Como recebe','MEI há 3 anos, por nota fiscal; renda de R$ 4 mil (outro cliente) passou a R$ 6.500 há 1 ano, com a empresa atual, única; relação de trabalho na prática "PJ pejotizado" (via Cora)','confirmado','Risco: concentração em um cliente e só 1 ano na renda atual (3 anos de MEI ajudam). Teto do MEI: R$ 81 mil/ano (R$ 6.500 × 12 = R$ 78 mil, mais o bônus de ago/2026).'],
+  ['comprovacao','Como comprova renda','Declara IR; notas fiscais e extratos Cora','estimativa','Confirmar com a CAIXA o que aceita de MEI: DASN-SIMEI, IR, extratos, notas fiscais.'],
+  ['fgts','FGTS disponível','R$ 0','estimativa',''],
+  ['entrada','Entrada disponível hoje','≈ R$ 10.000','estimativa','Hoje é quase todo Tesouro Selic — também é a única reserva de emergência.'],
+  ['sobra','Sobra mensal real','','desconhecido','Dito antes: pouco mais de R$ 1.000. Extratos de abr–set/2026 mostram saldo livre negativo (ver "Quanto cabe").'],
+  ['dividas','Dívidas e parcelas existentes','','desconhecido',''],
+  ['parcela','Parcela confortável / limite / perigosa','','desconhecido','A simulação de R$ 1.950 NÃO é adequação financeira confirmada.']]],
+ ['Imóvel desejado',[
+  ['tipo','Casa ou apartamento','Prefere casa; aceita apartamento (principal motivo contra: condomínio)','confirmado',''],
+  ['condominio','Tolerância a condomínio','Preferência, não restrição: apartamento com condomínio é aceito; teto ~R$ 400/mês','confirmado','Condomínio entra na conta mensal junto com parcela e IPTU.'],
+  ['novo','Novo, usado ou ambos','Quer imóvel novo (não aceita usado)','confirmado','Restringe a pesquisa a construtoras/incorporadoras; reavaliar só se a conta não fechar.'],
+  ['quartos','Quartos / banheiros / vaga','2 quartos (preferência); vaga: a definir','preferencia','Pretende comprar carro no futuro.'],
+  ['area','Área mínima e home office','Trabalha na maior parte do tempo de casa','confirmado','O segundo quarto pode servir de escritório.'],
+  ['reforma','Tolerância a reforma','','desconhecido','']]],
+ ['Localização e rotina',[
+  ['cidade','Cidades','Fortaleza (prefere), Eusébio e Maracanaú','confirmado','Caucaia e Aquiraz não foram citados na última resposta.'],
+  ['bairros','Bairros preferidos / a evitar','Evitar bairros mais perigosos (ex.: Granja Lisboa, Barroso)','confirmado',''],
+  ['desloc','Deslocamento aceitável (trabalho, família)','Trabalha de casa; deslocamento diário pesa pouco','estimativa','Confirmar família/locais frequentes.'],
+  ['transp','Carro, moto ou transporte público','Hoje sem carro; pretende comprar no futuro','estimativa','']]],
+ ['Objetivo e risco',[
+  ['horizonte','Comprar logo ou pode esperar','Preocupada com o tamanho da entrada','preferencia',''],
+  ['permanencia','Morar por quantos anos / revenda','','desconhecido',''],
+  ['planta','Tolerância a obra na planta e atrasos','Prefere obra avançada ou imóvel pronto; evita planta de longo prazo','confirmado','Foco da pesquisa: unidades prontas, remanescentes e obras em fase final.'],
+  ['outras','Metas que a compra não pode atrapalhar','','desconhecido','Ex.: vaga internacional, graduação, inglês.'],
+  ['excluidas','Construtoras excluídas','MRV (definitivo)','confirmado','']]]
+];
+function perfilBase(){var o={};PERFIL_PADRAO.forEach(function(g){g[1].forEach(function(c){o[c[0]]={v:c[2],s:c[3]}})});return o}
+function perfilVal(k){var p=S.perfil||perfilBase();return p[k]||{v:'',s:'desconhecido'}}
+
+function rPerfil(){
+  var P=S.perfil||perfilBase(),tot=0,conf=0,desc=0;
+  PERFIL_PADRAO.forEach(function(g){g[1].forEach(function(c){tot++;var s=(P[c[0]]||{}).s;if(s==='confirmado')conf++;if(s==='desconhecido'||!(P[c[0]]||{}).v)desc++})});
+  var h='<div class="aviso"><b>Como usar:</b> preencha e marque cada item como <i>confirmado</i>, <i>estimativa</i>, <i>preferência</i> ou <i>a descobrir</i>. Nada aqui é tratado como fato até você confirmar. A MRV está fora de qualquer recomendação.</div>';
+  h+='<div class="grid"><div class="cartao"><div class="rotulo">Ficha</div><div class="big">'+conf+'/'+tot+'</div><div class="mini">itens confirmados · '+desc+' ainda a descobrir</div>'+barra(Math.round(conf/tot*100))+'</div>'+
+     '<div class="cartao"><div class="rotulo">Critério</div><div style="margin-top:6px;font-size:14px">Maximizar a <b>adequação à sua vida</b>, não o valor do imóvel nem a maior parcela que o banco aceitar.</div></div></div>';
+  PERFIL_PADRAO.forEach(function(g){
+    h+='<div class="cartao"><h3>'+esc(g[0])+'</h3>'+g[1].map(function(c){var x=P[c[0]]||{v:'',s:'desconhecido'};
+      return '<div class="item" style="flex-wrap:wrap"><div style="flex:1;min-width:200px"><div class="mini">'+esc(c[1])+'</div><div>'+(x.v?esc(x.v):'<span class="mini">— não preenchido</span>')+'</div>'+(c[4]?'<div class="mini">'+esc(c[4])+'</div>':'')+'</div>'+
+        '<span class="tag'+(x.s==='confirmado'?' ok':'')+'">'+esc(ST_INFO[x.s]||'')+'</span><button class="btn sec" data-pf="'+c[0]+'">Editar</button></div>'}).join('')+'</div>';
+  });
+  $('#perfil').innerHTML=h;
+}
+
+/* ---------- 2. Quanto cabe ---------- */
+var CAP_PADRAO={renda:'6500',aluguel:'1329.80',sobra:'0',reserva:'0',entrada:'10000',preco:'200000',prazo:'360',juros:'8.16',sist:'price',extra:'0.05',custos:'5',inicial:'6000',cond:'0',iptu:'0',pctOk:'25',pctMax:'30'};
+function cap(){var c=S.cap||CAP_PADRAO,o={};Object.keys(CAP_PADRAO).forEach(function(k){o[k]=c[k]!=null?c[k]:CAP_PADRAO[k]});return o}
+function parcelaPrice(pv,i,n){if(pv<=0||n<=0)return 0;return i?pv*i/(1-Math.pow(1+i,-n)):pv/n}
+function calcImovel(preco,entrada,c){
+  var pv=Math.max(0,preco-entrada),i=num(c.juros)/100/12,n=Math.round(num(c.prazo))||360,sac=c.sist==='sac';
+  var base=sac?pv/n+pv*i:parcelaPrice(pv,i,n);          // 1ª prestação
+  var tx=pv*num(c.extra)/100;                            // seguros + tarifa mensal (estimativa)
+  var mensal=base+tx+num(c.cond)+num(c.iptu);
+  var custos=preco*num(c.custos)/100;
+  return {fin:pv,parc:base+tx,mensal:mensal,custos:custos,comecar:entrada,ate:entrada+custos+num(c.inicial),
+          total:(sac?(pv/n*n+pv*i*(n+1)/2):base*n)+tx*n+custos,pctFin:preco?pv/preco*100:0};
+}
+var MEDIA_NEG=-751; // média do saldo livre abr–set/2026 em dados/financeiro-base.json (renda 6.500, inclui aluguel)
+function rCapacidade(){
+  var c=cap(),renda=num(c.renda),preco=num(c.preco),ent=num(c.entrada),r=calcImovel(preco,ent,c);
+  var ok=renda*num(c.pctOk)/100,mx=renda*num(c.pctMax)/100,alug=num(c.aluguel),
+      acrescimo=r.mensal-alug,sobra=num(c.sobra);
+  var nivel=r.mensal<=ok?['ok','Confortável']:r.mensal<=mx?['','No limite']:['ruim','Perigosa'];
+  var reservaPos=num(c.reserva)+ent-r.ate; // dinheiro total (reserva separada + entrada) menos o necessário até as chaves
+  var h='<div class="aviso ruim"><b>Atenção aos seus extratos.</b> De abril a setembro/2026 o saldo livre ficou negativo todos os meses (média ≈ '+brl(MEDIA_NEG)+'/mês, mesmo com bônus em agosto). Antes de qualquer parcela, vale confirmar a "sobra de R$ 1.000" — a conta abaixo usa o campo <i>Sobra mensal real</i>. Fonte: <code>dados/financeiro-base.json</code>.</div>';
+  h+='<div class="cartao"><h3>Premissas <span class="mini">(edite; salva sozinho)</span></h3><div class="cal" style="margin-top:10px">'+
+   F('renda','Renda comprovável (R$/mês)')+F('aluguel','Aluguel atual (R$/mês)')+F('sobra','Sobra mensal real (R$)')+F('reserva','Reserva de emergência à parte (R$)')+
+   F('entrada','Entrada disponível (R$)')+F('preco','Preço do imóvel (R$)')+F('prazo','Prazo (meses)')+F('juros','Juros nominais (% a.a.)')+
+   '<label>Sistema<select data-cap="sist"><option value="price"'+(c.sist==='price'?' selected':'')+'>Price (parcela fixa)</option><option value="sac"'+(c.sist==='sac'?' selected':'')+'>SAC (1ª parcela maior)</option></select></label>'+
+   F('extra','Seguros+tarifa (% do saldo/mês)')+F('custos','ITBI, escritura e registro (% do preço)')+F('inicial','Mudança, reforma e móveis (R$)')+F('cond','Condomínio (R$/mês)')+F('iptu','IPTU (R$/mês)')+F('pctOk','Parcela confortável (% da renda)')+F('pctMax','Limite (% da renda)')+
+   '</div><div class="mini" style="margin-top:8px">Seguros e tarifa são estimativa; juros e taxas reais só vêm da simulação/proposta da Caixa ou de outro banco.</div></div>';
+  h+='<div class="grid"><div class="cartao"><div class="rotulo">Prestação + moradia</div><div class="big">'+brl(r.mensal)+'</div><span class="tag '+nivel[0]+'">'+nivel[1]+'</span>'+
+     '<div class="mini" style="margin-top:6px">'+(renda?Math.round(r.mensal/renda*100):0)+'% da renda · confortável até '+brl(ok)+' · limite '+brl(mx)+'</div></div>'+
+     '<div class="cartao"><div class="rotulo">Muda no seu caixa</div><div class="big" style="color:'+(acrescimo>0?'var(--t-bad)':'var(--t-ok)')+'">'+(acrescimo>0?'+':'')+brl(acrescimo)+'</div><div class="mini">por mês vs. o aluguel de '+brl(alug)+'. '+(sobra>=acrescimo?'Cabe na sobra informada ('+brl(sobra)+').':'<b>Não cabe</b> na sobra informada ('+brl(sobra)+').')+'</div></div></div>';
+  h+='<div class="cartao"><h3>Os três valores</h3>'+
+     kv('1 · Para começar a negociação',brl(r.comecar),'a entrada que você tem')+
+     kv('2 · Total até receber as chaves',brl(r.ate),'entrada + '+brl(r.custos)+' de custos + '+brl(num(c.inicial))+' de mudança/reforma')+
+     kv('3 · Custo total (financiamento + custos)',brl(r.total),'em '+Math.round(num(c.prazo))+' meses, sem correção monetária — estimativa')+
+     kv('Valor financiado',brl(r.fin),Math.round(r.pctFin)+'% do preço')+
+     kv('Reserva que sobra após a compra',brl(reservaPos),reservaPos<0?'faltam recursos para fechar':reservaPos<num(c.renda)*3?'abaixo de 3 meses de renda':'')+'</div>';
+  if(reservaPos<0)h+='<div class="aviso ruim">Com estes números o dinheiro não fecha: faltam <b>'+brl(-reservaPos)+'</b> até as chaves. Veja as estratégias de reduzir o preço, parcelar a entrada ou esperar.</div>';
+  h+='<div class="cartao"><h3>Teto por parcela</h3><div class="mini" style="margin:4px 0 8px">Quanto de imóvel cada limite de moradia compra (com as premissas acima, sem condomínio/IPTU).</div>'+
+     [ok,mx,Math.min(mx,alug+Math.max(sobra,0))].map(function(m,ix){var i=num(c.juros)/100/12,n=Math.round(num(c.prazo))||360;
+       var pv=Math.max(0,(m-num(c.cond)-num(c.iptu)))/(i?i/(1-Math.pow(1+i,-n)):1/n)/(1+num(c.extra)/100/(i?i/(1-Math.pow(1+i,-n)):1/n));
+       return kv(['Parcela confortável','Parcela no limite','Aluguel + sobra real'][ix]+' ('+brl(m)+')','financia ≈ '+brl(pv),'imóvel ≈ '+brl(pv+ent)+' com a entrada atual')}).join('')+
+     '</div>';
+  h+='<div class="cartao"><h3>Referência de programas <span class="tag">consultado 26/10/2026</span></h3>'+
+     '<div class="mini">Fontes secundárias (blogs/portais) — <b>não encontrei o texto oficial</b>; confirme na CAIXA e no Ministério das Cidades antes de decidir.</div>'+
+     '<ul class="l"><li>Minha Casa, Minha Vida (Portaria MCID nº 333/2026, segundo as fontes): Faixa 1 até R$ 3.200; Faixa 2 até R$ 5.000; <b>Faixa 3 até R$ 9.600</b>; Faixa 4 até R$ 13.000.</li>'+
+     '<li>Com <b>R$ 6.500</b> de renda familiar comprovada você cairia na Faixa 3: juros de referência 7,66%–8,16% a.a., imóvel até ≈ R$ 400 mil, <b>sem subsídio</b> (aporte de até R$ 55 mil só nas Faixas 1 e 2), prazo de até 420 meses.</li>'+
+     '<li>Sem FGTS, você perde o desconto/entrada com FGTS. Renda de autônomo/PJ: regra de comprovação <b>não verificada</b> — pergunte à CAIXA.</li></ul>'+
+     '<div class="row" style="margin-top:8px"><a class="mini" href="https://valorfinal.com.br/guia/minha-casa-minha-vida-2026" target="_blank" rel="noopener noreferrer">valorfinal.com.br ↗</a><a class="mini" href="https://oimparcial.com.br/noticias/2026/04/caixa-atualiza-minha-casa-minha-vida-com-novos-limites-de-renda-e-imoveis-de-ate-r-600-mil/" target="_blank" rel="noopener noreferrer">oimparcial.com.br ↗</a><a class="mini" href="https://www.caixa.gov.br/voce/habitacao/Paginas/default.aspx" target="_blank" rel="noopener noreferrer">CAIXA – habitação ↗</a></div></div>';
+  var foco=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.cap:null,pos=null;
+  if(foco){try{pos=document.activeElement.selectionStart}catch(e){}}
+  $('#capacidade').innerHTML=h;
+  if(foco){var el=$('[data-cap="'+foco+'"]');if(el){el.focus();if(pos!=null)try{el.setSelectionRange(pos,pos)}catch(e){}}}
+}
+function F(k,l){return '<label>'+esc(l)+'<input data-cap="'+k+'" inputmode="decimal" value="'+esc(cap()[k])+'"></label>'}
+function kv(a,b,c){return '<div class="kv"><span>'+esc(a)+(c?'<div class="mini">'+esc(c)+'</div>':'')+'</span><b>'+esc(b)+'</b></div>'}
+
+/* ---------- 3. Estratégias ---------- */
+var ESTR=[
+ ['A','Imóvel novo com entrada reduzida',
+  'Construtora que parcela a entrada, unidade remanescente ou pronta com campanha.',
+  ['Entrada em parcelas encaixa na renda mensal','Imóvel novo, menos reforma'],
+  ['Parcelas da entrada + aluguel pesam juntas por meses','Na planta: correção (INCC) e risco de atraso'],
+  'A entrada "anunciada" não é todo o dinheiro até as chaves. Se não sobra caixa hoje, parcelar só adia o problema.',
+  'Deixa de valer se parcelas da entrada + aluguel passarem do que sobra de verdade, ou se a construtora tiver histórico ruim local.'],
+ ['B','Minha Casa, Minha Vida e outros programas',
+  'Financiamento com juros reduzidos conforme a faixa de renda.',
+  ['Juros menores que o mercado','Prazo longo (até 420 meses)'],
+  ['Com R$ 6.500 tende à Faixa 3: sem subsídio','Teto de preço do imóvel; exige comprovar renda'],
+  'Não promete subsídio. Programa estadual/municipal só conta se estiver realmente ativo — confirmar.',
+  'Deixa de valer se a renda não for aceita pela CAIXA ou se o imóvel passar do teto da faixa.'],
+ ['C','Casa sem condomínio',
+  'Casa de entrada em bairro periférico de Fortaleza, Maracanaú, Caucaia, Eusébio etc.',
+  ['Sem taxa de condomínio','Mais área por real','Combina com a preferência por casa'],
+  ['Mais risco documental (regularização, matrícula)','Deslocamento, segurança e liquidez variam muito'],
+  'Custo real inclui transporte, manutenção e segurança. Barato em bairro sem infraestrutura revende mal.',
+  'Deixa de valer se a matrícula/construção estiver irregular ou o deslocamento comer a economia.'],
+ ['D','Apartamento econômico',
+  'Compare custo total de ocupação, não só a prestação.',
+  ['Preço de entrada menor','Segurança e áreas comuns'],
+  ['Condomínio + IPTU + taxas extras, para sempre','Menos área; conflita com sua resistência a condomínio'],
+  'Some o condomínio à parcela: R$ 300 de condomínio equivalem a financiar bem mais ou menos imóvel.',
+  'Deixa de valer se parcela + condomínio passar do limite da aba "Quanto cabe".'],
+ ['E','Usado ou revenda',
+  'Imóvel de terceiros, sem restringir a pesquisa a construtoras.',
+  ['Mais área/localização por menos','Negociação de preço'],
+  ['Reforma e instalações antigas','Documentação, ITBI, financiamento exige avaliação'],
+  'Peça matrícula atualizada e certidões; reserve verba de reforma.',
+  'Deixa de valer se a documentação tiver pendência que não se resolva ou a reforma anular o desconto.'],
+ ['F','Esperar e preparar a compra',
+  'Juntar entrada e organizar renda antes de assumir o financiamento.',
+  ['Menos risco de aperto','Tempo para comprovar renda e ajustar gastos'],
+  ['Preço do imóvel e juros podem subir','Exige disciplina de poupança'],
+  'Só funciona se a sobra mensal for real. Hoje os extratos não mostram sobra.',
+  'Deixa de valer se o imóvel-alvo subir mais rápido do que você poupa.']
+];
+var ST_ESTR={nada:'Sem avaliação',investigar:'Investigar',viavel:'Viável',descartada:'Descartada',escolhida:'Escolhida'};
+function rEstrategias(){
+  var c=cap(),prec=num(c.preco),e=S.estr||{};
+  var h='<div class="aviso">Cada estratégia abaixo é um roteiro de análise, não um achado de mercado. Os números reais (preços, entrada parcelada, taxas) dependem de confirmar com vendedor e banco — registre em <b>Finalistas</b>.</div>';
+  h+='<div class="cartao"><h3>F · Quanto tempo para juntar a entrada</h3><div class="mini" style="margin:4px 0 8px">Meta = '+num(c.custos)+'% de custos + entrada mínima (%) sobre o preço de '+brl(prec)+'.</div>'+
+     '<div class="cal"><label>Entrada mínima (% do preço)<input data-sim="pct" inputmode="decimal" value="'+esc(e.simPct||'10')+'"></label>'+
+     '<label>Poupança mensal (R$)<input data-sim="mes" inputmode="decimal" value="'+esc(e.simMes||'500')+'"></label>'+
+     '<label>Rendimento (% a.m.)<input data-sim="rend" inputmode="decimal" value="'+esc(e.simRend||'0.8')+'"></label>'+
+     '<label>Já guardado (R$)<input data-sim="ja" inputmode="decimal" value="'+esc(e.simJa||c.entrada)+'"></label></div><div id="simOut" style="margin-top:10px"></div></div>';
+  h+=ESTR.map(function(s){var st=(e['st'+s[0]])||'nada';
+    return '<div class="cartao"><div class="row"><h3>'+s[0]+' · '+esc(s[1])+'</h3><span class="sp"></span><select data-estr="'+s[0]+'" style="font:inherit;padding:6px;border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-ink)">'+
+      Object.keys(ST_ESTR).map(function(k){return '<option value="'+k+'"'+(st===k?' selected':'')+'>'+ST_ESTR[k]+'</option>'}).join('')+'</select></div>'+
+      '<div class="mini" style="margin:4px 0">'+esc(s[2])+'</div>'+
+      '<details><summary>Vantagens, desvantagens e quando desistir</summary><div class="mini" style="margin-top:6px"><b>Vantagens</b></div><ul class="l">'+s[3].map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'+
+      '<div class="mini" style="margin-top:6px"><b>Desvantagens e riscos</b></div><ul class="l">'+s[4].map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'+
+      '<p class="mini">'+esc(s[5])+'</p><p class="mini"><b>Deixa de valer a pena:</b> '+esc(s[6])+'</p></details>'+
+      '<label class="mini" style="display:block;margin-top:6px">Suas notas e números<textarea data-estrnota="'+s[0]+'" style="width:100%;font:inherit;padding:8px;border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-ink);min-height:54px">'+esc(e['n'+s[0]]||'')+'</textarea></label></div>'}).join('');
+  $('#estrategias').innerHTML=h;simula();
+}
+function simula(){
+  var o=$('#simOut');if(!o)return;
+  var c=cap(),prec=num(c.preco),pct=num((document.querySelector('[data-sim=pct]')||{}).value||10),mes=num((document.querySelector('[data-sim=mes]')||{}).value),
+      rend=num((document.querySelector('[data-sim=rend]')||{}).value)/100,ja=num((document.querySelector('[data-sim=ja]')||{}).value),
+      meta=prec*(pct+num(c.custos))/100+num(c.inicial),sal=ja,m=0;
+  while(sal<meta&&m<600){sal=sal*(1+rend)+mes;m++}
+  o.innerHTML='<div class="kv"><span>Meta (entrada + custos + mudança/reforma)</span><b>'+brl(meta)+'</b></div>'+
+    (ja>=meta?'<div class="aviso ok">Você já tem o valor.</div>':m>=600?'<div class="aviso ruim">Com essa poupança a meta não é alcançada em 50 anos.</div>':
+    '<div class="kv"><span>Prazo estimado</span><b>'+m+' meses ('+(m/12).toFixed(1).replace('.',',')+' anos)</b></div><div class="mini">Sem reajuste do imóvel — se ele subir ~6% a.a. a meta se afasta. Preserve a reserva de emergência à parte.</div>');
+}
+
+/* ---------- 4. Construtoras ---------- */
+var ST_CON={investigar:'A investigar',confiavel:'Evidências favoráveis',cautela:'Com cautela',descartada:'Descartada'};
+var FORM_CON={col:'imv_construtoras',titulo:'Ficha da construtora',campos:[
+ ['nome','Construtora / incorporadora','text','full'],['status','Situação','sel:'+JSON.stringify(ST_CON)],['confianca','Confiança da avaliação','sel:'+JSON.stringify({baixa:'Baixa',media:'Média',alta:'Alta'})],
+ ['ra_nota','Reclame Aqui: nota','text'],['ra_periodo','Período analisado','text'],['ra_recl','Reclamações (nº)','text'],['ra_sol','Índice de solução (%)','text'],['ra_volta','Voltariam a comprar (%)','text'],['ra_resp','Respondidas (%)','text'],['fonte','Link da fonte','url'],
+ ['data','Data da consulta','date'],['qualidade','Qualidade construtiva (infiltração, fissuras, instalações, assistência)','textarea','full'],
+ ['entrega','Entrega e prazos (atrasos, divergências, documentos)','textarea','full'],['solidez','Solidez (balanços, recuperação judicial, registro de incorporação)','textarea','full'],
+ ['local','Histórico em Fortaleza/RMF e empreendimentos específicos','textarea','full'],['fortes','Pontos fortes / evidências favoráveis','textarea','full'],['fracos','Pontos fracos / evidências desfavoráveis','textarea','full'],['lacunas','Lacunas de informação','textarea','full']],vazio:{status:'investigar',confianca:'baixa'}};
+function rConstrutoras(){
+  var l=S.constr.slice(),h='<div class="aviso ruim"><b>MRV excluída.</b> Não entra na lista nem como comparação. Reputação nacional não substitui evidência local: pesquise pelo <i>nome do empreendimento</i>.</div>';
+  h+='<div class="row" style="margin-bottom:12px"><button class="btn" data-novo="con">+ Construtora</button>'+(l.length?'':'<button class="btn sec" data-sementes="1">Adicionar as 4 de partida</button>')+'<span class="mini">Tenda, Direcional, Victa e Correta são pontos de partida, não lista aprovada.</span></div>';
+  if(!l.length)h+='<div class="cartao vazio">Nenhuma ficha ainda.</div>';
+  else h+='<div class="grid">'+l.map(function(c){var tem=c.ra_nota||c.fortes||c.fracos||c.qualidade;
+    return '<div class="cartao"><div class="row"><h3>'+esc(c.nome)+'</h3><span class="sp"></span><span class="tag'+(c.status==='confiavel'?' ok':c.status==='cautela'?' ruim':'')+(c.status==='descartada'?' no':'')+'">'+esc(ST_CON[c.status]||'')+'</span></div>'+
+      (tem?'<div class="mini" style="margin-top:6px">'+(c.ra_nota?'Reclame Aqui '+esc(c.ra_nota)+(c.ra_periodo?' ('+esc(c.ra_periodo)+')':'')+(c.ra_recl?' · '+esc(c.ra_recl)+' recl.':'')+(c.ra_sol?' · solução '+esc(c.ra_sol)+'%':'')+(c.ra_volta?' · voltariam '+esc(c.ra_volta)+'%':''):'')+'</div>'
+        +(c.fortes?'<div class="mini">＋ '+esc(c.fortes)+'</div>':'')+(c.fracos?'<div class="mini">－ '+esc(c.fracos)+'</div>':'')+(c.lacunas?'<div class="mini">? '+esc(c.lacunas)+'</div>':'')
+        :'<div class="mini" style="margin-top:6px">Sem evidências registradas — pendente de pesquisa.</div>')+
+      '<div class="mini">Confiança: '+esc(c.confianca||'baixa')+(c.data?' · consulta '+dataBR(c.data):'')+(c.fonte?' · <a href="'+esc(c.fonte)+'" target="_blank" rel="noopener noreferrer">fonte ↗</a>':'')+'</div>'+
+      '<div class="row" style="margin-top:10px"><button class="btn sec" data-edit="con:'+esc(c.id)+'">Editar</button></div></div>'}).join('')+'</div>';
+  h+='<div class="cartao"><h3>O que checar em cada empresa</h3><ul class="l"><li>Reclame Aqui: nota, período, nº de reclamações, % respondidas, % solucionadas, % voltariam (não compare períodos diferentes).</li><li>Reclamações pelo nome do empreendimento; relatos de moradores; Procon.</li><li>Atrasos, divergência entre o anunciado e o entregue, assistência técnica.</li><li>Balanços públicos, recuperação judicial, registro de incorporação, matrícula do terreno.</li><li>Reclamação isolada não é defeito comprovado de toda a empresa.</li></ul></div>';
+  $('#construtoras').innerHTML=h;
+}
+
+/* ---------- 5. Finalistas ---------- */
+var ST_PRECO={anunciado:'Anunciado',confirmado:'Confirmado pelo vendedor',negociavel:'Negociável (com evidência)'};
+var ST_CRED={nenhum:'Sem crédito',simulacao:'Simulação',pre:'Pré-análise',formal:'Análise formal',aprovado:'Aprovado p/ este imóvel'};
+var ST_IMV={avaliar:'Avaliar',visitar:'Visitar',visitado:'Visitado',proposta:'Proposta feita',escolhido:'Escolhido',descartado:'Descartado'};
+var FORM_IMV={col:'imv_imoveis',titulo:'Imóvel finalista',campos:[
+ ['nome','Empreendimento / identificação','text','full'],['vendedor','Construtora ou vendedor','text'],['tipo','Tipo','sel:'+JSON.stringify({casa:'Casa',casacond:'Casa em condomínio',apto:'Apartamento'})],
+ ['local','Endereço / localização','text','full'],['link','Link direto do anúncio','url','full'],['consulta','Data da consulta','date'],['status','Situação','sel:'+JSON.stringify(ST_IMV)],
+ ['preco','Preço (R$)','text'],['precoSt','Situação do preço','sel:'+JSON.stringify(ST_PRECO)],['area','Área privativa (m²)','text'],['quartos','Quartos','text'],['vagas','Vagas','text'],
+ ['entrada','Entrada exigida (R$)','text'],['entradaParc','Parcelamento da entrada','text','full'],['obra','Estágio da obra / entrega','text'],['credito','Estágio do crédito','sel:'+JSON.stringify(ST_CRED)],
+ ['condominio','Condomínio (R$/mês)','text'],['iptu','IPTU (R$/mês)','text'],['custosAd','Custos adicionais conhecidos','text','full'],['beneficios','Benefícios/subsídios anunciados e condições','text','full'],
+ ['riscos','Principais riscos e dúvidas','textarea','full'],['confianca','Confiança nas informações','sel:'+JSON.stringify({baixa:'Baixa',media:'Média',alta:'Alta'})]],vazio:{status:'avaliar',precoSt:'anunciado',credito:'nenhum',tipo:'casa',confianca:'baixa'}};
+function rFinalistas(){
+  var c=cap(),l=S.imv.slice(),h='<div class="aviso">Só entram imóveis <b>reais</b>, com link e data. Preço anunciado não é preço confirmado, e simulação não é aprovação. Os cálculos usam as premissas da aba <b>Quanto cabe</b> (juros, prazo, custos).</div>';
+  h+='<div class="row" style="margin-bottom:12px"><button class="btn" data-novo="imv">+ Imóvel</button></div>';
+  if(!l.length)h+='<div class="cartao vazio">Nenhum finalista ainda. Prefira poucas opções bem investigadas a uma lista longa.</div>';
+  else h+=l.map(function(i){
+    var p=num(i.preco),e=num(i.entrada)||num(c.entrada),cc=Object.assign({},c,{cond:i.condominio||0,iptu:i.iptu||0}),r=calcImovel(p,Math.max(e,0),cc),renda=num(c.renda);
+    var nivel=!p?null:r.mensal<=renda*num(c.pctOk)/100?['ok','confortável']:r.mensal<=renda*num(c.pctMax)/100?['','no limite']:['ruim','acima do limite'];
+    var ppm=p&&num(i.area)?brl(p/num(i.area))+'/m²':'';
+    return '<div class="cartao"><div class="row"><h3>'+esc(i.nome)+'</h3><span class="sp"></span><span class="tag'+(i.status==='escolhido'?' ok':'')+(i.status==='descartado'?' no':'')+'">'+esc(ST_IMV[i.status]||'')+'</span></div>'+
+      '<div class="mini">'+esc(i.vendedor||'vendedor não informado')+(ehMRV(i.vendedor+' '+i.nome)?' · <b style="color:var(--t-bad)">MRV: excluída</b>':'')+' · '+esc(i.local||'')+' · '+esc(({casa:'Casa',casacond:'Casa em condomínio',apto:'Apartamento'})[i.tipo]||'')+(num(i.area)?' · '+esc(i.area)+' m²':'')+(i.quartos?' · '+esc(i.quartos)+' q':'')+(i.vagas?' · '+esc(i.vagas)+' vaga(s)':'')+'</div>'+
+      '<div class="grid" style="margin-top:8px"><div><div class="rotulo">Preço</div><div class="big">'+(p?brl(p):'—')+'</div><div class="mini">'+esc(ST_PRECO[i.precoSt]||'')+(ppm?' · '+ppm:'')+(i.consulta?' · em '+dataBR(i.consulta):'')+'</div></div>'+
+      (p?'<div><div class="rotulo">Mensal estimado</div><div class="big">'+brl(r.mensal)+'</div><div class="mini">parcela '+brl(r.parc)+' + cond./IPTU '+brl(num(i.condominio)+num(i.iptu))+(nivel?' · <span class="tag '+nivel[0]+'">'+nivel[1]+'</span>':'')+'</div></div>':'')+'</div>'+
+      (p?kv('Para começar a negociação',brl(e),i.entradaParc?'parcelamento: '+i.entradaParc:'')+kv('Total até as chaves',brl(e+r.custos+num(c.inicial)),'entrada + custos de compra '+brl(r.custos)+' + mudança/reforma')+kv('Custo total estimado',brl(r.total),'sem correção monetária'):'')+
+      '<div class="mini" style="margin-top:6px">Crédito: <b>'+esc(ST_CRED[i.credito]||'')+'</b>'+(i.obra?' · obra: '+esc(i.obra):'')+(i.beneficios?' · benefícios: '+esc(i.beneficios):'')+(i.custosAd?' · custos: '+esc(i.custosAd):'')+'</div>'+
+      (i.riscos?'<div class="mini">⚠ '+esc(i.riscos)+'</div>':'')+'<div class="mini">Confiança: '+esc(i.confianca||'baixa')+(i.link?' · <a href="'+esc(i.link)+'" target="_blank" rel="noopener noreferrer">anúncio ↗</a>':' · <b>sem link</b>')+'</div>'+
+      '<div class="row" style="margin-top:10px"><button class="btn sec" data-edit="imv:'+esc(i.id)+'">Editar</button></div></div>'}).join('<div style="height:12px"></div>');
+  $('#finalistas').innerHTML=h;
+}
+
+/* ---------- 6. Plano de ação ---------- */
+var FASES=[
+ ['doc','1 · Documentos a reunir',['RG, CPF, comprovante de residência e estado civil','Declaração de IR completa (com recibo) dos últimos anos','Extratos bancários PF e PJ dos últimos 6–12 meses','Contratos e notas fiscais dos clientes (comprovam recebimento)','Pró-labore/distribuição de lucros, DAS/DASN ou DECORE, conforme o enquadramento','Perguntar à CAIXA quais documentos ela aceita para autônomo/PJ']],
+ ['cred','2 · Crédito',['Ajustar renda comprovável: o banco só vê o que está documentado','Simular na CAIXA e em mais 1–2 bancos (parcela, CET, prazo)','Perguntar se há análise formal antes de escolher o imóvel e qual a validade','Conferir faixa do Minha Casa Minha Vida e teto de preço na fonte oficial','Anotar: simulação ≠ pré-análise ≠ aprovação para um imóvel específico']],
+ ['base','3 · Base financeira',['Confirmar a sobra mensal real (extratos mostram saldo negativo em abr–set/2026)','Definir parcela confortável, limite e parcela perigosa','Separar reserva de emergência da entrada','Rever a meta de entrada com base nas opções reais','Definir quanto poupar por mês e começar']],
+ ['pesq','4 · Pesquisa e visitas',['Completar a ficha de perfil (itens "a descobrir")','Investigar 3–5 construtoras e registrar evidências com link e data','Montar 3–5 finalistas reais; confirmar disponibilidade e preço com o vendedor','Visitar em horários/dias diferentes: umidade, barulho, sol, água, sinal, vizinhança','Pesquisar o nome do empreendimento no Reclame Aqui e com moradores']],
+ ['ver','5 · Documentos do imóvel a verificar',['Matrícula atualizada e certidões do imóvel e do vendedor','Registro de incorporação (imóvel novo) e habite-se/regularização','Débitos de IPTU e condomínio','Contrato e memorial descritivo (o que será entregue)']],
+ ['neg','6 · Negociar e decidir',['Negociar preço, parcelamento da entrada e custos inclusos','Calcular entrada + custos + mudança até as chaves','Conferir se a reserva pós-compra segue acima de 3 meses de gastos','Aceitar só se: documentos limpos, mensal dentro do limite, reserva preservada, construtora sem alerta grave','Rejeitar se: pressão para fechar, condição boa demais sem explicação, MRV, documentação pendente']]
+];
+var PERGUNTAS=['O preço está disponível hoje? Por quanto você confirma por escrito?','Qual a entrada total e o parcelamento, com datas e correção (INCC/IPCA)?','Quais custos extras: ITBI, escritura, registro, taxa de corretagem, avaliação?','Qual o prazo de entrega e a multa por atraso? Há histórico de atraso da empresa?','Há condomínio, IPTU e taxa extra? Quanto, hoje?','Qual o estágio de documentação (matrícula, habite-se, incorporação)?','Aceita financiamento da CAIXA e qual a modalidade? Já houve financiamento nesta unidade/empreendimento?'];
+function itens(){var l=[];FASES.forEach(function(f){f[2].forEach(function(t,i){l.push({id:f[0]+i,fase:f[1],t:t})})});S.plano.extra.forEach(function(e){l.push({id:e.id,fase:'Meus itens',t:e.t,extra:true})});return l}
+function rPlano(){
+  var it=itens(),d=it.filter(function(i){return S.plano.done[i.id]}).length,p=it.length?Math.round(d/it.length*100):0,px=it.filter(function(i){return !S.plano.done[i.id]})[0];
+  var h='<div class="cartao"><div class="rotulo">Próximo passo</div>'+(px?'<div class="big" style="font-size:20px;margin:6px 0">'+esc(px.t)+'</div><div class="mini">'+esc(px.fase)+'</div><div class="row" style="margin-top:10px"><button class="btn" data-fazer="'+esc(px.id)+'">Concluí</button></div>':'<div class="big" style="font-size:20px">Plano concluído.</div>')+
+     '<div style="margin-top:12px">'+barra(p)+'<div class="mini" style="margin-top:4px">'+d+' de '+it.length+' passos · '+p+'%</div></div></div>';
+  var grupos=FASES.map(function(f){return {nome:f[1],it:f[2].map(function(t,i){return {id:f[0]+i,t:t}})}});
+  if(S.plano.extra.length)grupos.push({nome:'Meus itens',it:S.plano.extra.map(function(e){return {id:e.id,t:e.t,extra:true}})});
+  grupos.forEach(function(g){var n=g.it.filter(function(i){return S.plano.done[i.id]}).length;
+    h+='<div class="cartao"><h3>'+esc(g.nome)+' <span class="tag'+(n===g.it.length?' ok':'')+'">'+n+'/'+g.it.length+'</span></h3>'+g.it.map(function(i){var f=S.plano.done[i.id];
+      return '<label class="item'+(f?' feito':'')+'"><input type="checkbox" data-chk="'+esc(i.id)+'"'+(f?' checked':'')+'><span>'+esc(i.t)+'</span>'+(i.extra?'<button class="btn sec" style="margin-left:auto;padding:2px 8px" data-rm="'+esc(i.id)+'" aria-label="Remover">✕</button>':'')+'</label>'}).join('')+'</div>'});
+  h+='<div class="cartao"><h3>Perguntas ao vendedor</h3><ul class="l">'+PERGUNTAS.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ul></div>';
+  h+='<form id="addItem" class="row" style="margin-top:12px"><input id="novoItem" placeholder="Adicionar um passo seu" style="flex:1;min-width:200px;font:inherit;padding:10px;border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink)"><button class="btn" type="submit">Adicionar</button></form>';
+  $('#plano').innerHTML=h;
+}
+function renderAll(){rPerfil();if(!document.activeElement||!document.activeElement.dataset.cap)rCapacidade();rEstrategias();rConstrutoras();rFinalistas();rPlano()}
+
+/* ---------- persistência ---------- */
+function save(col,id,data){return db?db.doc(col+'/'+id).set(data):Promise.resolve()}
+function del(col,id){return db.doc(col+'/'+id).delete()}
+var tCap=null;function saveCap(){clearTimeout(tCap);tCap=setTimeout(function(){save('imv_config','capacidade',S.cap)},500)}
+var tEst=null;function saveEstr(){clearTimeout(tEst);tEst=setTimeout(function(){save('imv_config','estrategias',S.estr)},500)}
+function savePlano(){return save('imv_plano','main',S.plano)}
+
+/* ---------- formulários ---------- */
+var FORMS={con:FORM_CON,imv:FORM_IMV};
+var dlg=$('#dlg'),frm=$('#frm'),atual=null;
+function campo(c,v){
+  var val=esc(v[c[0]]==null?'':v[c[0]]),cls=c[3]||'';
+  if(c[2].indexOf('sel:')===0){var o=JSON.parse(c[2].slice(4));return '<label class="'+cls+'">'+esc(c[1])+'<select name="'+c[0]+'">'+Object.keys(o).map(function(k){return '<option value="'+k+'"'+(v[c[0]]===k?' selected':'')+'>'+esc(o[k])+'</option>'}).join('')+'</select></label>'}
+  if(c[2]==='textarea')return '<label class="'+cls+'">'+esc(c[1])+'<textarea name="'+c[0]+'">'+val+'</textarea></label>';
+  return '<label class="'+cls+'">'+esc(c[1])+'<input name="'+c[0]+'" type="'+c[2]+'" value="'+val+'"></label>';
+}
+function abre(tipo,doc){
+  var F=FORMS[tipo];atual={tipo:tipo,id:doc?doc.id:uid()};var v=doc||F.vazio;
+  frm.innerHTML='<h3 class="full">'+esc(F.titulo)+'</h3>'+F.campos.map(function(c){return campo(c,v)}).join('')+
+    '<div class="row full" style="margin-top:6px"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button><span class="sp"></span>'+(doc?'<button class="btn sec" type="button" id="apaga" style="color:var(--t-bad);border-color:var(--t-bad)">Apagar</button>':'')+'</div>';
+  dlg.showModal();
+  $('#cancela').onclick=function(){dlg.close()};
+  if(doc)$('#apaga').onclick=function(){if(confirm('Apagar este item?')){del(F.col,doc.id);dlg.close()}};
+}
+function abrePerfil(k){
+  var meta=null;PERFIL_PADRAO.forEach(function(g){g[1].forEach(function(c){if(c[0]===k)meta=c})});
+  var x=perfilVal(k);atual={tipo:'pf',id:k};
+  frm.innerHTML='<h3 class="full">'+esc(meta[1])+'</h3>'+(meta[4]?'<div class="mini full">'+esc(meta[4])+'</div>':'')+
+    '<label class="full">Resposta<textarea name="v">'+esc(x.v)+'</textarea></label>'+
+    '<label class="full">Status<select name="s">'+Object.keys(ST_INFO).map(function(s){return '<option value="'+s+'"'+(x.s===s?' selected':'')+'>'+ST_INFO[s]+'</option>'}).join('')+'</select></label>'+
+    '<div class="row full"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button></div>';
+  dlg.showModal();$('#cancela').onclick=function(){dlg.close()};
+}
+frm.addEventListener('submit',function(e){
+  e.preventDefault();
+  if(atual.tipo==='pf'){var P=S.perfil||perfilBase();P[atual.id]={v:frm.elements.v.value.trim(),s:frm.elements.s.value};S.perfil=P;save('imv_config','perfil',P);dlg.close();rPerfil();return}
+  var F=FORMS[atual.tipo],d={};
+  F.campos.forEach(function(c){d[c[0]]=(frm.elements[c[0]].value||'').trim()});
+  if(ehMRV(d.nome+' '+(d.vendedor||''))){alert('MRV está excluída das opções. Registro não salvo.');return}
+  save(F.col,atual.id,d);dlg.close();
+});
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button');if(!t)return;
+  if(t.dataset.novo)abre(t.dataset.novo);
+  else if(t.dataset.pf)abrePerfil(t.dataset.pf);
+  else if(t.dataset.edit){var p=t.dataset.edit.split(':'),L={con:S.constr,imv:S.imv}[p[0]];abre(p[0],L.filter(function(x){return x.id===p[1]})[0])}
+  else if(t.dataset.fazer){S.plano.done[t.dataset.fazer]=true;savePlano();rPlano()}
+  else if(t.dataset.rm){S.plano.extra=S.plano.extra.filter(function(x){return x.id!==t.dataset.rm});delete S.plano.done[t.dataset.rm];savePlano();rPlano()}
+  else if(t.dataset.sementes){['Tenda','Direcional','Victa Engenharia','Correta Engenharia'].forEach(function(n,i){save('imv_construtoras','seed'+i,{nome:n,status:'investigar',confianca:'baixa'})})}
+});
+document.addEventListener('input',function(e){
+  var el=e.target;
+  if(el.dataset.cap){S.cap=cap();S.cap[el.dataset.cap]=el.value;saveCap();rCapacidade()}
+  else if(el.dataset.sim){S.estr=S.estr||{};S.estr['sim'+el.dataset.sim.charAt(0).toUpperCase()+el.dataset.sim.slice(1)]=el.value;saveEstr();simula()}
+  else if(el.dataset.estrnota){S.estr=S.estr||{};S.estr['n'+el.dataset.estrnota]=el.value;saveEstr()}
+});
+document.addEventListener('change',function(e){
+  var el=e.target;
+  if(el.dataset.cap==='sist'){S.cap=cap();S.cap.sist=el.value;saveCap();rCapacidade()}
+  else if(el.dataset.estr){S.estr=S.estr||{};S.estr['st'+el.dataset.estr]=el.value;saveEstr()}
+  else if(el.dataset.chk){if(el.checked)S.plano.done[el.dataset.chk]=true;else delete S.plano.done[el.dataset.chk];savePlano();rPlano()}
+});
+document.addEventListener('submit',function(e){if(e.target.id!=='addItem')return;e.preventDefault();var v=$('#novoItem').value.trim();if(!v)return;S.plano.extra.push({id:'x'+uid(),t:v});savePlano();rPlano()});
+$('#tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
+
+/* ---------- dados ---------- */
+function lista(snap){return snap.docs.map(function(d){var o=d.data();o.id=d.id;return o})}
+function aguardaDigitacao(){var a=document.activeElement;return a&&a.dataset&&(a.dataset.cap||a.dataset.sim||a.dataset.estrnota)}
+claude.use('db').then(function(d){
+  db=d;
+  db.collection('imv_construtoras').onSnapshot(function(s){S.constr=lista(s);rConstrutoras()});
+  db.collection('imv_imoveis').onSnapshot(function(s){S.imv=lista(s);rFinalistas()});
+  db.doc('imv_plano/main').onSnapshot(function(s){var v=s.exists?s.data():{};S.plano={done:v.done||{},extra:v.extra||[]};rPlano()});
+  db.doc('imv_config/perfil').onSnapshot(function(s){S.perfil=s.exists?Object.assign(perfilBase(),s.data()):null;rPerfil()});
+  db.doc('imv_config/capacidade').onSnapshot(function(s){if(aguardaDigitacao())return;S.cap=s.exists?s.data():null;rCapacidade()});
+  db.doc('imv_config/estrategias').onSnapshot(function(s){if(aguardaDigitacao())return;S.estr=s.exists?s.data():{};rEstrategias()});
+});
+renderAll();
+})();
+</script>
+<script src="assets/modulo.js"></script>
+</body>
+</html>

@@ -267,7 +267,9 @@ function render(p){
     card('rota','rota-internacional.html','Rota Internacional','<div class="num">'+p.rota.semana+' <small>de '+p.rota.meta+' candidaturas</small></div>'+barra(rotaPct)+delta(p.rota.semana,p.rota.anterior)+(p.rota.melhorSemana>p.rota.semana||p.rota.semanasMeta?'<div class="mini">'+(p.rota.semanasMeta?p.rota.semanasMeta+' semana'+(p.rota.semanasMeta===1?'':'s')+' seguida'+(p.rota.semanasMeta===1?'':'s')+' na meta · ':'')+'melhor semana: '+p.rota.melhorSemana+'</div>':'')),
     card('financeiro','financeiro.html','Financeiro','<div class="num">'+p.financeiro.pct+'% <small>da entrada</small></div>'+barra(p.financeiro.pct)+'<div class="mini">'+brl(p.financeiro.guardado)+' de '+brl(p.financeiro.meta)+'</div>'),
     card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
-    card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>')
+    card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>'),
+    card('imovel','imovel.html','Imóvel','<div class="mini">Perfil, quanto cabe, estratégias, construtoras e finalistas da primeira compra.</div>'),
+    card('negocios','negocios.html','Negócios','<div class="mini">Prospecção, clientes e oportunidades para a renda extra.</div>')
   ];
   P=p; if(window.CP_FOCO)CP_FOCO.render(); renderAgua(p); renderHoje(p); renderHabitos(p); renderMetas(p);
   (function(){

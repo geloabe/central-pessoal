@@ -1,6 +1,6 @@
 /* Faixa de topo + ícones dos módulos. Cada página define <html data-pg="..."> e carrega este arquivo. */
 (function(){
-  var NOMES={treino:'Treino',plano:'Plano alimentar',habitos:'Hábitos',grimorio:'Grimório',rota:'Rota Internacional',financeiro:'Financeiro',mudanca:'Mudança',desafios:'Desafios'};
+  var NOMES={treino:'Treino',plano:'Plano alimentar',habitos:'Hábitos',grimorio:'Grimório',rota:'Rota Internacional',financeiro:'Financeiro',mudanca:'Mudança',imovel:'Imóvel',negocios:'Negócios',desafios:'Desafios'};
   var ICONES={
     treino:'<rect class="i1" x="5" y="13" width="6" height="22"/><rect class="i2" x="13" y="18" width="5" height="12"/><rect class="i0" x="18" y="22" width="12" height="4"/><rect class="i2" x="30" y="18" width="5" height="12"/><rect class="i1" x="37" y="13" width="6" height="22"/>',
     plano:'<circle class="i1" cx="24" cy="24" r="19"/><circle class="i0" cx="24" cy="24" r="12" opacity=".2"/><path class="i2" d="M24 11C34 14 35 25 24 37 13 25 14 14 24 11Z"/>',
@@ -8,6 +8,8 @@
     grimorio:'<path class="i1" d="M5 14L22 18V42L5 38Z"/><path class="i0" d="M43 14L26 18V42L43 38Z"/><path class="i2" d="M24 3L28 9L24 15L20 9Z"/>',
     rota:'<path class="s1" d="M9 38C22 38 17 22 29 22S39 13 39 13"/><rect class="i0" x="4" y="33" width="10" height="10"/><path class="i2" d="M33 6H44V17Z"/>',
     mudanca:'<path class="i1" d="M24 4L44 20V42H4V20Z"/><rect class="i2" x="19" y="26" width="10" height="16"/><rect class="i0" x="9" y="24" width="6" height="6"/>',
+    imovel:'<path class="i1" d="M4 22L24 6L44 22V42H4Z"/><rect class="i0" x="10" y="26" width="8" height="8"/><rect class="i2" x="28" y="24" width="9" height="18"/>',
+    negocios:'<rect class="i1" x="6" y="18" width="36" height="22"/><path class="i0" d="M17 18V12H31V18"/><rect class="i2" x="6" y="26" width="36" height="4"/>',
     desafios:'<path class="i1" d="M10 6H38V18C38 27 31 32 24 32S10 27 10 18Z"/><rect class="i2" x="21" y="32" width="6" height="8"/><rect class="i0" x="13" y="40" width="22" height="4"/>',
     financeiro:'<rect class="i1" x="6" y="32" width="36" height="9"/><rect class="i2" x="10" y="21" width="32" height="9"/><rect class="i0" x="14" y="10" width="28" height="9"/>'
   };

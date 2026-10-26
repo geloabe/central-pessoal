@@ -24,6 +24,12 @@ html[data-pg="treino"] .set-check,html[data-pg="treino"] .ex-card.bonus .set-che
 html[data-pg="treino"] .save-btn{padding:16px;font-size:16px}
 
 /* ---------- Mudança ---------- */
+html[data-pg="negocios"]:not(#a):not(#b),.m-negocios{--m:#3F8F7A;--t-accent:#3F8F7A}
+@media not all{html[data-pg="negocios"]:not([data-modo="claro"]):not(#a):not(#b),.m-negocios{--m:#7FD0B8;--t-accent:#7FD0B8}}
+html[data-modo="escuro"][data-pg="negocios"]:not(#a):not(#b){--m:#7FD0B8;--t-accent:#7FD0B8}
+html[data-pg="imovel"]:not(#a):not(#b),.m-imovel{--m:#5B7FB0;--t-accent:#5B7FB0}
+@media not all{html[data-pg="imovel"]:not([data-modo="claro"]):not(#a):not(#b),.m-imovel{--m:#9DBBE6;--t-accent:#9DBBE6}}
+html[data-modo="escuro"][data-pg="imovel"]:not(#a):not(#b){--m:#9DBBE6;--t-accent:#9DBBE6}
 html[data-pg="mudanca"]:not(#a):not(#b),.m-mudanca{--m:#AB5C43;--t-accent:#AB5C43}
 @media not all{html[data-pg="mudanca"]:not([data-modo="claro"]):not(#a):not(#b),.m-mudanca{--m:#F2A388;--t-accent:#F2A388}}
 html[data-modo="escuro"][data-pg="mudanca"]:not(#a):not(#b){--m:#F2A388;--t-accent:#F2A388}

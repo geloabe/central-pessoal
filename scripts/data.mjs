@@ -53,6 +53,8 @@ const readers = {
     list('jobs', j.jobs); list('apps', j.apps); list('stories', j.stories);
     for (const col of ['profile', 'plan', 'english']) for (const [id, d] of Object.entries(j[col] || {})) addDoc(col, id, d);
   },
+  // Negócios: { colecao: { id: documento } }
+  'negocios-base.json': (j) => { for (const [col, m] of Object.entries(j)) for (const [id, d] of Object.entries(m)) addDoc(col, id, d); },
   // formato do "npm run backup"
   backup: (j) => { (j.kv || []).forEach((r) => addKv(r.key, r.value)); (j.docs || []).forEach((r) => addDoc(r.collection, r.id, r.data)); },
 };
