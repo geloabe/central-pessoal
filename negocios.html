@@ -66,6 +66,34 @@ ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
 .sc{font:600 12px var(--f-mono)}
 .fonte{display:inline-block;margin-right:8px}
 .pre{white-space:pre-wrap;background:var(--t-bg);border:1px solid var(--t-line);padding:10px;font-size:14px}
+
+/* ---- leitura mais calma: letra maior, contraste melhor ---- */
+body.t{font-size:17px;line-height:1.6}
+body.t .mini{font-size:15px;color:color-mix(in srgb,var(--t-ink) 80%,var(--t-bg))}
+body.t .rotulo{font-size:13px;color:color-mix(in srgb,var(--t-ink) 75%,var(--t-bg))}
+body.t .tag{font:600 13px var(--f-texto);letter-spacing:0;padding:3px 10px}
+body.t table{font-size:16px}
+body.t th{font:600 13px var(--f-texto);letter-spacing:0;text-transform:none;color:color-mix(in srgb,var(--t-ink) 78%,var(--t-bg))}
+body.t .cartao{padding:20px}
+body.t .cartao h3{font-size:21px;line-height:1.25}
+body.t .btn{min-height:44px;font-size:16px}
+body.t nav button{font-size:16px;padding:11px 18px;min-height:44px}
+body.t .kv{font-size:16px;padding:7px 0}
+body.t form.f label,body.t .fil label{font-size:15px;color:color-mix(in srgb,var(--t-ink) 80%,var(--t-bg))}
+body.t form.f input,body.t form.f select,body.t form.f textarea,body.t .fil input,body.t .fil select,body.t .ta{font-size:16px;padding:10px}
+body.t ul.l{font-size:16px;line-height:1.6}
+body.t dialog{font-size:16px}
+body.t .kan{flex-wrap:wrap}
+body.t .col{flex:1 1 200px;min-width:200px}
+body.t .cd{font-size:15px}
+body.t .cd select{font-size:14px;padding:6px}
+.foco{border-left:6px solid var(--m);background:color-mix(in srgb,var(--m) 8%,var(--t-surface))}
+.foco .big{font-size:28px}
+details.cartao>summary{cursor:pointer;font-family:var(--f-titulo);font-weight:600;font-size:19px;min-height:44px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+details.cartao[open]>summary{margin-bottom:10px}
+details.mais{margin-top:12px}
+details.mais>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600}
+nav#tabs2{margin-top:-6px}
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -75,16 +103,19 @@ ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
 <body class="t">
 <main>
   <h1 id="tit">Negócios e Oportunidades</h1>
-  <p class="sub">Quem abordar, com qual oferta, e o que fazer a seguir — para chegar à renda extra sem virar vendedor em tempo integral.</p>
+  <p class="sub">Uma coisa de cada vez: quem abordar hoje e o que fazer a seguir.</p>
   <nav id="tabs" role="tablist">
-    <button role="tab" data-t="painel" aria-selected="true">Painel</button>
-    <button role="tab" data-t="pipeline" aria-selected="false">Pipeline</button>
+    <button role="tab" data-t="painel" aria-selected="true">Hoje</button>
     <button role="tab" data-t="empresas" aria-selected="false">Empresas</button>
+    <button role="tab" data-t="pipeline" aria-selected="false">Funil</button>
+    <button role="tab" data-t="mais" aria-selected="false" aria-expanded="false">Mais ▾</button>
+  </nav>
+  <nav id="tabs2" style="display:none" role="tablist">
     <button role="tab" data-t="oport" aria-selected="false">Oportunidades</button>
+    <button role="tab" data-t="capac" aria-selected="false">Receita</button>
     <button role="tab" data-t="abordagem" aria-selected="false">Abordagem</button>
     <button role="tab" data-t="agenda" aria-selected="false">Agenda</button>
     <button role="tab" data-t="servicos" aria-selected="false">Serviços</button>
-    <button role="tab" data-t="capac" aria-selected="false">Capacidade e receita</button>
     <button role="tab" data-t="config" aria-selected="false">Configurações</button>
   </nav>
   <section id="painel" class="on"></section>
@@ -145,7 +176,8 @@ function fatores(e){
       canal=e.email||e.whatsapp||e.telefone,sv=(e.servicos||[]),porte=e.porte||'desconhecido';
   var f={};
   f.compat=e.aderente==='sim'?(sv.length>=2?1:.8):e.aderente==='duvida'?.4:e.aderente==='nao'?0:.3;
-  f.necessidade=ind?Math.min(1,.35*ind):.2;
+  var ev=((e.dossie||{}).dores||[]).filter(function(x){return (x.status==='confirmada'||x.status==='indicio')&&(x.evidencia||'').trim()}).length;
+  f.necessidade=(ind||ev)?Math.min(1,.35*ind+.3*ev):.2;
   f.acesso=temNome?1:temFun?.6:(e.email||e.whatsapp)?.45:e.telefone?.25:0;
   f.receita=({grande:1,medio:1,'médio':1,pequeno:.55,desconhecido:.3})[porte]||.3;
   f.viabilidade=({pequeno:1,'médio':.8,medio:.8,grande:.4,desconhecido:.5})[porte]||.5;
@@ -185,6 +217,7 @@ function atrasadas(){
 function proximaAcao(e){
   if(e.proxAcao)return e.proxAcao;
   if(e.pesquisa==='pendente')return 'Concluir a pesquisa (site, contatos, porte)';
+  if(e.aderente!=='nao'&&prontidao(e).pct<80&&['contato','aguardando','conversa','diagnostico','oportunidade','prep','enviada','negociacao','ganha','perdida','nutricao'].indexOf(e.etapa)<0)return 'Completar o dossiê de dores antes de abordar';
   if(!(e.contatosPublicos||[]).length&&!e.email&&!e.whatsapp&&!e.telefone)return 'Achar um canal público de contato';
   if(!ultimoContato(e.id)&&e.aderente!=='nao')return 'Preparar e revisar a primeira mensagem';
   return '';
@@ -198,9 +231,101 @@ function saveCfg(){return save('neg_config','main',S.cfg)}
 function log(empresaId,o){var id=uid(),d=Object.assign({empresaId:empresaId,data:hoje(),criado:Date.now()},o);return save('neg_atividades',id,d)}
 
 
+
+/* ---------- Metodologia oficial: dossiê de dores (v1) ---------- */
+var DOS=[
+ ['identidade','Quem é e em que momento está','Tipo de negócio, porte, estrutura (dono, grupo, franquia), fase (expansão, mudança de controle, aperto). Onde achar: site "quem somos", notícias, LinkedIn, CNPJ.'],
+ ['oferta','O que vende e como vende','Linhas de produto ou serviço, canais (balcão, representantes, online), B2B ou B2C. Onde achar: site, catálogo, redes sociais.'],
+ ['receita','Como ganha dinheiro','Fontes de receita, o que tem margem alta e baixa, alavancas (volume, ticket, recorrência) e os indicadores típicos do setor. Onde achar: notícias, entrevistas, comparáveis do setor.'],
+ ['clientes','Quem compra e o que dói em cada segmento','Perfil de cliente por segmento, o que compram e a dor principal de cada um (disponibilidade, controle, escala, custo…).'],
+ ['financeiro','Escala e saúde financeira','Faturamento ou porte estimado, crescimento, funcionários e unidades. Registre a fonte e a confiança; se não há dado público, escreva isso e triangule com outros sinais.'],
+ ['concorrencia','Concorrência e diferencial','Concorrentes por linha, onde a empresa ganha (preço, região, serviço, flexibilidade) e onde perde.'],
+ ['mercado','Mercado, regulação e riscos','Ventos a favor e contra, regras do setor, sazonalidade e dependências (fornecedores, plataformas, órgãos).'],
+ ['operacao','Operação, sistemas e dados','Processos centrais, equipes e turnos, sistemas (ERP, planilhas), integrações, dados disponíveis e relatórios que o gestor usa.'],
+ ['decisao','Quem decide e como','Dono ou sócios, gerências, quem cuida de operações, TI e financeiro; ciclo de decisão provável.'],
+ ['lacunas','O que ainda não sabemos','Perguntas abertas para validar na conversa. Escrever "não sei" faz parte da pesquisa.']
+];
+var DOR_ST={hipotese:'Hipótese',indicio:'Indício',segmento:'Típica do segmento (generalização)',confirmada:'Confirmada pelo cliente',descartada:'Descartada'};
+function dores(e){return ((e.dossie||{}).dores||[])}
+var DOS_FORM=[
+ ['resumo','Resumo (3 a 5 linhas)','Quem é, o que importa para a conversa e o melhor ângulo de abordagem.'],
+ ['identidade','O negócio','O que faz, história, porte, unidades, quem é o dono. Comece cada linha com •'],
+ ['receita','Como ganha dinheiro','Linhas de receita, margens típicas, alavancas, indicadores do setor.'],
+ ['clientes','Quem compra e o que dói','Tipos de cliente e a dor de cada um.'],
+ ['operacao','Operação, sistemas e o que já têm','Equipes, rotas, estoque, sistemas e relatórios — só com evidência.'],
+ ['mercado','Setor e concorrência','Concorrentes locais, fornecedores, regulação, tendências.'],
+ ['momento','Momento da empresa','Expansão, notícias recentes, vagas abertas.'],
+ ['decisao','Quem decide','Dono, sócios ou gerente publicados, e como chegar neles.'],
+ ['lacunas','O que ainda não sei','Perguntas abertas. "Não sei" também é resposta.']
+];
+var TAGS={'Fato':'ok','Indício':'amb','Setor':'amb','Hipótese':'','Não sei':'ruim'};
+function fmt(t){
+  var linhas=String(t||'').split('\n').filter(function(x){return x.trim()});
+  return linhas.map(function(l){
+    var m=l.replace(/^\s*[•\-\*]\s*/,''),tag='',cl='';
+    var r=m.match(/^\[(Fato|Indício|Setor|Hipótese|Não sei)\]\s*/);
+    if(r){tag='<span class="tag '+TAGS[r[1]]+'">'+(r[1]==='Setor'?'Típico do setor':r[1])+'</span> ';m=m.slice(r[0].length)}
+    return '<p style="margin:6px 0;font-size:17px;line-height:1.55">'+tag+esc(m)+'</p>';
+  }).join('');
+}
+function prontidao(e){
+  var d=e.dossie||{},l=dores(e).filter(function(x){return x.status!=='descartada'}),it=[
+    {ok:(d.identidade||'').trim().length>15,t:'Sei o que a empresa faz e como ganha dinheiro'},
+    {ok:(d.operacao||'').trim().length>15,t:'Sei como a operação funciona'},
+    {ok:(d.decisao||'').trim().length>9,t:'Sei quem decide'},
+    {ok:l.some(function(x){return (x.evidencia||'').trim()}),t:'Tenho uma dor provável com evidência'},
+    {ok:l.some(function(x){return (x.pergunta||'').trim()}),t:'Tenho uma pergunta para validar a dor'}];
+  var n=it.filter(function(x){return x.ok}).length;
+  return {pct:n*20,n:n,itens:it,falta:it.filter(function(x){return !x.ok}).map(function(x){return x.t.charAt(0).toLowerCase()+x.t.slice(1)})};
+}
+function abreDossie(e){
+  atual={tipo:'dos',id:e.id};var d=e.dossie||{};
+  frm.innerHTML='<h3 class="full">Dossiê — '+esc(e.nome)+'</h3><div class="full mini">Etiquete cada linha: [Fato], [Indício], [Setor] (generalização do segmento), [Hipótese] ou [Não sei].</div>'+
+    DOS_FORM.map(function(x){return '<label class="full">'+esc(x[1])+'<span class="mini">'+esc(x[2])+'</span><textarea name="d_'+x[0]+'" style="min-height:'+(x[0]==='resumo'?'90px':'110px')+'">'+esc(d[x[0]]||'')+'</textarea></label>'}).join('')+
+    '<label class="full">Perguntas para a conversa<span class="mini">Uma por linha.</span><textarea name="d_perguntas" style="min-height:140px">'+esc((d.perguntas||[]).join('\n'))+'</textarea></label>'+
+    '<div class="row full"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button></div>';
+  dlg.showModal();$('#cancela').onclick=function(){dlg.close()};
+}
+function abreDor(e,idx){
+  var l=dores(e),x=idx>=0?l[idx]:{status:'hipotese',cat:'A'};atual={tipo:'dor',id:e.id,idx:idx};
+  frm.innerHTML='<h3 class="full">'+(idx>=0?'Editar dor':'Nova dor')+' — '+esc(e.nome)+'</h3>'+
+   '<label class="full">Qual a dor provável?<textarea name="texto">'+esc(x.texto||'')+'</textarea></label>'+
+   '<label class="full">O que sustenta isso? (e de onde veio)<textarea name="evidencia">'+esc(x.evidencia||'')+'</textarea></label>'+
+   '<label class="full">Pergunta para validar na conversa<input name="pergunta" value="'+esc(x.pergunta||'')+'"></label>'+
+   '<label class="full">Status<select name="status">'+opts(DOR_ST,x.status)+'</select></label>'+
+   '<details class="full"><summary>Mais detalhes (opcional)</summary><div class="f" style="display:grid;gap:10px;margin-top:8px"><label>Serviço relacionado<select name="cat">'+opts(CAT,x.cat||'A')+'</select></label>'+
+   '<label>Fonte (link)<input name="fonte" type="url" value="'+esc(x.fonte||'')+'"></label><label>Impacto provável<input name="impacto" value="'+esc(x.impacto||'')+'"></label></div></details>'+
+   '<div class="row full"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button><span class="sp"></span>'+(idx>=0?'<button class="btn sec" type="button" id="apagaDor" style="color:var(--t-bad);border-color:var(--t-bad)">Apagar</button>':'')+'</div>';
+  dlg.showModal();$('#cancela').onclick=function(){dlg.close()};
+  if(idx>=0)$('#apagaDor').onclick=function(){if(confirm('Apagar esta dor?')){var d=Object.assign({},e);d.dossie=Object.assign({},e.dossie);d.dossie.dores=dores(e).filter(function(_,i){return i!==idx});saveEmp(d);dlg.close()}};
+}
+function blocoDossie(e){
+  var pr=prontidao(e),d=e.dossie||{},l=dores(e).filter(function(x){return x.status!=='descartada'}),fe=d.fontes||[];
+  var h='<div class="row"><button class="btn sec" data-dossie="'+esc(e.id)+'">Editar dossiê</button><button class="btn sec" data-novador="'+esc(e.id)+'">+ Dor</button><span class="sp"></span><span class="mini">Prontidão '+pr.pct+'%'+(d.atualizado?' · atualizado em '+dBR(d.atualizado):'')+'</span></div>'+barra(pr.pct);
+  if(pr.pct<100)h+='<div class="mini" style="margin-top:6px">'+pr.itens.filter(function(x){return !x.ok}).map(function(x){return '○ '+esc(x.t)}).join(' · ')+'</div>';
+  if(d.resumo)h+='<div class="aviso ok" style="margin-top:12px;font-size:17px"><b>Resumo.</b> '+esc(d.resumo)+'</div>';
+  h+='<div class="mini" style="margin:10px 0 0">Legenda: <span class="tag ok">Fato</span> confirmado em fonte · <span class="tag amb">Indício</span> sinal público · <span class="tag amb">Típico do setor</span> generalização · <span class="tag">Hipótese</span> a validar</div>';
+  DOS_FORM.filter(function(x){return x[0]!=='resumo'&&(d[x[0]]||'').trim()}).forEach(function(x){h+='<h4 style="font:600 19px var(--f-titulo);margin:18px 0 4px">'+esc(x[1])+'</h4>'+fmt(d[x[0]])});
+  if((d.perguntas||[]).length)h+='<h4 style="font:600 19px var(--f-titulo);margin:18px 0 4px">Perguntas para a conversa</h4><ol class="l">'+d.perguntas.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol>';
+  h+='<h4 style="font:600 19px var(--f-titulo);margin:18px 0 4px">Dores</h4>';
+  var esp=l.filter(function(x){return x.status!=='segmento'}),seg=l.filter(function(x){return x.status==='segmento'});
+  function lista(arr,titulo){return arr.length?'<div class="mini" style="margin-top:8px"><b>'+titulo+'</b></div>'+arr.map(function(x){var i=dores(e).indexOf(x);return '<div class="item"><div style="flex:1"><b>'+esc(x.texto)+'</b> <span class="tag '+(x.status==='confirmada'?'ok':'amb')+'">'+esc(DOR_ST[x.status]||'')+'</span>'+(x.impacto?'<div class="mini">Impacto provável: '+esc(x.impacto)+'</div>':'')+(x.evidencia?'<div class="mini">Base: '+esc(x.evidencia)+(urlOk(x.fonte)&&x.fonte?' <a href="'+esc(x.fonte)+'" target="_blank" rel="noopener noreferrer">fonte ↗</a>':'')+'</div>':'<div class="mini">Sem evidência registrada.</div>')+(x.pergunta?'<div class="mini"><b>Perguntar:</b> '+esc(x.pergunta)+'</div>':'')+'</div><button class="btn sec" data-dor="'+esc(e.id)+':'+i+'">Editar</button></div>'}).join(''):''}
+  h+=lista(esp,'Da própria empresa (hipótese ou indício)')+lista(seg,'Comuns neste segmento (generalização — confirmar na conversa)');
+  if(!l.length)h+='<div class="mini">Nenhuma dor registrada ainda.</div>';
+  if(fe.length)h+='<h4 style="font:600 19px var(--f-titulo);margin:18px 0 4px">Fontes do dossiê</h4><ul class="l">'+fe.map(function(f){return '<li>'+(urlOk(f.url)?'<a href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">'+esc(f.titulo||dominio(f.url))+' ↗</a>':esc(f.titulo||''))+' <span class="mini">'+esc(f.tipo||'')+(f.dataConsulta?' · '+dBR(f.dataConsulta):'')+'</span></li>'}).join('')+'</ul>';
+  return h;
+}
+function cardMetodologia(){
+  return '<div class="cartao"><div class="row"><h3>Metodologia: entender antes de abordar</h3><span class="tag">v1</span></div>'+
+   '<ol class="l"><li><b>O negócio:</b> o que vende, para quem e como ganha dinheiro.</li><li><b>A operação:</b> sistemas, equipes, relatórios.</li><li><b>Quem decide</b> e como chegar até essa pessoa.</li><li><b>As dores:</b> cada uma com evidência e uma pergunta para validar.</li><li><b>O que não sei:</b> as perguntas abertas.</li></ol>'+
+   '<div class="mini">Só abordo quando o dossiê chega a 80%. Fato, indício, hipótese e problema confirmado ficam separados; hipótese nunca vira fato. Fontes públicas apenas, nada confidencial de outros clientes ou do emprego.</div></div>';
+}
+
 /* ---------- Por que esta empresa e como contatar ---------- */
 function porque(e){
   var r=[],sv=e.servicos||[],f=(e.fatos||[]),ind=(e.indicios||[]);
+  var dl=dores(e).filter(function(x){return x.status!=='descartada'}),dr=dl.filter(function(x){return x.status!=='segmento'})[0]||dl[0];
+  if(dr)r.push((dr.status==='segmento'?'Dor comum no segmento (a confirmar): ':'Dor provável: ')+dr.texto+(dr.evidencia?' — '+dr.evidencia:''));
   if(e.unidades)r.push('Unidades registradas na pesquisa: '+e.unidades+' (confira a fonte antes de citar na conversa).');
   else if(f.length)r.push('Fato verificado: '+(f[0].texto||f[0])+'.');
   if(ind.length)r.push('Indício: '+(ind[0].texto||ind[0])+'.');
@@ -229,8 +354,32 @@ function comoContatar(e){
 }
 function bloco(titulo,l){return '<div class="mini" style="margin-top:6px"><b>'+esc(titulo)+'</b></div><ul class="l">'+l.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'}
 
-/* ---------- Painel ---------- */
+/* ---------- Hoje ---------- */
+function semanaContatos(){var l=new Date(hoje()+'T12:00:00');l.setDate(l.getDate()-6);var li=l.toISOString().slice(0,10),m={};S.ati.forEach(function(a){if((a.tipo==='contato'||a.canal)&&a.data>=li)m[a.empresaId]=1});return Object.keys(m).length}
+function fila(){return S.emp.filter(function(e){return e.aderente!=='nao'&&!ehIntermediario(e)&&['descoberta','pesquisa','qualificada','pronta'].indexOf(e.etapa||'descoberta')>=0&&!ultimoContato(e.id)}).map(function(e){return {e:e,s:score(e)}}).sort(function(a,b){return b.s.total-a.s.total})}
+function retornos(){var lim=cfg().diasRetorno;return S.emp.filter(function(e){var u=ultimoContato(e.id);return u&&dias(u.data)>=lim&&['aguardando','contato','conversa'].indexOf(e.etapa)>=0})}
 function rPainel(){
+  var f=fila(),ret=retornos(),at=atrasadas(),v=valores(),c=cfg(),meta=Math.max(2,Math.floor(num(c.horasSem)*0.4/0.5)),feitos=semanaContatos();
+  var i=f.length?(S.focoIdx||0)%f.length:0,foco=f[i],h='';
+  if(!S.emp.length)h+='<div class="aviso">Nenhuma empresa cadastrada ainda. Cadastre em <b>Empresas</b> ou importe a base inicial (<code>npm run import -- negocios-base.json</code>).</div>';
+  if(foco){var e=foco.e,pr=prontidao(e);
+    h+='<div class="cartao foco"><div class="rotulo">Próximo passo</div><div class="big" style="margin:6px 0 2px">'+esc(e.nome)+'</div><div class="mini">'+esc(e.cidade||'')+' · '+esc(e.segmento||'')+'</div>'+
+      '<p style="margin:12px 0 4px"><b>Por quê:</b> '+esc(porque(e)[0])+'</p><p style="margin:0 0 12px"><b>Como:</b> '+esc(comoContatar(e)[1]||'')+'</p>'+
+      (pr.pct<80?'<div class="aviso" style="margin-bottom:12px">Antes de abordar, entenda as dores desta empresa (dossiê '+pr.pct+'%). Falta: '+esc(pr.falta[0]||'')+'.</div>':'')+
+      '<div class="row"><button class="btn" data-emp="'+esc(e.id)+'">'+(pr.pct<80?'Preparar':'Abrir e gerar mensagem')+'</button>'+(f.length>1?'<button class="btn sec" data-outra="1">Ver outra</button>':'')+'</div></div>';
+  }else if(S.emp.length)h+='<div class="cartao foco"><div class="big">Fila vazia</div><p>Não há empresas novas para abordar. Veja os retornos abaixo ou cadastre mais empresas.</p></div>';
+  h+='<div class="grid" style="margin-top:12px"><div class="cartao"><div class="rotulo">Esta semana</div><div class="big">'+feitos+' de '+meta+'</div><div class="mini">contatos novos feitos</div>'+barra(meta?feitos/meta*100:0)+
+    (at.length?'<div style="margin-top:10px"><button class="btn sec" data-irtab="agenda">'+at.length+' atrasada'+(at.length>1?'s':'')+' — ver agenda</button></div>':'<div class="mini" style="margin-top:8px">Nada atrasado.</div>')+'</div>'+
+    '<div class="cartao"><div class="rotulo">Dinheiro</div><div class="big">'+brl(v.contr)+'</div><div class="mini">contratado</div><div class="kv" style="margin-top:8px"><span>Em negociação (ponderado)</span><b>'+brl(v.pond)+'</b></div><div class="mini">Projeção, não dinheiro garantido.</div></div></div>';
+  if(ret.length)h+='<div class="cartao"><h3>Hora de retornar</h3>'+ret.slice(0,4).map(function(e){return '<div class="item"><div style="flex:1"><b>'+esc(e.nome)+'</b><div class="mini">último contato em '+dBR(ultimoContato(e.id).data)+'</div></div><button class="btn sec" data-emp="'+esc(e.id)+'">Abrir</button></div>'}).join('')+'</div>';
+  var depois=f.filter(function(_,k){return k!==i}).slice(0,3);
+  if(depois.length)h+='<div class="cartao"><h3>Depois dessa</h3>'+depois.map(function(x){return '<div class="item"><div style="flex:1"><a href="#" data-emp="'+esc(x.e.id)+'"><b>'+esc(x.e.nome)+'</b></a><div class="mini">'+esc(x.e.cidade||'')+' · '+esc(x.e.segmento||'')+'</div></div></div>'}).join('')+'</div>';
+  h+='<details class="mais"><summary>Ver números completos</summary>'+painelCompleto()+'</details>';
+  $('#painel').innerHTML=h;
+}
+
+/* ---------- Painel completo (recolhido) ---------- */
+function painelCompleto(){
   var n=S.emp.length,cont=0,qual=0,pesq=0,pron=0,resp=0,diag=0,prop=0,neg=0,ganh=0,perd=0;
   S.emp.forEach(function(e){var t=e.etapa||'descoberta';
     if(['qualificada','pronta'].indexOf(t)>=0||ETAPAS_IDX(t)>=2&&ETAPAS_IDX(t)<12)qual++;
@@ -267,7 +416,7 @@ function rPainel(){
   // distribuição
   h+='<div class="grid2">'+dist('Por etapa',S.emp,function(e){return nomeEtapa(e.etapa||'descoberta')})+dist('Por cidade',S.emp,function(e){return e.cidade||'(sem cidade)'})+dist('Por segmento',S.emp,function(e){return e.segmento||'(sem segmento)'})+
      dist('Oportunidades por serviço',S.opo,function(o){return CAT[(servicos().filter(function(s){return s.id===o.servicoId})[0]||{}).cat]||'(sem serviço)'})+'</div>';
-  $('#painel').innerHTML=h;
+  return h;
 }
 function ETAPAS_IDX(id){var l=etapas();for(var i=0;i<l.length;i++)if(l[i].id===id)return i;return -1}
 function card(t,v,s,k){return '<div class="cartao"><div class="rotulo">'+esc(t)+'</div><div class="big"'+(k==='ruim'?' style="color:var(--t-bad)"':'')+'>'+esc(v)+'</div><div class="mini">'+esc(s||'')+'</div></div>'}
@@ -301,16 +450,24 @@ function responde(q){
 }
 
 /* ---------- Pipeline ---------- */
+var GRUPOS=[['Pesquisar',['descoberta','pesquisa']],['Prontas',['qualificada','pronta']],['Em contato',['contato','aguardando','conversa']],['Proposta',['diagnostico','oportunidade','prep','enviada','negociacao']],['Fechadas',['ganha','perdida','nutricao']]];
+function cartaoFunil(e,et){var sc=score(e);return '<div class="cd"><b data-emp="'+esc(e.id)+'">'+esc(e.nome)+'</b><div class="mini">'+esc(e.cidade||'')+' · '+esc(e.segmento||'')+'</div><div class="mini">Pontuação '+sc.total+(sc.prov?'*':'')+'</div>'+
+  '<select data-mover="'+esc(e.id)+'" aria-label="Mover etapa">'+et.map(function(y){return '<option value="'+y.id+'"'+(y.id===(e.etapa||'descoberta')?' selected':'')+'>'+esc(y.nome)+'</option>'}).join('')+'</select></div>'}
 function rPipeline(){
-  var et=etapas(),h='<div class="row" style="margin-bottom:10px"><span class="mini">Mova a empresa pelo seletor do cartão. Cada mudança entra no histórico.</span><span class="sp"></span><button class="btn sec" data-vis="tabela">Ver como tabela</button></div>';
-  if(S.vis==='tabela'){
-    h+='<div class="cartao scroll"><table><thead><tr><th>Empresa</th><th>Etapa</th><th class="n">Pont.</th><th>Próxima ação</th><th>Data</th></tr></thead><tbody>'+
-      S.emp.slice().sort(function(a,b){return ETAPAS_IDX(a.etapa||'descoberta')-ETAPAS_IDX(b.etapa||'descoberta')||score(b).total-score(a).total}).map(function(e){return '<tr class="cl" data-emp="'+esc(e.id)+'"><td><b>'+esc(e.nome)+'</b><div class="mini">'+esc(e.cidade||'')+'</div></td><td>'+esc(nomeEtapa(e.etapa||'descoberta'))+'</td><td class="n">'+score(e).total+'</td><td>'+esc(proximaAcao(e))+'</td><td>'+dBR(e.proxData)+'</td></tr>'}).join('')+'</tbody></table></div>';
-  }else{
+  var et=etapas(),vis=S.vis||'grupos',
+      h='<div class="row" style="margin-bottom:12px"><button class="btn'+(vis==='grupos'?'':' sec')+'" data-vis="grupos">Resumido</button><button class="btn'+(vis==='kanban'?'':' sec')+'" data-vis="kanban">Todas as etapas</button><button class="btn'+(vis==='tabela'?'':' sec')+'" data-vis="tabela">Tabela</button><span class="sp"></span><span class="mini">Mude a etapa pelo seletor do cartão.</span></div>';
+  if(vis==='tabela'){
+    h+='<div class="cartao scroll"><table><thead><tr><th>Empresa</th><th>Etapa</th><th class="n">Pont.</th><th>Próxima ação</th></tr></thead><tbody>'+
+      S.emp.slice().sort(function(a,b){return ETAPAS_IDX(a.etapa||'descoberta')-ETAPAS_IDX(b.etapa||'descoberta')||score(b).total-score(a).total}).map(function(e){return '<tr class="cl" data-emp="'+esc(e.id)+'"><td><b>'+esc(e.nome)+'</b><div class="mini">'+esc(e.cidade||'')+'</div></td><td>'+esc(nomeEtapa(e.etapa||'descoberta'))+'</td><td class="n">'+score(e).total+'</td><td>'+esc(proximaAcao(e))+(e.proxData?'<div class="mini">'+dBR(e.proxData)+'</div>':'')+'</td></tr>'}).join('')+'</tbody></table></div>';
+  }else if(vis==='kanban'){
     h+='<div class="kan">'+et.map(function(x){var l=S.emp.filter(function(e){return (e.etapa||'descoberta')===x.id}).sort(function(a,b){return score(b).total-score(a).total});
-      return '<div class="col"><h4><span>'+esc(x.nome)+'</span><span>'+l.length+'</span></h4>'+l.map(function(e){var s=score(e);return '<div class="cd"><b data-emp="'+esc(e.id)+'">'+esc(e.nome)+'</b><div class="mini">'+esc(e.cidade||'')+' · '+esc(e.segmento||'')+'</div><div class="row"><span class="sc">'+s.total+(s.prov?'*':'')+'</span><span class="mini">'+esc(PRIO[prioridade(e)])+'</span></div>'+
-        '<select data-mover="'+esc(e.id)+'" aria-label="Mover etapa">'+et.map(function(y){return '<option value="'+y.id+'"'+(y.id===x.id?' selected':'')+'>'+esc(y.nome)+'</option>'}).join('')+'</select></div>'}).join('')+'</div>'}).join('')+'</div><div class="mini">* pontuação provisória (pesquisa não verificada)</div>';
+      return '<div class="col"><h4><span>'+esc(x.nome)+'</span><span>'+l.length+'</span></h4>'+l.map(function(e){return cartaoFunil(e,et)}).join('')+'</div>'}).join('')+'</div>';
+  }else{
+    var usados={};GRUPOS.forEach(function(g){g[1].forEach(function(k){usados[k]=1})});
+    h+='<div class="kan">'+GRUPOS.map(function(g){var l=S.emp.filter(function(e){return g[1].indexOf(e.etapa||'descoberta')>=0}).sort(function(a,b){return score(b).total-score(a).total});
+      return '<div class="col"><h4><span>'+esc(g[0])+'</span><span>'+l.length+'</span></h4>'+(l.slice(0,12).map(function(e){return cartaoFunil(e,et)}).join('')||'<div class="mini">vazio</div>')+(l.length>12?'<div class="mini">+ '+(l.length-12)+' (use Tabela)</div>':'')+'</div>'}).join('')+'</div>';
   }
+  h+='<div class="mini" style="margin-top:8px">* pontuação provisória (pesquisa não verificada)</div>';
   $('#pipeline').innerHTML=h;
 }
 
@@ -330,18 +487,20 @@ function uniq(k){var m={};S.emp.forEach(function(e){if(e[k])m[e[k]]=1});return O
 function rEmpresas(){
   if(S.sel&&emp(S.sel)){rDetalhe(emp(S.sel));return}
   var f=S.fil,l=filtradas();
-  var h='<div class="row" style="margin-bottom:10px"><button class="btn" data-novo="emp">+ Empresa</button><button class="btn sec" data-csv="emp">Exportar CSV</button><span class="sp"></span><span class="mini">'+l.length+' de '+S.emp.length+'</span></div>'+
-   '<div class="fil"><label>Busca<input data-f="q" value="'+esc(f.q)+'" placeholder="nome, segmento, cidade…"></label>'+
+  var h='<div class="row" style="margin-bottom:12px"><button class="btn" data-novo="emp">+ Empresa</button><span class="sp"></span><span class="mini">'+l.length+' de '+S.emp.length+'</span></div>'+
+   '<div class="fil"><label>Buscar<input data-f="q" value="'+esc(f.q)+'" placeholder="nome, cidade, segmento…"></label>'+
    '<label>Cidade<select data-f="cidade">'+opts(arrObj(uniq('cidade')),f.cidade,'Todas')+'</select></label>'+
+   '<label>Etapa<select data-f="etapa">'+opts(etapasObj(),f.etapa,'Todas')+'</select></label></div>'+
+   '<details class="mais" style="margin:-4px 0 12px"><summary>Mais filtros e ordenação</summary><div class="fil" style="margin-top:8px">'+
    '<label>Segmento<select data-f="seg">'+opts(arrObj(uniq('segmento')),f.seg,'Todos')+'</select></label>'+
-   '<label>Etapa<select data-f="etapa">'+opts(etapasObj(),f.etapa,'Todas')+'</select></label>'+
    '<label>Prioridade<select data-f="prio">'+opts(PRIO,f.prio,'Todas')+'</select></label>'+
    '<label>Pesquisa<select data-f="conf">'+opts({verificada:'Verificada',parcial:'Parcial',pendente:'Pendente'},f.conf,'Todas')+'</select></label>'+
    '<label>Serviço sugerido<select data-f="serv">'+opts(CAT,f.serv,'Todos')+'</select></label>'+
-   '<label>Ordenar<select data-f="ord">'+opts({score:'Pontuação',nome:'Nome',data:'Última verificação',prox:'Próxima ação'},S.ord)+'</select></label></div>';
+   '<label>Ordenar por<select data-f="ord">'+opts({score:'Pontuação',nome:'Nome',data:'Última verificação',prox:'Próxima ação'},S.ord)+'</select></label></div>'+
+   '<button class="btn sec" data-csv="emp">Exportar CSV</button></details>';
   if(!l.length)h+='<div class="cartao vazio">'+(S.emp.length?'Nenhuma empresa com esses filtros.':'Nenhuma empresa ainda.')+'</div>';
-  else h+='<div class="cartao scroll"><table><thead><tr><th>Empresa</th><th>Local / segmento</th><th>Etapa</th><th class="n">Pont.</th><th>Prioridade</th><th>Pesquisa</th><th>Próxima ação</th></tr></thead><tbody>'+
-    l.map(function(e){var s=score(e);return '<tr class="cl" data-emp="'+esc(e.id)+'"><td><b>'+esc(e.nome)+'</b>'+(e.aderente==='nao'?' <span class="tag">não aderente</span>':'')+'</td><td>'+esc(e.cidade||'')+'<div class="mini">'+esc(e.segmento||'')+(e.subsegmento?' · '+esc(e.subsegmento):'')+'</div></td><td>'+esc(nomeEtapa(e.etapa||'descoberta'))+'</td><td class="n">'+s.total+(s.prov?'*':'')+'</td><td>'+esc(PRIO[prioridade(e)])+'</td><td><span class="tag '+(e.pesquisa==='verificada'?'ok':e.pesquisa==='pendente'?'ruim':'amb')+'">'+esc(e.pesquisa||'pendente')+'</span></td><td>'+esc(proximaAcao(e))+(e.proxData?'<div class="mini">'+dBR(e.proxData)+'</div>':'')+'</td></tr>'}).join('')+'</tbody></table></div><div class="mini" style="margin-top:6px">* pontuação provisória (pesquisa não verificada)</div>';
+  else h+='<div class="cartao scroll"><table><thead><tr><th>Empresa</th><th>Etapa</th><th class="n">Pont.</th><th>Próxima ação</th></tr></thead><tbody>'+
+    l.map(function(e){var sc=score(e);return '<tr class="cl" data-emp="'+esc(e.id)+'"><td><b>'+esc(e.nome)+'</b>'+(e.aderente==='nao'?' <span class="tag">não aderente</span>':'')+'<div class="mini">'+esc(e.cidade||'')+' · '+esc(e.segmento||'')+(e.pesquisa==='pendente'?' · pesquisa pendente':'')+'</div></td><td>'+esc(nomeEtapa(e.etapa||'descoberta'))+'</td><td class="n">'+sc.total+(sc.prov?'*':'')+'</td><td>'+esc(proximaAcao(e))+(e.proxData?'<div class="mini">'+dBR(e.proxData)+'</div>':'')+'</td></tr>'}).join('')+'</tbody></table></div><div class="mini" style="margin-top:6px">* pontuação provisória (pesquisa não verificada)</div>';
   keepFocus('#empresas',h);
 }
 function arrObj(a){var o={};a.forEach(function(x){o[x]=x});return o}
@@ -355,43 +514,39 @@ function keepFocus(sel,h){
 
 /* ---------- Empresa: detalhe ---------- */
 var TIPO_FATO={fato:'Fato verificado',indicio:'Indício',hip:'Hipótese comercial',conf:'Problema confirmado',desc:'Desconhecido'};
+function det(titulo,resumo,inner,aberto){return '<details class="cartao"'+(aberto?' open':'')+'><summary>'+esc(titulo)+(resumo?' <span class="mini" style="font-family:var(--f-texto);font-weight:400">'+resumo+'</span>':'')+'</summary>'+inner+'</details>'}
 function rDetalhe(e){
-  var s=score(e),cs=S.con.filter(function(c){return c.empresaId===e.id}),ops=opsDe(e.id),at=atDe(e.id),ta=S.tar.filter(function(t){return t.empresaId===e.id&&!t.feito});
-  var h='<div class="row" style="margin-bottom:10px"><button class="btn sec" data-voltar="1">← Empresas</button><span class="sp"></span><button class="btn sec" data-edit="emp:'+esc(e.id)+'">Editar</button></div>';
-  h+='<div class="cartao"><div class="row"><h3 style="font-size:22px">'+esc(e.nome)+'</h3><span class="sp"></span><span class="tag">'+esc(nomeEtapa(e.etapa||'descoberta'))+'</span><span class="tag '+(e.pesquisa==='verificada'?'ok':e.pesquisa==='pendente'?'ruim':'amb')+'">pesquisa '+esc(e.pesquisa||'pendente')+'</span></div>'+
-   '<div class="mini">'+esc(e.cidade||'')+' · '+esc(e.segmento||'')+(e.subsegmento?' · '+esc(e.subsegmento):'')+(e.razao?' · razão social: '+esc(e.razao):'')+'</div>'+
-   (e.descricao?'<p>'+esc(e.descricao)+'</p>':'')+
-   '<div class="grid2"><div>'+
-    kv('Site',e.site&&urlOk(e.site)?'<a href="'+esc(e.site)+'" target="_blank" rel="noopener noreferrer">'+esc(dominio(e.site))+' ↗</a>':'—',true)+kv('Telefone institucional',esc(e.telefone||'—'),true)+kv('E-mail corporativo',esc(e.email||'—'),true)+kv('WhatsApp comercial',esc(e.whatsapp||'—'),true)+kv('LinkedIn',e.linkedin&&urlOk(e.linkedin)?'<a href="'+esc(e.linkedin)+'" target="_blank" rel="noopener noreferrer">perfil ↗</a>':'—',true)+
-   '</div><div>'+kv('Unidades',esc(e.unidades||'não confirmado'),true)+kv('Porte estimado',esc(e.porte||'desconhecido')+(e.porteBase?' <span class="mini">('+esc(e.porteBase)+')</span>':''),true)+kv('Última verificação',e.verificadoEm?dBR(e.verificadoEm):'—',true)+kv('Próxima ação',esc(proximaAcao(e)||'—')+(e.proxData?' · '+dBR(e.proxData):''),true)+kv('Relacionamento',esc(e.relac||'sem contato'),true)+'</div></div></div>';
+  var sc=score(e),cs=S.con.filter(function(c){return c.empresaId===e.id}),ops=opsDe(e.id),at=atDe(e.id),ta=S.tar.filter(function(t){return t.empresaId===e.id&&!t.feito}),pr=prontidao(e);
+  var h='<div class="row" style="margin-bottom:12px"><button class="btn sec" data-voltar="1">← Empresas</button><span class="sp"></span><button class="btn sec" data-edit="emp:'+esc(e.id)+'">Editar</button></div>';
+  h+='<div class="cartao"><div class="row"><h3 style="font-size:26px">'+esc(e.nome)+'</h3><span class="sp"></span><span class="tag">'+esc(nomeEtapa(e.etapa||'descoberta'))+'</span></div>'+
+   '<div class="mini">'+esc(e.cidade||'')+' · '+esc(e.segmento||'')+(e.subsegmento?' · '+esc(e.subsegmento):'')+'</div>'+(e.descricao?'<p>'+esc(e.descricao)+'</p>':'')+
+   (e.site&&urlOk(e.site)?kv('Site','<a href="'+esc(e.site)+'" target="_blank" rel="noopener noreferrer">'+esc(dominio(e.site))+' ↗</a>',true):'')+(e.whatsapp?kv('WhatsApp',esc(e.whatsapp),true):'')+(e.telefone?kv('Telefone',esc(e.telefone),true):'')+(e.email?kv('E-mail',esc(e.email),true):'')+kv('Próxima ação',esc(proximaAcao(e)||'—')+(e.proxData?' · '+dBR(e.proxData):''),true)+'</div>';
   h+='<div class="cartao"><h3>Por que esta empresa e como contatar</h3><div class="grid2"><div>'+bloco('Por que abordar',porque(e))+'</div><div>'+bloco('Como contatar',comoContatar(e))+'</div></div></div>';
-  // pontuação
-  h+='<div class="grid2"><div class="cartao"><div class="row"><h3>Pontuação '+s.total+(s.prov?' <span class="tag amb">provisória</span>':'')+'</h3><span class="sp"></span><button class="btn sec" data-ajusta="'+esc(e.id)+'">Ajustar</button></div>'+
-   Object.keys(s.det).map(function(k){var d=s.det[k];return '<div class="kv"><span>'+esc(PESO_NOME[k])+(d.manual?' <span class="tag">manual</span>':'')+'</span><b>'+d.v+' / '+d.w+'</b></div>'}).join('')+
-   (e.scoreJust?'<div class="mini" style="margin-top:6px">Justificativa: '+esc(e.scoreJust)+'</div>':'')+
-   '<div class="mini" style="margin-top:6px">Pontos automáticos vêm dos dados registrados; sem evidência, a nota fica baixa e a avaliação provisória. Prioridade: <b>'+esc(PRIO[prioridade(e)])+'</b>.</div></div>'+
-   '<div class="cartao"><h3>O que sabemos</h3>'+evid('Fato verificado',e.fatos,'ok')+evid('Indício',e.indicios,'amb')+
-    '<div class="mini" style="margin-top:8px"><b>Hipóteses comerciais</b> (validar em conversa)</div><ul class="l">'+((e.hipoteses||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')||'<li class="mini">nenhuma</li>')+'</ul>'+
-    (e.confirmados&&e.confirmados.length?'<div class="mini" style="margin-top:8px"><b>Problema confirmado pelo cliente</b></div><ul class="l">'+e.confirmados.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
-    (e.obs?'<div class="mini" style="margin-top:8px">Obs.: '+esc(e.obs)+'</div>':'')+
-    '<div class="mini" style="margin-top:8px"><b>Fontes</b></div><div class="mini">'+((e.fontes||[]).map(function(f){return '<a class="fonte" href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">'+esc(f.tipo||dominio(f.url))+' ↗</a>'+(f.dataConsulta?'<span class="mini">'+dBR(f.dataConsulta)+'</span> ':'')}).join('')||'sem fontes registradas')+'</div></div></div>';
-  var est=ESTRAT.filter(function(x){return x.id===estrategiaPara(e)})[0]||{nome:'Fora da estratégia atual',esforco:'—',quando:'Consultorias e software houses são intermediários (parceria técnica). Você escolheu abordar direto as empresas que compram; mantenho o registro, mas fora da fila de abordagem.'};
-  h+='<div class="cartao"><h3>Estratégia sugerida</h3><div><b>'+esc(est.nome)+'</b> <span class="tag">esforço '+esc(est.esforco)+'</span></div><div class="mini">'+esc(est.quando)+'</div></div>';
-  // ofertas
-  h+='<div class="cartao"><div class="row"><h3>Ofertas plausíveis</h3><span class="sp"></span><button class="btn sec" data-novo="opo:'+esc(e.id)+'">+ Oportunidade</button></div><div class="mini">Hipóteses de oferta, não necessidades confirmadas.</div><ul class="l">'+((e.ofertas||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')||'<li class="mini">nenhuma</li>')+'</ul>'+
-   (ops.length?'<div class="scroll" style="margin-top:8px"><table><thead><tr><th>Oportunidade</th><th>Etapa</th><th class="n">Estimado</th><th class="n">Prob.</th></tr></thead><tbody>'+ops.map(function(o){return '<tr class="cl" data-edit="opo:'+esc(o.id)+'"><td>'+esc(servNome(o.servicoId)||o.problema||'(sem serviço)')+'</td><td>'+esc(nomeEtapa(o.etapa))+'</td><td class="n">'+brl(num(o.vEst))+'</td><td class="n">'+Math.round(probOp(o)*100)+'%</td></tr>'}).join('')+'</tbody></table></div>':'')+'</div>';
-  // contatos
-  h+='<div class="cartao"><div class="row"><h3>Contatos</h3><span class="sp"></span><button class="btn sec" data-novo="con:'+esc(e.id)+'">+ Contato</button></div><div class="mini">Só informação profissional pública ou fornecida legitimamente. Canal geral da empresa não é o decisor.</div>'+
-   ((e.contatosPublicos||[]).length?'<div class="mini" style="margin-top:6px"><b>Canais/pessoas publicados na pesquisa</b></div><ul class="l">'+e.contatosPublicos.map(function(c){return '<li>'+esc(c.funcao||'')+(c.nome?' — '+esc(c.nome):'')+' · '+esc(c.canal||'')+(c.fonte?' <a href="'+esc(c.fonte)+'" target="_blank" rel="noopener noreferrer">fonte ↗</a>':'')+'</li>'}).join('')+'</ul>':'')+
-   (cs.length?cs.map(function(c){return '<div class="item"><div style="flex:1"><b>'+esc(c.nome||'(sem nome)')+'</b> <span class="mini">'+esc(c.cargo||'')+(c.depto?' · '+esc(c.depto):'')+'</span><div class="mini">'+esc([c.email,c.canal,c.linkedin].filter(Boolean).join(' · '))+(c.origem?' · origem: '+esc(c.origem):'')+(c.verificado?' · verificado '+dBR(c.verificado):'')+'</div></div><button class="btn sec" data-edit="con:'+esc(c.id)+'">Editar</button></div>'}).join(''):'')+'</div>';
-  // mensagens
-  h+='<div class="cartao"><h3>Abordagem personalizada</h3><div class="mini">Gera um rascunho editável a partir dos dados desta empresa. Nada é enviado automaticamente.</div>'+
-   '<div class="row" style="margin:8px 0"><select id="msgTipo" style="font:inherit;padding:8px;border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-ink)">'+opts(MSG_TIPOS,S.msgTipo||'whatsapp')+'</select><button class="btn" data-gerar="'+esc(e.id)+'">Gerar</button><button class="btn sec" data-copiar="1">Copiar</button><button class="btn sec" data-regcontato="'+esc(e.id)+'">Registrar contato feito</button></div>'+
+  h+=det('Dossiê da empresa','Prontidão '+pr.pct+'%',blocoDossie(e),true);
+  h+='<div class="cartao"><h3>Mensagem</h3><div class="mini">Rascunho editável. Nada é enviado automaticamente.</div>'+
+   '<div class="row" style="margin:10px 0"><select id="msgTipo" style="font:inherit;font-size:16px;padding:10px;border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-ink)">'+opts(MSG_TIPOS,S.msgTipo||'whatsapp')+'</select><button class="btn" data-gerar="'+esc(e.id)+'">Gerar</button><button class="btn sec" data-copiar="1">Copiar</button><button class="btn sec" data-regcontato="'+esc(e.id)+'">Registrar contato feito</button></div>'+
    '<textarea class="ta" id="msgOut" style="min-height:190px" placeholder="Escolha o tipo e clique em Gerar"></textarea></div>';
-  // tarefas e histórico
-  h+='<div class="grid2"><div class="cartao"><div class="row"><h3>Tarefas</h3><span class="sp"></span><button class="btn sec" data-novo="tar:'+esc(e.id)+'">+ Tarefa</button></div>'+
-   (ta.length?ta.map(function(t){return '<label class="item"><input type="checkbox" data-tar="'+esc(t.id)+'"><span>'+esc(t.titulo)+(t.data?' <span class="mini">· '+dBR(t.data)+'</span>':'')+'</span></label>'}).join(''):'<div class="mini" style="margin-top:6px">Sem tarefas abertas.</div>')+'</div>'+
-   '<div class="cartao"><h3>Histórico</h3>'+(at.length?at.slice(0,25).map(function(a){return '<div class="item" style="flex-direction:column;gap:2px"><div><b>'+dBR(a.data)+'</b> <span class="tag">'+esc(a.tipo==='etapa'?'etapa':a.canal||'nota')+'</span></div>'+(a.msg?'<div class="mini">'+esc(a.msg)+'</div>':'')+(a.resp?'<div class="mini">↩ '+esc(a.resp)+'</div>':'')+(a.resultado?'<div class="mini">Resultado: '+esc(a.resultado)+'</div>':'')+(a.proxPasso?'<div class="mini">Próximo: '+esc(a.proxPasso)+(a.retorno?' ('+dBR(a.retorno)+')':'')+'</div>':'')+'</div>'}).join(''):'<div class="mini">Nenhum registro.</div>')+'</div></div>';
+  h+=det('Contatos',(cs.length+(e.contatosPublicos||[]).length)+'',
+    '<div class="row"><button class="btn sec" data-novo="con:'+esc(e.id)+'">+ Contato</button></div><div class="mini">Só informação profissional pública. Canal geral não é o decisor.</div>'+
+    ((e.contatosPublicos||[]).length?'<ul class="l">'+e.contatosPublicos.map(function(c){return '<li>'+esc(c.funcao||'')+(c.nome?' — '+esc(c.nome):'')+' · '+esc(c.canal||'')+(c.fonte?' <a href="'+esc(c.fonte)+'" target="_blank" rel="noopener noreferrer">fonte ↗</a>':'')+'</li>'}).join('')+'</ul>':'')+
+    cs.map(function(c){return '<div class="item"><div style="flex:1"><b>'+esc(c.nome||'(sem nome)')+'</b> <span class="mini">'+esc(c.cargo||'')+(c.depto?' · '+esc(c.depto):'')+'</span><div class="mini">'+esc([c.email,c.canal,c.linkedin].filter(Boolean).join(' · '))+'</div></div><button class="btn sec" data-edit="con:'+esc(c.id)+'">Editar</button></div>'}).join(''),false);
+  h+=det('Oportunidades',ops.length+'',
+    '<div class="row"><button class="btn sec" data-novo="opo:'+esc(e.id)+'">+ Oportunidade</button></div><div class="mini">Ofertas plausíveis (hipóteses, não necessidades confirmadas):</div><ul class="l">'+((e.ofertas||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')||'<li class="mini">nenhuma</li>')+'</ul>'+
+    (ops.length?'<div class="scroll"><table><thead><tr><th>Oportunidade</th><th>Etapa</th><th class="n">Estimado</th><th class="n">Prob.</th></tr></thead><tbody>'+ops.map(function(o){return '<tr class="cl" data-edit="opo:'+esc(o.id)+'"><td>'+esc(servNome(o.servicoId)||o.problema||'(sem serviço)')+'</td><td>'+esc(nomeEtapa(o.etapa))+'</td><td class="n">'+brl(num(o.vEst))+'</td><td class="n">'+Math.round(probOp(o)*100)+'%</td></tr>'}).join('')+'</tbody></table></div>':''),false);
+  h+=det('Tarefas e histórico',(ta.length?ta.length+' aberta(s)':''),
+    '<div class="row"><button class="btn sec" data-novo="tar:'+esc(e.id)+'">+ Tarefa</button></div>'+ta.map(function(t){return '<label class="item"><input type="checkbox" data-tar="'+esc(t.id)+'"><span>'+esc(t.titulo)+(t.data?' <span class="mini">· '+dBR(t.data)+'</span>':'')+'</span></label>'}).join('')+
+    (at.length?at.slice(0,25).map(function(a){return '<div class="item" style="flex-direction:column;gap:2px"><div><b>'+dBR(a.data)+'</b> <span class="tag">'+esc(a.tipo==='etapa'?'etapa':a.canal||'nota')+'</span></div>'+(a.msg?'<div class="mini">'+esc(a.msg)+'</div>':'')+(a.resp?'<div class="mini">↩ '+esc(a.resp)+'</div>':'')+(a.resultado?'<div class="mini">Resultado: '+esc(a.resultado)+'</div>':'')+(a.proxPasso?'<div class="mini">Próximo: '+esc(a.proxPasso)+(a.retorno?' ('+dBR(a.retorno)+')':'')+'</div>':'')+'</div>'}).join(''):'<div class="mini" style="margin-top:6px">Nenhum registro.</div>'),false);
+  h+=det('Pontuação '+sc.total+(sc.prov?' (provisória)':''),'',
+    Object.keys(sc.det).map(function(k){var d=sc.det[k];return '<div class="kv"><span>'+esc(PESO_NOME[k])+(d.manual?' <span class="tag">manual</span>':'')+'</span><b>'+d.v+' / '+d.w+'</b></div>'}).join('')+(e.scoreJust?'<div class="mini">Justificativa: '+esc(e.scoreJust)+'</div>':'')+
+    '<div class="row" style="margin-top:8px"><button class="btn sec" data-ajusta="'+esc(e.id)+'">Ajustar</button></div><div class="mini">Sem evidência, a nota fica baixa e provisória. Prioridade: <b>'+esc(PRIO[prioridade(e)])+'</b>.</div>',false);
+  var est=ESTRAT.filter(function(x){return x.id===estrategiaPara(e)})[0]||{nome:'Fora da estratégia atual',esforco:'—',quando:'Consultorias e software houses são intermediários. Você escolheu abordar direto as empresas que compram; o registro fica, fora da fila.'};
+  h+=det('Fontes e o que sabemos','',
+    kv('Unidades',esc(e.unidades||'não confirmado'),true)+kv('Porte',esc(e.porte||'desconhecido')+(e.porteBase?' ('+esc(e.porteBase)+')':''),true)+kv('Última verificação',e.verificadoEm?dBR(e.verificadoEm):'—',true)+
+    evid('Fato verificado',e.fatos,'ok')+evid('Indício',e.indicios,'amb')+
+    '<div class="mini" style="margin-top:8px"><b>Hipóteses comerciais</b> (validar em conversa)</div><ul class="l">'+((e.hipoteses||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')||'<li class="mini">nenhuma</li>')+'</ul>'+
+    (e.obs?'<div class="mini">Obs.: '+esc(e.obs)+'</div>':'')+
+    '<div class="mini" style="margin-top:8px"><b>Fontes</b></div><div class="mini">'+((e.fontes||[]).map(function(f){return '<a class="fonte" href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">'+esc(f.tipo||dominio(f.url))+' ↗</a>'}).join('')||'sem fontes registradas')+'</div>'+
+    '<div class="mini" style="margin-top:8px"><b>Estratégia sugerida:</b> '+esc(est.nome)+'. '+esc(est.quando)+'</div>',false);
   $('#empresas').innerHTML=h;
 }
 function kv(a,b,raw){return '<div class="kv"><span class="mini">'+esc(a)+'</span><b style="font-weight:500">'+(raw?b:esc(b))+'</b></div>'}
@@ -411,12 +566,13 @@ function perguntasPara(e){var t=norm((e.segmento||'')+(e.subsegmento||''));
   if(/posto|trr|combust/.test(t))return PERGUNTAS.posto;if(/distrib|atacad/.test(t))return PERGUNTAS.distribuicao;if(/log|transp/.test(t))return PERGUNTAS.logistica;
   if(/superm|varejo|farm|material/.test(t))return PERGUNTAS.varejo;if(/clin|labor|saud/.test(t))return PERGUNTAS.saude;if(/acad/.test(t))return PERGUNTAS.academia;return PERGUNTAS.padrao}
 function gerar(e,tipo){
-  var oferta=(e.ofertas||[])[0]||'automatizar a consolidação de relatórios e indicadores',
+  var dr0=dores(e).filter(function(x){return x.status!=='descartada'})[0],
+      oferta=(dr0&&dr0.texto)||(e.ofertas||[])[0]||'automatizar a consolidação de relatórios e indicadores',
       fato=(e.fatos||[])[0],ref=fato?(fato.texto||fato):(e.descricao||''),
       cidade=e.cidade||'região',nome=e.nome,
       contato=(e.contatosPublicos||[]).filter(function(c){return c.funcao})[0],dest=contato?(contato.nome||('responsável por '+contato.funcao)):'responsável';
   var ass='\n\n[Seu nome]\nEngenheiro de dados — automação e indicadores gerenciais\n[Seu contato]';
-  var perg=perguntasPara(e);
+  var perg=perguntasPara(e);if(dr0&&dr0.pergunta)perg=[dr0.pergunta].concat(perg);
   var T={
    whatsapp:'Olá! Sou engenheiro de dados e trabalho com automação de relatórios e integração de sistemas para empresas da região. Vi que a '+nome+' atua em '+cidade+(ref?' ('+resumo(ref)+')':'')+'. Quando uma operação assim cresce, muitas vezes os relatórios acabam dependendo de planilhas e trabalho manual — não sei se é o caso de vocês. Posso conversar 15 minutos com quem cuida da área '+(contato?'de '+contato.funcao:'administrativa/operacional')+' para entender como vocês fazem hoje? Sem compromisso.',
    email:'Assunto: Conversa rápida sobre relatórios e indicadores — '+nome+'\n\nOlá, '+dest+',\n\nSou engenheiro de dados e ajudo empresas a reduzir trabalho manual com relatórios, integração entre sistemas e indicadores de gestão. Pesquisei a '+nome+(ref?' e vi que '+resumo(ref):'')+'.\n\nCosturo uma hipótese que gostaria de validar com vocês (e que pode não se aplicar): '+oferta+'.\n\nTeriam 15 minutos nesta ou na próxima semana para eu entender a rotina atual? Se não for com você, agradeço se puder indicar a pessoa certa.'+ass,
@@ -474,7 +630,8 @@ function estrategiaPara(e){
 function rAbordagem(){
   var c=cfg(),horas=num(c.horasSem),hPros=horas*0.4,novos=Math.max(2,Math.floor(hPros/0.5));
   var h='<div class="aviso"><b>Princípio:</b> você não quer virar vendedor. Você escolheu abordar direto as empresas que compram, sem intermediários (indicações, parcerias, revendedores). A ideia é poucos contatos bem escolhidos, uma pergunta em vez de um discurso, e parar depois de um retorno. As estratégias estão ordenadas do menor para o maior esforço comercial.</div>';
-  h+='<div class="grid2"><div class="cartao"><h3>Ritmo sugerido</h3>'+kv('Horas por semana',esc(horas+' h'),true)+kv('Reservar para prospecção (~40%)',esc(hPros.toFixed(1)+' h'),true)+kv('Novos contatos por semana (~30 min cada)',esc(String(novos)),true)+
+  h+=cardMetodologia();
+  h+='<div class="grid2" style="margin-top:12px"><div class="cartao"><h3>Ritmo sugerido</h3>'+kv('Horas por semana',esc(horas+' h'),true)+kv('Reservar para prospecção (~40%)',esc(hPros.toFixed(1)+' h'),true)+kv('Novos contatos por semana (~30 min cada)',esc(String(novos)),true)+
    '<ul class="l"><li>1 h: pesquisar 2–3 empresas da fila.</li><li>1 h: revisar e enviar as mensagens que você aprovar.</li><li>30 min: retornos e registro de respostas.</li><li>O resto: entrega dos projetos em andamento.</li></ul><div class="mini" style="margin-top:6px">Se a ocupação passar de 80% (aba Capacidade), reduza novos contatos antes de aceitar projeto novo.</div></div>'+
    '<div class="cartao"><h3>Regra de cadência</h3><ul class="l"><li>Dia 0: primeira mensagem.</li><li>Dia 7: um único retorno.</li><li>Sem resposta: mover para "Em nutrição" e revisitar em 60–90 dias.</li><li>Respondeu "agora não": registrar o motivo e a data para voltar.</li></ul><div class="mini" style="margin-top:6px">Nada é enviado automaticamente: você revisa e envia.</div></div></div>';
   var cont={};S.emp.filter(function(e){return e.aderente!=='nao'}).forEach(function(e){var k=estrategiaPara(e);(cont[k]=cont[k]||[]).push(e)});
@@ -575,12 +732,17 @@ function abre(tipo,doc,pre){
   var Fm=F[tipo];atual={tipo:tipo,id:doc?doc.id:uid(),antes:doc?JSON.parse(JSON.stringify(doc)):null};var v=Object.assign({},Fm.vazio,doc||{},pre||{});
   var extra='';
   if(tipo==='emp')extra='<div class="full mini">Serviços sugeridos</div><div class="full row">'+Object.keys(CAT).map(function(k){return '<label style="flex-direction:row;gap:4px;align-items:center"><input type="checkbox" name="sv_'+k+'" '+((v.servicos||[]).indexOf(k)>=0?'checked':'')+' style="width:auto"> '+k+'</label>'}).join('')+'</div>';
-  frm.innerHTML='<h3 class="full">'+esc(Fm.titulo)+'</h3>'+Fm.campos.map(function(c){return campo(c,v)}).join('')+extra+
+  var ESS={emp:['nome','segmento','cidade','site','telefone','whatsapp','email'],opo:['empresaId','servicoId','etapa','vEst','horas','proxAcao']}[tipo],corpo;
+  if(ESS){var por={};Fm.campos.forEach(function(c){por[c[0]]=c});
+    corpo=ESS.map(function(k){return campo(por[k],v)}).join('')+'<details class="full"><summary>Mais campos (opcional)</summary><div class="f" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">'+Fm.campos.filter(function(c){return ESS.indexOf(c[0])<0}).map(function(c){return campo(c,v)}).join('')+extra+'</div></details>'}
+  else corpo=Fm.campos.map(function(c){return campo(c,v)}).join('')+extra;
+  frm.innerHTML='<h3 class="full">'+esc(Fm.titulo)+'</h3>'+corpo+
     '<div class="row full" style="margin-top:6px"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button><span class="sp"></span>'+(doc?'<button class="btn sec" type="button" id="apaga" style="color:var(--t-bad);border-color:var(--t-bad)">Apagar</button>':'')+'</div>';
   dlg.showModal();$('#cancela').onclick=function(){dlg.close()};
   if(doc)$('#apaga').onclick=function(){if(confirm('Apagar este item?')){del(Fm.col,doc.id);if(tipo==='emp'){S.sel=null}dlg.close()}};
 }
 frm.addEventListener('submit',function(ev){
+  if(atual.tipo==='pont'||atual.tipo==='dos'||atual.tipo==='dor')return;
   ev.preventDefault();var Fm=F[atual.tipo],d=Object.assign({},atual.antes||{});delete d.id;
   Fm.campos.forEach(function(c){d[c[0]]=(frm.elements[c[0]].value||'').trim()});
   if(d.site&&!urlOk(d.site)){alert('O site precisa começar com http:// ou https://');return}
@@ -620,6 +782,21 @@ frm.addEventListener('submit',function(ev){
   saveEmp(d);dlg.close();
 },true);
 
+frm.addEventListener('submit',function(ev){
+  if(!atual||(atual.tipo!=='dos'&&atual.tipo!=='dor'))return;
+  ev.preventDefault();ev.stopImmediatePropagation();
+  var e=emp(atual.id),d=Object.assign({},e);d.dossie=Object.assign({},e.dossie||{});
+  if(atual.tipo==='dos'){DOS_FORM.forEach(function(x){d.dossie[x[0]]=(frm.elements['d_'+x[0]].value||'').trim()});d.dossie.perguntas=(frm.elements.d_perguntas.value||'').split('\n').map(function(x){return x.trim()}).filter(Boolean);d.dossie.atualizado=hoje()}
+  else{
+    var f=frm.elements,o={texto:f.texto.value.trim(),status:f.status.value,cat:f.cat.value,evidencia:f.evidencia.value.trim(),fonte:f.fonte.value.trim(),impacto:f.impacto.value.trim(),pergunta:f.pergunta.value.trim()};
+    if(!o.texto){alert('Descreva a dor.');return}
+    if(o.fonte&&!urlOk(o.fonte)){alert('A fonte precisa ser um link completo (https://…).');return}
+    if(o.status==='confirmada'&&!o.evidencia){alert('Para marcar como confirmada pelo cliente, registre a evidência (o que foi dito, por quem e quando).');return}
+    var l=dores(e).slice();if(atual.idx>=0)l[atual.idx]=o;else l.push(o);d.dossie.dores=l;
+  }
+  saveEmp(d);dlg.close();
+},true);
+
 /* ---------- CSV ---------- */
 function csv(tipo){
   var rows,cols;
@@ -639,11 +816,16 @@ document.addEventListener('click',function(ev){
   if(t.tagName==='TR'&&d.edit){var p=d.edit.split(':');var L={opo:S.opo,emp:S.emp}[p[0]];abre(p[0],L.filter(function(x){return x.id===p[1]})[0]);return}
   if(t.tagName!=='BUTTON')return;
   if(d.q)responde(d.q);
-  else if(d.vis){S.vis=S.vis==='tabela'?'':'tabela';rPipeline()}
+  else if(d.vis){S.vis=d.vis;rPipeline()}
+  else if(d.outra){S.focoIdx=(S.focoIdx||0)+1;rPainel()}
+  else if(d.irtab){var bt=document.querySelector('[data-t='+d.irtab+']');if(bt)bt.click()}
   else if(d.voltar){S.sel=null;rEmpresas()}
   else if(d.novo){var pp=d.novo.split(':');if(pp[0]==='emp')abre('emp');else if(pp[1]){abrePre(pp[0],{empresaId:pp[1]})}else abre(pp[0])}
   else if(d.edit){var q=d.edit.split(':'),L2={emp:S.emp,con:S.con,opo:S.opo,srv:S.srv,tar:S.tar}[q[0]];abre(q[0],L2.filter(function(x){return x.id===q[1]})[0])}
   else if(d.ajusta)ajusta(emp(d.ajusta));
+  else if(d.dossie)abreDossie(emp(d.dossie));
+  else if(d.novador)abreDor(emp(d.novador),-1);
+  else if(d.dor){var dd=d.dor.split(':');abreDor(emp(dd[0]),+dd[1])}
   else if(d.gerar){var e=emp(d.gerar);S.msgTipo=$('#msgTipo').value;$('#msgOut').value=gerar(e,S.msgTipo)}
   else if(d.copiar){var o=$('#msgOut');o.select();try{navigator.clipboard.writeText(o.value)}catch(x){document.execCommand('copy')}}
   else if(d.regcontato){abrePre('ati',{empresaId:d.regcontato,data:hoje(),msg:($('#msgOut')||{}).value||''});var m=$('#frm').elements.msg;if(m&&!m.value)m.value=($('#msgOut')||{}).value||'';frm.elements.data.value=hoje()}
@@ -656,7 +838,7 @@ document.addEventListener('input',function(ev){var el=ev.target;if(el.dataset.f=
 document.addEventListener('change',function(ev){
   var el=ev.target,d=el.dataset;
   if(d.f){if(d.f==='ord')S.ord=el.value;else S.fil[d.f]=el.value;rEmpresas()}
-  else if(d.mover){var e=emp(d.mover),novo=el.value;if(e&&novo!==(e.etapa||'descoberta')){var j=(novo==='perdida'||novo==='nutricao'||novo==='ganha')?prompt('Justificativa (opcional):')||'':'';var a=nomeEtapa(e.etapa||'descoberta');e.etapa=novo;saveEmp(e);log(e.id,{tipo:'etapa',msg:a+' → '+nomeEtapa(novo)+(j?' — '+j:'')});rPipeline()}}
+  else if(d.mover){var e=emp(d.mover),novo=el.value;if(e&&novo!==(e.etapa||'descoberta')){if((novo==='pronta'||novo==='contato')&&prontidao(e).pct<80&&!confirm('O dossiê de dores desta empresa está em '+prontidao(e).pct+'% (mínimo 80%). Entender as dores antes de abordar. Mover mesmo assim?')){rPipeline();return}var j=(novo==='perdida'||novo==='nutricao'||novo==='ganha')?prompt('Justificativa (opcional):')||'':'';var a=nomeEtapa(e.etapa||'descoberta');e.etapa=novo;saveEmp(e);log(e.id,{tipo:'etapa',msg:a+' → '+nomeEtapa(novo)+(j?' — '+j:'')});rPipeline()}}
   else if(d.tar){var t=S.tar.filter(function(x){return x.id===d.tar})[0];if(t){t.feito=el.checked;var c=Object.assign({},t);delete c.id;save('neg_tarefas',t.id,c)}}
 });
 document.addEventListener('submit',function(ev){
@@ -669,10 +851,12 @@ document.addEventListener('submit',function(ev){
   if(!et.some(function(x){return x.id==='ganha'})||!et.some(function(x){return x.id==='perdida'})){alert('Mantenha as etapas "ganha" e "perdida".');return}
   c.etapas=et;S.cfg=c;saveCfg();alert('Configurações salvas.');renderAll();
 });
-$('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
-  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+function navClick(ev){var b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.t==='mais'){var n=$('#tabs2'),aberto=n.style.display!=='none';n.style.display=aberto?'none':'flex';b.setAttribute('aria-expanded',String(!aberto));return}
+  document.querySelectorAll('#tabs button,#tabs2 button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
   document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)});
-  if(b.dataset.t==='empresas'&&S.sel&&!emp(S.sel))S.sel=null});
+  if(b.dataset.t==='empresas'&&S.sel&&!emp(S.sel))S.sel=null}
+$('#tabs').addEventListener('click',navClick);$('#tabs2').addEventListener('click',navClick);
 
 /* ---------- dados ---------- */
 function lista(snap){return snap.docs.map(function(d){var o=d.data();o.id=d.id;return o})}
