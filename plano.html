@@ -214,10 +214,11 @@ details.calc summary{cursor:pointer;font-weight:600;min-height:44px;display:flex
     <div class="resumo" id="resumo" aria-live="polite"></div>
     <div class="tl" id="tl"></div>
     <div id="extras"></div>
+    <div id="cardio"></div>
     <p class="note">Arroz, feijão, macarrão, purê e carnes estão pesados <b>cozidos</b>; ao lado de cada um aparece o equivalente <b>cru</b> (aproximado). Calorias e macros são estimativas por tabela (TACO/USDA) e variam com o preparo e a marca. Toque nas opções de cada refeição para trocar: o total do dia se atualiza.</p>
     <p class="note">Doces e refeição livre não são proibidos e não precisam ser “compensados”.</p>
     <details class="calc"><summary>Como esta meta foi calculada</summary>
-    <div class="meta"><b>Ponto de partida:</b> homem, 69 kg, 1,73 m (IMC 23,1). <b>Objetivo:</b> perder a gordura que ganhou e ganhar músculo ao mesmo tempo. O plano fica em torno de <b>2.200 kcal</b> (cerca de 2.350 com uma sobremesa), uns 200 a 350 abaixo do seu gasto estimado (~2.550 kcal, calculado para 25 anos), com bastante proteína.</div>
+    <div class="meta"><b>Ponto de partida:</b> homem, 69 kg, 1,73 m (IMC 23,1). <b>Objetivo:</b> ganhar músculo e perder só um pouco mais de barriga. O plano fica em torno de <b>2.400 kcal</b> (cerca de 2.550 com uma sobremesa), uns 100 a 150 abaixo do seu gasto estimado (~2.550 kcal, calculado para 25 anos). Com o cardio na esteira (cerca de 200 kcal por sessão de corrida alternada) o déficit semanal fica perto de 200 kcal por dia. As calorias a mais ficam em volta do treino: leite no café, mais carboidrato no almoço e mais aveia na vitamina do pós-treino.</div>
     </details>
   </section>
 
@@ -264,12 +265,16 @@ details.calc summary{cursor:pointer;font-weight:600;min-height:44px;display:flex
 
   <section id="ajustes">
     <div class="card"><h3>Como ajustar sozinho</h3>
-      <p>Pese-se 2 ou 3 vezes por semana, de manhã, e olhe a <b>média da semana</b>, não o dia. Meça a cintura a cada 2 semanas.</p>
+      <p>Pese-se 2 ou 3 vezes por semana, de manhã, e olhe a <b>média da semana</b>, não o dia. Meça a cintura uma vez por semana, no mesmo dia.</p>
       <table class="tb"><tbody>
-      <tr><td>Peso caindo mais de 0,5 kg por semana, 2 semanas seguidas</td><td>Perda rápida demais: coloque o leite no café e 1 ovo na ceia</td></tr>
-      <tr><td>Peso e cintura parados por 3 semanas</td><td>Escolha o jantar “Lanche” ou tire o leite da vitamina</td></tr>
-      <tr><td>Cargas do treino caindo</td><td>Coma mais: coloque o queijo no hambúrguer e o leite no café</td></tr>
+      <tr><td>Peso caindo mais de 0,5 kg por semana, 2 semanas seguidas</td><td>Perda rápida demais: coloque 1 ovo na ceia e mais 50 g de arroz no jantar</td></tr>
+      <tr><td>Peso e cintura parados por 3 semanas</td><td>Aumente o cardio (3ª sessão ou 40 min) antes de cortar comida. Se ainda assim parar, tire o leite do café</td></tr>
+      <tr><td>Cargas do treino caindo</td><td>Coma mais: coloque o queijo no hambúrguer e mais 50 g de arroz no almoço</td></tr>
+      <tr><td>Cintura subindo mais de 1 cm em 3 a 4 semanas</td><td>Tire o leite do café e confira o que está fora do plano</td></tr>
       <tr><td>Peso estável ou caindo devagar, cintura menor, cargas subindo</td><td>Está funcionando: não mude nada</td></tr></tbody></table></div>
+    <div class="card"><h3>Cardio na esteira</h3>
+      <p><b>2 corridas por semana</b> de 30 min, alternando corrida a 9 km/h (1 a 2 min) com caminhada a 6 km/h (1 a 2 min), e <b>caminhada leve todo dia</b> (20 a 40 min ou 8 a 10 mil passos). Gasto aproximado, para 69 kg: corrida alternada ~200 a 240 kcal por 30 min; caminhada ~130 a 150 kcal por 30 min. São estimativas.</p>
+      <p>Faça depois da musculação ou em outro horário, nunca antes de treino de perna. Se doer canela ou joelho, troque a corrida por caminhada com 1 a 2% de inclinação. Depois de 2 a 3 semanas, se estiver tranquilo, suba para 3 corridas. Com mais cardio, some uns 100 kcal à comida. Marque no dia, em “Cardio”.</p></div>
     <div class="card"><h3>Refeição livre e bebida</h3><p>Registre no dia, em “Fora do plano”. Uma refeição livre pode valer como uma das 6 refeições e não quebra a sequência. Bebida entra como extra, só para você enxergar o dia inteiro.</p><p>Álcool tem 7 kcal por grama (quase como gordura) e pode piorar o sono e a recuperação do treino. Sem proibição: a média da semana é o que decide.</p></div>
     <div class="card"><h3>Farofa de ovos</h3>
       <p class="kc">4 ovos + 30 g de farinha de mandioca + 1 colher de chá de azeite/manteiga · ~460 kcal · 26 g P · 27 g G</p>
@@ -351,14 +356,14 @@ var IDEIAS=[
 
   var REF=[
    {h:'07:30',key:'cafe',n:'Café da manhã',ops:[
-     {n:'Ovos ou frango',obs:'Para adiantar a semana, os ovos podem ir ao forno em forminhas de muffin (180 °C, 15 min) e durar 3 dias. Confira o rótulo do seu Rap10: as calorias variam por marca.',it:[['3 unidades','Ovos mexidos ou cozidos',216,19,1,14,false,[['Ovos','3 unidades','Ovos mexidos ou cozidos',216,19,1,14],['Frango','100 g','Frango desfiado',160,31,0,4]]],['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2],['Cuscuz','50 g de flocão seco (≈ 125 g pronto)','Cuscuz de milho',175,4,37,1]]],['1 média (130 g)','Fruta (banana, maçã ou mamão)',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7,true]]}]},
+     {n:'Ovos ou frango',obs:'Para adiantar a semana, os ovos podem ir ao forno em forminhas de muffin (180 °C, 15 min) e durar 3 dias. Confira o rótulo do seu Rap10: as calorias variam por marca.',it:[['3 unidades','Ovos mexidos ou cozidos',216,19,1,14,false,[['Ovos','3 unidades','Ovos mexidos ou cozidos',216,19,1,14],['Frango','100 g','Frango desfiado',160,31,0,4]]],['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2],['Cuscuz','50 g de flocão seco (≈ 125 g pronto)','Cuscuz de milho',175,4,37,1]]],['1 média (130 g)','Fruta (banana, maçã ou mamão)',80,1,19,0],['200 ml','Leite zero lactose',122,6,10,7]]}]},
    {h:'10:00',key:'lanche1',n:'Lanche da manhã',ops:[
      {n:'Fruta + pão',it:[['1 média','Banana',90,1,23,0],['2 fatias (50 g)','Pão integral ou torrada',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral ou torrada',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2],['Magic Toast','1 pacote (6 unidades, 18 g)','Magic Toast Lev (doce)',66,1.5,14,0]]]]},
      {n:'Ovos + fruta',it:[['2 unidades','Ovos mexidos simples',144,13,1,10],['1 média','Banana',90,1,23,0]]}]},
-   {h:'12:00',key:'almoco',sobremesa:true,n:'Almoço',tag:'1 h antes do treino',ops:[{n:'Padrão',fj:1,obs:'Se o treino pesar no estômago, coma o carboidrato e a proteína primeiro e deixe a salada e a tangerina para depois. Purê: batata cozida amassada com um pouco de leite desnatado (de preferência zero lactose) e 1 colher de chá de manteiga. Outras proteínas e trocas: aba Trocas.',it:[['120 g','Arroz cozido',154,3,34,0,false,[['Arroz','120 g','Arroz cozido',154,3,34,0],['Purê','220 g','Purê de batata',198,4,33,6],['Macarrão','110 g','Macarrão cozido',174,6,34,1]],[['Arroz','170 g','Arroz cozido',218,4,48,0],['Purê','320 g','Purê de batata',288,6,48,9],['Macarrão','160 g','Macarrão cozido',253,9,49,1]]],['100 g','Feijão cozido',77,5,14,1,'on'],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0,'on'],['à vontade','Folhas',10,1,2,0,'on'],['1 unidade','Tangerina, depois',40,1,10,0,'on']]}]},
+   {h:'12:00',key:'almoco',sobremesa:true,n:'Almoço',tag:'1 h antes do treino',ops:[{n:'Padrão',fj:1,obs:'Se o treino pesar no estômago, coma o carboidrato e a proteína primeiro e deixe a salada e a tangerina para depois. Purê: batata cozida amassada com um pouco de leite desnatado (de preferência zero lactose) e 1 colher de chá de manteiga. Outras proteínas e trocas: aba Trocas.',it:[['150 g','Arroz cozido',193,4,42,0,false,[['Arroz','150 g','Arroz cozido',193,4,42,0],['Purê','275 g','Purê de batata',247,5,41,8],['Macarrão','140 g','Macarrão cozido',222,8,43,1]],[['Arroz','200 g','Arroz cozido',257,5,57,0],['Purê','370 g','Purê de batata',333,7,56,10],['Macarrão','190 g','Macarrão cozido',300,11,58,1]]],['100 g','Feijão cozido',77,5,14,1,'on'],['150 g','Proteína: frango, carne magra, peixe ou filé-mignon suíno',240,47,0,5],['100 g + 100 g','Cenoura e beterraba cozidas',79,3,18,0,'on'],['à vontade','Folhas',10,1,2,0,'on'],['1 unidade','Tangerina, depois',40,1,10,0,'on']]}]},
    {treino:'13:00',txt:'Treino',_h:{d:'13:00',n:'22:00'},_t:{d:'Treino',n:'Treino · você sai às 22:00 e volta perto da meia-noite'}},
    {h:'14:30',key:'pos',n:'Pós-treino',tag:'logo depois do treino',ops:[
-     {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['1 colher de sopa (15 g)','Aveia',55,2,9,1]]},
+     {n:'Vitamina',it:[['1 scoop (30 g)','Whey zero lactose',120,24,3,2],['200 ml','Leite zero lactose',122,6,10,7],['1 média','Banana',90,1,23,0],['2 colheres de sopa (30 g)','Aveia',110,4,18,2]]},
      {n:'Sorvete de morango (160 g)',obs:'Do lote que você já deixou pronto no freezer (400 g de morango, 2 scoops de whey e 180 ml de leite desnatado zero lactose, cerca de 640 g). Porção: 160 g, cerca de 108 kcal e 14 g de proteína; pese descontando a vasilha. Se a fome pedir mais, coma 320 g (metade do lote, cerca de 215 kcal e 28 g de proteína).',it:[['100 g','Morango congelado',32,0.8,7.8,0],['½ scoop (15 g)','Whey zero lactose',60,12,1,0.5],['45 ml','Leite desnatado zero lactose',16,1.5,2,0]]},
      {n:'Sanduíche',it:[['2 fatias (50 g)','Pão integral',120,6,22,2,false,[['Pão','2 fatias (50 g)','Pão integral',120,6,22,2],['Rap10','1 unidade (35 g)','Rap10 integral',100,3,18,2]]],['2 unidades','Ovos',144,13,1,10,false,[['Ovos','2 unidades','Ovos',144,13,1,10],['Frango ou suíno','80 g de frango ou 90 g de suíno','Frango ou suíno desfiado',130,25,0,3.5]]],['1 média','Fruta',80,1,19,0]]}],
      /* treino às 22h: sem liquidificador, para não fazer barulho em casa */
@@ -501,7 +506,7 @@ var IDEIAS=[
         lista(its,i)+compHtml(i,o)+(o.obs||r.obs?'<p class="obs">'+E(o.obs||r.obs)+'</p>':'')+(r.sobremesa?'<div class="sobr"><label>Sobremesa<select data-s="'+i+'"><option value="">Sem sobremesa</option>'+SOBREMESAS.map(function(x){var k=soma(x.it)[0];return '<option value="'+E(x.n)+'"'+(sb&&sb.n===x.n?' selected':'')+'>'+E(x.n)+' · '+Math.round(k)+' kcal</option>'}).join('')+'</select></label>'+(sb?lista(sb.it)+'<p class="obs">'+E(sb.obs)+'</p>':'<p class="obs">Escolha uma para matar a vontade de doce: todas cabem no plano (100 a 155 kcal).</p>')+'</div>':'')+'</div></div>';
     });
     document.getElementById('tl').innerHTML=h;
-    renderNav();renderAnalise(tot[0]);renderExtras();
+    renderNav();renderAnalise(tot[0]);renderExtras();renderCardio();
     document.getElementById('resumo').innerHTML='<div><b>'+Math.round(tot[0]).toLocaleString('pt-BR')+'</b><small>kcal</small></div><div><b>'+Math.round(tot[1])+' g</b><small>proteína</small></div><div><b>'+Math.round(tot[2])+' g</b><small>carbo</small></div><div><b>'+Math.round(tot[3])+' g</b><small>gordura</small></div>';
   }
   document.getElementById('tl').addEventListener('click',function(e){
@@ -634,6 +639,26 @@ var IDEIAS=[
       (ex.length?ex.map(function(x){return '<div class="exrow"><span>'+(x.tipo==='alcool'?'🍺 ':'🍽️ ')+E(x.nome)+'</span><b>'+Math.round(x.kcal)+' kcal</b><button type="button" class="b-x" data-exdel="'+E(x.id)+'" aria-label="Remover '+E(x.nome)+'">✕</button></div>'}).join(''):'')+
       '<div class="acoes-ex"><button type="button" class="mini-btn" data-ex="livre">＋ Refeição livre</button><button type="button" class="mini-btn" data-ex="alcool">＋ Bebida</button></div></div>';
   }
+  /* cardio: um documento por dia em "cardio" (corrida alternada e caminhada); meta semanal de 2 corridas e 5 caminhadas */
+  var cardio={},CARD_META={corrida:2,caminhada:5};
+  function semanaDe(k){var d=parseISO(k),dow=d.getDay()===0?6:d.getDay()-1,o=[];for(var i=0;i<7;i++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()-dow+i);o.push(x.getFullYear()+'-'+pad2(x.getMonth()+1)+'-'+pad2(x.getDate()))}return o}
+  function contaSemana(tipo){return semanaDe(diaSel).filter(function(k){return cardio[k]&&cardio[k][tipo]}).length}
+  function renderCardio(){
+    var c=cardio[diaSel]||{};
+    function linha(t,nome,det){var n=contaSemana(t);return '<div class="exrow"><span>'+nome+'<br><span class="mini">'+det+' · semana: '+n+' de '+CARD_META[t]+(n>=CARD_META[t]?' ✓':'')+'</span></span><button type="button" class="mini-btn" data-cd="'+t+'" aria-pressed="'+!!c[t]+'">'+(c[t]?'✓ Feita':'Fiz')+'</button></div>'}
+    document.getElementById('cardio').innerHTML='<div class="card"><h3>Cardio</h3><p class="mini" style="margin:0 0 8px">Marque quando fizer. Sem culpa em dia que não deu: a meta é da semana.</p>'+
+      linha('corrida','🏃 Corrida alternada','30 min · 9 km/h e 6 km/h')+linha('caminhada','🚶 Caminhada leve','20 a 40 min · ~6 km/h')+'</div>';
+  }
+  document.getElementById('cardio').addEventListener('click',function(e){
+    var b=e.target.closest('[data-cd]');if(!b)return;
+    var t=b.dataset.cd,k=diaSel,d=cardio[k]||{date:k};
+    if(d[t])delete d[t];else d[t]=true;
+    var vazio=!d.corrida&&!d.caminhada;
+    if(vazio)delete cardio[k];else cardio[k]=d;
+    renderCardio();
+    if(db){(vazio?db.doc('cardio/'+k).delete():db.doc('cardio/'+k).set(d)).catch(function(x){console.error('cardio não salvou',x)})}
+    if(d[t]&&contaSemana(t)===CARD_META[t])toast('Meta da semana batida: '+(t==='corrida'?'corridas':'caminhadas')+' 💪');
+  });
   function renderNav(){
     var h=hojeISO();document.getElementById('dLabel').innerHTML=(diaSel===h?'<b>Hoje</b> · ':'<b>')+rotuloDia(diaSel)+(diaSel===h?'':'</b>');
     document.getElementById('dNext').disabled=diaSel>=h;
@@ -821,6 +846,7 @@ var IDEIAS=[
     db=d;
     carregaCompras();
     db.collection('refeicoes').onSnapshot(function(sn){if(pend>0||Date.now()<bloqueioAte)return;reg={};sn.docs.forEach(function(d){var o=d.data();reg[o.date||d.id]=o});renderDia();renderDias();setTimeout(rolarAuto,150)});
+    db.collection('cardio').onSnapshot(function(sn){cardio={};sn.docs.forEach(function(d){var o=d.data();cardio[o.date||d.id]=o});renderCardio()});
     db.collection('medidas').onSnapshot(render,function(){st.textContent='erro ao carregar'});
     db.doc('plano_ideias/main').get().then(function(s){if(s.exists){votos=s.data().votos||{};renderIdeias();renderDia()}});
   });
