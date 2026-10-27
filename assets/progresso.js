@@ -140,7 +140,7 @@
   }
 
   /* ---------- Plano alimentar: refeições marcadas por dia ---------- */
-  var REF_N = 6, BOM_MIN = 4, PROT_META = 130; // 6 refeições no plano; "dia bom" = 4 ou mais; proteína mínima ≈ 1,9 g/kg
+  var REF_N = 6, BOM_MIN = 4, PROT_META = 150; // 6 refeições no plano; "dia bom" = 4 ou mais; proteína mínima ≈ 2,2 g/kg (foco em ganho de músculo)
   function refDia(r) {
     var f = (r && r.feitas) || {}, ks = Object.keys(f), k = 0, pr = 0, c = 0, g = 0, ek = 0, bebida = 0;
     ks.forEach(function (x) { k += num(f[x].kcal); pr += num(f[x].p); c += num(f[x].c); g += num(f[x].g); });
