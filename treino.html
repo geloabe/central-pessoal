@@ -615,17 +615,13 @@ const WORKOUTS = {
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HA1", name:"Flexão de braços (apoie os joelhos se precisar)", target:"4×8–15"},
         {id:"HA2", name:"Flexão com pés elevados (cadeira ou sofá)", target:"3×8–12"},
-        {id:"HA3", name:"Flexão diamante (mãos juntas)", target:"3×8–12"},
-        {id:"HA4", name:"Mergulho entre duas cadeiras (tríceps)", target:"3×10–15"},
+        {id:"HA8", name:"Flexão com cotovelos colados no corpo (tríceps)", target:"3×8–12"},
         {id:"HA5", name:"Flexão pike (quadril alto, foco no ombro)", target:"3×8–12"},
-        {id:"HA6", name:"Prancha com toque no ombro", target:"3×10/lado"},
-        {id:"HA7", name:"Superman em Y-T-W no chão (ombro posterior)", target:"3×10–12"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
-        {id:"HK1", name:"Elevação de pernas deitado (no fim, suba o quadril)", target:"3×12–15"},
-        {id:"HK6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
-        {id:"HK4", name:"Prancha (frontal)", target:"2×30–45s"},
-        {id:"HK5", name:"Dead bug (braço e perna opostos)", target:"3×10/lado"},
+        {id:"HK1", name:"Elevação de pernas deitado", target:"3×10–15"},
+        {id:"HK7", name:"Abdominal curto (só levanta os ombros)", target:"3×15–20"},
+        {id:"HK4", name:"Prancha (frontal)", target:"3×30–45s"},
       ]},
     ]
   },
@@ -633,11 +629,10 @@ const WORKOUTS = {
     label: "Treino B em casa — Quadríceps",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HB1", name:"Agachamento livre (descida lenta de 3 s)", target:"4×12–20"},
-        {id:"HB2", name:"Agachamento búlgaro (pé de trás no sofá)", target:"3×10–12/perna"},
-        {id:"HB3", name:"Afundo caminhando", target:"3×10–12/perna"},
+        {id:"HB1", name:"Agachamento livre", target:"4×12–20"},
+        {id:"HB7", name:"Afundo alternado no lugar", target:"3×10/perna"},
         {id:"HB4", name:"Cadeira invisível na parede", target:"3×30–45s"},
-        {id:"HB5", name:"Panturrilha em pé unilateral num degrau", target:"4×12–20/perna"},
+        {id:"HB6", name:"Panturrilha em pé (dois pés, no chão ou num degrau)", target:"4×15–25"},
       ]},
     ]
   },
@@ -645,17 +640,15 @@ const WORKOUTS = {
     label: "Treino C em casa — Costas, Bíceps & Antebraço",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HC1", name:"Remada invertida debaixo de uma mesa firme", target:"4×8–12"},
-        {id:"HC2", name:"Superman com pausa de 2 s", target:"3×12–15"},
-        {id:"HC3", name:"Rosca de bíceps com toalha (resistência com a outra mão)", target:"3×10–12/braço"},
-        {id:"HC4", name:"Remada unilateral apoiada na cadeira (opcional: mochila com livros)", target:"3×10–12/lado"},
+        {id:"HC6", name:"Remada curvada com mochila com livros", target:"4×10–15"},
+        {id:"HC2", name:"Superman (segure 2 s no topo)", target:"3×12–15"},
+        {id:"HC7", name:"Rosca de bíceps com mochila com livros", target:"3×10–15"},
         {id:"HC5", name:"Apertar e segurar a toalha (antebraço)", target:"3×20–30s"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
-        {id:"HK1", name:"Elevação de pernas deitado (no fim, suba o quadril)", target:"3×12–15"},
-        {id:"HK6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
-        {id:"HK4", name:"Prancha (frontal)", target:"2×30–45s"},
-        {id:"HK5", name:"Dead bug (braço e perna opostos)", target:"3×10/lado"},
+        {id:"HK1", name:"Elevação de pernas deitado", target:"3×10–15"},
+        {id:"HK7", name:"Abdominal curto (só levanta os ombros)", target:"3×15–20"},
+        {id:"HK4", name:"Prancha (frontal)", target:"3×30–45s"},
       ]},
     ]
   },
@@ -663,10 +656,9 @@ const WORKOUTS = {
     label: "Treino D em casa — Posterior de Coxa & Glúteo",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
+        {id:"HD7", name:"Ponte de glúteo no chão", target:"4×12–20"},
         {id:"HD1", name:"Ponte de glúteo unilateral", target:"3×10–12/perna"},
-        {id:"HD2", name:"Elevação pélvica com as costas apoiadas no sofá", target:"4×12–15"},
-        {id:"HD3", name:"Stiff unilateral sem peso", target:"3×10–12/perna"},
-        {id:"HD4", name:"Flexora deslizando (toalha ou meia no chão)", target:"3×8–12"},
+        {id:"HD8", name:"Stiff com mochila com livros", target:"3×12–15"},
         {id:"HD5", name:"Agachamento sumô com pausa", target:"3×15–20"},
         {id:"HD6", name:"Abdução de quadril deitado de lado", target:"3×15–20/lado"},
       ]},
@@ -676,16 +668,15 @@ const WORKOUTS = {
     label: "Bônus em casa — Braços, Peito, Panturrilha & Ombro",
     sections: [
       { title: "Bônus Braços", cls: "bonus", exercises: [
-        {id:"HX1", name:"Mergulho no sofá (tríceps)", target:"2×12–15"},
-        {id:"HX2", name:"Rosca de bíceps com toalha", target:"2×12–15/braço"},
+        {id:"HX7", name:"Flexão com cotovelos colados no corpo (tríceps)", target:"2×10–15"},
+        {id:"HX8", name:"Rosca de bíceps com mochila com livros", target:"2×12–15"},
       ]},
       { title: "Bônus Peito & Panturrilha", cls: "bonus", exercises: [
         {id:"HX3", name:"Flexão declinada (pés no sofá)", target:"2×10–15"},
-        {id:"HX4", name:"Panturrilha em pé unilateral num degrau", target:"2×15–20/perna"},
+        {id:"HX9", name:"Panturrilha em pé (dois pés, no chão ou num degrau)", target:"2×20–25"},
       ]},
       { title: "Bônus Ombro", cls: "bonus", exercises: [
         {id:"HX5", name:"Flexão pike", target:"3×8–12"},
-        {id:"HX6", name:"Superman em Y-T-W no chão", target:"2×12–15"},
       ]},
     ]
   },
@@ -696,15 +687,11 @@ const WORKOUTS = {
         {id:"HR1", name:"Polichinelo", target:"4×40s"},
         {id:"HR2", name:"Corrida parada com joelhos altos", target:"4×30s"},
         {id:"HR3", name:"Escalador (mountain climber)", target:"4×30s"},
-        {id:"HR4", name:"Agachamento com salto", target:"3×30s"},
-        {id:"HR5", name:"Burpee sem flexão", target:"3×30s"},
       ]},
       { title: "Baixo impacto (ritmo constante)", cls: "core", exercises: [
         {id:"HR6", name:"Marcha acelerada no lugar", target:"3×60s"},
         {id:"HR7", name:"Boxe no ar (sombra)", target:"4×60s"},
         {id:"HR8", name:"Passo lateral com toque", target:"3×60s"},
-        {id:"HR9", name:"Subir e descer um degrau", target:"3×60s"},
-        {id:"HR10", name:"Pular corda imaginária", target:"4×45s"},
       ]},
     ]
   },
@@ -729,8 +716,22 @@ function buildExerciseIndex() {
    ['C8', 'Crucifixo unilateral no cabo (crossover)', '2×15', 'C'], ['C9', 'Panturrilha em pé', '2×15–20', 'C'],
    ['D8', 'Elevação lateral', '3×15–20', 'D'], ['D9', 'Face pull / crucifixo invertido', '2×15–20', 'D'],
    ['CORE3', 'Rotação de tronco (russian twist)', '3×12/lado', 'A'], ['CORE4', 'Prancha lateral', '3×20–30s/lado', 'A'],
-   ['HK2', 'Rotação de tronco sentado (russian twist), sem peso', '3×12/lado', 'HA'], ['HK3', 'Prancha lateral', '3×20–30s/lado', 'HA']].forEach(l => {
-    if (!idx[l[0]]) idx[l[0]] = { name: l[1], treino: l[3], target: l[2] };
+   ['HK2', 'Rotação de tronco sentado (russian twist), sem peso', '3×12/lado', 'HA'], ['HK3', 'Prancha lateral', '3×20–30s/lado', 'HA'],
+   // treinos em casa simplificados (nov/2026): ficam só no histórico
+   ['HA3', 'Flexão diamante (mãos juntas)', '3×8–12', 'HA'], ['HA4', 'Mergulho entre duas cadeiras (tríceps)', '3×10–15', 'HA'],
+   ['HA6', 'Prancha com toque no ombro', '3×10/lado', 'HA'], ['HA7', 'Superman em Y-T-W no chão (ombro posterior)', '3×10–12', 'HA'],
+   ['HK5', 'Dead bug (braço e perna opostos)', '3×10/lado', 'HA'], ['HK6', 'Prancha lateral com elevação de quadril', '3×10–12/lado', 'HA'],
+   ['HB2', 'Agachamento búlgaro (pé de trás no sofá)', '3×10–12/perna', 'HB'], ['HB3', 'Afundo caminhando', '3×10–12/perna', 'HB'],
+   ['HB5', 'Panturrilha em pé unilateral num degrau', '4×12–20/perna', 'HB'],
+   ['HC1', 'Remada invertida debaixo de uma mesa firme', '4×8–12', 'HC'], ['HC3', 'Rosca de bíceps com toalha', '3×10–12/braço', 'HC'],
+   ['HC4', 'Remada unilateral apoiada na cadeira', '3×10–12/lado', 'HC'],
+   ['HD2', 'Elevação pélvica com as costas apoiadas no sofá', '4×12–15', 'HD'], ['HD3', 'Stiff unilateral sem peso', '3×10–12/perna', 'HD'],
+   ['HD4', 'Flexora deslizando (toalha ou meia no chão)', '3×8–12', 'HD'],
+   ['HX1', 'Mergulho no sofá (tríceps)', '2×12–15', 'HX'], ['HX2', 'Rosca de bíceps com toalha', '2×12–15/braço', 'HX'],
+   ['HX4', 'Panturrilha em pé unilateral num degrau', '2×15–20/perna', 'HX'], ['HX6', 'Superman em Y-T-W no chão', '2×12–15', 'HX'],
+   ['HR4', 'Agachamento com salto', '3×30s', 'HR'], ['HR5', 'Burpee sem flexão', '3×30s', 'HR'],
+   ['HR9', 'Subir e descer um degrau', '3×60s', 'HR'], ['HR10', 'Pular corda imaginária', '4×45s', 'HR']].forEach(l => {
+    if (!idx[l[0]]) idx[l[0]] = { name: l[1], treino: l[3], target: l[2], legacy: true };
   });
   return idx;
 }
@@ -778,8 +779,16 @@ const COMO = {
   HR9: { p: ['Escolha um degrau firme, de uns 15 a 20 cm. Fique de frente para ele.', 'Suba com um pé e depois o outro, ficando em pé no degrau.', 'Desça um pé de cada vez.', 'Troque o pé que sobe primeiro a cada série ou a cada 30 segundos.'], e: 'Apoie a mão na parede se sentir desequilíbrio. Suba o ritmo para ficar mais intenso.' },
   HR10: { p: ['Em pé, pés juntos e cotovelos perto do corpo, com as mãos como se segurassem uma corda.', 'Gire os pulsos como se girasse a corda.', 'Salte levemente, só um pouco do chão, na ponta dos pés.', 'Mantenha o ritmo constante, aterrissando suave.'], e: 'Mais leve: alterne um pé de cada vez, como se estivesse trotando.' }
 };
-COMO.HX1 = COMO.HA4; COMO.HX2 = COMO.HC3; COMO.HX3 = COMO.HA2;
-COMO.HX4 = COMO.HB5; COMO.HX5 = COMO.HA5; COMO.HX6 = COMO.HA7;
+COMO.HA8 = { p: ['Posição de flexão normal, mas com as mãos na largura dos ombros e os cotovelos apontando para trás, colados nas costelas.', 'Corpo em linha reta, barriga e glúteo firmes.', 'Desça até o peito quase tocar o chão, sem abrir os cotovelos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Muito difícil? Apoie os joelhos no chão.' };
+COMO.HK7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão.', 'Mãos ao lado da cabeça ou cruzadas no peito (não puxe o pescoço).', 'Levante só os ombros e a parte de cima das costas do chão, contraindo a barriga.', 'Desça devagar, sem relaxar de vez.'], e: 'Movimento curto. Olhe para o teto e solte o ar ao subir.' };
+COMO.HB6 = { p: ['Em pé, pés na largura do quadril, no chão ou com a ponta dos pés na borda de um degrau.', 'Se precisar, apoie a mão numa parede.', 'Suba na ponta dos pés o mais alto que conseguir e segure 1 segundo.', 'Desça devagar, até o calcanhar chegar embaixo.'], e: 'Mais difícil: faça com uma perna só.' };
+COMO.HB7 = { p: ['Em pé, dê um passo grande à frente com a perna direita.', 'Desça dobrando os dois joelhos até o de trás quase tocar o chão.', 'Suba empurrando o pé da frente, sem tirar os pés do lugar.', 'Faça todas as repetições de um lado e depois troque (ou alterne a cada repetição).'], e: 'Tronco reto. Se perder o equilíbrio, apoie a mão numa parede ou cadeira.' };
+COMO.HC6 = { p: ['Coloque livros numa mochila e segure pela alça de cima (ou abrace a mochila contra a barriga).', 'Pés na largura dos ombros, joelhos levemente dobrados, tronco inclinado para a frente com as costas retas.', 'Puxe a mochila em direção à barriga, levando os cotovelos para trás e juntando as escápulas.', 'Desça devagar, esticando os braços.'], e: 'Ajuste o peso: mais livros deixam mais difícil. Não arredonde as costas.' };
+COMO.HC7 = { p: ['Mochila com livros segurada pela alça, braço esticado ao lado do corpo (ou segure com as duas mãos).', 'Cotovelo colado na costela.', 'Dobre o cotovelo subindo a mochila até perto do ombro.', 'Desça devagar, até esticar o braço.'], e: 'Sem balançar o corpo. Faça os dois braços, um de cada vez.' };
+COMO.HD7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão, na largura do quadril.', 'Braços ao lado do corpo.', 'Empurre os calcanhares e suba o quadril até o corpo ficar em linha reta, dos ombros aos joelhos.', 'Aperte o glúteo no topo e desça devagar.'], e: 'Se sentir mais a lombar que o glúteo, suba menos e aperte o glúteo com força.' };
+COMO.HD8 = { p: ['Segure a mochila com livros na frente das coxas, com as duas mãos.', 'Pés na largura do quadril e joelhos levemente dobrados.', 'Empurre o quadril para trás e incline o tronco, deixando a mochila deslizar perto das pernas, com as costas retas.', 'Volte contraindo o glúteo e o posterior da coxa.'], e: 'Desça só até sentir o posterior da coxa esticar. Sem arredondar as costas.' };
+COMO.HX3 = COMO.HA2; COMO.HX5 = COMO.HA5;
+COMO.HX7 = COMO.HA8; COMO.HX8 = COMO.HC7; COMO.HX9 = COMO.HB6;
 function comoHTML(id) {
   const c = COMO[id];
   if (!c) return '';
@@ -1265,7 +1274,7 @@ function toggleDone(key, i) {
 function openSwap(key) {
   const t = T[currentTab], sl = slotOf(key);
   const usados = new Set(t.slots.map(x => x.id));
-  const opts = Object.entries(EX_INDEX).filter(([id, e]) => !usados.has(id) && isCasa(e.treino) === isCasa(currentTab))
+  const opts = Object.entries(EX_INDEX).filter(([id, e]) => !usados.has(id) && !(e.legacy && isCasa(e.treino)) && isCasa(e.treino) === isCasa(currentTab))
     .sort((a, b) => a[1].name.localeCompare(b[1].name, 'pt-BR'));
   const sel = document.getElementById('swapSel');
   sel.innerHTML = (sl.id !== sl.key ? `<option value="${sl.key}">↺ Voltar ao original: ${H(EX_INDEX[sl.key].name)}</option>` : '') +
