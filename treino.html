@@ -630,6 +630,7 @@ const WORKOUTS = {
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HB1", name:"Agachamento livre", target:"4×12–20"},
+        {id:"HB7", name:"Afundo parado (pés fixos, só desce e sobe)", target:"3×10–12/perna"},
         {id:"HB2", name:"Agachamento búlgaro (pé de trás no sofá)", target:"3×10–12/perna"},
         {id:"HB4", name:"Cadeira invisível na parede", target:"3×30–45s"},
         {id:"HB6", name:"Panturrilha em pé (dois pés, no chão ou num degrau)", target:"4×15–25"},
@@ -721,7 +722,7 @@ function buildExerciseIndex() {
    ['HA3', 'Flexão diamante (mãos juntas)', '3×8–12', 'HA'], ['HA4', 'Mergulho entre duas cadeiras (tríceps)', '3×10–15', 'HA'],
    ['HA6', 'Prancha com toque no ombro', '3×10/lado', 'HA'], ['HA7', 'Superman em Y-T-W no chão (ombro posterior)', '3×10–12', 'HA'],
    ['HK5', 'Dead bug (braço e perna opostos)', '3×10/lado', 'HA'], ['HK6', 'Prancha lateral com elevação de quadril', '3×10–12/lado', 'HA'],
-   ['HB7', 'Afundo alternado no lugar', '3×10/perna', 'HB'], ['HB3', 'Afundo caminhando', '3×10–12/perna', 'HB'],
+   ['HB3', 'Afundo caminhando', '3×10–12/perna', 'HB'],
    ['HB5', 'Panturrilha em pé unilateral num degrau', '4×12–20/perna', 'HB'],
    ['HC1', 'Remada invertida debaixo de uma mesa firme', '4×8–12', 'HC'], ['HC3', 'Rosca de bíceps com toalha', '3×10–12/braço', 'HC'],
    ['HC4', 'Remada unilateral apoiada na cadeira', '3×10–12/lado', 'HC'],
@@ -782,7 +783,7 @@ const COMO = {
 COMO.HA8 = { p: ['Posição de flexão normal, mas com as mãos na largura dos ombros e os cotovelos apontando para trás, colados nas costelas.', 'Corpo em linha reta, barriga e glúteo firmes.', 'Desça até o peito quase tocar o chão, sem abrir os cotovelos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Muito difícil? Apoie os joelhos no chão.' };
 COMO.HK7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão.', 'Mãos ao lado da cabeça ou cruzadas no peito (não puxe o pescoço).', 'Levante só os ombros e a parte de cima das costas do chão, contraindo a barriga.', 'Desça devagar, sem relaxar de vez.'], e: 'Movimento curto. Olhe para o teto e solte o ar ao subir.' };
 COMO.HB6 = { p: ['Em pé, pés na largura do quadril, no chão ou com a ponta dos pés na borda de um degrau.', 'Se precisar, apoie a mão numa parede.', 'Suba na ponta dos pés o mais alto que conseguir e segure 1 segundo.', 'Desça devagar, até o calcanhar chegar embaixo.'], e: 'Mais difícil: faça com uma perna só.' };
-COMO.HB7 = { p: ['Em pé, dê um passo grande à frente com a perna direita.', 'Desça dobrando os dois joelhos até o de trás quase tocar o chão.', 'Suba empurrando o pé da frente, sem tirar os pés do lugar.', 'Faça todas as repetições de um lado e depois troque (ou alterne a cada repetição).'], e: 'Tronco reto. Se perder o equilíbrio, apoie a mão numa parede ou cadeira.' };
+COMO.HB7 = { p: ['Em pé, dê um passo grande à frente e deixe os pés ali, sem mexer: um à frente, o outro atrás, na ponta do pé.', 'Desça reto para baixo, dobrando os dois joelhos, até o joelho de trás quase tocar o chão.', 'Suba reto, empurrando o pé da frente. Os pés não saem do lugar.', 'Faça todas as repetições de uma perna e troque o pé da frente.'], e: 'Tronco reto. Se perder o equilíbrio, apoie a mão numa parede ou cadeira.' };
 COMO.HC6 = { p: ['Coloque livros numa mochila e segure pela alça de cima (ou abrace a mochila contra a barriga).', 'Pés na largura dos ombros, joelhos levemente dobrados, tronco inclinado para a frente com as costas retas.', 'Puxe a mochila em direção à barriga, levando os cotovelos para trás e juntando as escápulas.', 'Desça devagar, esticando os braços.'], e: 'Ajuste o peso: mais livros deixam mais difícil. Não arredonde as costas.' };
 COMO.HC7 = { p: ['Mochila com livros segurada pela alça, braço esticado ao lado do corpo (ou segure com as duas mãos).', 'Cotovelo colado na costela.', 'Dobre o cotovelo subindo a mochila até perto do ombro.', 'Desça devagar, até esticar o braço.'], e: 'Sem balançar o corpo. Faça os dois braços, um de cada vez.' };
 COMO.HD7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão, na largura do quadril.', 'Braços ao lado do corpo.', 'Empurre os calcanhares e suba o quadril até o corpo ficar em linha reta, dos ombros aos joelhos.', 'Aperte o glúteo no topo e desça devagar.'], e: 'Se sentir mais a lombar que o glúteo, suba menos e aperte o glúteo com força.' };
