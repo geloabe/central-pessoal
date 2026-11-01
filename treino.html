@@ -684,15 +684,15 @@ const WORKOUTS = {
   HR: {
     label: "Cardio em casa",
     sections: [
-      { title: "Intervalado (esforço forte, 20 s de descanso)", cls: "bonus", exercises: [
-        {id:"HR1", name:"Polichinelo", target:"4×40s"},
-        {id:"HR2", name:"Corrida parada com joelhos altos", target:"4×30s"},
-        {id:"HR3", name:"Escalador (mountain climber)", target:"4×30s"},
+      { title: "Opção 1 · Contínuo, 27 min (ritmo em que ainda dá pra falar frases curtas). Faça em rodízio, sem parar: marcha → boxe → passo lateral, 3 voltas", cls: "core", exercises: [
+        {id:"HR6", name:"Marcha acelerada no lugar", target:"3×180s"},
+        {id:"HR7", name:"Boxe no ar (sombra)", target:"3×180s"},
+        {id:"HR8", name:"Passo lateral com toque", target:"3×180s"},
       ]},
-      { title: "Baixo impacto (ritmo constante)", cls: "core", exercises: [
-        {id:"HR6", name:"Marcha acelerada no lugar", target:"3×60s"},
-        {id:"HR7", name:"Boxe no ar (sombra)", target:"4×60s"},
-        {id:"HR8", name:"Passo lateral com toque", target:"3×60s"},
+      { title: "Opção 2 · Intervalado, 15 min (40 s forte + 20 s de descanso). Faça em rodízio: polichinelo → joelhos altos → escalador, 5 voltas", cls: "bonus", exercises: [
+        {id:"HR1", name:"Polichinelo", target:"5×40s"},
+        {id:"HR2", name:"Corrida parada com joelhos altos", target:"5×40s"},
+        {id:"HR3", name:"Escalador (mountain climber)", target:"5×40s"},
       ]},
     ]
   },
@@ -799,7 +799,7 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 // ===================== ESTADO =====================
 const WORKOUT_NAMES = { A: 'Peito · Ombro', B: 'Quadríceps', C: 'Costas · Bíceps', D: 'Posterior · Glúteo',
-  HA: 'Peito · Ombro', HB: 'Quadríceps', HC: 'Costas · Bíceps', HD: 'Posterior · Glúteo', HX: 'Braços · peito · ombro', HR: 'Intervalos · baixo impacto' };
+  HA: 'Peito · Ombro', HB: 'Quadríceps', HC: 'Costas · Bíceps', HD: 'Posterior · Glúteo', HX: 'Braços · peito · ombro', HR: 'Contínuo 27 min · intervalado 15 min' };
 let LOCAL = (function () { try { return localStorage.getItem('treino-local') === 'casa' ? 'casa' : 'academia'; } catch (e) { return 'academia'; } })();
 const isCasa = k => /^H/.test(k);
 const tabLetra = k => k === 'HX' ? 'Bônus' : k === 'HR' ? 'Cardio' : k.replace(/^H/, '');
