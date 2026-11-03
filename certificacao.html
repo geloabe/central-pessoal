@@ -91,12 +91,16 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
   <div id="topo"></div>
   <nav id="tabs" role="tablist">
     <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
+    <button role="tab" data-t="aulas" aria-selected="false">Aulas</button>
+    <button role="tab" data-t="revisar" aria-selected="false">Revisar</button>
     <button role="tab" data-t="plano" aria-selected="false">Plano</button>
     <button role="tab" data-t="topicos" aria-selected="false">Tópicos</button>
     <button role="tab" data-t="simulados" aria-selected="false">Simulados</button>
     <button role="tab" data-t="cola" aria-selected="false">Cola</button>
   </nav>
   <section id="hoje" class="on"></section>
+  <section id="aulas"></section>
+  <section id="revisar"></section>
   <section id="plano"></section>
   <section id="topicos"></section>
   <section id="simulados"></section>
@@ -106,10 +110,16 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 
 <script src="assets/progresso.js"></script>
 <script src="assets/cert.js"></script>
+<script src="assets/cert-estudo.js"></script>
+<script src="assets/cert/semana1.js"></script>
+<script src="assets/cert/semana2.js"></script>
+<script src="assets/cert/semana3.js"></script>
+<script src="assets/cert/semana4.js"></script>
+<script src="assets/cert-estudo-ui.js"></script>
 <script>
 (function(){
 'use strict';
-var K=window.CP_CERT, ref=null, C={};
+var K=window.CP_CERT, E=window.CP_ESTUDO, UI=window.CP_ESTUDO_UI, CONT=window.CP_CERT_CONTEUDO||{dias:{}}, ref=null, C={}, escrita=Promise.resolve(), ultimoSalvar=0;
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function hoje(){return new Date()}
@@ -120,10 +130,14 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function pct(a,b){return b?Math.round(a/b*100):0}
 function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
 
+/* Escritas em fila (uma de cada vez): o "update" lê e regrava o documento, então duas ao mesmo tempo poderiam apagar uma à outra. */
 function salvar(patch){
   Object.keys(patch).forEach(function(k){C[k]=patch[k]});
+  ultimoSalvar=Date.now();
   render();
-  return ref?ref.update(patch):Promise.resolve();
+  if(!ref)return Promise.resolve();
+  escrita=escrita.then(function(){return ref.update(patch)}).catch(function(e){console.error('falha ao salvar',e)}).then(function(){ultimoSalvar=Date.now()});
+  return escrita;
 }
 
 /* ---------- tarefas ---------- */
@@ -164,6 +178,7 @@ function hojeSec(e){
   var n=e.diaPlano,p=K.PLANO[n-1],tot=p.min,h='';
   if(e.comecaEm>0)h+='<div class="cartao"><div class="rotulo">Falta '+e.comecaEm+' dia'+(e.comecaEm>1?'s':'')+' para começar</div><p style="margin:8px 0 0">O plano começa em '+dmS(C.inicio)+'. Se quiser adiantar, o dia 1 já está liberado abaixo.</p></div>';
   if(e.encerrado)h+='<div class="cartao"><div class="rotulo">Plano concluído</div><p style="margin:8px 0 0">Os 29 dias já passaram. Use as abas Simulados e Cola até a prova'+(C.aprovada?'' :', e marque Aprovada em Ajustar quando acontecer')+'.</p></div>';
+  h+=estudoCard(e);
   h+='<div class="cartao"'+(e.comecaEm>0||e.encerrado?' style="margin-top:12px"':'')+'><div class="row"><span class="tag">DIA '+n+' DE '+K.N_DIAS+'</span><span class="mini">'+dataDoDia(n)+' · cerca de '+Math.round(tot/60*10)/10+' h</span></div>'+
     '<h2 style="margin:8px 0 4px">'+esc(p.t)+'</h2><div class="mini" style="margin-bottom:6px">'+esc(p.o)+'</div>'+
     e.tarefasHoje.map(function(t){return tarefa(t,t.feito)}).join('')+
@@ -200,9 +215,10 @@ function planoSec(e){
 /* ---------- tópicos ---------- */
 var NOTAS=['Não vi','Fraco','Ok','Dominado'];
 function topSec(){
-  var el=$('#topicos'),pr=K.prontidao(C.topicos),T=C.topicos||{},h='';
-  h+='<div class="cartao"><div class="rotulo">Prontidão pelos tópicos</div><div style="font:600 30px var(--f-titulo);margin-top:6px">'+pr.pct+'%</div>'+barra(pr.pct)+
-    '<div class="mini">Média das suas notas, ponderada pelo peso de cada seção na prova. Seja duro: 3 só se conseguir explicar para outra pessoa.</div></div>';
+  var el=$('#topicos'),pr=K.prontidao(C.topicos),T=C.topicos||{},h='',dm=E.dominio(CONT,C.srs);
+  h+='<div class="cartao"><div class="rotulo">Prontidão pelos tópicos</div><div class="row" style="align-items:baseline;gap:18px"><div><div style="font:600 30px var(--f-titulo);margin-top:6px">'+pr.pct+'%</div><div class="mini">sua autoavaliação</div></div>'+
+    '<div><div style="font:600 30px var(--f-titulo);margin-top:6px">'+(dm.geral==null?'—':dm.geral+'%')+'</div><div class="mini">desempenho medido'+(dm.geral==null?'':' ('+dm.cobertura+' de 5 seções)')+'</div></div></div>'+barra(pr.pct)+
+    '<div class="mini">A autoavaliação é a média das suas notas, ponderada pelo peso de cada seção. O desempenho medido vem das questões que você respondeu. Se os dois divergem, confie no medido.</div></div>';
   K.SECOES.forEach(function(s,i){
     var ps=pr.porSecao[i],ts=K.TOPICOS.filter(function(t){return t.s===s.id});
     h+='<details style="margin-top:12px"'+(i===0?' open':'')+'><summary><span style="flex:1">'+s.id+'. '+esc(s.nome)+'</span><span class="mini">'+s.peso+'% da prova · '+ps.pct+'%</span></summary><div class="corpo">'+barra(ps.pct)+
@@ -210,7 +226,7 @@ function topSec(){
         var v=T[t.id];
         return '<div class="top-lin"><div class="nm"><b>'+t.id+'</b>'+esc(t.nome)+'</div><div class="nota" role="group" aria-label="Nota do tópico '+t.id+'">'+
           NOTAS.map(function(nm,k){return '<button type="button" data-top="'+t.id+'|'+k+'" aria-pressed="'+(v===k)+'">'+nm+'</button>'}).join('')+'</div>'+
-          '<div class="mini" style="margin-top:6px">Dias do plano: '+t.d.join(', ')+'</div></div>';
+          '<div class="mini" style="margin-top:6px">Dias do plano: '+t.d.join(', ')+(dm.porTopico[t.id].resp?' · desempenho medido: '+dm.porTopico[t.id].pct+'% em '+dm.porTopico[t.id].resp+' questões':'')+'</div></div>';
       }).join('')+'</div></details>';
   });
   el.innerHTML=h;
@@ -226,7 +242,11 @@ function simSec(){
     (st.n?'<div class="row" style="margin-top:6px"><div style="font:600 30px var(--f-titulo)">'+(st.media==null?'—':st.media+'%')+'</div>'+zona+'</div><div class="mini">'+(st.media==null?'Faça um simulado completo para ter a média.':'Média dos últimos 2 simulados completos · melhor nota '+st.melhor+'%')+
       (st.maisFraca?' · seção que mais derrubou: '+st.maisFraca+'. '+esc(K.SECOES[st.maisFraca-1].nome):'')+'</div>':'<div class="mini" style="margin-top:6px">Nenhum simulado registrado ainda. O primeiro está no dia 12.</div>')+
     '<div class="mini" style="margin-top:8px">O Google não divulga a nota de corte. Como referência prática: entre na prova com 80% ou mais nos completos. Entre 70% e 80%, vale mais uma semana.</div></div>';
-  h+='<div class="cartao"><h3 style="margin-bottom:10px">Registrar simulado</h3><form class="f" id="fsim">'+
+  var bq=E.banco(CONT),srs=C.srs||{},vistas=bq.filter(function(q){return srs[q.id]}).length;
+  h+='<div class="cartao"><h3 style="margin-bottom:6px">Simulado no app</h3><p class="mini" style="margin:0 0 10px">Monta a prova a partir do banco, na proporção dos pesos oficiais (22/25/20/15/18%), com cronômetro e sem feedback até o fim. Dá prioridade a questões que você ainda não viu e às que errou. Banco: '+bq.length+' questões ('+vistas+' já vistas). Só entram os dias que você já alcançou no plano.</p>'+
+    '<div class="row">'+btn('Completo: 50 questões, 2 h','sim','','completo')+btn('Parcial: 30 questões, 1 h','sim','','parcial',true)+'</div>'+
+    '<div class="row" style="margin-top:8px"><select id="ssec" style="flex:1;min-height:46px;font:inherit;font-size:16px;padding:0 8px">'+K.SECOES.map(function(s){return '<option value="'+s.id+'">'+s.id+'. '+esc(s.nome)+'</option>'}).join('')+'</select>'+btn('Mini: 20 questões','simsec','','',true)+'</div></div>';
+  h+='<div class="cartao"><h3 style="margin-bottom:10px">Registrar simulado externo</h3><form class="f" id="fsim">'+
     '<label>Tipo<select name="tipo" id="stipo"><option value="completo">Completo</option><option value="parcial">Parcial</option></select></label>'+
     '<label>Data<input type="date" name="data" value="'+K.iso(hoje())+'" required></label>'+
     '<label>Acertos<input name="acertos" type="number" inputmode="numeric" min="0" required></label>'+
@@ -252,13 +272,80 @@ function colaSec(){
   h+='<div class="cola" style="margin-top:12px">'+K.COLA.map(function(g,i){
     return '<details'+(i===0?' open':'')+'><summary style="font-weight:600">'+esc(g.t)+'</summary><div class="corpo"><ul>'+g.i.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></details>';
   }).join('')+'</div>';
-  h+='<div class="cartao" style="margin-top:12px"><h3 style="margin-bottom:6px">Recursos oficiais</h3><div class="lista">'+K.RECURSOS.map(function(r){return '<a href="'+esc(r[1])+'" target="_blank" rel="noopener noreferrer">'+esc(r[0])+'</a>'}).join('')+'</div></div>';
+  h+='<div class="cartao" style="margin-top:12px"><div class="rotulo">Materiais complementares</div><p class="mini" style="margin:6px 0 0">Ordem de uso: base oficial e labs, o banco de questões do app, UM banco pago de simulados e livros só para aprofundar. Mais material não significa mais aprendizado.</p></div>'+K.MATERIAIS.map(function(g,i){
+    return '<details style="margin-top:8px"'+(i===0?' open':'')+'><summary style="font-weight:600">'+esc(g.t)+'</summary><div class="corpo"><p class="mini" style="margin:0 0 6px">'+esc(g.n||'')+'</p>'+g.i.map(function(x){return '<div style="padding:10px 0;border-top:1px solid var(--t-line)"><a href="'+esc(x[1])+'" target="_blank" rel="noopener noreferrer" style="color:var(--t-accent);word-break:break-word;font-weight:600">'+esc(x[0])+'</a><div class="mini" style="margin-top:2px">'+esc(x[2])+'</div></div>'}).join('')+'</div></details>';
+  }).join('');
   $('#cola').innerHTML=h;
+}
+
+/* ---------- estudo guiado (aulas, cartões, quiz, lab) ---------- */
+function btn(txt,est,n,a,sec){return '<button class="btn'+(sec?' sec':'')+'" data-est="'+est+'" data-n="'+(n||'')+'" data-a="'+(a||'')+'" style="min-height:46px;font-size:15px">'+esc(txt)+'</button>'}
+var ESPECIAIS={7:['secao',3,'Mini-simulado de armazenamento e BigQuery (20 questões)'],12:['completo',0,'Simulado completo 1: 50 questões em 2 h'],14:['secao',2,'Mini-simulado de ingestão e processamento (20 questões)'],
+  21:['secao',1,'Mini-simulado de projeto de sistemas (20 questões)'],25:['completo',0,'Simulado completo 2: 50 questões em 2 h'],27:['parcial',0,'Simulado parcial: 30 questões em 60 min']};
+function estudoCard(e){
+  var n=e.diaPlano,pa=E.passosDoDia(C,CONT,n),f=E.filaCartoes(CONT,C.srs,hoje(),n,{maxNovos:0}),qd=E.questoesDevidas(CONT,C.srs,hoje(),n).length,er=E.cadernoErros(CONT,C.srs).length,h='';
+  h+='<div class="cartao" style="margin-top:12px"><div class="rotulo">Estudo guiado · dia '+n+'</div><h2 style="margin:6px 0 2px">'+esc(K.PLANO[n-1].t)+'</h2>';
+  if(pa){
+    var d=CONT.dias[n],nc=pa.cartoesTotal,nq=pa.quizTotal;
+    var passos=[
+      {ok:pa.aula,tit:'Ler a aula',desc:'Um bloco por vez, com um resumo simples antes de cada parte técnica.',min:UI.minutosAula(n),est:'aula',rot:pa.aula?'Reler a aula':'Começar a aula'},
+      {ok:pa.cartoes,tit:'Cartões do dia',desc:pa.cartoesVistos+' de '+nc+' vistos. A revisão espaçada traz de volta o que você esquece.',min:Math.max(3,Math.round(nc*0.6)),est:'cart',rot:'Estudar cartões'},
+      {ok:pa.quiz,tit:'Quiz do dia (meta 80%)',desc:pa.quizPct==null?nq+' questões no formato da prova, com explicação de cada alternativa.':'Melhor nota: '+pa.quizPct+'%. Os erros viram revisão.',min:Math.round(nq*1.5),est:'quiz',rot:pa.quizPct==null?'Começar o quiz':'Refazer o quiz'}
+    ];
+    if(pa.lab!==null)passos.push({ok:pa.lab,tit:'Lab prático',desc:'Passo a passo com custo estimado, erros comuns e limpeza no final.',min:parseInt((d.lab&&d.lab.tempo)||'30',10)||30,est:'lab',rot:'Abrir o lab'});
+    passos.push({ok:pa.explique,tit:'Explicar com suas palavras',desc:'No final da aula. Se não consegue explicar, ainda não aprendeu.',min:5,est:'aula',rot:'Escrever'});
+    var feitos=passos.filter(function(x){return x.ok}).length,prox=passos.filter(function(x){return !x.ok})[0];
+    h+='<div class="mini" style="margin:4px 0 4px">'+feitos+' de '+passos.length+' passos feitos hoje</div>'+barra(Math.round(feitos/passos.length*100));
+    if(prox)h+='<div style="margin-top:12px;padding:14px;border:2px solid var(--m);background:color-mix(in srgb,var(--m) 8%,var(--t-surface))"><div class="rotulo">Próximo passo</div><div style="font:600 21px var(--f-titulo);margin:6px 0 2px">'+esc(prox.tit)+'</div><div class="mini" style="margin-bottom:10px">Cerca de '+prox.min+' min · '+esc(prox.desc)+'</div>'+btn(prox.rot,prox.est,n,'',false).replace('min-height:46px;font-size:15px','min-height:54px;font-size:17px;width:100%')+'</div>';
+    else h+='<div class="ok-msg" style="margin-top:12px">Tudo feito por hoje. O resto é bônus.</div>';
+    h+='<details style="margin-top:12px"><summary>Ver todos os passos do dia</summary><div class="corpo">'+passos.map(function(x,i){return '<div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--t-line)"><div style="flex:none;width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--t-borda);font:600 13px var(--f-mono);'+(x.ok?'background:var(--t-ok);border-color:var(--t-ok);color:#fff':'')+'">'+(x.ok?'✓':(i+1))+'</div><div style="flex:1;min-width:0"><b>'+esc(x.tit)+'</b><div class="mini" style="margin:2px 0 8px">~'+x.min+' min · '+esc(x.desc)+'</div>'+btn(x.rot,x.est,n,'',true)+'</div></div>'}).join('')+'</div></details>';
+    h+=pa.dominado?'<div class="ok-msg" style="margin-top:8px">Dia dominado: aula, cartões e quiz com 80% ou mais.</div>':'<div class="mini" style="margin-top:8px">O dia fica dominado com aula lida, todos os cartões vistos e quiz com 80% ou mais. Sem pressa: a segunda rodada nos erros costuma fechar.</div>';
+  }else{
+    var esp=ESPECIAIS[n];
+    if(esp)h+='<p style="margin:8px 0">'+esc(esp[2])+'. As questões vêm do banco dos dias que você já estudou, sem feedback até o fim, como na prova.</p><div class="row">'+btn(esp[0]==='completo'?'Começar o simulado':'Começar','sim',n,esp[0]+(esp[1]?'|'+esp[1]:''))+'</div>';
+    else if(n===24)h+='<p style="margin:8px 0">Dia de pontos fracos. O quiz abaixo junta as questões dos seus 3 tópicos de menor desempenho.</p><div class="row">'+btn('Treinar tópicos fracos','fracos')+'</div>';
+    else if(n===26)h+='<p style="margin:8px 0">Dia de reforço. Comece pelo caderno de erros.</p><div class="row">'+btn('Abrir o caderno de erros ('+er+')','erros')+'</div>';
+    else h+='<p class="mini" style="margin:8px 0">Hoje não há aula nova. Use as revisões abaixo e o checklist do dia.</p>';
+  }
+  if(f.devidos.length||qd||er){
+    h+='<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--t-line)"><div class="rotulo" style="margin-bottom:8px">Revisões que venceram</div><div class="row">'+
+      (f.devidos.length?btn('Cartões ('+f.devidos.length+')','cartrev'):'')+(qd?btn('Questões ('+qd+')','revisao','',''):'')+(er?btn('Caderno de erros ('+er+')','erros','','',true):'')+'</div></div>';
+  }
+  return h+'</div>';
+}
+
+function aulasSec(e){
+  var dp=e.ativo?e.diaPlano:1,h='',semanas=[[1,7],[8,14],[15,21],[22,28]];
+  if(!Object.keys(CONT.dias).length){$('#aulas').innerHTML='<div class="cartao">O conteúdo das aulas ainda não foi carregado. Recarregue a página.</div>';return}
+  h+='<div class="cartao"><div class="rotulo">Aulas</div><p class="mini" style="margin:6px 0 0">Cada dia tem aula completa, cartões, quiz e, quando faz sentido, um lab. Os dias à frente ficam liberados para quem quiser adiantar.</p></div>';
+  semanas.forEach(function(w,wi){
+    var itens='',dom=0,tot=0;
+    for(var n=w[0];n<=w[1];n++){
+      var d=CONT.dias[n];if(!d)continue;tot++;var pa=E.passosDoDia(C,CONT,n);if(pa.dominado)dom++;
+      itens+='<details class="dia"'+(n===dp?' open':'')+'><summary><span class="tag'+(pa.dominado?' ok':'')+'">DIA '+n+'</span><span style="flex:1;min-width:0">'+esc(d.aula.titulo)+'</span></summary><div class="corpo">'+
+        '<div class="mini" style="margin-bottom:8px">'+(pa.aula?'Aula lida · ':'')+'Cartões '+pa.cartoesVistos+'/'+pa.cartoesTotal+' · Quiz '+(pa.quizPct==null?'não feito':pa.quizPct+'%')+(pa.lab===null?'':' · Lab '+(pa.lab?'feito':'pendente'))+'</div>'+
+        '<div class="row">'+btn('Aula','aula',n)+btn('Cartões','cart',n,'',true)+btn('Quiz','quiz',n,'',true)+(pa.lab!==null?btn('Lab','lab',n,'',true):'')+'</div></div></details>';
+    }
+    if(tot)h+='<details class="sem"'+(dp>=w[0]&&dp<=w[1]?' open':'')+' style="margin-top:12px"><summary><span style="flex:1">Semana '+(wi+1)+'</span><span class="mini">'+dom+' de '+tot+' dominados</span></summary><div class="corpo">'+itens+'</div></details>';
+  });
+  $('#aulas').innerHTML=h;
+}
+
+function revisarSec(e){
+  var dp=e.ativo?e.diaPlano:1,f=E.filaCartoes(CONT,C.srs,hoje(),dp,{maxNovos:15}),qd=E.questoesDevidas(CONT,C.srs,hoje(),dp).length,er=E.cadernoErros(CONT,C.srs).length,dm=E.dominio(CONT,C.srs),h='';
+  var srs=C.srs||{},dom=Object.keys(srs).filter(function(k){return srs[k].b>=3}).length;
+  h+='<div class="cartao"><div class="rotulo">Revisão espaçada</div><p class="mini" style="margin:6px 0 10px">O que você erra volta amanhã; o que acerta volta em 1, 3, 7, 14 e 30 dias. É isso que fixa o conteúdo na memória de longo prazo.</p>'+
+    '<div class="stats"><div><div class="rotulo">Cartões</div><div class="big" style="font:600 26px var(--f-titulo)">'+f.devidos.length+'</div><small>vencidos</small></div><div><div class="rotulo">Questões</div><div class="big" style="font:600 26px var(--f-titulo)">'+qd+'</div><small>para rever</small></div><div><div class="rotulo">Erros</div><div class="big" style="font:600 26px var(--f-titulo)">'+er+'</div><small>no caderno</small></div></div>'+
+    '<div class="row" style="margin-top:10px">'+btn('Cartões ('+(f.devidos.length+f.novos.length)+')','cartrev')+btn('Questões ('+qd+')','revisao','','',true)+btn('Caderno de erros ('+er+')','erros','','',true)+'</div>'+
+    '<div class="mini" style="margin-top:10px">Itens já consolidados (3ª caixa ou mais): '+dom+'.</div></div>';
+  var tops=K.TOPICOS.filter(function(t){return dm.porTopico[t.id].resp>0}).sort(function(a,b){return dm.porTopico[a.id].pct-dm.porTopico[b.id].pct});
+  h+='<div class="cartao"><h3 style="margin-bottom:6px">Desempenho por tópico</h3>'+(tops.length?tops.map(function(t){var p=dm.porTopico[t.id];return '<div class="sim" style="align-items:flex-start"><div class="pc" style="min-width:56px">'+p.pct+'%</div><div style="flex:1;min-width:0"><div style="font-size:14px"><b style="font-family:var(--f-mono);font-size:12px;color:var(--t-muted)">'+t.id+'</b> '+esc(t.nome.split(':')[0])+'</div><div class="mini">'+p.ok+' de '+p.resp+' respostas certas · '+p.total+' questões no banco</div></div>'+btn('Treinar','topico','',t.id,true)+'</div>'}).join(''):'<div class="mini">Faça o primeiro quiz para ver seu desempenho por tópico.</div>')+'</div>';
+  $('#revisar').innerHTML=h;
 }
 
 function render(){
   var e=K.estado(C,hoje());
-  topo(e);hojeSec(e);planoSec(e);topSec();simSec();
+  topo(e);hojeSec(e);aulasSec(e);revisarSec(e);planoSec(e);topSec();simSec();
 }
 
 /* ---------- eventos ---------- */
@@ -291,6 +378,15 @@ document.addEventListener('change',function(ev){
 });
 document.addEventListener('click',function(ev){
   var b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.est){
+    var k=b.dataset.est,a=b.dataset.a,n=+b.dataset.n;
+    if(k==='aula')UI.abrirAula(n);else if(k==='cart')UI.abrirCartoes('dia',n);else if(k==='cartrev')UI.abrirCartoes('rev');
+    else if(k==='quiz')UI.abrirQuiz('dia',n);else if(k==='lab')UI.abrirLab(n);else if(k==='revisao')UI.abrirQuiz('revisao');
+    else if(k==='erros')UI.abrirQuiz('erros');else if(k==='fracos')UI.abrirQuiz('fracos');else if(k==='topico')UI.abrirQuiz('topico',a);
+    else if(k==='sim'){var p=String(a).split('|');UI.simulado(p[0],+p[1]||undefined)}
+    else if(k==='simsec'){UI.simulado('secao',+$('#ssec').value)}
+    return;
+  }
   if(b.dataset.tar){salvar({feitas:K.alternar(C,b.dataset.tar,hoje())})}
   else if(b.dataset.top){var p=b.dataset.top.split('|'),T=Object.assign({},C.topicos||{});T[p[0]]=+p[1];salvar({topicos:T})}
   else if(b.dataset.cfg){ajustes()}
@@ -301,10 +397,12 @@ $('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button
   $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
   document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
 
+UI.init({obter:function(){return C},salvar:salvar,hoje:hoje,aoFechar:render});
 colaSec();render();
 claude.use('db').then(function(d){
   ref=d.doc('cert/main');
-  ref.onSnapshot(function(s){C=s.exists?(s.data()||{}):{};render()});
+  /* Ignora ecos do próprio banco logo após uma escrita nossa, para não pisar no que acabou de ser respondido. */
+  ref.onSnapshot(function(s){if(UI.ocupado()||Date.now()-ultimoSalvar<2500)return;C=s.exists?(s.data()||{}):{};render()});
 });
 })();
 </script>

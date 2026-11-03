@@ -311,6 +311,55 @@
     ['Documentação do Google Cloud', 'https://cloud.google.com/docs']
   ];
 
+  /* Materiais complementares. Ordem de uso sugerida: documentação e labs oficiais, banco de questões do app, UM banco pago de simulados e livros só para aprofundar. */
+  var MATERIAIS = [
+    { t: 'Base oficial (gratuito)', n: 'Comece por aqui. É o que a prova realmente cobra.', i: [
+      ['Guia do exame v4.2 (PDF)', 'https://services.google.com/fh/files/misc/professional_data_engineer_exam_guide_english.pdf', 'Lista os 19 tópicos e os pesos. Use como índice do que você precisa saber.'],
+      ['Trilha oficial no Cloud Skills Boost', 'https://www.cloudskillsboost.google/paths/16', 'Cursos e labs guiados do Google. Os labs rodam em ambiente temporário, sem custo no seu projeto.'],
+      ['Questões de exemplo oficiais', 'https://docs.google.com/forms/d/e/1FAIpQLSfkWEzBCP0wQ09ZuFm7G2_4qtkYbfmk_0getojdnPdCYmq37Q/viewform', 'O formato mais fiel da prova. Faça no dia 1 e de novo na semana 4.'],
+      ['Architecture Center', 'https://cloud.google.com/architecture', 'Arquiteturas de referência. Ótimo para treinar questões de cenário.'],
+      ['Well-Architected Framework', 'https://cloud.google.com/architecture/framework', 'Princípios de confiabilidade, custo, segurança e operação que as questões assumem.'],
+      ['Nível gratuito e créditos', 'https://cloud.google.com/free', 'Veja o que é grátis antes de abrir o projeto dos labs.']
+    ] },
+    { t: 'Cursos (pagos ou parcialmente pagos)', n: 'Úteis se você aprende melhor com vídeo. Não são obrigatórios.', i: [
+      ['Coursera: Preparing for Google Cloud Certification: Cloud Data Engineer', 'https://www.coursera.org/professional-certificates/gcp-data-engineering', 'Série de 5 cursos feita pelo Google, com labs. A taxa da prova não está incluída. Confira o idioma e se acompanha o guia atual.']
+    ] },
+    { t: 'Simulados extras (pagos ou gratuitos)', n: 'Escolha só UM banco externo para não se dispersar. Confira se foi atualizado para o guia v4.2 (BigLake, Dataplex, BigQuery ML, RAG).', i: [
+      ['Udemy: Google Cloud Professional Data Engineer Practice Tests', 'https://www.udemy.com/course/slg-google-cloud-professional-data-engineer-practice-tests/', 'Simulados de 50 questões. Verifique a data da última atualização e as avaliações antes de comprar.'],
+      ['GitHub (comunidade): materiais gratuitos de 2026', 'https://github.com/aseemmankotia/course-google-cloud-professional-data-engineer-2026', 'Cartões e simulados gratuitos. Não verifiquei a qualidade: trate como complemento e desconfie de gabarito sem explicação.']
+    ] },
+    { t: 'Leituras para entender a fundo', n: 'Não são específicas da prova, mas fazem os conceitos grudarem.', i: [
+      ['Livro: Official Google Cloud Certified Professional Data Engineer Study Guide (Wiley)', 'https://www.wiley.com/en-us/Official+Google+Cloud+Certified+Professional+Data+Engineer+Study+Guide-p-00043099', 'Referência completa, mas é de uma versão anterior da prova: use para conceitos, e o guia v4.2 para saber o que cai.'],
+      ['Artigo: The world beyond batch, Streaming 101 (Tyler Akidau)', 'https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/', 'A melhor explicação de tempo de evento, janelas e watermark. Leia antes do dia 10.'],
+      ['Beam Programming Guide', 'https://beam.apache.org/documentation/programming-guide/', 'Referência do modelo do Beam (PCollection, janelas, gatilhos). Dias 9 e 10.'],
+      ['Machine Learning Crash Course (Google)', 'https://developers.google.com/machine-learning/crash-course', 'Base de ML para o dia 18, se o assunto for novo para você.'],
+      ['Guia de preparação da comunidade Google', 'https://discuss.google.dev/t/your-guide-to-preparing-for-the-google-cloud-professional-data-engineer-certification/107505', 'Relatos e dicas de quem já fez a prova.']
+    ] }
+  ];
+
+  /* Leitura oficial por dia do plano: [rótulo, URL] */
+  var DOCS_DIA = {
+    1: [['Nível gratuito e créditos', 'https://cloud.google.com/free'], ['BigQuery sandbox', 'https://cloud.google.com/bigquery/docs/sandbox']],
+    2: [['Introdução ao BigQuery', 'https://cloud.google.com/bigquery/docs/introduction'], ['Tabelas particionadas', 'https://cloud.google.com/bigquery/docs/partitioned-tables'], ['Tabelas clusterizadas', 'https://cloud.google.com/bigquery/docs/clustered-tables'], ['Carregar dados', 'https://cloud.google.com/bigquery/docs/loading-data'], ['Storage Write API', 'https://cloud.google.com/bigquery/docs/write-api']],
+    3: [['Otimizar computação de consultas', 'https://cloud.google.com/bigquery/docs/best-practices-performance-compute'], ['Materialized views', 'https://cloud.google.com/bigquery/docs/materialized-views-intro'], ['BI Engine', 'https://cloud.google.com/bigquery/docs/bi-engine-intro'], ['Campos aninhados e repetidos', 'https://cloud.google.com/bigquery/docs/nested-repeated']],
+    4: [['Bigtable: design de esquema e row key', 'https://cloud.google.com/bigtable/docs/schema-design'], ['Spanner', 'https://cloud.google.com/spanner/docs/overview'], ['Cloud SQL', 'https://cloud.google.com/sql/docs/introduction'], ['AlloyDB', 'https://cloud.google.com/alloydb/docs/overview'], ['Classes do Cloud Storage', 'https://cloud.google.com/storage/docs/storage-classes'], ['Firestore', 'https://cloud.google.com/firestore/docs/overview']],
+    5: [['BigLake', 'https://cloud.google.com/bigquery/docs/biglake-intro'], ['Dataplex', 'https://cloud.google.com/dataplex/docs/introduction'], ['Analytics Hub', 'https://cloud.google.com/bigquery/docs/analytics-hub-introduction']],
+    6: [['IAM', 'https://cloud.google.com/iam/docs/overview'], ['Organization policies', 'https://cloud.google.com/resource-manager/docs/organization-policy/overview'], ['VPC Service Controls', 'https://cloud.google.com/vpc-service-controls/docs/overview'], ['CMEK', 'https://cloud.google.com/kms/docs/cmek'], ['Segurança por coluna no BigQuery', 'https://cloud.google.com/bigquery/docs/column-level-security-intro'], ['Segurança por linha no BigQuery', 'https://cloud.google.com/bigquery/docs/row-level-security-intro'], ['Authorized views', 'https://cloud.google.com/bigquery/docs/authorized-views']],
+    8: [['Visão geral do Pub/Sub', 'https://cloud.google.com/pubsub/docs/overview'], ['Tipos de assinatura', 'https://cloud.google.com/pubsub/docs/subscription-overview'], ['Exactly-once delivery', 'https://cloud.google.com/pubsub/docs/exactly-once-delivery'], ['Tratamento de falhas e dead-letter', 'https://cloud.google.com/pubsub/docs/handling-failures'], ['Ordenação de mensagens', 'https://cloud.google.com/pubsub/docs/ordering']],
+    9: [['Visão geral do Dataflow', 'https://cloud.google.com/dataflow/docs/overview'], ['Beam Programming Guide', 'https://beam.apache.org/documentation/programming-guide/'], ['Flex Templates', 'https://cloud.google.com/dataflow/docs/guides/templates/using-flex-templates'], ['FlexRS', 'https://cloud.google.com/dataflow/docs/guides/flexrs'], ['Streaming Engine', 'https://cloud.google.com/dataflow/docs/streaming-engine']],
+    10: [['Streaming 101 (Akidau)', 'https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/'], ['Pipelines de streaming no Dataflow', 'https://cloud.google.com/dataflow/docs/concepts/streaming-pipelines'], ['Beam Programming Guide (janelas e gatilhos)', 'https://beam.apache.org/documentation/programming-guide/']],
+    11: [['Dataproc', 'https://cloud.google.com/dataproc/docs/concepts/overview'], ['Data Fusion', 'https://cloud.google.com/data-fusion/docs/concepts/overview'], ['Datastream', 'https://cloud.google.com/datastream/docs/overview'], ['Database Migration Service', 'https://cloud.google.com/database-migration/docs'], ['BigQuery Data Transfer Service', 'https://cloud.google.com/bigquery/docs/dts-introduction'], ['Storage Transfer Service', 'https://cloud.google.com/storage-transfer/docs/overview'], ['Transfer Appliance', 'https://cloud.google.com/transfer-appliance']],
+    13: [['Cloud Composer', 'https://cloud.google.com/composer/docs/concepts/overview'], ['Apache Airflow', 'https://airflow.apache.org/docs/'], ['Workflows', 'https://cloud.google.com/workflows/docs/overview'], ['Dataform', 'https://cloud.google.com/dataform/docs/overview'], ['Cloud Build', 'https://cloud.google.com/build/docs/overview']],
+    15: [['Sensitive Data Protection (DLP)', 'https://cloud.google.com/sensitive-data-protection/docs/sensitive-data-protection-overview'], ['Audit logs', 'https://cloud.google.com/logging/docs/audit'], ['Restrição de locais (organization policy)', 'https://cloud.google.com/resource-manager/docs/organization-policy/defining-locations'], ['Mascaramento dinâmico de dados', 'https://cloud.google.com/bigquery/docs/column-data-masking-intro'], ['Linhagem de dados', 'https://cloud.google.com/dataplex/docs/about-data-lineage']],
+    16: [['BigQuery: recuperação de desastre gerenciada', 'https://cloud.google.com/bigquery/docs/managed-disaster-recovery'], ['BigQuery: time travel', 'https://cloud.google.com/bigquery/docs/time-travel'], ['Spanner: replicação', 'https://cloud.google.com/spanner/docs/replication'], ['Bigtable: replicação', 'https://cloud.google.com/bigtable/docs/replication-overview'], ['Cloud SQL: alta disponibilidade', 'https://cloud.google.com/sql/docs/mysql/high-availability'], ['Dataplex: qualidade de dados', 'https://cloud.google.com/dataplex/docs/data-quality-overview'], ['Guia de planejamento de DR', 'https://cloud.google.com/architecture/dr-scenarios-planning-guide']],
+    17: [['Looker Studio', 'https://cloud.google.com/looker-studio'], ['INFORMATION_SCHEMA', 'https://cloud.google.com/bigquery/docs/information-schema-intro'], ['Plano de execução da consulta', 'https://cloud.google.com/bigquery/docs/query-plan-explanation'], ['Authorized views', 'https://cloud.google.com/bigquery/docs/authorized-views'], ['Analytics Hub', 'https://cloud.google.com/bigquery/docs/analytics-hub-introduction']],
+    18: [['BigQuery ML', 'https://cloud.google.com/bigquery/docs/bqml-introduction'], ['Busca vetorial', 'https://cloud.google.com/bigquery/docs/vector-search-intro'], ['Gerar embeddings', 'https://cloud.google.com/bigquery/docs/generate-text-embedding'], ['Machine Learning Crash Course', 'https://developers.google.com/machine-learning/crash-course']],
+    19: [['Reservas e slots', 'https://cloud.google.com/bigquery/docs/reservations-intro'], ['BigQuery Editions', 'https://cloud.google.com/bigquery/docs/editions-intro'], ['Preços do BigQuery', 'https://cloud.google.com/bigquery/pricing'], ['Controle de custos', 'https://cloud.google.com/bigquery/docs/best-practices-costs'], ['Orçamentos e alertas de faturamento', 'https://cloud.google.com/billing/docs/how-to/budgets']],
+    20: [['Cloud Monitoring', 'https://cloud.google.com/monitoring/docs'], ['Cloud Logging', 'https://cloud.google.com/logging/docs'], ['Monitoramento do BigQuery', 'https://cloud.google.com/bigquery/docs/monitoring'], ['Cotas e limites do BigQuery', 'https://cloud.google.com/bigquery/quotas'], ['Monitoramento do Pub/Sub', 'https://cloud.google.com/pubsub/docs/monitoring']],
+    22: [['Architecture Center', 'https://cloud.google.com/architecture'], ['Well-Architected Framework', 'https://cloud.google.com/architecture/framework']],
+    23: [['Well-Architected Framework', 'https://cloud.google.com/architecture/framework'], ['Questões de exemplo oficiais', 'https://docs.google.com/forms/d/e/1FAIpQLSfkWEzBCP0wQ09ZuFm7G2_4qtkYbfmk_0getojdnPdCYmq37Q/viewform']]
+  };
+
   /* ---------- lógica ---------- */
   function cfgPadrao(hoje) { var i = addDias(hoje || new Date(), 1); return { inicio: iso(i), prova: iso(addDias(i, N_DIAS)) }; }
 
@@ -373,7 +422,7 @@
     var o = {}; if (cfg.inicio) o.inicio = iso(addDias(parse(cfg.inicio), n)); if (cfg.prova) o.prova = iso(addDias(parse(cfg.prova), n)); return o;
   }
 
-  var api = { SECOES: SECOES, TOPICOS: TOPICOS, TIPOS: TIPOS, PLANO: PLANO, COLA: COLA, RECURSOS: RECURSOS, N_DIAS: N_DIAS, N_TAREFAS: N_TAREFAS,
+  var api = { SECOES: SECOES, TOPICOS: TOPICOS, TIPOS: TIPOS, PLANO: PLANO, COLA: COLA, RECURSOS: RECURSOS, MATERIAIS: MATERIAIS, DOCS_DIA: DOCS_DIA, N_DIAS: N_DIAS, N_TAREFAS: N_TAREFAS,
               estado: estado, prontidao: prontidao, simStats: simStats, alternar: alternar, empurrar: empurrar, cfgPadrao: cfgPadrao, iso: iso, parse: parse, addDias: addDias };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_CERT = api;
 })(typeof window !== 'undefined' ? window : globalThis);

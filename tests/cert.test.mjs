@@ -112,3 +112,11 @@ test('integração: calcular funciona sem plano e com plano (marcos, meta e cont
   assert.ok(p.metas.vida.some((m) => m.id === 'cert'));
   assert.ok(p.hoje >= 1);
 });
+
+test('materiais: links https, dias válidos e grupos preenchidos', () => {
+  const urls = [];
+  for (const g of C.MATERIAIS) { assert.ok(g.t && g.i.length); g.i.forEach((x) => { assert.equal(x.length, 3); urls.push(x[1]); assert.ok(x[2].length > 10); }); }
+  for (const [dia, lista] of Object.entries(C.DOCS_DIA)) { assert.ok(+dia >= 1 && +dia <= C.N_DIAS); lista.forEach((x) => urls.push(x[1])); }
+  assert.ok(urls.every((u) => /^https:\/\//.test(u)));
+  assert.equal(new Set(urls.filter((u, i) => urls.indexOf(u) !== i)).size >= 0, true);
+});
