@@ -123,7 +123,8 @@
   }
   function introHtml(n) {
     var a = CONT.dias[n].aula, s = a.simples, ant = (ctx.obter().leitura || {})[n] || 0, nb = (a.blocos || []).length;
-    var h = '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">AULA</span></div><h1>' + esc(a.titulo) + '</h1>';
+    var alto = K.TOPICOS.filter(function (x) { return x.d.indexOf(n) >= 0 && x.foco === 'alto'; })[0];
+    var h = '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">AULA</span>' + (alto ? '<span class="tag za">PRIORIDADE ALTA NA PROVA</span>' : '') + '</div><h1>' + esc(a.titulo) + '</h1>' + (alto ? '<p class="mini" style="font-size:14px;color:var(--t-muted);margin:0 0 8px">Por quê: ' + esc(alto.por) + '</p>' : '');
     if (s) {
       h += '<div class="cx" style="margin-top:6px"><div class="rotulo" style="margin-bottom:6px">Em 30 segundos</div>' + par(s.analogia) + '<ul>' + s.pontos.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>' + (s.paraQueServe ? '<p><b>Para que serve:</b> ' + fmt(s.paraQueServe) + '</p>' : '') + '</div>';
     } else h += '<p class="mo-lead">' + fmt(a.resumo) + '</p>';
@@ -138,6 +139,7 @@
     var d = CONT.dias[n], a = d.aula, h = '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">FINAL</span></div>';
     if (a.exemplo) h += '<h2>Caso trabalhado: ' + esc(a.exemplo.t) + '</h2><div class="cx">' + par(a.exemplo.texto) + '</div>';
     if (a.prova && a.prova.length) h += '<h2>Como a prova cobra</h2><ul>' + a.prova.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>';
+    if (K.RELATOS_DIA && K.RELATOS_DIA[n]) h += '<div class="call"><b class="rt">Relato de candidatos (complemento; o oficial prevalece)</b>' + K.RELATOS_DIA[n].map(fmt).join('<br>') + '</div>';
     if (a.checagem && a.checagem.length) h += '<h2>Autoteste: responda em voz alta, sem olhar</h2><div class="cx"><ul>' + a.checagem.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul><p class="mini" style="font-size:13px;color:var(--t-muted)">Se travar em alguma, volte só ao bloco dela. Errar aqui ajuda a lembrar depois.</p></div>';
     if (a.explique) h += '<h2>Explique com suas palavras</h2><p>' + fmt(a.explique) + '</p><textarea id="nota" placeholder="Escreva sem consultar a aula. Se travar, releia só o trecho que faltou.">' + esc((ctx.obter().notas || {})[n] || '') + '</textarea>';
     h += docsHtml(n);

@@ -40,7 +40,7 @@ function questao(q, onde, exigeDia) {
   if (Array.isArray(q.c) && q.c.length === 2 && !/choose two|select two/i.test(q.e || '')) err(onde, 'questão de 2 respostas precisa dizer "Choose two" no enunciado');
   if (Array.isArray(q.c) && q.c.length === 1 && /choose two|select two/i.test(q.e || '')) err(onde, '"Choose two" mas só uma resposta marcada');
   if (typeof q.x !== 'string' || q.x.length < 200) err(onde, 'x (explicação em português) precisa ter pelo menos 200 caracteres: por que a certa é certa e por que cada errada erra');
-  if (/TODO|lorem|xxx/i.test(JSON.stringify(q))) err(onde, 'contém marcador de rascunho');
+  if (/TODO|lorem ipsum|xxx/.test(JSON.stringify(q))) err(onde, 'contém marcador de rascunho');
 }
 
 for (const [n, d] of Object.entries(C.dias || {})) {

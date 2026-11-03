@@ -120,3 +120,30 @@ test('materiais: links https, dias válidos e grupos preenchidos', () => {
   assert.ok(urls.every((u) => /^https:\/\//.test(u)));
   assert.equal(new Set(urls.filter((u, i) => urls.indexOf(u) !== i)).size >= 0, true);
 });
+
+test('ritmo leve: cada dia do plano ocupa 2 dias de calendário e a prova vai para 58 dias depois', () => {
+  const base = { inicio: '2026-11-04', ritmo: 2 };
+  assert.equal(C.estado(base, d('2026-11-04')).dia, 1);
+  assert.equal(C.estado(base, d('2026-11-05')).dia, 1);
+  assert.equal(C.estado(base, d('2026-11-06')).dia, 2);
+  assert.equal(C.estado(base, d('2026-11-03')).comecaEm, 1); // antes do início, igual ao ritmo normal
+  assert.equal(C.estado({ inicio: '2026-11-04' }, d('2026-11-06')).dia, 3);
+  assert.equal(C.cfgPadrao(d('2026-11-03'), 2).prova, '2027-01-01'); // início 04/11 + 58 dias
+  assert.equal(C.estado(base, d('2026-11-10')).prova, '2027-01-01');
+  assert.equal(C.iso(C.dataDoDia(base, 3)), '2026-11-08');
+});
+
+test('radar e cuidados: o complemento deixa claro que não é oficial', () => {
+  assert.match(C.RADAR.aviso, /não regra|Complemento/);
+  assert.ok(C.RADAR.repetido.length >= 5 && C.RADAR.repetido.every((x) => ['Alto', 'Médio', 'Baixo'].includes(x[0])));
+  assert.ok(C.CUIDADOS.some((x) => /guia oficial/i.test(x)));
+  assert.equal(C.PLANO[23].t.includes('Rede'), true);
+});
+
+test('integração dos relatos: todo tópico tem foco, e os relatos por dia apontam para dias válidos', () => {
+  assert.ok(C.TOPICOS.every((t) => ['alto', 'medio', 'base'].includes(t.foco)));
+  assert.ok(C.TOPICOS.filter((t) => t.foco === 'alto').length >= 4);
+  for (const [dia, lista] of Object.entries(C.RELATOS_DIA)) { assert.ok(+dia >= 1 && +dia <= C.N_DIAS); assert.ok(lista.length && lista.every((x) => x.length > 30)); }
+  // o dia 24 de rede entra nos tópicos 1.1 e 2.1
+  assert.ok(C.TOPICOS.find((t) => t.id === '2.1').d.includes(24));
+});

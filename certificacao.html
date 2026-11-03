@@ -115,6 +115,8 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 <script src="assets/cert/semana2.js"></script>
 <script src="assets/cert/semana3.js"></script>
 <script src="assets/cert/semana4.js"></script>
+<script src="assets/cert/semana5_rede.js"></script>
+<script src="assets/cert/semana5_extra.js"></script>
 <script src="assets/cert-estudo-ui.js"></script>
 <script>
 (function(){
@@ -125,7 +127,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function hoje(){return new Date()}
 function dm(dt){return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')}
 function dmS(s){return s?dm(K.parse(s)):''}
-function dataDoDia(n){return C.inicio?dm(K.addDias(K.parse(C.inicio),n-1)):''}
+function dataDoDia(n){return C.inicio?dm(K.dataDoDia(C,n)):''}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function pct(a,b){return b?Math.round(a/b*100):0}
 function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
@@ -167,9 +169,13 @@ function topo(e){
 /* ---------- hoje ---------- */
 function setup(){
   var d=K.cfgPadrao(hoje());
+  var op=function(v,tit,desc,ck){return '<label style="flex-direction:row;align-items:flex-start;gap:10px;color:var(--t-ink);margin-bottom:8px"><input type="radio" name="ritmo" value="'+v+'"'+(ck?' checked':'')+' style="width:24px;min-height:24px;margin-top:2px"><span><b>'+tit+'</b>: '+desc+'</span></label>'};
   return '<div class="cartao"><div class="rotulo">Começar</div><h2 style="margin:6px 0 8px">Quando você começa?</h2>'+
-    '<p class="mini" style="margin:0 0 12px">São 29 dias: 28 de estudo, com um dia leve por semana, e o dia da prova. Cerca de 13 h por semana, ao todo uns 53 h. Dá para mudar as datas depois.</p>'+
+    '<p class="mini" style="margin:0 0 12px">O plano tem 29 dias (28 de estudo, com um dia leve por semana, mais o dia da prova). Dá para mudar as datas e o ritmo depois.</p>'+
     '<form class="f" id="setup"><label>Início<input type="date" name="inicio" value="'+d.inicio+'" required></label><label>Prova<input type="date" name="prova" value="'+d.prova+'" required></label>'+
+    '<div class="full"><div style="font-size:14px;color:var(--t-muted);margin-bottom:6px">Ritmo</div>'+
+    op('1','Relâmpago','29 dias, cerca de 13 h por semana. Intenso.',true)+
+    op('2','Leve','58 dias, metade da carga por dia (cerca de 6 a 7 h por semana). Faz sentido se é a sua primeira vez na plataforma: quem passou costuma relatar de 2 a 5 meses de preparo.',false)+'</div>'+
     '<div class="row full"><button class="btn" type="submit">Começar o plano</button></div></form></div>';
 }
 function hojeSec(e){
@@ -224,9 +230,9 @@ function topSec(){
     h+='<details style="margin-top:12px"'+(i===0?' open':'')+'><summary><span style="flex:1">'+s.id+'. '+esc(s.nome)+'</span><span class="mini">'+s.peso+'% da prova · '+ps.pct+'%</span></summary><div class="corpo">'+barra(ps.pct)+
       ts.map(function(t){
         var v=T[t.id];
-        return '<div class="top-lin"><div class="nm"><b>'+t.id+'</b>'+esc(t.nome)+'</div><div class="nota" role="group" aria-label="Nota do tópico '+t.id+'">'+
+        return '<div class="top-lin"><div class="nm"><b>'+t.id+'</b>'+esc(t.nome)+(t.foco==='alto'?' <span class="tag za">FOCO ALTO</span>':t.foco==='medio'?' <span class="tag">FOCO MÉDIO</span>':'')+'</div><div class="nota" role="group" aria-label="Nota do tópico '+t.id+'">'+
           NOTAS.map(function(nm,k){return '<button type="button" data-top="'+t.id+'|'+k+'" aria-pressed="'+(v===k)+'">'+nm+'</button>'}).join('')+'</div>'+
-          '<div class="mini" style="margin-top:6px">Dias do plano: '+t.d.join(', ')+(dm.porTopico[t.id].resp?' · desempenho medido: '+dm.porTopico[t.id].pct+'% em '+dm.porTopico[t.id].resp+' questões':'')+'</div></div>';
+          '<div class="mini" style="margin-top:6px">Dias do plano: '+t.d.join(', ')+(t.por?' · '+esc(t.por):'')+(dm.porTopico[t.id].resp?' · desempenho medido: '+dm.porTopico[t.id].pct+'% em '+dm.porTopico[t.id].resp+' questões':'')+'</div></div>';
       }).join('')+'</div></details>';
   });
   el.innerHTML=h;
@@ -264,6 +270,20 @@ function simSec(){
 }
 
 /* ---------- cola ---------- */
+function radarHtml(){
+  var R=K.RADAR;
+  var li=function(arr){return '<ul style="padding-left:18px;margin:6px 0">'+arr.map(function(x){return '<li style="margin:6px 0;line-height:1.45">'+x+'</li>'}).join('')+'</ul>'};
+  return '<details style="margin-top:8px"><summary style="font-weight:600">Radar da prova: o que candidatos relatam (complemento, não oficial)</summary><div class="corpo">'+
+    '<div style="margin:0 0 10px;padding:10px 12px;border-left:4px solid var(--t-accent2);background:var(--t-realce);font-size:14px;line-height:1.5">'+esc(R.aviso)+'</div><p class="mini" style="margin:0 0 6px">'+esc(R.base)+'</p>'+
+    '<div class="rotulo" style="margin:12px 0 4px">Muito repetido (grau de concordância entre fontes)</div>'+li(R.repetido.map(function(x){return '<b>'+esc(x[0])+':</b> '+esc(x[1])}))+
+    '<div class="rotulo" style="margin:12px 0 4px">Sinais mais fracos ou incertos</div>'+li(R.fraco.map(function(x){return esc(x[0])}))+
+    '<div class="rotulo" style="margin:12px 0 4px">Contradições entre as fontes</div>'+li(R.contradicoes.map(esc))+
+    '<div class="rotulo" style="margin:12px 0 4px">Nomes que mudaram</div>'+li(R.nomes.map(function(x){return esc(x[0])+' → '+esc(x[1])}))+'<p class="mini" style="margin:4px 0 0">'+esc(R.nomesAviso)+'</p>'+
+    '<div class="rotulo" style="margin:12px 0 4px">Sobre o tempo de preparo</div><p style="margin:4px 0;line-height:1.5">'+esc(R.preparo)+'</p></div></details>';
+}
+function cuidadosHtml(){
+  return '<details style="margin-top:8px"><summary style="font-weight:600">Cuidados com material de terceiros</summary><div class="corpo"><ul style="padding-left:18px;margin:6px 0">'+K.CUIDADOS.map(function(x){return '<li style="margin:6px 0;line-height:1.45">'+esc(x)+'</li>'}).join('')+'</ul></div></details>';
+}
 function colaSec(){
   var h='<div class="cartao"><div class="rotulo">Sobre a prova</div><div class="fatos">'+
     '<div><b>Duração</b>2 horas</div><div><b>Questões</b>40 a 50, múltipla escolha e seleção múltipla</div><div><b>Preço</b>US$ 200 mais impostos</div>'+
@@ -275,6 +295,7 @@ function colaSec(){
   h+='<div class="cartao" style="margin-top:12px"><div class="rotulo">Materiais complementares</div><p class="mini" style="margin:6px 0 0">Ordem de uso: base oficial e labs, o banco de questões do app, UM banco pago de simulados e livros só para aprofundar. Mais material não significa mais aprendizado.</p></div>'+K.MATERIAIS.map(function(g,i){
     return '<details style="margin-top:8px"'+(i===0?' open':'')+'><summary style="font-weight:600">'+esc(g.t)+'</summary><div class="corpo"><p class="mini" style="margin:0 0 6px">'+esc(g.n||'')+'</p>'+g.i.map(function(x){return '<div style="padding:10px 0;border-top:1px solid var(--t-line)"><a href="'+esc(x[1])+'" target="_blank" rel="noopener noreferrer" style="color:var(--t-accent);word-break:break-word;font-weight:600">'+esc(x[0])+'</a><div class="mini" style="margin-top:2px">'+esc(x[2])+'</div></div>'}).join('')+'</div></details>';
   }).join('');
+  h+=radarHtml()+cuidadosHtml();
   $('#cola').innerHTML=h;
 }
 
@@ -299,6 +320,7 @@ function estudoCard(e){
     if(prox)h+='<div style="margin-top:12px;padding:14px;border:2px solid var(--m);background:color-mix(in srgb,var(--m) 8%,var(--t-surface))"><div class="rotulo">Próximo passo</div><div style="font:600 21px var(--f-titulo);margin:6px 0 2px">'+esc(prox.tit)+'</div><div class="mini" style="margin-bottom:10px">Cerca de '+prox.min+' min · '+esc(prox.desc)+'</div>'+btn(prox.rot,prox.est,n,'',false).replace('min-height:46px;font-size:15px','min-height:54px;font-size:17px;width:100%')+'</div>';
     else h+='<div class="ok-msg" style="margin-top:12px">Tudo feito por hoje. O resto é bônus.</div>';
     h+='<details style="margin-top:12px"><summary>Ver todos os passos do dia</summary><div class="corpo">'+passos.map(function(x,i){return '<div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--t-line)"><div style="flex:none;width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--t-borda);font:600 13px var(--f-mono);'+(x.ok?'background:var(--t-ok);border-color:var(--t-ok);color:#fff':'')+'">'+(x.ok?'✓':(i+1))+'</div><div style="flex:1;min-width:0"><b>'+esc(x.tit)+'</b><div class="mini" style="margin:2px 0 8px">~'+x.min+' min · '+esc(x.desc)+'</div>'+btn(x.rot,x.est,n,'',true)+'</div></div>'}).join('')+'</div></details>';
+    if(n===24)h+='<div class="row" style="margin-top:10px">'+btn('Treinar meus tópicos fracos','fracos','','',true)+'</div>';
     h+=pa.dominado?'<div class="ok-msg" style="margin-top:8px">Dia dominado: aula, cartões e quiz com 80% ou mais.</div>':'<div class="mini" style="margin-top:8px">O dia fica dominado com aula lida, todos os cartões vistos e quiz com 80% ou mais. Sem pressa: a segunda rodada nos erros costuma fechar.</div>';
   }else{
     var esp=ESPECIAIS[n];
@@ -340,6 +362,8 @@ function revisarSec(e){
     '<div class="mini" style="margin-top:10px">Itens já consolidados (3ª caixa ou mais): '+dom+'.</div></div>';
   var tops=K.TOPICOS.filter(function(t){return dm.porTopico[t.id].resp>0}).sort(function(a,b){return dm.porTopico[a.id].pct-dm.porTopico[b.id].pct});
   h+='<div class="cartao"><h3 style="margin-bottom:6px">Desempenho por tópico</h3>'+(tops.length?tops.map(function(t){var p=dm.porTopico[t.id];return '<div class="sim" style="align-items:flex-start"><div class="pc" style="min-width:56px">'+p.pct+'%</div><div style="flex:1;min-width:0"><div style="font-size:14px"><b style="font-family:var(--f-mono);font-size:12px;color:var(--t-muted)">'+t.id+'</b> '+esc(t.nome.split(':')[0])+'</div><div class="mini">'+p.ok+' de '+p.resp+' respostas certas · '+p.total+' questões no banco</div></div>'+btn('Treinar','topico','',t.id,true)+'</div>'}).join(''):'<div class="mini">Faça o primeiro quiz para ver seu desempenho por tópico.</div>')+'</div>';
+  var altos=K.TOPICOS.filter(function(t){return t.foco==='alto'}).map(function(t){return {t:t,p:dm.porTopico[t.id]}}).sort(function(a,b){return (a.p.pct==null?-1:a.p.pct)-(b.p.pct==null?-1:b.p.pct)}).slice(0,5);
+  h+='<div class="cartao"><h3 style="margin-bottom:6px">Onde dedicar tempo extra</h3><p class="mini" style="margin:0 0 6px">Tópicos de foco alto (peso oficial da seção mais o que relatos de candidatos reforçam), do que você ainda não respondeu ou vai pior.</p>'+altos.map(function(x){return '<div class="sim" style="align-items:flex-start"><div style="flex:1;min-width:0"><div style="font-size:14px"><b style="font-family:var(--f-mono);font-size:12px;color:var(--t-muted)">'+x.t.id+'</b> '+esc(x.t.nome.split(':')[0])+'</div><div class="mini">'+(x.p.pct==null?'sem respostas ainda':x.p.pct+'% em '+x.p.resp+' respostas')+'</div></div>'+btn('Treinar','topico','',x.t.id,true)+'</div>'}).join('')+'</div>';
   $('#revisar').innerHTML=h;
 }
 
@@ -354,6 +378,8 @@ function ajustes(){
   frm.innerHTML='<h3 class="full">Ajustar</h3>'+
     '<label>Início do plano<input type="date" name="inicio" value="'+esc(C.inicio||'')+'" required></label>'+
     '<label>Data da prova<input type="date" name="prova" value="'+esc(C.prova||'')+'" required></label>'+
+    '<label class="full">Ritmo<select name="ritmo"><option value="1"'+(C.ritmo===2?'':' selected')+'>Relâmpago (29 dias)</option><option value="2"'+(C.ritmo===2?' selected':'')+'>Leve (58 dias)</option></select></label>'+
+    '<div class="mini full">Trocar o ritmo muda qual dia do plano aparece hoje.</div>'+
     '<label class="full" style="flex-direction:row;align-items:center;gap:10px;color:var(--t-ink)"><input type="checkbox" name="aprovada" style="width:24px;min-height:24px" '+(C.aprovada?'checked':'')+'> Aprovada na certificação</label>'+
     '<div class="row full"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button></div>';
   dlg.showModal();$('#cancela').onclick=function(){dlg.close()};
@@ -361,11 +387,11 @@ function ajustes(){
 frm.addEventListener('submit',function(ev){
   ev.preventDefault();var f=frm.elements;
   if(!f.inicio||!f.inicio.value)return;
-  salvar({inicio:f.inicio.value,prova:f.prova.value||K.iso(K.addDias(K.parse(f.inicio.value),K.N_DIAS)),aprovada:!!f.aprovada.checked});dlg.close();
+  var rt=(+f.ritmo.value===2?2:1);salvar({inicio:f.inicio.value,ritmo:rt,prova:f.prova.value||K.iso(K.addDias(K.parse(f.inicio.value),K.N_DIAS*rt)),aprovada:!!f.aprovada.checked});dlg.close();
 });
 document.addEventListener('submit',function(ev){
   var f=ev.target;
-  if(f.id==='setup'){ev.preventDefault();salvar({inicio:f.inicio.value,prova:f.prova.value,feitas:C.feitas||{},topicos:C.topicos||{},simulados:C.simulados||[],aprovada:false})}
+  if(f.id==='setup'){ev.preventDefault();salvar({inicio:f.inicio.value,prova:f.prova.value,ritmo:(+f.ritmo.value===2?2:1),feitas:C.feitas||{},topicos:C.topicos||{},simulados:C.simulados||[],aprovada:false})}
   else if(f.id==='fsim'){
     ev.preventDefault();var a=Math.max(0,+f.acertos.value||0),t=Math.max(1,+f.total.value||1);
     if(a>t){alert('Acertos não pode ser maior que o total.');return}
@@ -374,6 +400,7 @@ document.addEventListener('submit',function(ev){
   }
 });
 document.addEventListener('change',function(ev){
+  if(ev.target.name==='ritmo'&&ev.target.form&&ev.target.form.id==='setup'){var f=ev.target.form,r=+ev.target.value===2?2:1;if(f.inicio.value)f.prova.value=K.iso(K.addDias(K.parse(f.inicio.value),K.N_DIAS*r))}
   if(ev.target.id==='stipo'){var t=$('#stotal');if(t)t.value=ev.target.value==='completo'?50:30}
 });
 document.addEventListener('click',function(ev){

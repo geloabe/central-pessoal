@@ -22,11 +22,11 @@
 
   /* 19 tópicos do guia; "d" = dias do plano que cobrem o tópico */
   var TOPICOS = [
-    { id: '1.1', s: 1, nome: 'Segurança e conformidade: IAM, criptografia e chaves, privacidade/PII, soberania regional, governança de projeto e dataset, dev × produção', d: [6, 15] },
+    { id: '1.1', s: 1, nome: 'Segurança e conformidade: IAM, criptografia e chaves, privacidade/PII, soberania regional, governança de projeto e dataset, dev × produção', d: [6, 15, 24] },
     { id: '1.2', s: 1, nome: 'Confiabilidade e fidelidade: limpeza, orquestração, recuperação de desastre, ACID × disponibilidade, validação de dados', d: [16] },
     { id: '1.3', s: 1, nome: 'Flexibilidade e portabilidade: requisitos de negócio, multicloud, staging, catálogo, profiling e descoberta', d: [5, 15] },
     { id: '1.4', s: 1, nome: 'Migrações: plano e validação (BigQuery DTS, DMS, Transfer Appliance, rede, Datastream)', d: [11] },
-    { id: '2.1', s: 2, nome: 'Planejar pipelines: fontes e destinos, lógica de transformação e orquestração, rede, criptografia', d: [8, 22] },
+    { id: '2.1', s: 2, nome: 'Planejar pipelines: fontes e destinos, lógica de transformação e orquestração, rede, criptografia', d: [8, 22, 24] },
     { id: '2.2', s: 2, nome: 'Construir pipelines: Dataflow/Beam, Dataproc, Data Fusion, Pub/Sub, Spark, Kafka; batch, streaming, janelas, dados atrasados, enriquecimento com IA', d: [8, 9, 10, 11] },
     { id: '2.3', s: 2, nome: 'Operacionalizar pipelines: Cloud Composer, Workflows, CI/CD', d: [13] },
     { id: '3.1', s: 3, nome: 'Selecionar armazenamento: BigQuery, BigLake, AlloyDB, Bigtable, Spanner, Cloud SQL, Cloud Storage, Firestore, Memorystore; custo e ciclo de vida', d: [4] },
@@ -43,6 +43,53 @@
     { id: '5.5', s: 5, nome: 'Falhas e mitigação: tolerância, multirregião, dados corrompidos ou faltando, replicação e failover', d: [16, 20] }
   ];
 
+
+  /* Foco de estudo por tópico: junta o peso OFICIAL da seção com o que relatos de candidatos reforçam (complemento). alto, medio ou base. */
+  var FOCO = {
+    '1.1': ['alto', 'Seção de 22% da prova; segurança, IAM e menor privilégio reaparecem em quase todo cenário.'],
+    '1.2': ['medio', 'Confiabilidade, DR e validação aparecem em cenários de resiliência.'],
+    '1.3': ['base', 'Conceitual; costuma entrar como pano de fundo de outras questões.'],
+    '1.4': ['medio', 'Datastream, DMS e opções de transferência são citados por candidatos.'],
+    '2.1': ['medio', 'Inclui fundamentos de rede e criptografia, que ganharam uma aula no dia 24.'],
+    '2.2': ['alto', 'A maior seção (25%). Streaming em Dataflow (janelas, watermark, exactly-once) é apontado como o ponto mais difícil.'],
+    '2.3': ['medio', 'Composer x Workflows x Scheduler x Dataform aparecem como pares de decisão.'],
+    '3.1': ['alto', 'Escolha de armazenamento é um dos temas mais repetidos; o evento oficial do Google recomenda estudar os fluxogramas.'],
+    '3.2': ['alto', 'BigQuery aparece em quase todas as seções: partição, clustering, custo e modelagem.'],
+    '3.3': ['medio', 'Lake e BigLake: tema crescente, com peso incerto.'],
+    '3.4': ['medio', 'Dataplex e governança federada: tema crescente nos relatos.'],
+    '4.1': ['alto', 'Materialized views, BI Engine e consultas lentas aparecem nos relatos e em simulados.'],
+    '4.2': ['base', 'Relatos recentes descrevem ML como básico. O guia inclui BigQuery ML, embeddings e RAG: estude o essencial.'],
+    '4.3': ['medio', 'Compartilhar sem copiar (authorized views, Analytics Hub) aparece em simulados atuais.'],
+    '5.1': ['medio', 'Custo por necessidade: Spot, FlexRS, clusters efêmeros.'],
+    '5.2': ['medio', 'DAGs e repetibilidade.'],
+    '5.3': ['medio', 'Editions, reservas e slots entram em perguntas de custo.'],
+    '5.4': ['base', 'Observabilidade; entra mais como parte de cenários de falha.'],
+    '5.5': ['medio', 'Falhas, multirregião e replicação (turbo replication foi citada por um candidato).']
+  };
+  TOPICOS.forEach(function (t) { var f = FOCO[t.id] || ['medio', '']; t.foco = f[0]; t.por = f[1]; });
+
+  /* Relatos de candidatos por dia do plano (COMPLEMENTO: o guia oficial e a documentação prevalecem) */
+  var RELATOS_DIA = {
+    1: ['Candidatos descrevem a prova como de decisão, e não de definição: todas as alternativas parecem possíveis e só uma cumpre todos os requisitos.'],
+    2: ['O BigQuery aparece em quase todas as seções nos relatos. Em simulados atuais é comum escolher partição por data e cluster pelas colunas filtradas.'],
+    3: ['Relatos citam materialized views e BI Engine em questões da seção 4.'],
+    4: ['A escolha de armazenamento (Bigtable, Spanner, BigQuery, Cloud SQL) é um dos temas mais repetidos. O evento oficial do Google (2023) recomenda estudar os fluxogramas de decisão. Hotspot de chave aparece em simulados.'],
+    5: ['Dataplex, BigLake e Analytics Hub aparecem como temas crescentes, com peso incerto. Um comentário no fórum oficial relata reprovação por não ter estudado Dataplex e BigQuery Omni.'],
+    6: ['Segundo o evento oficial do Google (2023), hierarquia de recursos, herança de permissões e menor privilégio reaparecem sempre.'],
+    8: ['Pub/Sub + Dataflow + BigQuery é o padrão de streaming mais citado. Seek/replay e exactly-once em assinatura pull aparecem em questões de prática atuais.'],
+    9: ['Escolher entre Dataflow, Dataproc e outras ferramentas é tema recorrente. A regra de desempate relatada: o serviço gerenciado com menor sobrecarga operacional.'],
+    10: ['Vários candidatos apontam janelas, watermark, dado atrasado e exactly-once como o ponto mais difícil da prova.'],
+    11: ['Datastream (CDC) e as opções de transferência (Transfer Appliance, Storage Transfer Service) são citados por candidatos.'],
+    13: ['Composer x Workflows x Cloud Functions x Scheduler, e Dataform (assertions, SQL como código), aparecem como pares de decisão nos relatos.'],
+    15: ['Em simulados atuais, policy tags, DLP e CMEK aparecem em cenários de governança. Armadilha frequente: ativar o enforcement da taxonomia e remover o papel Fine-Grained Reader herdado.'],
+    16: ['Um candidato de 2025 relatou 2 a 3 questões sobre turbo replication do Cloud Storage. RPO e failover aparecem em cenários de resiliência.'],
+    17: ['Questões sobre compartilhar sem copiar (authorized views, Analytics Hub) aparecem em simulados atuais.'],
+    18: ['Candidatos de 2025 e 2026 descrevem ML como mínimo e básico, e nenhum relatou questões de IA generativa. O guia v4.2 inclui BigQuery ML, embeddings e RAG, então estude o essencial sem exagerar.'],
+    19: ['Escolher entre sob demanda e capacidade (Editions) aparece em simulados atuais. O nome "flat-rate" é antigo.'],
+    22: ['O Google orienta: ler o objetivo da pergunta, eliminar o que viola algum requisito e preferir o serviço gerenciado.'],
+    24: ['Um candidato de 2025 relatou várias questões de rede (sub-redes, balanceador de carga). O guia oficial lista fundamentos de rede no tópico 2.1.']
+  };
+
   var TIPOS = { estudo: 'Estudo', lab: 'Lab', cartoes: 'Cartões', quiz: 'Questões', simulado: 'Simulado', revisao: 'Revisão', prova: 'Prova' };
 
   /* Plano: t=título, s=seções, o=objetivo, d=dica, k=tarefas [tipo, minutos, texto]. O dia 29 é a prova. */
@@ -54,7 +101,7 @@
       k: [['estudo', 25, 'Ler o guia oficial v4.2 inteiro (5 seções, 19 tópicos). Na aba Tópicos, dar uma nota de 0 a 3 para cada um, com honestidade.'],
           ['quiz', 30, 'Fazer as questões de exemplo oficiais sem consultar nada. Anotar o que errou e por quê.'],
           ['lab', 20, 'Abrir um projeto no Google Cloud (nível gratuito ou crédito), ativar BigQuery e Cloud Storage e rodar uma consulta num dataset público.'],
-          ['estudo', 15, 'Agendar a prova no certmetrics para o dia 29 (online ou em centro). Conferir ID válido e as regras de reagendamento.']] },
+          ['estudo', 15, 'Decidir a data da prova: dá para marcar já ou esperar o resultado do simulado 2 (dia 25). Antes de pagar, confira no certmetrics as regras de reagendamento e cancelamento e se o seu documento de identidade serve.']] },
     { t: 'BigQuery I: arquitetura, carga e particionamento', s: [3],
       o: 'Entender como o BigQuery armazena, cobra e carrega dados.',
       d: 'LIMIT não reduz o custo. O que reduz é filtrar por partição e escolher poucas colunas. O dry run mostra os bytes antes de rodar.',
@@ -191,11 +238,12 @@
       d: 'Cost-effective, least operational overhead, serverless, minimize latency, no code changes: cada uma aponta para uma família de serviços.',
       k: [['estudo', 40, 'Padrões de enunciado e o que cada um indica (ver Cola, Palavras-chave).'],
           ['quiz', 60, '30 questões mistas cronometradas, com 2 minutos por questão.']] },
-    { t: 'Pontos fracos', s: [1, 2, 3, 4, 5],
-      o: 'Fechar os buracos que ainda doem.',
-      d: 'Um lab rápido fixa mais do que mais uma leitura.',
-      k: [['estudo', 70, 'Reestudo cirúrgico dos 3 tópicos com menor nota: documentação, vídeo e um lab rápido para cada.'],
-          ['cartoes', 30, 'Cartões só dos tópicos fracos.']] },
+    { t: 'Rede, segurança em cenários e pontos fracos', s: [1, 2, 5],
+      o: 'Cobrir o tópico de rede do guia (2.1) e fechar os buracos que ainda doem.',
+      d: 'Em rede, pergunte sempre: quem precisa falar com quem, por onde e com que permissão? Um lab rápido fixa mais do que mais uma leitura.',
+      k: [['estudo', 40, 'Aula do dia: rede para engenheiros de dados (VPC, firewall, Private Google Access, peering, VPN x Interconnect) e segurança em cenários.'],
+          ['quiz', 20, 'Quiz do dia sobre rede e segurança (meta 80%).'],
+          ['estudo', 40, 'Reestudo cirúrgico dos 3 tópicos com menor desempenho medido (aba Revisar): documentação, vídeo e um lab rápido para cada.']] },
     { t: 'Simulado 2 (condições reais, dia longo)', s: [1, 2, 3, 4, 5],
       o: 'Ensaio geral: tempo, ambiente e cabeça de prova.',
       d: 'Meta: 80% ou mais. Abaixo de 70%, use o dia 26 inteiro para reforço e adie a prova se precisar.',
@@ -290,6 +338,14 @@
       'Controlar gasto: budgets e alertas, cotas customizadas por projeto e usuário, partição e cluster, expiração de dados.',
       'Dataflow: system lag e data freshness. Pub/Sub: idade da mensagem mais antiga sem ack. Composer: falhas de DAG. BigQuery: INFORMATION_SCHEMA.JOBS e uso de slots.',
       'Erros comuns: quota exceeded, resources exceeded, schema mismatch, hot key. Para 429 e 503, retry com backoff.'] },
+    { t: 'Estratégia na hora da prova', i: [
+      'Leia primeiro a pergunta final e depois o cenário. Tente prever a resposta antes de olhar as alternativas.',
+      'Elimine as alternativas que quebram qualquer requisito do cenário (custo, latência, região, segurança, equipe pequena).',
+      'Duas respostas podem parecer certas. Escolha a que cumpre TODOS os requisitos com a menor operação.',
+      'Passou de uns 5 minutos? Marque para rever e siga. Com 50 questões em 2 horas, a média é de 2,4 minutos por questão.',
+      'Segundo o evento oficial do Google (2023), não há penalidade por chute: não deixe questão em branco.',
+      'Em "Choose two", marque as duas só se estiver seguro das duas. Pode ser tudo ou nada.',
+      'Prefira a opção gerenciada ou serverless quando o resto empatar (least operational overhead).'] },
     { t: 'Palavras-chave do enunciado', i: [
       'Least operational overhead ou fully managed: escolha o serviço gerenciado (BigQuery, Dataflow, Pub/Sub), não clusters.',
       'Cost-effective: pense em Spot, FlexRS, classe de armazenamento mais fria, partição e reserva de slots.',
@@ -319,7 +375,8 @@
       ['Questões de exemplo oficiais', 'https://docs.google.com/forms/d/e/1FAIpQLSfkWEzBCP0wQ09ZuFm7G2_4qtkYbfmk_0getojdnPdCYmq37Q/viewform', 'O formato mais fiel da prova. Faça no dia 1 e de novo na semana 4.'],
       ['Architecture Center', 'https://cloud.google.com/architecture', 'Arquiteturas de referência. Ótimo para treinar questões de cenário.'],
       ['Well-Architected Framework', 'https://cloud.google.com/architecture/framework', 'Princípios de confiabilidade, custo, segurança e operação que as questões assumem.'],
-      ['Nível gratuito e créditos', 'https://cloud.google.com/free', 'Veja o que é grátis antes de abrir o projeto dos labs.']
+      ['Nível gratuito e créditos', 'https://cloud.google.com/free', 'Veja o que é grátis antes de abrir o projeto dos labs.'],
+      ['Canal Google Cloud Tech (YouTube)', 'https://www.youtube.com/@googlecloudtech', 'Vídeos oficiais do Google. Bons para Beam, BigQuery e arquitetura. Use junto com a documentação, não no lugar dela.']
     ] },
     { t: 'Cursos (pagos ou parcialmente pagos)', n: 'Úteis se você aprende melhor com vídeo. Não são obrigatórios.', i: [
       ['Coursera: Preparing for Google Cloud Certification: Cloud Data Engineer', 'https://www.coursera.org/professional-certificates/gcp-data-engineering', 'Série de 5 cursos feita pelo Google, com labs. A taxa da prova não está incluída. Confira o idioma e se acompanha o guia atual.']
@@ -335,6 +392,52 @@
       ['Machine Learning Crash Course (Google)', 'https://developers.google.com/machine-learning/crash-course', 'Base de ML para o dia 18, se o assunto for novo para você.'],
       ['Guia de preparação da comunidade Google', 'https://discuss.google.dev/t/your-guide-to-preparing-for-the-google-cloud-professional-data-engineer-certification/107505', 'Relatos e dicas de quem já fez a prova.']
     ] }
+  ];
+
+  /* Radar: o que candidatos e educadores relatam (COMPLEMENTO, não oficial). Pesquisa de 03/11/2026. */
+  var RADAR = {
+    aviso: 'Complemento, não regra. O guia oficial v4.2 e a documentação do Google são a referência do que cai. Os achados já foram integrados ao plano (marcas de foco nos tópicos, linhas "Relato de candidatos" nas aulas, o dia 24 de rede). Aqui fica o resumo de onde vieram e quais são os limites. Esta página resume o que candidatos e educadores relatam em blogs, vídeos e fóruns. A maior parte das fontes recentes é de quem vende curso ou simulado, então use como pista de onde reforçar, nunca como lista do que vai cair.',
+    base: 'Pesquisa em 03/11/2026: 15 transcrições de vídeos e 22 páginas e posts. Só 4 vídeos e poucos textos são relatos de quem fez a prova. Nenhuma fonte traz medição de frequência por serviço.',
+    repetido: [
+      ['Alto', 'A prova é de cenário: várias alternativas parecem possíveis, e vale a que cumpre TODOS os requisitos (custo, latência, operação, segurança, conformidade).'],
+      ['Alto', 'BigQuery aparece em quase todas as seções: partição, clustering, custo, segurança, materialized views, compartilhamento.'],
+      ['Alto', 'Pub/Sub + Dataflow + BigQuery é o padrão de streaming mais citado. Janelas, watermark, dado atrasado e exactly-once são o ponto mais difícil.'],
+      ['Alto', 'Escolha de armazenamento (Bigtable, Spanner, BigQuery, Cloud SQL, Cloud Storage) e a diferença entre Dataflow, Dataproc, Composer e Dataform.'],
+      ['Alto', 'Segurança e IAM (menor privilégio, hierarquia, DLP, CMEK, VPC Service Controls) e governança (Dataplex, policy tags, Analytics Hub, BigLake).'],
+      ['Médio', 'Quando todo o resto empata, ganha o serviço gerenciado com menor sobrecarga operacional.'],
+      ['Alto', 'O que mais ajuda: labs de verdade, simulados com revisão de cada erro (entender, não decorar) e a documentação oficial como fonte da verdade.']
+    ],
+    fraco: [
+      ['Rede: um candidato relatou várias questões, e o guia oficial lista fundamentos de rede no tópico 2.1. Por isso há uma aula no dia 24.'],
+      ['Dataform, Datastream, BigQuery Omni e Analytics Hub aparecem como "novos" em vários relatos, mas com pesos incertos.'],
+      ['Machine learning: os relatos dizem que pesa pouco e é básico (BigQuery ML, escolha de ferramenta). O guia v4.2 inclui BigQuery ML, embeddings e RAG: estude o básico sem exagerar.'],
+      ['IA generativa e RAG: nenhum candidato confirmou questões. Siga o guia oficial.'],
+      ['Memorystore, Firestore e Cloud SQL: relatos divergem. Trate como prioridade baixa, não zero.']
+    ],
+    contradicoes: [
+      'Número de questões: o oficial diz 40 a 50. Vários relatos dizem 50 ou 50 a 60. Vale o oficial, e estar pronto para 50.',
+      'Múltipla seleção "tudo ou nada": um candidato afirma, sem confirmação oficial. Treine como se fosse.',
+      'Dificuldade: uns dizem "poucas pegadinhas", outros "duas respostas defensáveis". Planeje para o caso difícil.',
+      'Quando o exame foi reescrito (2023 ou 2025) e quanto ML foi cortado: fontes de vendedores discordam. Vale o guia.'
+    ],
+    nomes: [
+      ['Data Catalog / Dataplex Catalog / Dataplex Universal Catalog', 'Knowledge Catalog (as notas de versão oficiais já usam este nome; API e papéis mantêm "dataplex")'],
+      ['Dataproc', 'Managed Service for Apache Spark (relatado; confira as notas de versão)'],
+      ['BigLake', 'relatos citam "Lakehouse"; confira as notas de versão'],
+      ['Dataprep', 'BigQuery data preparation (relatado; confira o status atual do Dataprep)'],
+      ['Analytics Hub', 'aparece também como "BigQuery sharing"']
+    ],
+    nomesAviso: 'Estude os dois nomes: a prova e os materiais podem usar qualquer um.',
+    preparo: 'Relatos de quem passou falam em 2 a 5 meses de preparo, por exemplo uns 8 h por semana com experiência em dados e sem GCP prévio. O plano relâmpago concentra isso em 4 semanas. Se esta é a primeira vez que você usa a plataforma, o ritmo leve de 8 semanas é uma escolha sensata. Marque a prova quando os simulados estiverem em 80% ou mais.'
+  };
+
+  /* Cuidados com material de terceiros */
+  var CUIDADOS = [
+    'O guia oficial v4.2 e a documentação do Google são a referência do que cai. Blogs, vídeos e simulados só complementam.',
+    'Evite "dumps" (questões vazadas da prova): violam as políticas do Google, podem estar errados ou datados e não ensinam a decidir.',
+    'Confira a data de qualquer material. Há muito conteúdo de 2019 a 2022 com respostas hoje erradas (por exemplo, "flat-rate", "snapshot decorators" e streaming inserts como recomendação).',
+    'A maioria dos guias recentes é de quem vende curso ou simulado. Números como "BigQuery = 30% a 40% da prova" ou "nota de corte de 70%" não têm fonte oficial.',
+    'Se um material discordar da documentação oficial, vale a documentação.'
   ];
 
   /* Leitura oficial por dia do plano: [rótulo, URL] */
@@ -361,7 +464,8 @@
   };
 
   /* ---------- lógica ---------- */
-  function cfgPadrao(hoje) { var i = addDias(hoje || new Date(), 1); return { inicio: iso(i), prova: iso(addDias(i, N_DIAS)) }; }
+  function cfgPadrao(hoje, ritmo) { var i = addDias(hoje || new Date(), 1), r = ritmo === 2 ? 2 : 1; return { inicio: iso(i), prova: iso(addDias(i, N_DIAS * r)), ritmo: r }; }
+  function dataDoDia(cfg, n) { var r = cfg && cfg.ritmo === 2 ? 2 : 1; return addDias(parse(cfg.inicio), (n - 1) * r); }
 
   function prontidao(topicos) {
     topicos = topicos || {};
@@ -397,7 +501,8 @@
     var base = { ativo: false, total: N_TAREFAS, feitas: feitasN, pct: Math.round(feitasN / N_TAREFAS * 100), hoje: hojeN, dias: N_DIAS,
                  prontidao: pront.pct, pront: pront, sim: sim, aprovada: !!cfg.aprovada, seq: 0, melhor: 0, pausas: 0, emRisco: false };
     if (!cfg.inicio) return base;
-    var dia = dias(parse(cfg.inicio), hoje) + 1;               // <=0: ainda não começou
+    var delta = dias(parse(cfg.inicio), hoje), r = cfg.ritmo === 2 ? 2 : 1;   // ritmo 2 = cada dia do plano ocupa 2 dias de calendário (metade da carga por dia)
+    var dia = delta < 0 ? delta + 1 : Math.floor(delta / r) + 1;               // <=0: ainda não começou
     var n = Math.max(1, Math.min(N_DIAS, dia));
     var tarefasHoje = PLANO[n - 1].tarefas.map(function (t) { return { id: t.id, tipo: t.tipo, min: t.min, txt: t.txt, feito: !!F[t.id] }; });
     var atrasadas = [];
@@ -408,7 +513,7 @@
     base.comecaEm = dia <= 0 ? 1 - dia : 0; base.encerrado = dia > N_DIAS;
     base.titulo = PLANO[n - 1].t; base.tarefasHoje = tarefasHoje; base.atrasadas = atrasadas;
     base.diaFeito = tarefasHoje.length > 0 && tarefasHoje.every(function (t) { return t.feito; });
-    base.prova = cfg.prova || iso(addDias(parse(cfg.inicio), N_DIAS)); base.faltamProva = dias(hoje, parse(base.prova));
+    base.prova = cfg.prova || iso(addDias(parse(cfg.inicio), N_DIAS * r)); base.ritmo = r; base.faltamProva = dias(hoje, parse(base.prova));
     base.seq = sq.seq; base.melhor = sq.melhor; base.pausas = sq.pausas; base.emRisco = sq.emRisco;
     return base;
   }
@@ -422,7 +527,7 @@
     var o = {}; if (cfg.inicio) o.inicio = iso(addDias(parse(cfg.inicio), n)); if (cfg.prova) o.prova = iso(addDias(parse(cfg.prova), n)); return o;
   }
 
-  var api = { SECOES: SECOES, TOPICOS: TOPICOS, TIPOS: TIPOS, PLANO: PLANO, COLA: COLA, RECURSOS: RECURSOS, MATERIAIS: MATERIAIS, DOCS_DIA: DOCS_DIA, N_DIAS: N_DIAS, N_TAREFAS: N_TAREFAS,
-              estado: estado, prontidao: prontidao, simStats: simStats, alternar: alternar, empurrar: empurrar, cfgPadrao: cfgPadrao, iso: iso, parse: parse, addDias: addDias };
+  var api = { SECOES: SECOES, TOPICOS: TOPICOS, TIPOS: TIPOS, PLANO: PLANO, COLA: COLA, RECURSOS: RECURSOS, MATERIAIS: MATERIAIS, DOCS_DIA: DOCS_DIA, RADAR: RADAR, CUIDADOS: CUIDADOS, RELATOS_DIA: RELATOS_DIA, N_DIAS: N_DIAS, N_TAREFAS: N_TAREFAS,
+              estado: estado, dataDoDia: dataDoDia, prontidao: prontidao, simStats: simStats, alternar: alternar, empurrar: empurrar, cfgPadrao: cfgPadrao, iso: iso, parse: parse, addDias: addDias };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_CERT = api;
 })(typeof window !== 'undefined' ? window : globalThis);
