@@ -198,6 +198,7 @@ a.meta.ok .l span:last-child{color:var(--t-ok);font-weight:700}
   <g id="marca"><rect class="p1" x="4" y="4" width="28" height="28"/><rect class="p2" x="16" y="16" width="28" height="28"/><rect class="x" x="16" y="16" width="16" height="16"/><path class="c" d="M16 32A16 16 0 0 1 32 16V32Z"/></g></defs></svg>
 
 <script src="assets/modulo.js"></script>
+<script src="assets/cert.js"></script>
 <script src="assets/progresso.js"></script>
 <script src="assets/integracoes.js"></script>
 <script src="assets/foco.js"></script>
@@ -235,10 +236,11 @@ async function carregar(){
     seguro(db.collection('refeicoes').get().then(docs),[]),
     seguro(db.collection('agua').get().then(docs),[]),
     seguro(db.collection('foco').get().then(docs),[]),
-    seguro(db.collection('captura').get().then(docs),[])
+    seguro(db.collection('captura').get().then(docs),[]),
+    seguro(db.doc('cert/main').get().then(function(s){return s.exists?s.data():null}),null)
   ]);
   return {sessions:r[0],habitos:{config:json(r[1]),records:CP_INT.mesclar(json(r[2])||{},r[17],r[0])},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
-    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19]};
+    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19],cert:r[20]};
 }
 
 function card(id,href,titulo,corpo){
@@ -277,6 +279,7 @@ function render(p){
     card('rota','rota-internacional.html','Rota Internacional','<div class="num">'+p.rota.semana+' <small>de '+p.rota.meta+' candidaturas</small></div>'+barra(rotaPct)+delta(p.rota.semana,p.rota.anterior)+(p.rota.melhorSemana>p.rota.semana||p.rota.semanasMeta?'<div class="mini">'+(p.rota.semanasMeta?p.rota.semanasMeta+' semana'+(p.rota.semanasMeta===1?'':'s')+' seguida'+(p.rota.semanasMeta===1?'':'s')+' na meta · ':'')+'melhor semana: '+p.rota.melhorSemana+'</div>':'')),
     card('financeiro','financeiro.html','Financeiro','<div class="num">'+p.financeiro.pct+'% <small>da entrada</small></div>'+barra(p.financeiro.pct)+'<div class="mini">'+brl(p.financeiro.guardado)+' de '+brl(p.financeiro.meta)+'</div>'),
     card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
+    card('cert','certificacao.html','Certificação',p.cert.ativo?(p.cert.aprovada?'<div class="num">Aprovada <small>Google Data Engineer</small></div>':'<div class="num">'+p.cert.pct+'% <small>do plano</small></div>'+barra(p.cert.pct)+'<div class="mini">'+(p.cert.comecaEm>0?'Começa em '+p.cert.comecaEm+' dia'+(p.cert.comecaEm>1?'s':''):p.cert.faltamProva>0?'Prova em '+p.cert.faltamProva+' dias':'Prova: hoje ou já passou')+' · prontidão '+p.cert.prontidao+'%</div>'):'<div class="mini">Plano relâmpago de 4 semanas para o Google Professional Data Engineer.</div>'),
     card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>'),
     card('imovel','imovel.html','Imóvel','<div class="mini">Perfil, quanto cabe, estratégias, construtoras e finalistas da primeira compra.</div>'),
     card('negocios','negocios.html','Negócios','<div class="mini">Prospecção, clientes e oportunidades para a renda extra.</div>')
@@ -287,6 +290,7 @@ function render(p){
     if(r.hoje<6) l.push(['plano.html','🍽️',r.hoje?'Refeições: '+r.hoje+' de 6':'Marcar as refeições']);
     if(!hb.ativo||hb.feitosHoje<hb.totalHoje) l.push(['habitos.html','✅',hb.ativo?'Hábitos: '+hb.feitosHoje+' de '+hb.totalHoje:'Check-in de hábitos']);
     if(ds.ativos&&ds.hoje<ds.ativos) l.push(['desafios.html','🎯','Desafio: falta marcar hoje']);
+    var ce=p.cert; if(ce.ativo&&!ce.aprovada&&!ce.encerrado&&!ce.comecaEm&&ce.tarefasHoje&&ce.feitasHoje<ce.tarefasHoje) l.push(['certificacao.html','🎓','Certificação: '+ce.feitasHoje+' de '+ce.tarefasHoje]);
     var el=$('#parahoje'); if(!el)return;
     if(!l.length){el.innerHTML='<div class="rotulo">Para hoje</div><div class="chips"><a class="ok" href="#">✓ Tudo em dia hoje</a></div>';return}
     el.innerHTML='<div class="rotulo">Para hoje · toque para ir</div><div class="chips">'+l.slice(0,3).map(function(x){return '<a href="'+x[0]+'"><span aria-hidden="true">'+x[1]+'</span>'+esc(x[2])+'</a>'}).join('')+'</div>';

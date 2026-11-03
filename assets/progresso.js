@@ -209,6 +209,16 @@
              hoje: at.filter(function (e) { return e.feitoHoje; }).length, pct: at.length ? Math.round(at.reduce(function (a, e) { return a + e.pct; }, 0) / at.length) : 0 };
   }
 
+  /* ---------- Certificação (plano em assets/cert.js; dados em cert/main) ---------- */
+  function cert(d, hoje) {
+    var C = root.CP_CERT, doc = d.cert || {};
+    if (!C || !doc.inicio) return { ativo: false, hoje: 0, pct: 0, feitas: 0, prontidao: 0, seq: 0, aprovada: !!doc.aprovada, simMax: 0 };
+    var e = C.estado(doc, hoje);
+    return { ativo: true, hoje: e.hoje, pct: e.pct, feitas: e.feitas, prontidao: e.prontidao, seq: e.seq, dia: e.dia, dias: e.dias, comecaEm: e.comecaEm,
+             encerrado: e.encerrado, faltamProva: e.faltamProva, diaFeito: e.diaFeito, tarefasHoje: e.tarefasHoje.length, feitasHoje: e.tarefasHoje.filter(function (t) { return t.feito; }).length,
+             aprovada: !!doc.aprovada, simMax: e.sim.melhor || 0 };
+  }
+
   /* ---------- Foco do dia e anotações rápidas ---------- */
   // foco: um documento por dia {date, texto, passo, feito, dispensado}. "Hoje não" não conta contra ninguém: só esconde o cartão.
   function foco(d, hoje) {
@@ -282,16 +292,22 @@
     add('d1', '1º desafio concluído', p.desafios.concluidos >= 1);
     add('d3', '3 desafios concluídos', p.desafios.concluidos >= 3);
     add('p1', '1ª medição do plano alimentar', p.plano.total >= 1);
+    add('c1', '1ª tarefa do plano da certificação', p.cert.feitas >= 1);
+    add('c7', '7 dias seguidos estudando para a certificação', p.cert.seq >= 7);
+    add('c50', 'Metade do plano da certificação', p.cert.pct >= 50);
+    add('cs70', 'Simulado da certificação com 70% ou mais', p.cert.simMax >= 70);
+    add('cs80', 'Simulado da certificação com 80% ou mais', p.cert.simMax >= 80);
+    add('cok', 'Certificação Google Data Engineer conquistada', p.cert.aprovada);
     return l;
   }
 
   function coisasHoje(p) {
-    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0) + (p.foco.feito ? 1 : 0);
+    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0) + (p.foco.feito ? 1 : 0) + (p.cert.hoje > 0 ? 1 : 0);
   }
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), ausencia: ausencia(d, hoje) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), cert: cert(d, hoje), ausencia: ausencia(d, hoje) };
     p.metas = metas(p, d); p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
@@ -311,6 +327,7 @@
     o.push(m('vida', 'financeiro', 'Entrada do imóvel', p.financeiro.pct, 100, 'financeiro.html', p.financeiro.pct + '%'));
     o.push(m('vida', 'mudanca', 'Mudança (checklist)', p.mudanca.pct, 100, 'mudanca.html', p.mudanca.pct + '%'));
     if (p.desafios.ativos) o.push(m('vida', 'desafios', 'Desafios em andamento', p.desafios.pct, 100, 'desafios.html', p.desafios.pct + '%'));
+    if (p.cert.ativo && !p.cert.aprovada) o.push(m('vida', 'cert', 'Plano da certificação', p.cert.pct, 100, 'certificacao.html', p.cert.pct + '%'));
     return { saude: s, vida: o };
   }
 

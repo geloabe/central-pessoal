@@ -1,0 +1,379 @@
+/* Plano da certificação Google Cloud Professional Data Engineer (guia oficial v4.2).
+   Funções puras (sem DOM nem rede), testáveis no Node. Dados do usuário (documento cert/main):
+   { inicio:'AAAA-MM-DD', prova:'AAAA-MM-DD', feitas:{'4-1':'AAAA-MM-DD'}, topicos:{'1.1':0..3},
+     simulados:[{id,data,tipo:'completo'|'parcial',acertos,total,fraca:1..5|null}], aprovada:false } */
+(function (root) {
+  'use strict';
+  var DIA = 864e5;
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function iso(dt) { return dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate()); }
+  function parse(s) { var p = String(s).slice(0, 10).split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+  function addDias(dt, n) { var d = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()); d.setDate(d.getDate() + n); return d; }
+  function dias(a, b) { return Math.round((parse(iso(b)) - parse(iso(a))) / DIA); }
+
+  /* Pesos oficiais das seções do exame (guia v4.2) */
+  var SECOES = [
+    { id: 1, nome: 'Projetar sistemas de processamento', peso: 22 },
+    { id: 2, nome: 'Ingerir e processar os dados', peso: 25 },
+    { id: 3, nome: 'Armazenar os dados', peso: 20 },
+    { id: 4, nome: 'Preparar e usar dados para análise', peso: 15 },
+    { id: 5, nome: 'Manter e automatizar as cargas de dados', peso: 18 }
+  ];
+
+  /* 19 tópicos do guia; "d" = dias do plano que cobrem o tópico */
+  var TOPICOS = [
+    { id: '1.1', s: 1, nome: 'Segurança e conformidade: IAM, criptografia e chaves, privacidade/PII, soberania regional, governança de projeto e dataset, dev × produção', d: [6, 15] },
+    { id: '1.2', s: 1, nome: 'Confiabilidade e fidelidade: limpeza, orquestração, recuperação de desastre, ACID × disponibilidade, validação de dados', d: [16] },
+    { id: '1.3', s: 1, nome: 'Flexibilidade e portabilidade: requisitos de negócio, multicloud, staging, catálogo, profiling e descoberta', d: [5, 15] },
+    { id: '1.4', s: 1, nome: 'Migrações: plano e validação (BigQuery DTS, DMS, Transfer Appliance, rede, Datastream)', d: [11] },
+    { id: '2.1', s: 2, nome: 'Planejar pipelines: fontes e destinos, lógica de transformação e orquestração, rede, criptografia', d: [8, 22] },
+    { id: '2.2', s: 2, nome: 'Construir pipelines: Dataflow/Beam, Dataproc, Data Fusion, Pub/Sub, Spark, Kafka; batch, streaming, janelas, dados atrasados, enriquecimento com IA', d: [8, 9, 10, 11] },
+    { id: '2.3', s: 2, nome: 'Operacionalizar pipelines: Cloud Composer, Workflows, CI/CD', d: [13] },
+    { id: '3.1', s: 3, nome: 'Selecionar armazenamento: BigQuery, BigLake, AlloyDB, Bigtable, Spanner, Cloud SQL, Cloud Storage, Firestore, Memorystore; custo e ciclo de vida', d: [4] },
+    { id: '3.2', s: 3, nome: 'Data warehouse: modelagem, grau de normalização, padrões de acesso', d: [2, 3] },
+    { id: '3.3', s: 3, nome: 'Data lake: descoberta, acesso, controle de custo, processamento e monitoramento', d: [5] },
+    { id: '3.4', s: 3, nome: 'Plataforma de dados: Dataplex, catálogo, governança federada', d: [5, 15] },
+    { id: '4.1', s: 4, nome: 'Preparar para visualização: BI Engine, materialized views, consultas lentas, mascaramento e DLP', d: [3, 17] },
+    { id: '4.2', s: 4, nome: 'Preparar para IA e ML: BigQuery ML, features, embeddings e RAG', d: [18] },
+    { id: '4.3', s: 4, nome: 'Compartilhar dados: regras, publicação, Analytics Hub', d: [17] },
+    { id: '5.1', s: 5, nome: 'Otimizar recursos: custo por necessidade, clusters persistentes × por job', d: [19] },
+    { id: '5.2', s: 5, nome: 'Automação e repetibilidade: DAGs do Composer, agendamento', d: [13] },
+    { id: '5.3', s: 5, nome: 'Organizar cargas: BigQuery Editions e reservas, interativo × batch', d: [19] },
+    { id: '5.4', s: 5, nome: 'Monitorar e resolver problemas: Monitoring, Logging, cotas, billing, reservas', d: [20] },
+    { id: '5.5', s: 5, nome: 'Falhas e mitigação: tolerância, multirregião, dados corrompidos ou faltando, replicação e failover', d: [16, 20] }
+  ];
+
+  var TIPOS = { estudo: 'Estudo', lab: 'Lab', cartoes: 'Cartões', quiz: 'Questões', simulado: 'Simulado', revisao: 'Revisão', prova: 'Prova' };
+
+  /* Plano: t=título, s=seções, o=objetivo, d=dica, k=tarefas [tipo, minutos, texto]. O dia 29 é a prova. */
+  var PLANO = [
+    // ---------- Semana 1: base, BigQuery e armazenamento ----------
+    { t: 'Orientação e diagnóstico', s: [1, 2, 3, 4, 5],
+      o: 'Saber de onde você parte e deixar a prova marcada.',
+      d: 'A prova é só em inglês (ou japonês). Estude os termos em inglês desde o início.',
+      k: [['estudo', 25, 'Ler o guia oficial v4.2 inteiro (5 seções, 19 tópicos). Na aba Tópicos, dar uma nota de 0 a 3 para cada um, com honestidade.'],
+          ['quiz', 30, 'Fazer as questões de exemplo oficiais sem consultar nada. Anotar o que errou e por quê.'],
+          ['lab', 20, 'Abrir um projeto no Google Cloud (nível gratuito ou crédito), ativar BigQuery e Cloud Storage e rodar uma consulta num dataset público.'],
+          ['estudo', 15, 'Agendar a prova no certmetrics para o dia 29 (online ou em centro). Conferir ID válido e as regras de reagendamento.']] },
+    { t: 'BigQuery I: arquitetura, carga e particionamento', s: [3],
+      o: 'Entender como o BigQuery armazena, cobra e carrega dados.',
+      d: 'LIMIT não reduz o custo. O que reduz é filtrar por partição e escolher poucas colunas. O dry run mostra os bytes antes de rodar.',
+      k: [['estudo', 40, 'Armazenamento colunar separado da computação (slots), datasets e regiões; carga em lote (grátis) × streaming × Storage Write API (exactly-once).'],
+          ['estudo', 30, 'Partição (por tempo, ingestão ou intervalo inteiro) × cluster (até 4 colunas): quando usar cada um; exigir filtro de partição; expiração de partição e de tabela.'],
+          ['lab', 30, 'Criar tabela particionada e clusterizada a partir de um dataset público e comparar os bytes processados (dry run) com e sem filtro de partição.']] },
+    { t: 'BigQuery II: modelagem e desempenho', s: [3, 4],
+      o: 'Modelar para consulta rápida e barata e diagnosticar consultas lentas.',
+      d: 'Desnormalizar com STRUCT e ARRAY costuma vencer JOINs enormes. Normalizar só dimensões que mudam muito.',
+      k: [['estudo', 35, 'Modelagem: estrela × tabela larga, campos aninhados e repetidos, SCD, quando normalizar.'],
+          ['estudo', 35, 'Desempenho: plano de execução, shuffle, skew, ordem dos joins, APPROX_*, materialized views, BI Engine, search index e cache de resultado.'],
+          ['lab', 30, 'Reescrever uma consulta lenta e comparar tempo e bytes. Criar uma materialized view e ver o ganho.']] },
+    { t: 'Escolha de armazenamento (dia longo)', s: [3],
+      o: 'Escolher o serviço certo só pelos requisitos. Isso é cobrado em muitas questões.',
+      d: 'Bigtable: row key sem timestamp crescente no início, senão vira hotspot. Spanner: relacional global com consistência forte.',
+      k: [['estudo', 60, 'Bigtable (row key, hotspot, SSD × HDD, replicação), Spanner, Cloud SQL, AlloyDB, Firestore, Memorystore, Cloud Storage (classes, lifecycle, Autoclass, dual e multi-region).'],
+          ['cartoes', 30, 'Montar uma árvore de decisão de 1 página: transacional × analítico, escala, latência, consistência, SQL, alcance global.'],
+          ['estudo', 40, 'Custo e ciclo de vida: Standard, Nearline (30 d), Coldline (90 d), Archive (365 d); armazenamento de longo prazo do BigQuery; expiração; exportar dado frio para o GCS.'],
+          ['quiz', 50, '20 questões só de seleção de armazenamento. Cada erro vira um cartão.']] },
+    { t: 'Data lake, BigLake e Dataplex (dia longo)', s: [1, 3],
+      o: 'Montar um lakehouse e entender a governança sobre ele.',
+      d: 'BigLake dá segurança por linha e coluna sobre arquivos abertos (Parquet, ORC, Iceberg, Delta) no Cloud Storage.',
+      k: [['estudo', 45, 'BigLake: tabelas externas × nativas × BigLake, formatos abertos, segurança fina, multicloud.'],
+          ['estudo', 45, 'Dataplex: catálogo, lakes e zones, qualidade e profiling, linhagem, governança federada (data mesh). O Data Catalog antigo virou Dataplex Catalog.'],
+          ['lab', 60, 'Lakehouse: arquivos Parquet no Cloud Storage, tabela BigLake, consulta no BigQuery; registrar no catálogo e rodar um perfil de dados.']] },
+    { t: 'Segurança I: IAM, chaves e BigQuery', s: [1],
+      o: 'Dominar os controles de acesso e criptografia mais cobrados.',
+      d: 'Conta de serviço: prefira impersonation e identidade da carga em vez de chaves JSON.',
+      k: [['estudo', 40, 'IAM: papéis básicos × predefinidos × customizados, menor privilégio, contas de serviço, organization policies, VPC Service Controls (perímetro contra exfiltração).'],
+          ['estudo', 30, 'Criptografia: padrão do Google × CMEK (Cloud KMS) × CSEK (só Cloud Storage e Compute Engine) × EKM; rotação de chaves; criptografia por envelope.'],
+          ['cartoes', 20, 'Segurança no BigQuery: IAM em dataset e tabela, authorized views, datasets e rotinas, row-level, column-level (policy tags) e mascaramento dinâmico.']] },
+    { t: 'Revisão da semana 1', s: [1, 3],
+      o: 'Consolidar e medir o que ficou.',
+      d: 'Errar aqui é barato. Errar na prova não é.',
+      k: [['cartoes', 20, 'Revisar todos os cartões criados na semana.'],
+          ['quiz', 30, 'Mini-simulado de 20 questões (armazenamento e BigQuery). Corrigir entendendo o porquê de cada alternativa.'],
+          ['revisao', 10, 'Atualizar as notas na aba Tópicos.']] },
+    // ---------- Semana 2: ingestão e processamento ----------
+    { t: 'Pub/Sub', s: [2],
+      o: 'Dominar o modelo de mensageria do Google Cloud.',
+      d: 'Por padrão a entrega é at-least-once. Exactly-once está disponível em assinaturas pull. Para duplicatas, pense em idempotência.',
+      k: [['estudo', 45, 'Tópico e assinatura; pull × push × BigQuery × Cloud Storage; at-least-once e exactly-once; ordering keys; ack deadline; dead-letter e retry; retenção e replay (seek); schemas Avro e Protobuf.'],
+          ['estudo', 25, 'Padrões: fan-out, absorver picos, desacoplar. Pub/Sub × Managed Service for Apache Kafka × Cloud Tasks.'],
+          ['lab', 30, 'Criar tópico e assinatura para BigQuery, publicar com gcloud, ver na tabela e forçar uma falha para cair na dead-letter.']] },
+    { t: 'Dataflow e Apache Beam I', s: [2],
+      o: 'Entender o modelo do Beam e quando escolher Dataflow.',
+      d: 'Para pipeline novo, serverless e streaming, Dataflow. Para reaproveitar Spark ou Hadoop existente, Dataproc.',
+      k: [['estudo', 50, 'Beam: Pipeline, PCollection, ParDo, GroupByKey, Combine, side inputs; Dataflow: autoscaling, Streaming Engine, Shuffle, FlexRS (batch barato), Flex Templates e templates do Google.'],
+          ['estudo', 30, 'Dataflow × Dataproc × SQL do BigQuery × Data Fusion; operar: update, drain, cancel, snapshots.'],
+          ['lab', 30, 'Rodar um template do Google (Pub/Sub para BigQuery ou Texto para BigQuery) e olhar o grafo e as métricas.']] },
+    { t: 'Beam II: streaming, janelas e dados atrasados', s: [2],
+      o: 'Resolver qualquer questão de janela, watermark e dado atrasado.',
+      d: 'Tempo de evento ≠ tempo de processamento. Watermark estima até onde o tempo de evento chegou. Gatilho decide quando emitir.',
+      k: [['estudo', 50, 'Janelas: fixed, sliding, session e global; watermark; gatilhos (early, on-time, late); lateness permitido; modo de acumulação.'],
+          ['estudo', 30, 'Exatidão: exactly-once no Dataflow, sinks idempotentes, deduplicação, reprocesso e backfill.'],
+          ['lab', 30, 'Pipeline em Python com janela fixa de 1 min contando eventos do Pub/Sub e gravando no BigQuery; enviar eventos atrasados e ver o efeito.']] },
+    { t: 'Dataproc, Data Fusion e migração (dia longo)', s: [1, 2],
+      o: 'Cobrir o restante da ingestão e as ferramentas de migração.',
+      d: 'Volume enorme e rede lenta: Transfer Appliance (offline). Replicar banco continuamente: Datastream (CDC).',
+      k: [['estudo', 45, 'Dataproc: Spark, Hadoop e Hive; cluster efêmero por job com dados no GCS; autoscaling; workers Spot; Serverless for Apache Spark; Metastore.'],
+          ['estudo', 30, 'Data Fusion (ETL visual, roda em Dataproc) e Kafka no Google Cloud.'],
+          ['estudo', 45, 'Migração e transferência: BigQuery Data Transfer Service, Storage Transfer Service, Transfer Appliance, Datastream, Database Migration Service, rede (VPN, Interconnect, Private Google Access).'],
+          ['quiz', 60, '25 questões da seção 2 (ingestão e processamento).']] },
+    { t: 'Simulado 1 (diagnóstico, dia longo)', s: [1, 2, 3, 4, 5],
+      o: 'Medir onde você está, em condições reais.',
+      d: 'Aqui ainda falta metade do conteúdo. Uma nota de 50% a 60% é normal e útil.',
+      k: [['simulado', 120, 'Simulado completo: 50 questões em 2 h, em inglês, sem pausas e sem consultar. Registrar na aba Simulados.'],
+          ['revisao', 60, 'Para cada erro, escrever por que a certa é certa e por que as outras erram. Criar cartões e marcar a seção mais fraca.']] },
+    { t: 'Orquestração e CI/CD', s: [2, 5],
+      o: 'Saber escolher entre Composer, Workflows, Scheduler e Dataform.',
+      d: 'Dependências complexas entre várias tarefas: Composer. Chamar poucos serviços em sequência: Workflows. Só disparar no horário: Scheduler.',
+      k: [['estudo', 40, 'Cloud Composer (Airflow gerenciado): DAG, operadores, sensores, retries, backfill; Composer 2 e 3; Cloud Scheduler; Workflows; Dataform (SQLX, dependências, assertions); consultas agendadas.'],
+          ['estudo', 25, 'CI/CD para dados: Git, Cloud Build, deploy de DAGs e templates, Terraform, ambientes dev e prod, teste de pipeline.'],
+          ['lab', 25, 'Escrever um DAG simples (consulta no BigQuery e exportação para o GCS) e validar a sintaxe; rodar no Composer só se houver crédito.']] },
+    { t: 'Revisão da semana 2', s: [2],
+      o: 'Fixar ingestão e processamento.',
+      d: 'Se janelas e watermark ainda confundem, volte ao dia 10 antes de seguir.',
+      k: [['cartoes', 20, 'Revisar cartões da semana.'],
+          ['quiz', 30, 'Mini-simulado de 20 questões (pipelines, Pub/Sub, Dataflow, orquestração).'],
+          ['revisao', 10, 'Atualizar as notas na aba Tópicos.']] },
+    // ---------- Semana 3: governança, confiabilidade, análise e operação ----------
+    { t: 'Privacidade, residência e governança', s: [1, 3],
+      o: 'Dominar proteção de dados sensíveis e conformidade.',
+      d: 'Dado sensível dentro do BigQuery: policy tags e mascaramento. Detectar e anonimizar: Sensitive Data Protection (DLP).',
+      k: [['estudo', 40, 'Cloud DLP (Sensitive Data Protection): inspeção, mascaramento, tokenização (determinística, FPE), re-identificação; PII no BigQuery.'],
+          ['estudo', 30, 'Residência e soberania: regiões × multirregião, organization policy de locais, VPC Service Controls, audit logs (Admin Activity sempre ligado; Data Access configurável).'],
+          ['estudo', 30, 'Governança de projeto, dataset e tabela; dev × produção; Dataplex Catalog, linhagem e perfil de dados.']] },
+    { t: 'Confiabilidade, DR e ACID', s: [1, 5],
+      o: 'Escolher a estratégia certa de recuperação e consistência.',
+      d: 'Defina primeiro RPO e RTO. Depois escolha: multirregião, réplica, snapshot ou backup.',
+      k: [['estudo', 45, 'Recuperação de desastre: RPO e RTO; BigQuery (multirregião, replicação entre regiões, time travel de 7 dias, fail-safe, snapshots), Cloud Storage dual-region, Spanner multirregião, replicação do Bigtable, Cloud SQL HA e réplica entre regiões.'],
+          ['estudo', 30, 'ACID e disponibilidade: Spanner, Cloud SQL e AlloyDB são ACID; Bigtable é atômico por linha; transações multi-statement no BigQuery.'],
+          ['estudo', 25, 'Validação e qualidade: assertions do Dataform, qualidade do Dataplex, dead-letter no Dataflow.']] },
+    { t: 'BI, desempenho e compartilhamento', s: [4],
+      o: 'Servir dados com rapidez e compartilhá-los com segurança.',
+      d: 'Compartilhar sem copiar: authorized view ou Analytics Hub. Dashboard lento: BI Engine e materialized view.',
+      k: [['estudo', 40, 'Looker e Looker Studio sobre o BigQuery: BI Engine, materialized views, campos pré-calculados, partição para dashboards, cache, diagnóstico por INFORMATION_SCHEMA.'],
+          ['estudo', 30, 'Compartilhar: Analytics Hub (exchanges e listings), authorized views e datasets, datasets públicos, exportação.'],
+          ['lab', 30, 'Criar uma authorized view e testar o acesso com outra conta; ler o fluxo de uma listagem do Analytics Hub.']] },
+    { t: 'IA e ML nos dados (dia longo)', s: [4],
+      o: 'Cobrir BigQuery ML, embeddings e RAG, que entraram no guia v4.2.',
+      d: 'Embeddings + VECTOR_SEARCH no BigQuery resolvem busca semântica e RAG sem sair do warehouse.',
+      k: [['estudo', 50, 'BigQuery ML: CREATE MODEL (linear, logística, k-means, boosted trees, DNN, ARIMA_PLUS, matrix factorization), TRANSFORM, ML.EVALUATE e ML.PREDICT, modelos remotos e importados.'],
+          ['estudo', 40, 'Dados para ML: features em SQL, divisão treino e teste, desbalanceamento, vazamento; Vertex AI (Feature Store, pipelines) em visão geral.'],
+          ['estudo', 40, 'IA generativa: ML.GENERATE_EMBEDDING, VECTOR_SEARCH, índice vetorial, RAG com dados não estruturados, LLM para gerar SQL e seus riscos (revisar e controlar permissões).'],
+          ['lab', 50, 'Treinar um classificador no BigQuery ML com dataset público e avaliar; gerar embeddings de texto e fazer busca vetorial.']] },
+    { t: 'Custos e capacidade (dia longo)', s: [5],
+      o: 'Decidir entre sob demanda e reservas e cortar custo sem perder desempenho.',
+      d: 'Carga previsível e constante: reservas (Editions). Carga esporádica: sob demanda. Batch tolerante a atraso: FlexRS.',
+      k: [['estudo', 50, 'BigQuery Editions (Standard, Enterprise, Enterprise Plus), reservas, slots com autoscaling, commitments; sob demanda × Editions; armazenamento lógico × físico; interativo × batch.'],
+          ['estudo', 40, 'Otimizar custo: partição e cluster, expirar dados, evitar SELECT *, cotas customizadas, budgets e alertas de billing; Dataproc persistente × por job; FlexRS.'],
+          ['lab', 50, 'Consultar INFORMATION_SCHEMA.JOBS e JOBS_TIMELINE para achar as consultas mais caras e criar um orçamento com alerta.'],
+          ['quiz', 40, '20 questões da seção 5.']] },
+    { t: 'Observabilidade e falhas', s: [5],
+      o: 'Saber o que monitorar e como reagir.',
+      d: 'Dataflow: system lag e data freshness. Pub/Sub: idade da mensagem mais antiga sem ack. Composer: falha de DAG.',
+      k: [['estudo', 40, 'Cloud Monitoring e Logging: métricas-chave, alertas, log sinks para o BigQuery.'],
+          ['estudo', 30, 'Troubleshooting: quota exceeded, resources exceeded, schema mismatch, hot key, 429 e 503 com retry e backoff; surpresas de billing.'],
+          ['cartoes', 20, 'Falhas: restart e idempotência, múltiplas zonas e regiões, dado corrompido ou faltando (reprocessar, dead-letter).']] },
+    { t: 'Revisão da semana 3 e lacunas', s: [1, 4, 5],
+      o: 'Descobrir os 3 tópicos mais fracos para atacar na semana 4.',
+      d: 'Seja duro nas notas: nota 3 só se conseguir explicar para outra pessoa.',
+      k: [['cartoes', 20, 'Revisar cartões da semana.'],
+          ['quiz', 30, 'Mini-simulado de 20 questões (seções 1 e 4).'],
+          ['revisao', 10, 'Atualizar notas na aba Tópicos e escolher os 3 mais fracos para o dia 24.']] },
+    // ---------- Semana 4: cenários, simulados e véspera ----------
+    { t: 'Cenários de arquitetura I', s: [1, 2, 3],
+      o: 'Treinar o formato real: um cenário e a melhor combinação de serviços.',
+      d: 'Leia primeiro a última frase da questão (o que ela pede) e depois o cenário.',
+      k: [['quiz', 60, '25 cenários do tipo escolha a melhor arquitetura. Para cada um, justificar em voz alta.'],
+          ['estudo', 40, 'Matriz de decisão: ingestão × processamento × armazenamento × entrega. Revisar a aba Cola.']] },
+    { t: 'Cenários II e pegadinhas de enunciado', s: [1, 2, 3, 4, 5],
+      o: 'Reconhecer as palavras que decidem a resposta.',
+      d: 'Cost-effective, least operational overhead, serverless, minimize latency, no code changes: cada uma aponta para uma família de serviços.',
+      k: [['estudo', 40, 'Padrões de enunciado e o que cada um indica (ver Cola, Palavras-chave).'],
+          ['quiz', 60, '30 questões mistas cronometradas, com 2 minutos por questão.']] },
+    { t: 'Pontos fracos', s: [1, 2, 3, 4, 5],
+      o: 'Fechar os buracos que ainda doem.',
+      d: 'Um lab rápido fixa mais do que mais uma leitura.',
+      k: [['estudo', 70, 'Reestudo cirúrgico dos 3 tópicos com menor nota: documentação, vídeo e um lab rápido para cada.'],
+          ['cartoes', 30, 'Cartões só dos tópicos fracos.']] },
+    { t: 'Simulado 2 (condições reais, dia longo)', s: [1, 2, 3, 4, 5],
+      o: 'Ensaio geral: tempo, ambiente e cabeça de prova.',
+      d: 'Meta: 80% ou mais. Abaixo de 70%, use o dia 26 inteiro para reforço e adie a prova se precisar.',
+      k: [['simulado', 120, 'Simulado completo: 50 questões em 2 h, em inglês, sem pausa e sem consulta. Registrar na aba Simulados.'],
+          ['revisao', 60, 'Analisar todos os erros e os acertos por chute. Marcar a seção mais fraca.']] },
+    { t: 'Reforço e cola de 1 página (dia longo)', s: [1, 2, 3, 4, 5],
+      o: 'Transformar os erros em regras de decisão.',
+      d: 'A cola de 1 página é para ler na véspera, não para decorar.',
+      k: [['revisao', 60, 'Reestudar os erros do simulado 2 por seção.'],
+          ['cartoes', 40, 'Montar a cola de 1 página com as 10 regras de decisão que mais derrubaram você.'],
+          ['estudo', 50, 'Reler os comparativos mais cobrados: Bigtable × Spanner × BigQuery, Dataflow × Dataproc, Composer × Workflows × Scheduler.']] },
+    { t: 'Simulado 3 parcial e checklist da prova', s: [1, 2, 3, 4, 5],
+      o: 'Manter o ritmo sem cansar e deixar o ambiente pronto.',
+      d: 'Prova online: teste câmera, microfone, internet e a sala antes. Feche aplicativos e deixe a mesa limpa.',
+      k: [['simulado', 60, 'Simulado parcial: 30 questões em 60 min. Registrar na aba Simulados.'],
+          ['revisao', 15, 'Checklist técnico: documento de identidade, ambiente, internet, câmera, software de proctoring, horário.']] },
+    { t: 'Véspera: descansar', s: [1, 2, 3, 4, 5],
+      o: 'Chegar à prova com a cabeça descansada.',
+      d: 'Nada de conteúdo novo. Dormir bem rende mais que mais uma hora de estudo.',
+      k: [['cartoes', 25, 'Ler a cola de 1 página e os cartões marcados como difíceis.'],
+          ['revisao', 15, 'Separar documento, preparar o ambiente e definir o horário de acordar. Dormir pelo menos 7 horas.']] },
+    { t: 'Dia da prova', s: [1, 2, 3, 4, 5],
+      o: 'Fazer a prova com calma e estratégia.',
+      d: 'Cerca de 2,4 minutos por questão (50 em 120). Marque as dúvidas, siga em frente e volte no fim. Elimine alternativas antes de escolher.',
+      k: [['prova', 15, 'Acordar cedo, comer leve, conferir o documento e entrar na sala de prova 30 minutos antes.'],
+          ['prova', 120, 'Fazer a prova.'],
+          ['revisao', 5, 'Registrar o resultado: em Ajustar, marcar Aprovada. Comemorar.']] }
+  ];
+  // normaliza: número do dia, tempo total e ids das tarefas
+  PLANO.forEach(function (d, i) {
+    d.n = i + 1; d.min = 0;
+    d.tarefas = d.k.map(function (k, j) { d.min += k[1]; return { id: (i + 1) + '-' + j, tipo: k[0], min: k[1], txt: k[2] }; });
+  });
+  var N_DIAS = PLANO.length, N_TAREFAS = PLANO.reduce(function (a, d) { return a + d.tarefas.length; }, 0);
+
+  /* Cola: regras de decisão mais cobradas */
+  var COLA = [
+    { t: 'Escolha de armazenamento', i: [
+      'Analítico, SQL, petabytes, sem servidor: BigQuery.',
+      'Chave e coluna larga, latência de milissegundos, vazão enorme (IoT, séries temporais, adtech): Bigtable. Cuidado com a row key: timestamp crescente no início causa hotspot. Replicação multi-cluster é eventual.',
+      'Relacional com consistência forte e escala horizontal global: Spanner.',
+      'MySQL, PostgreSQL ou SQL Server gerenciado, escala vertical e réplicas de leitura: Cloud SQL. PostgreSQL de alto desempenho com análise: AlloyDB.',
+      'Documentos para apps web e mobile, sincronização em tempo real: Firestore. Cache em memória: Memorystore.',
+      'Objetos, arquivos e data lake: Cloud Storage. Classes: Standard, Nearline (mín. 30 dias), Coldline (90) e Archive (365). Lifecycle e Autoclass movem os dados sozinhos.',
+      'Tabelas sobre arquivos abertos no GCS, com segurança por linha e coluna: BigLake.'] },
+    { t: 'BigQuery', i: [
+      'Partição: tempo, ingestão ou intervalo inteiro (até 10.000 partições). Cluster: até 4 colunas, ordem importa. Exigir filtro de partição evita varredura cara.',
+      'LIMIT não reduz custo. SELECT * encarece. Dry run mostra os bytes. APPROX_COUNT_DISTINCT é mais barato.',
+      'Carga em lote é grátis. Streaming cobra. Storage Write API é a opção moderna e permite exactly-once.',
+      'Time travel de 7 dias (configurável de 2 a 7), mais 7 de fail-safe. Snapshots e clones guardam um ponto no tempo. Dado sem alteração por 90 dias vai para armazenamento de longo prazo (mais barato).',
+      'Desnormalizar com STRUCT e ARRAY reduz joins. Materialized view acelera agregações repetidas. BI Engine acelera dashboards.',
+      'Editions: Standard, Enterprise e Enterprise Plus. Reservas e slots com autoscaling para carga previsível. Sob demanda para carga esporádica.',
+      'Segurança: IAM em dataset e tabela; authorized view, dataset e rotina; row-level; column-level por policy tags; mascaramento dinâmico; CMEK.'] },
+    { t: 'Pub/Sub e streaming', i: [
+      'Entrega at-least-once por padrão. Exactly-once em assinaturas pull. Ordering keys garantem ordem por chave.',
+      'Falha repetida de processamento: dead-letter topic com limite de tentativas. Reprocessar: seek (replay) e retenção.',
+      'Tipos de assinatura: pull, push, BigQuery e Cloud Storage. Schemas em Avro ou Protobuf.',
+      'Janelas: fixed (tumbling), sliding, session (por inatividade) e global. Watermark estima o progresso do tempo de evento. Lateness permitido aceita dado atrasado. Gatilho define quando emitir.',
+      'Dataflow: autoscaling, Streaming Engine, FlexRS para batch barato, Flex Templates. Update substitui o job. Drain termina o que já entrou. Cancel descarta.'] },
+    { t: 'Processamento: o que usar', i: [
+      'Pipeline novo, serverless, batch e streaming: Dataflow (Beam).',
+      'Já existe Spark ou Hadoop e quer pouca mudança de código: Dataproc. Prefira cluster efêmero por job com dados no GCS, workers Spot e autoscaling.',
+      'ETL visual sem código: Data Fusion.',
+      'Transformação em SQL dentro do BigQuery: consultas agendadas ou Dataform (com assertions).',
+      'Orquestrar dependências complexas: Cloud Composer (Airflow). Poucos serviços em sequência: Workflows. Só disparar no horário: Cloud Scheduler.'] },
+    { t: 'Migração e transferência', i: [
+      'Replicar banco continuamente (CDC) para o BigQuery ou o GCS: Datastream.',
+      'Migrar banco para Cloud SQL ou AlloyDB: Database Migration Service.',
+      'Cargas agendadas de SaaS e de outros warehouses para o BigQuery: BigQuery Data Transfer Service.',
+      'Arquivos de S3, Azure ou on-premises para o GCS pela rede: Storage Transfer Service. Volume enorme e rede lenta: Transfer Appliance (offline).',
+      'Conectividade: VPN para começar, Interconnect para banda alta e estável, Private Google Access para acessar APIs sem IP público.'] },
+    { t: 'Segurança, privacidade e governança', i: [
+      'Menor privilégio. Prefira papéis predefinidos; contas de serviço com impersonation em vez de chaves.',
+      'Perímetro contra exfiltração de dados: VPC Service Controls. Restringir regiões e outras regras de projeto: organization policies.',
+      'Criptografia em repouso é padrão. CMEK usa Cloud KMS (você controla a chave). CSEK existe só em Cloud Storage e Compute Engine.',
+      'Achar e anonimizar dado sensível: Sensitive Data Protection (DLP): inspeção, mascaramento, tokenização.',
+      'Audit logs: Admin Activity sempre ligado. Data Access é configurável (no BigQuery já fica ligado).',
+      'Catálogo, qualidade, perfil e linhagem: Dataplex. Governança federada entre domínios: data mesh com Dataplex.'] },
+    { t: 'Confiabilidade e recuperação', i: [
+      'Defina RPO (quanto dado pode perder) e RTO (quanto tempo pode ficar fora). Depois escolha a técnica.',
+      'Bigtable: replicação com vários clusters (roteamento single-cluster para ler o que escreveu). Spanner multirregião para a maior disponibilidade. Cloud SQL: HA regional mais réplica entre regiões.',
+      'Cloud Storage: dual-region ou multi-region para durabilidade e failover.',
+      'ACID: Spanner, Cloud SQL e AlloyDB sim. Bigtable só atômico por linha. BigQuery tem transações multi-statement.',
+      'Job que falha: torne idempotente, use retry com backoff e dead-letter. Dado corrompido ou faltando: reprocessar a partir da fonte ou de snapshot.'] },
+    { t: 'IA e ML', i: [
+      'Modelo simples sobre dados do warehouse: BigQuery ML (CREATE MODEL, ML.PREDICT, ML.EVALUATE, TRANSFORM).',
+      'Busca semântica e RAG: ML.GENERATE_EMBEDDING, índice vetorial e VECTOR_SEARCH.',
+      'Treine e avalie com divisão correta e evite vazamento de dados.',
+      'Dado não estruturado (documentos, imagens): extrair e fazer chunking antes de gerar embeddings.'] },
+    { t: 'Custos e operação', i: [
+      'Carga previsível e constante: reservas. Esporádica: sob demanda. Batch sem pressa: FlexRS, Spot e consultas batch.',
+      'Controlar gasto: budgets e alertas, cotas customizadas por projeto e usuário, partição e cluster, expiração de dados.',
+      'Dataflow: system lag e data freshness. Pub/Sub: idade da mensagem mais antiga sem ack. Composer: falhas de DAG. BigQuery: INFORMATION_SCHEMA.JOBS e uso de slots.',
+      'Erros comuns: quota exceeded, resources exceeded, schema mismatch, hot key. Para 429 e 503, retry com backoff.'] },
+    { t: 'Palavras-chave do enunciado', i: [
+      'Least operational overhead ou fully managed: escolha o serviço gerenciado (BigQuery, Dataflow, Pub/Sub), não clusters.',
+      'Cost-effective: pense em Spot, FlexRS, classe de armazenamento mais fria, partição e reserva de slots.',
+      'Minimize latency ou near real-time: streaming (Pub/Sub e Dataflow), Bigtable.',
+      'Existing Hadoop or Spark jobs, minimal changes: Dataproc.',
+      'Globally consistent transactions: Spanner.',
+      'Without moving data ou share without copying: authorized view ou Analytics Hub.',
+      'Compliance, PII, sensitive: DLP, CMEK, VPC Service Controls, policy tags.',
+      'Elimine primeiro as alternativas que quebram um requisito explícito e depois escolha entre as que sobraram.'] }
+  ];
+
+  var RECURSOS = [
+    ['Guia oficial do exame (v4.2, PDF)', 'https://services.google.com/fh/files/misc/professional_data_engineer_exam_guide_english.pdf'],
+    ['Página da certificação (preço, formato, validade)', 'https://cloud.google.com/learn/certification/data-engineer'],
+    ['Trilha oficial no Cloud Skills Boost', 'https://www.cloudskillsboost.google/paths/16'],
+    ['Questões de exemplo oficiais (formulário)', 'https://docs.google.com/forms/d/e/1FAIpQLSfkWEzBCP0wQ09ZuFm7G2_4qtkYbfmk_0getojdnPdCYmq37Q/viewform'],
+    ['Guia de preparação da comunidade Google', 'https://discuss.google.dev/t/your-guide-to-preparing-for-the-google-cloud-professional-data-engineer-certification/107505'],
+    ['Agendar a prova (certmetrics)', 'https://cp.certmetrics.com/google/en/login'],
+    ['Documentação do Google Cloud', 'https://cloud.google.com/docs']
+  ];
+
+  /* ---------- lógica ---------- */
+  function cfgPadrao(hoje) { var i = addDias(hoje || new Date(), 1); return { inicio: iso(i), prova: iso(addDias(i, N_DIAS)) }; }
+
+  function prontidao(topicos) {
+    topicos = topicos || {};
+    var porSecao = SECOES.map(function (s) {
+      var ts = TOPICOS.filter(function (t) { return t.s === s.id; });
+      var soma = ts.reduce(function (a, t) { return a + Math.max(0, Math.min(3, +topicos[t.id] || 0)); }, 0);
+      return { id: s.id, nome: s.nome, peso: s.peso, pct: Math.round(soma / (ts.length * 3) * 100), avaliados: ts.filter(function (t) { return topicos[t.id] != null; }).length, n: ts.length };
+    });
+    var pct = Math.round(porSecao.reduce(function (a, s) { return a + s.pct * s.peso; }, 0) / 100);
+    return { pct: pct, porSecao: porSecao };
+  }
+
+  function simStats(sims) {
+    sims = (sims || []).filter(function (x) { return x && x.total > 0; }).slice().sort(function (a, b) { return a.data < b.data ? -1 : 1; });
+    var pct = function (x) { return Math.round(x.acertos / x.total * 100); };
+    var comp = sims.filter(function (x) { return x.tipo === 'completo'; });
+    var ult = comp.slice(-2);
+    var media = ult.length ? Math.round(ult.reduce(function (a, x) { return a + pct(x); }, 0) / ult.length) : null;
+    var melhor = sims.length ? Math.max.apply(null, sims.map(pct)) : null;
+    var fracas = {};
+    sims.forEach(function (x) { if (x.fraca) fracas[x.fraca] = (fracas[x.fraca] || 0) + 1; });
+    var top = Object.keys(fracas).sort(function (a, b) { return fracas[b] - fracas[a]; })[0] || null;
+    return { n: sims.length, completos: comp.length, media: media, melhor: melhor, fracas: fracas, maisFraca: top ? +top : null,
+             zona: media == null ? null : media >= 80 ? 'verde' : media >= 70 ? 'amarela' : 'vermelha' };
+  }
+
+  function estado(cfg, hoje) {
+    cfg = cfg || {}; hoje = hoje || new Date();
+    var F = cfg.feitas || {}, hojeISO = iso(hoje);
+    var feitasN = 0, hojeN = 0;
+    PLANO.forEach(function (d) { d.tarefas.forEach(function (t) { if (F[t.id]) { feitasN++; if (F[t.id] === hojeISO) hojeN++; } }); });
+    var pront = prontidao(cfg.topicos), sim = simStats(cfg.simulados);
+    var base = { ativo: false, total: N_TAREFAS, feitas: feitasN, pct: Math.round(feitasN / N_TAREFAS * 100), hoje: hojeN, dias: N_DIAS,
+                 prontidao: pront.pct, pront: pront, sim: sim, aprovada: !!cfg.aprovada, seq: 0, melhor: 0, pausas: 0, emRisco: false };
+    if (!cfg.inicio) return base;
+    var dia = dias(parse(cfg.inicio), hoje) + 1;               // <=0: ainda não começou
+    var n = Math.max(1, Math.min(N_DIAS, dia));
+    var tarefasHoje = PLANO[n - 1].tarefas.map(function (t) { return { id: t.id, tipo: t.tipo, min: t.min, txt: t.txt, feito: !!F[t.id] }; });
+    var atrasadas = [];
+    for (var i = 0; i < n - 1; i++) PLANO[i].tarefas.forEach(function (t) { if (!F[t.id]) atrasadas.push({ id: t.id, dia: i + 1, tipo: t.tipo, min: t.min, txt: t.txt }); });
+    var bom = {}; Object.keys(F).forEach(function (k) { if (F[k]) bom[F[k]] = 1; });
+    var sq = root.CP_PROG && root.CP_PROG.sequencia ? root.CP_PROG.sequencia(function (k) { return !!bom[k]; }, Object.keys(bom), hoje) : { seq: 0, melhor: 0, pausas: 0, emRisco: false };
+    base.ativo = true; base.dia = dia; base.diaPlano = n; base.dia0 = parse(cfg.inicio);
+    base.comecaEm = dia <= 0 ? 1 - dia : 0; base.encerrado = dia > N_DIAS;
+    base.titulo = PLANO[n - 1].t; base.tarefasHoje = tarefasHoje; base.atrasadas = atrasadas;
+    base.diaFeito = tarefasHoje.length > 0 && tarefasHoje.every(function (t) { return t.feito; });
+    base.prova = cfg.prova || iso(addDias(parse(cfg.inicio), N_DIAS)); base.faltamProva = dias(hoje, parse(base.prova));
+    base.seq = sq.seq; base.melhor = sq.melhor; base.pausas = sq.pausas; base.emRisco = sq.emRisco;
+    return base;
+  }
+
+  function alternar(cfg, id, hoje) { // marca ou desmarca uma tarefa; devolve o novo "feitas"
+    var F = Object.assign({}, cfg.feitas || {});
+    if (F[id]) delete F[id]; else F[id] = iso(hoje || new Date());
+    return F;
+  }
+  function empurrar(cfg, n) { // adia o plano e a prova em n dias
+    var o = {}; if (cfg.inicio) o.inicio = iso(addDias(parse(cfg.inicio), n)); if (cfg.prova) o.prova = iso(addDias(parse(cfg.prova), n)); return o;
+  }
+
+  var api = { SECOES: SECOES, TOPICOS: TOPICOS, TIPOS: TIPOS, PLANO: PLANO, COLA: COLA, RECURSOS: RECURSOS, N_DIAS: N_DIAS, N_TAREFAS: N_TAREFAS,
+              estado: estado, prontidao: prontidao, simStats: simStats, alternar: alternar, empurrar: empurrar, cfgPadrao: cfgPadrao, iso: iso, parse: parse, addDias: addDias };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_CERT = api;
+})(typeof window !== 'undefined' ? window : globalThis);

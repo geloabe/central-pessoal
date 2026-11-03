@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>document.documentElement.dataset.pg="cert"</script>
+<link rel="stylesheet" href="assets/tema.css">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Certificação</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:860px;margin:0 auto;padding:16px 16px calc(80px + env(safe-area-inset-bottom))}
+h1{font-size:28px}
+h2{font-size:21px}
+h3{font-size:18px}
+.sub{color:var(--t-muted);margin:4px 0 16px}
+.mini{font-size:13px;color:var(--t-muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:15px;min-height:44px;padding:8px 16px;border-radius:var(--raio);border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+section{display:none}section.on{display:block}
+.barra{height:8px;background:var(--t-line);overflow:hidden;margin:8px 0}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .8s ease-out}@keyframes cresce{from{width:0}}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.stats .big{font:600 26px/1.1 var(--f-titulo);letter-spacing:var(--titulo-tracking);margin-top:6px}
+.stats small{display:block;color:var(--t-muted);font-size:12px;margin-top:2px}
+.resumo{margin-bottom:16px}
+.ok-msg{color:var(--t-ok);font-weight:600}
+.cartao+.cartao{margin-top:12px}
+.tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em;display:inline-block}
+.tag.ok{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.zv{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.za{background:color-mix(in srgb,var(--t-accent2) 25%,var(--t-surface));border-color:var(--t-accent2)}
+.tag.zr{background:color-mix(in srgb,#C0392B 14%,var(--t-surface));border-color:#C0392B}
+.tar{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--t-line)}
+.tar:first-of-type{border-top:0}
+.tar .chk{flex:none;width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-bg);font:700 22px var(--f-texto);cursor:pointer;padding:0}
+.tar.ok .chk{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.tar .tx{flex:1;min-width:0;padding-top:2px}
+.tar .tx div{margin-top:5px;overflow-wrap:anywhere}
+.tar.ok .tx div{color:var(--t-muted)}
+.dica{margin-top:12px;padding:10px 12px;border-left:3px solid var(--t-accent2);background:var(--t-realce);font-size:14px}
+.lk{min-height:44px;padding:0 4px;border:0;background:none;color:var(--t-accent);font:600 14px var(--f-texto);text-decoration:underline;cursor:pointer}
+details{border:1px solid var(--t-line);background:var(--t-surface);border-radius:var(--raio);margin-bottom:8px}
+details>summary{min-height:48px;display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"›";color:var(--t-muted);font-size:20px;transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>.corpo{padding:2px 14px 14px}
+details.sem>summary{font:600 17px var(--f-titulo)}
+details.dia{margin:8px 0 0;background:var(--t-bg)}
+details.dia>summary{font-size:15px}
+.top-lin{padding:12px 0;border-top:1px solid var(--t-line)}
+.top-lin:first-of-type{border-top:0}
+.top-lin .nm{font-size:15px;margin-bottom:8px}
+.top-lin .nm b{font-family:var(--f-mono);font-size:12px;color:var(--t-muted);margin-right:6px}
+.nota{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.nota button{min-height:44px;font:600 13px var(--f-texto);border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);cursor:pointer;padding:0 2px}
+.nota button[aria-pressed=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form.f label{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--t-muted)}
+form.f .full{grid-column:1/-1}
+form.f input,form.f select{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.btn{min-height:46px}
+.sim{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--t-line)}
+.sim:first-of-type{border-top:0}
+.sim .pc{font:600 22px var(--f-titulo);min-width:64px}
+dialog{border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);padding:18px;width:min(520px,94vw)}
+dialog::backdrop{background:rgba(40,30,60,.35)}
+.cola li{margin:6px 0;line-height:1.45}
+.cola ul{margin:0;padding-left:20px}
+.lista a{display:block;padding:10px 0;border-top:1px solid var(--t-line);color:var(--t-accent);word-break:break-word}
+.lista a:first-child{border-top:0}
+.fatos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.fatos div{font-size:14px}.fatos b{display:block;font:600 12px var(--f-mono);color:var(--t-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+</style>
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
+<link rel="stylesheet" href="assets/mobile.css">
+<script src="assets/rascunho.js" defer></script>
+</head>
+<body class="t">
+<main>
+  <h1>Google Data Engineer</h1>
+  <p class="sub">Plano relâmpago de 4 semanas para a Professional Data Engineer. Dia ruim não zera nada: o que conta é o conjunto.</p>
+  <div id="topo"></div>
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
+    <button role="tab" data-t="plano" aria-selected="false">Plano</button>
+    <button role="tab" data-t="topicos" aria-selected="false">Tópicos</button>
+    <button role="tab" data-t="simulados" aria-selected="false">Simulados</button>
+    <button role="tab" data-t="cola" aria-selected="false">Cola</button>
+  </nav>
+  <section id="hoje" class="on"></section>
+  <section id="plano"></section>
+  <section id="topicos"></section>
+  <section id="simulados"></section>
+  <section id="cola"></section>
+</main>
+<dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
+
+<script src="assets/progresso.js"></script>
+<script src="assets/cert.js"></script>
+<script>
+(function(){
+'use strict';
+var K=window.CP_CERT, ref=null, C={};
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function hoje(){return new Date()}
+function dm(dt){return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')}
+function dmS(s){return s?dm(K.parse(s)):''}
+function dataDoDia(n){return C.inicio?dm(K.addDias(K.parse(C.inicio),n-1)):''}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function pct(a,b){return b?Math.round(a/b*100):0}
+function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
+
+function salvar(patch){
+  Object.keys(patch).forEach(function(k){C[k]=patch[k]});
+  render();
+  return ref?ref.update(patch):Promise.resolve();
+}
+
+/* ---------- tarefas ---------- */
+function tarefa(t,feito){
+  return '<div class="tar'+(feito?' ok':'')+'"><button type="button" class="chk" data-tar="'+t.id+'" aria-pressed="'+(!!feito)+'" aria-label="'+(feito?'Desmarcar: ':'Marcar como feita: ')+esc(t.txt)+'">'+(feito?'✓':'')+'</button>'+
+    '<div class="tx"><span class="tag">'+K.TIPOS[t.tipo]+' · '+t.min+' min</span><div>'+esc(t.txt)+'</div></div></div>';
+}
+function feita(id){return !!(C.feitas&&C.feitas[id])}
+
+/* ---------- topo ---------- */
+function topo(e){
+  var el=$('#topo');
+  if(!e.ativo){el.innerHTML='';return}
+  var prova=C.aprovada?'<div class="big ok-msg">Aprovada</div><small>certificação conquistada</small>':
+    e.faltamProva>0?'<div class="big">'+e.faltamProva+' d</div><small>prova em '+dmS(e.prova)+'</small>':
+    e.faltamProva===0?'<div class="big">hoje</div><small>dia da prova</small>':
+    '<div class="big">—</div><small>prova era '+dmS(e.prova)+'</small>';
+  var sq=e.ativo&&e.seq>0?e.seq+' dia'+(e.seq===1?'':'s')+' seguidos'+(e.pausas?' · '+e.pausas+' pausa'+(e.pausas>1?'s':'')+' usada'+(e.pausas>1?'s':''):'')+(e.emRisco?' · hoje ainda dá tempo':''):
+    (e.melhor>0?'Recomeço: sua melhor sequência foi de '+e.melhor+' dias.':'Marque uma tarefa para começar a sequência.');
+  el.innerHTML='<div class="cartao resumo"><div class="stats">'+
+    '<div><div class="rotulo">Prova</div>'+prova+'</div>'+
+    '<div><div class="rotulo">Plano</div><div class="big">'+e.pct+'%</div><small>'+e.feitas+' de '+e.total+' tarefas</small></div>'+
+    '<div><div class="rotulo">Prontidão</div><div class="big">'+e.prontidao+'%</div><small>pelos tópicos</small></div></div>'+
+    barra(e.pct)+'<div class="mini">'+esc(sq)+'</div></div>';
+}
+
+/* ---------- hoje ---------- */
+function setup(){
+  var d=K.cfgPadrao(hoje());
+  return '<div class="cartao"><div class="rotulo">Começar</div><h2 style="margin:6px 0 8px">Quando você começa?</h2>'+
+    '<p class="mini" style="margin:0 0 12px">São 29 dias: 28 de estudo, com um dia leve por semana, e o dia da prova. Cerca de 13 h por semana, ao todo uns 53 h. Dá para mudar as datas depois.</p>'+
+    '<form class="f" id="setup"><label>Início<input type="date" name="inicio" value="'+d.inicio+'" required></label><label>Prova<input type="date" name="prova" value="'+d.prova+'" required></label>'+
+    '<div class="row full"><button class="btn" type="submit">Começar o plano</button></div></form></div>';
+}
+function hojeSec(e){
+  var el=$('#hoje');
+  if(!e.ativo){el.innerHTML=setup();return}
+  var n=e.diaPlano,p=K.PLANO[n-1],tot=p.min,h='';
+  if(e.comecaEm>0)h+='<div class="cartao"><div class="rotulo">Falta '+e.comecaEm+' dia'+(e.comecaEm>1?'s':'')+' para começar</div><p style="margin:8px 0 0">O plano começa em '+dmS(C.inicio)+'. Se quiser adiantar, o dia 1 já está liberado abaixo.</p></div>';
+  if(e.encerrado)h+='<div class="cartao"><div class="rotulo">Plano concluído</div><p style="margin:8px 0 0">Os 29 dias já passaram. Use as abas Simulados e Cola até a prova'+(C.aprovada?'' :', e marque Aprovada em Ajustar quando acontecer')+'.</p></div>';
+  h+='<div class="cartao"'+(e.comecaEm>0||e.encerrado?' style="margin-top:12px"':'')+'><div class="row"><span class="tag">DIA '+n+' DE '+K.N_DIAS+'</span><span class="mini">'+dataDoDia(n)+' · cerca de '+Math.round(tot/60*10)/10+' h</span></div>'+
+    '<h2 style="margin:8px 0 4px">'+esc(p.t)+'</h2><div class="mini" style="margin-bottom:6px">'+esc(p.o)+'</div>'+
+    e.tarefasHoje.map(function(t){return tarefa(t,t.feito)}).join('')+
+    (e.diaFeito?'<div class="ok-msg" style="margin-top:10px">Dia concluído. O resto é bônus.</div>':'')+
+    (p.d?'<div class="dica"><b>Regra de bolso:</b> '+esc(p.d)+'</div>':'')+'</div>';
+  if(e.atrasadas.length){
+    h+='<details style="margin-top:12px"><summary>Para pôr em dia ('+e.atrasadas.length+')</summary><div class="corpo"><p class="mini" style="margin:0 0 6px">Nada acumula como dívida: faça quando der ou deixe de lado o que for menos importante. Se a semana apertou, empurre o plano 1 dia.</p>'+
+      e.atrasadas.slice(0,12).map(function(t){return '<div class="mini" style="margin-top:8px">Dia '+t.dia+'</div>'+tarefa(t,false)}).join('')+
+      (e.atrasadas.length>12?'<div class="mini">… e mais '+(e.atrasadas.length-12)+' no Plano.</div>':'')+'</div></details>';
+  }
+  h+='<div class="row" style="margin-top:10px"><button class="lk" data-empurra="1">Empurrar o plano 1 dia</button><button class="lk" data-cfg="1">Ajustar datas</button></div>';
+  el.innerHTML=h;
+}
+
+/* ---------- plano ---------- */
+function planoSec(e){
+  var el=$('#plano');
+  var semanas=[[1,7],[8,14],[15,21],[22,28],[29,29]],h='';
+  semanas.forEach(function(w,i){
+    var tt=0,ff=0,dias='';
+    for(var n=w[0];n<=w[1];n++){
+      var p=K.PLANO[n-1],f=0;p.tarefas.forEach(function(t){tt++;if(feita(t.id)){ff++;f++}});
+      var atual=e.ativo&&n===e.diaPlano;
+      dias+='<details class="dia"'+(atual?' open':'')+'><summary><span class="tag'+(f===p.tarefas.length?' ok':'')+'">DIA '+n+'</span><span style="flex:1;min-width:0">'+esc(p.t)+'</span><span class="mini">'+f+'/'+p.tarefas.length+'</span></summary><div class="corpo">'+
+        '<div class="mini" style="margin-bottom:4px">'+(dataDoDia(n)?dataDoDia(n)+' · ':'')+'cerca de '+Math.round(p.min/60*10)/10+' h · '+esc(p.o)+'</div>'+
+        p.tarefas.map(function(t){return tarefa(t,feita(t.id))}).join('')+(p.d?'<div class="dica"><b>Regra de bolso:</b> '+esc(p.d)+'</div>':'')+'</div></details>';
+    }
+    var abre=e.ativo&&e.diaPlano>=w[0]&&e.diaPlano<=w[1];
+    h+='<details class="sem"'+(abre?' open':'')+'><summary><span style="flex:1">'+(i<4?'Semana '+(i+1):'Prova')+'</span><span class="mini">'+pct(ff,tt)+'%</span></summary><div class="corpo">'+barra(pct(ff,tt))+dias+'</div></details>';
+  });
+  el.innerHTML=h;
+}
+
+/* ---------- tópicos ---------- */
+var NOTAS=['Não vi','Fraco','Ok','Dominado'];
+function topSec(){
+  var el=$('#topicos'),pr=K.prontidao(C.topicos),T=C.topicos||{},h='';
+  h+='<div class="cartao"><div class="rotulo">Prontidão pelos tópicos</div><div style="font:600 30px var(--f-titulo);margin-top:6px">'+pr.pct+'%</div>'+barra(pr.pct)+
+    '<div class="mini">Média das suas notas, ponderada pelo peso de cada seção na prova. Seja duro: 3 só se conseguir explicar para outra pessoa.</div></div>';
+  K.SECOES.forEach(function(s,i){
+    var ps=pr.porSecao[i],ts=K.TOPICOS.filter(function(t){return t.s===s.id});
+    h+='<details style="margin-top:12px"'+(i===0?' open':'')+'><summary><span style="flex:1">'+s.id+'. '+esc(s.nome)+'</span><span class="mini">'+s.peso+'% da prova · '+ps.pct+'%</span></summary><div class="corpo">'+barra(ps.pct)+
+      ts.map(function(t){
+        var v=T[t.id];
+        return '<div class="top-lin"><div class="nm"><b>'+t.id+'</b>'+esc(t.nome)+'</div><div class="nota" role="group" aria-label="Nota do tópico '+t.id+'">'+
+          NOTAS.map(function(nm,k){return '<button type="button" data-top="'+t.id+'|'+k+'" aria-pressed="'+(v===k)+'">'+nm+'</button>'}).join('')+'</div>'+
+          '<div class="mini" style="margin-top:6px">Dias do plano: '+t.d.join(', ')+'</div></div>';
+      }).join('')+'</div></details>';
+  });
+  el.innerHTML=h;
+}
+
+/* ---------- simulados ---------- */
+var CAL=[[7,'Mini-simulado de 20 questões (armazenamento e BigQuery)'],[12,'Simulado completo 1: 50 questões em 2 h'],[14,'Mini-simulado de 20 questões (pipelines)'],[21,'Mini-simulado de 20 questões (seções 1 e 4)'],[25,'Simulado completo 2: 50 questões em 2 h'],[27,'Simulado parcial: 30 questões em 60 min']];
+function simSec(){
+  var el=$('#simulados'),L=(C.simulados||[]).slice().sort(function(a,b){return a.data<b.data?1:-1});
+  var st=K.simStats(C.simulados),h='';
+  var zona=st.zona==='verde'?'<span class="tag zv">ZONA VERDE</span>':st.zona==='amarela'?'<span class="tag za">MAIS UMA SEMANA</span>':st.zona==='vermelha'?'<span class="tag zr">REFORÇAR</span>':'';
+  h+='<div class="cartao"><div class="rotulo">Simulados</div>'+
+    (st.n?'<div class="row" style="margin-top:6px"><div style="font:600 30px var(--f-titulo)">'+(st.media==null?'—':st.media+'%')+'</div>'+zona+'</div><div class="mini">'+(st.media==null?'Faça um simulado completo para ter a média.':'Média dos últimos 2 simulados completos · melhor nota '+st.melhor+'%')+
+      (st.maisFraca?' · seção que mais derrubou: '+st.maisFraca+'. '+esc(K.SECOES[st.maisFraca-1].nome):'')+'</div>':'<div class="mini" style="margin-top:6px">Nenhum simulado registrado ainda. O primeiro está no dia 12.</div>')+
+    '<div class="mini" style="margin-top:8px">O Google não divulga a nota de corte. Como referência prática: entre na prova com 80% ou mais nos completos. Entre 70% e 80%, vale mais uma semana.</div></div>';
+  h+='<div class="cartao"><h3 style="margin-bottom:10px">Registrar simulado</h3><form class="f" id="fsim">'+
+    '<label>Tipo<select name="tipo" id="stipo"><option value="completo">Completo</option><option value="parcial">Parcial</option></select></label>'+
+    '<label>Data<input type="date" name="data" value="'+K.iso(hoje())+'" required></label>'+
+    '<label>Acertos<input name="acertos" type="number" inputmode="numeric" min="0" required></label>'+
+    '<label>Total de questões<input name="total" id="stotal" type="number" inputmode="numeric" min="1" value="50" required></label>'+
+    '<label class="full">Seção que mais derrubou<select name="fraca"><option value="">Não sei / nenhuma</option>'+K.SECOES.map(function(s){return '<option value="'+s.id+'">'+s.id+'. '+esc(s.nome)+'</option>'}).join('')+'</select></label>'+
+    '<div class="row full"><button class="btn" type="submit">Salvar</button></div></form></div>';
+  h+='<div class="cartao"><h3 style="margin-bottom:6px">Histórico</h3>'+(L.length?L.map(function(x){
+    var p=pct(x.acertos,x.total);
+    return '<div class="sim"><div class="pc">'+p+'%</div><div style="flex:1;min-width:0"><div>'+x.acertos+' de '+x.total+' · '+(x.tipo==='completo'?'completo':'parcial')+'</div><div class="mini">'+dmS(x.data)+(x.fraca?' · mais erros na seção '+x.fraca:'')+'</div></div>'+
+      '<button class="lk" data-rm="'+x.id+'" aria-label="Remover este simulado">remover</button></div>';
+  }).join(''):'<div class="mini">Vazio por enquanto.</div>')+'</div>';
+  h+='<div class="cartao"><h3 style="margin-bottom:6px">Quando fazer</h3>'+CAL.map(function(c){return '<div class="sim"><span class="tag">DIA '+c[0]+'</span><div style="flex:1">'+esc(c[1])+'</div><span class="mini">'+dataDoDia(c[0])+'</span></div>'}).join('')+
+    '<div class="mini" style="margin-top:8px">Questões oficiais de exemplo estão na aba Cola. Para os simulados longos, use um banco de questões que cubra o guia v4.2; confira se foi atualizado para BigLake, Dataplex, BigQuery ML e RAG.</div></div>';
+  el.innerHTML=h;
+}
+
+/* ---------- cola ---------- */
+function colaSec(){
+  var h='<div class="cartao"><div class="rotulo">Sobre a prova</div><div class="fatos">'+
+    '<div><b>Duração</b>2 horas</div><div><b>Questões</b>40 a 50, múltipla escolha e seleção múltipla</div><div><b>Preço</b>US$ 200 mais impostos</div>'+
+    '<div><b>Idioma</b>Inglês ou japonês</div><div><b>Validade</b>2 anos</div><div><b>Formato</b>Online ou em centro</div></div>'+
+    '<div class="mini" style="margin-top:10px">Recomendado pelo Google: 3 anos de experiência, 1 ano deles com dados no Google Cloud. Sem pré-requisito. Confira valores e regras na página oficial antes de pagar.</div></div>';
+  h+='<div class="cola" style="margin-top:12px">'+K.COLA.map(function(g,i){
+    return '<details'+(i===0?' open':'')+'><summary style="font-weight:600">'+esc(g.t)+'</summary><div class="corpo"><ul>'+g.i.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></details>';
+  }).join('')+'</div>';
+  h+='<div class="cartao" style="margin-top:12px"><h3 style="margin-bottom:6px">Recursos oficiais</h3><div class="lista">'+K.RECURSOS.map(function(r){return '<a href="'+esc(r[1])+'" target="_blank" rel="noopener noreferrer">'+esc(r[0])+'</a>'}).join('')+'</div></div>';
+  $('#cola').innerHTML=h;
+}
+
+function render(){
+  var e=K.estado(C,hoje());
+  topo(e);hojeSec(e);planoSec(e);topSec();simSec();
+}
+
+/* ---------- eventos ---------- */
+var dlg=$('#dlg'),frm=$('#frm');
+function ajustes(){
+  frm.innerHTML='<h3 class="full">Ajustar</h3>'+
+    '<label>Início do plano<input type="date" name="inicio" value="'+esc(C.inicio||'')+'" required></label>'+
+    '<label>Data da prova<input type="date" name="prova" value="'+esc(C.prova||'')+'" required></label>'+
+    '<label class="full" style="flex-direction:row;align-items:center;gap:10px;color:var(--t-ink)"><input type="checkbox" name="aprovada" style="width:24px;min-height:24px" '+(C.aprovada?'checked':'')+'> Aprovada na certificação</label>'+
+    '<div class="row full"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button></div>';
+  dlg.showModal();$('#cancela').onclick=function(){dlg.close()};
+}
+frm.addEventListener('submit',function(ev){
+  ev.preventDefault();var f=frm.elements;
+  if(!f.inicio||!f.inicio.value)return;
+  salvar({inicio:f.inicio.value,prova:f.prova.value||K.iso(K.addDias(K.parse(f.inicio.value),K.N_DIAS)),aprovada:!!f.aprovada.checked});dlg.close();
+});
+document.addEventListener('submit',function(ev){
+  var f=ev.target;
+  if(f.id==='setup'){ev.preventDefault();salvar({inicio:f.inicio.value,prova:f.prova.value,feitas:C.feitas||{},topicos:C.topicos||{},simulados:C.simulados||[],aprovada:false})}
+  else if(f.id==='fsim'){
+    ev.preventDefault();var a=Math.max(0,+f.acertos.value||0),t=Math.max(1,+f.total.value||1);
+    if(a>t){alert('Acertos não pode ser maior que o total.');return}
+    var l=(C.simulados||[]).concat([{id:uid(),data:f.data.value||K.iso(hoje()),tipo:f.tipo.value,acertos:a,total:t,fraca:f.fraca.value?+f.fraca.value:null}]);
+    salvar({simulados:l});
+  }
+});
+document.addEventListener('change',function(ev){
+  if(ev.target.id==='stipo'){var t=$('#stotal');if(t)t.value=ev.target.value==='completo'?50:30}
+});
+document.addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.tar){salvar({feitas:K.alternar(C,b.dataset.tar,hoje())})}
+  else if(b.dataset.top){var p=b.dataset.top.split('|'),T=Object.assign({},C.topicos||{});T[p[0]]=+p[1];salvar({topicos:T})}
+  else if(b.dataset.cfg){ajustes()}
+  else if(b.dataset.empurra){if(confirm('Adiar o plano e a prova em 1 dia?'))salvar(K.empurrar(C,1))}
+  else if(b.dataset.rm){if(confirm('Remover este simulado?'))salvar({simulados:(C.simulados||[]).filter(function(x){return x.id!==b.dataset.rm})})}
+});
+$('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
+  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
+
+colaSec();render();
+claude.use('db').then(function(d){
+  ref=d.doc('cert/main');
+  ref.onSnapshot(function(s){C=s.exists?(s.data()||{}):{};render()});
+});
+})();
+</script>
+<script src="assets/modulo.js"></script>
+</body>
+</html>

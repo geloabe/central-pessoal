@@ -39,6 +39,11 @@ html[data-pg="desafios"]:not(#a):not(#b),.m-desafios{--m:#B03A6B;--t-accent:#B03
 @media not all{html[data-pg="desafios"]:not([data-modo="claro"]):not(#a):not(#b),.m-desafios{--m:#F29BBE;--t-accent:#F29BBE}}
 html[data-modo="escuro"][data-pg="desafios"]:not(#a):not(#b){--m:#F29BBE;--t-accent:#F29BBE}
 
+/* ---------- Certificação ---------- */
+html[data-pg="cert"]:not(#a):not(#b),.m-cert{--m:#4F5BB5;--t-accent:#4F5BB5}
+@media not all{html[data-pg="cert"]:not([data-modo="claro"]):not(#a):not(#b),.m-cert{--m:#9AA4F0;--t-accent:#9AA4F0}}
+html[data-modo="escuro"][data-pg="cert"]:not(#a):not(#b){--m:#9AA4F0;--t-accent:#9AA4F0}
+
 /* ---------- Rota Internacional: mapeamento completo + painel de embarque pastel ---------- */
 html[data-pg="rota"]:not(#a):not(#b){
   --bg:var(--t-bg);--surface:var(--t-surface);--sunk:color-mix(in srgb,var(--t-accent) 6%,var(--t-surface));--ink:var(--t-ink);--muted:var(--t-muted);--line:var(--t-line);
