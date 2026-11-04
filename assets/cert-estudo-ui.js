@@ -3,7 +3,9 @@
    A página entrega: obter() -> dados atuais, salvar(patch) -> Promise, hoje() -> Date, aoFechar() -> redesenha a página. */
 (function (root) {
   'use strict';
-  var E = root.CP_ESTUDO, K = root.CP_CERT, CONT = root.CP_CERT_CONTEUDO || { dias: {} };
+  var E = root.CP_ESTUDO, K = root.CP_PLANO_ESTUDO || root.CP_CERT, CONT = root.CP_CONTEUDO_ESTUDO || root.CP_CERT_CONTEUDO || { dias: {} };
+  /* Rótulos configuráveis: a certificação usa os padrões; o PDI entrega K.ROTULOS (aula, fontes oficiais etc.) */
+  function ROT(k, padrao) { return (K.ROTULOS && K.ROTULOS[k]) || padrao; }
   var ctx = null, modo = null, S = null, R = null, tempo = null, sujoT = null, emVoo = 0, ultimaEscrita = 0;
   var LET = 'ABCDE';
 
@@ -51,7 +53,10 @@
     '.notas4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.notas4 .btn{min-height:52px;font-size:14px;padding:4px}' +
     '.big{font:600 40px var(--f-titulo)}.res .ok{color:var(--t-ok)}.res .no{color:#C0392B}' +
     '.passo{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--t-line)}.passo:first-of-type{border-top:0}.passo .n{flex:none;width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--t-borda);font:600 13px var(--f-mono)}.passo.ok .n{background:var(--t-ok);border-color:var(--t-ok);color:#fff}' +
-    '.passo>div{flex:1;min-width:0}.cp{margin-top:6px;min-height:36px;padding:0 10px;font:600 12px var(--f-mono);border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer}';
+    '.passo>div{flex:1;min-width:0}.cp{margin-top:6px;min-height:36px;padding:0 10px;font:600 12px var(--f-mono);border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);cursor:pointer}' +
+    '.prog{height:6px;background:var(--t-line);margin:8px 0 0}.prog i{display:block;height:100%;background:var(--m)}' +
+    '.lista-l a{display:block;padding:10px 0;border-top:1px solid var(--t-line);color:var(--t-accent);word-break:break-word;font-weight:600}.gt{margin:8px 0;line-height:1.5}' +
+    '.call.fnt{border-left-color:var(--t-ok)}.call.fnt a{color:var(--t-accent);font-weight:600;word-break:break-word}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
   /* ---------- camada ---------- */
@@ -105,6 +110,7 @@
     if (b.tabela) h += tabelaHtml(b.tabela);
     if (b.dica) h += '<div class="call"><b class="rt">Dica</b>' + fmt(b.dica) + '</div>';
     if (b.armadilha) h += '<div class="call arm"><b class="rt">Armadilha</b>' + fmt(b.armadilha) + '</div>';
+    if (b.fonte && /^https:\/\//.test(b.fonte[1] || '')) h += '<div class="call fnt"><b class="rt">Fonte oficial</b><a href="' + esc(b.fonte[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(b.fonte[0]) + '</a></div>';
     return h;
   }
   function glossHtml(a) {
@@ -113,7 +119,7 @@
   }
   function docsHtml(n) {
     var d = K.DOCS_DIA && K.DOCS_DIA[n]; if (!d || !d.length) return '';
-    return '<h2>Para aprofundar (documentação oficial)</h2><p class="mini" style="font-size:14px;color:var(--t-muted)">Opcional. Leia só se quiser ir além da aula.</p><div class="lista-l">' + d.map(function (x) { return '<a href="' + esc(x[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(x[0]) + '</a>'; }).join('') + '</div>';
+    return '<h2>' + esc(ROT('fontesTitulo', 'Para aprofundar (documentação oficial)')) + '</h2><p class="mini" style="font-size:14px;color:var(--t-muted)">' + esc(ROT('fontesNota', 'Opcional. Leia só se quiser ir além da aula.')) + '</p><div class="lista-l">' + d.map(function (x) { return '<a href="' + esc(x[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(x[0]) + '</a>'; }).join('') + '</div>';
   }
   function barraProg() {
     var a = CONT.dias[A.n].aula, nb = (a.blocos || []).length, tot = nb + 1, p = Math.round(A.passo / tot * 100), rest = 0;
@@ -124,7 +130,7 @@
   function introHtml(n) {
     var a = CONT.dias[n].aula, s = a.simples, ant = (ctx.obter().leitura || {})[n] || 0, nb = (a.blocos || []).length;
     var alto = K.TOPICOS.filter(function (x) { return x.d.indexOf(n) >= 0 && x.foco === 'alto'; })[0];
-    var h = '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">AULA</span>' + (alto ? '<span class="tag za">PRIORIDADE ALTA NA PROVA</span>' : '') + '</div><h1>' + esc(a.titulo) + '</h1>' + (alto ? '<p class="mini" style="font-size:14px;color:var(--t-muted);margin:0 0 8px">Por quê: ' + esc(alto.por) + '</p>' : '');
+    var h = '<div class="mo-tags"><span class="tag">' + ROT('dia', 'Dia').toUpperCase() + ' ' + n + '</span><span class="tag">AULA</span>' + (alto ? '<span class="tag za">PRIORIDADE ALTA NA PROVA</span>' : '') + '</div><h1>' + esc(a.titulo) + '</h1>' + (alto ? '<p class="mini" style="font-size:14px;color:var(--t-muted);margin:0 0 8px">Por quê: ' + esc(alto.por) + '</p>' : '');
     if (s) {
       h += '<div class="cx" style="margin-top:6px"><div class="rotulo" style="margin-bottom:6px">Em 30 segundos</div>' + par(s.analogia) + '<ul>' + s.pontos.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>' + (s.paraQueServe ? '<p><b>Para que serve:</b> ' + fmt(s.paraQueServe) + '</p>' : '') + '</div>';
     } else h += '<p class="mo-lead">' + fmt(a.resumo) + '</p>';
@@ -136,9 +142,9 @@
     return h;
   }
   function finalHtml(n) {
-    var d = CONT.dias[n], a = d.aula, h = '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">FINAL</span></div>';
+    var d = CONT.dias[n], a = d.aula, h = '<div class="mo-tags"><span class="tag">' + ROT('dia', 'Dia').toUpperCase() + ' ' + n + '</span><span class="tag">FINAL</span></div>';
     if (a.exemplo) h += '<h2>Caso trabalhado: ' + esc(a.exemplo.t) + '</h2><div class="cx">' + par(a.exemplo.texto) + '</div>';
-    if (a.prova && a.prova.length) h += '<h2>Como a prova cobra</h2><ul>' + a.prova.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>';
+    if (a.prova && a.prova.length) h += '<h2>' + esc(ROT('prova', 'Como a prova cobra')) + '</h2><ul>' + a.prova.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>';
     if (K.RELATOS_DIA && K.RELATOS_DIA[n]) h += '<div class="call"><b class="rt">Relato de candidatos (complemento; o oficial prevalece)</b>' + K.RELATOS_DIA[n].map(fmt).join('<br>') + '</div>';
     if (a.checagem && a.checagem.length) h += '<h2>Autoteste: responda em voz alta, sem olhar</h2><div class="cx"><ul>' + a.checagem.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul><p class="mini" style="font-size:13px;color:var(--t-muted)">Se travar em alguma, volte só ao bloco dela. Errar aqui ajuda a lembrar depois.</p></div>';
     if (a.explique) h += '<h2>Explique com suas palavras</h2><p>' + fmt(a.explique) + '</p><textarea id="nota" placeholder="Escreva sem consultar a aula. Se travar, releia só o trecho que faltou.">' + esc((ctx.obter().notas || {})[n] || '') + '</textarea>';
@@ -150,18 +156,18 @@
   function abrirAula(n) {
     if (!CONT.dias[n] || !CONT.dias[n].aula) { alert('A aula deste dia ainda não está disponível.'); return; }
     A = { n: n, passo: 0, tudo: false };
-    abrir('Dia ' + n + ' · aula', ''); telaAula();
+    abrir(ROT('dia', 'Dia') + ' ' + n + ' · aula', ''); telaAula();
   }
   function telaAula() {
     var n = A.n, a = CONT.dias[n].aula, bl = a.blocos || [], nb = bl.length, h = '';
     if (A.tudo) {
-      h = '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">AULA COMPLETA</span></div><h1>' + esc(a.titulo) + '</h1>' + (a.simples ? '<div class="cx"><div class="rotulo" style="margin-bottom:6px">Em 30 segundos</div>' + par(a.simples.analogia) + '<ul>' + a.simples.pontos.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul></div>' : '<p class="mo-lead">' + fmt(a.resumo) + '</p>') + glossHtml(a) + bl.map(blocoHtml).join('') + finalHtml(n);
+      h = '<div class="mo-tags"><span class="tag">' + ROT('dia', 'Dia').toUpperCase() + ' ' + n + '</span><span class="tag">AULA COMPLETA</span></div><h1>' + esc(a.titulo) + '</h1>' + (a.simples ? '<div class="cx"><div class="rotulo" style="margin-bottom:6px">Em 30 segundos</div>' + par(a.simples.analogia) + '<ul>' + a.simples.pontos.map(function (x) { return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul></div>' : '<p class="mo-lead">' + fmt(a.resumo) + '</p>') + glossHtml(a) + bl.map(blocoHtml).join('') + finalHtml(n);
       corpo(h); ligarFinal(); return;
     }
     h = barraProg();
     if (A.passo === 0) h += introHtml(n);
     else if (A.passo <= nb) {
-      h += '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">BLOCO ' + A.passo + '/' + nb + '</span></div>' + blocoHtml(bl[A.passo - 1]);
+      h += '<div class="mo-tags"><span class="tag">' + ROT('dia', 'Dia').toUpperCase() + ' ' + n + '</span><span class="tag">BLOCO ' + A.passo + '/' + nb + '</span></div>' + blocoHtml(bl[A.passo - 1]);
       h += '<div class="mo-btns"><button class="btn sec" id="a-ant">← Anterior</button><button class="btn" id="a-prox">' + (A.passo === nb ? 'Ir para o final' : 'Próximo bloco →') + '</button></div>';
     } else h += finalHtml(n);
     corpo(h);
@@ -208,7 +214,7 @@
       var cs = (CONT.dias[n].cartoes || []).map(function (c) { return Object.assign({ dia: +n }, c); });
       var f = E.filaCartoes(CONT, C.srs, ctx.hoje(), Math.max(dp, n), { maxNovos: 99 });
       var due = f.devidos.filter(function (c) { return c.dia !== +n; });
-      fila = cs.filter(function (c) { var s = (C.srs || {})[c.id]; return !s || s.p <= iso(ctx.hoje()); }).concat(due.slice(0, 15)); titulo = 'Dia ' + n + ' · cartões';
+      fila = cs.filter(function (c) { var s = (C.srs || {})[c.id]; return !s || s.p <= iso(ctx.hoje()); }).concat(due.slice(0, 15)); titulo = ROT('dia', 'Dia') + ' ' + n + ' · cartões';
     } else {
       var g = E.filaCartoes(CONT, C.srs, ctx.hoje(), dp, { maxNovos: 15 });
       fila = g.devidos.concat(g.novos); titulo = 'Revisão de cartões';
@@ -329,7 +335,7 @@
   /* ---------- pontos de entrada ---------- */
   function abrirQuiz(tipo, arg) {
     var C = ctx.obter(), dp = diaPlano(), itens = [], titulo = 'Quiz';
-    if (tipo === 'dia') { itens = (CONT.dias[arg].questoes || []).slice(); titulo = 'Dia ' + arg + ' · quiz'; }
+    if (tipo === 'dia') { itens = (CONT.dias[arg].questoes || []).slice(); titulo = ROT('dia', 'Dia') + ' ' + arg + ' · quiz'; }
     else if (tipo === 'revisao') { itens = E.questoesDevidas(CONT, C.srs, ctx.hoje(), dp); titulo = 'Questões para rever'; }
     else if (tipo === 'erros') { itens = E.cadernoErros(CONT, C.srs); titulo = 'Caderno de erros'; }
     else if (tipo === 'topico') { itens = E.banco(CONT).filter(function (q) { return q.t === arg; }); titulo = 'Tópico ' + arg; }
@@ -354,15 +360,15 @@
   function abrirLab(n) {
     var d = CONT.dias[n]; if (!d || !d.lab) { alert('Este dia não tem lab.'); return; }
     var L = d.lab, feito = !!(ctx.obter().labs || {})[n];
-    var h = '<div class="mo-tags"><span class="tag">DIA ' + n + '</span><span class="tag">LAB</span>' + (L.custo.length <= 36 ? '<span class="tag za">CUSTO: ' + esc(L.custo) + '</span>' : '') + (L.tempo ? '<span class="tag">' + esc(L.tempo) + '</span>' : '') + '</div><h1>' + esc(L.t) + '</h1>' + (L.custo.length > 36 ? '<div class="call"><b class="rt">Custo estimado</b>' + fmt(L.custo) + '</div>' : '') + (L.porque ? '<p class="mo-lead">' + fmt(L.porque) + '</p>' : '') + (L.antes ? '<div class="cx"><div class="rotulo" style="margin-bottom:6px">Antes de começar</div>' + par(L.antes) + '</div>' : '');
+    var h = '<div class="mo-tags"><span class="tag">' + ROT('dia', 'Dia').toUpperCase() + ' ' + n + '</span><span class="tag">LAB</span>' + (L.custo.length <= 36 ? '<span class="tag za">CUSTO: ' + esc(L.custo) + '</span>' : '') + (L.tempo ? '<span class="tag">' + esc(L.tempo) + '</span>' : '') + '</div><h1>' + esc(L.t) + '</h1>' + (L.custo.length > 36 ? '<div class="call"><b class="rt">Custo estimado</b>' + fmt(L.custo) + '</div>' : '') + (L.porque ? '<p class="mo-lead">' + fmt(L.porque) + '</p>' : '') + (L.antes ? '<div class="cx"><div class="rotulo" style="margin-bottom:6px">Antes de começar</div>' + par(L.antes) + '</div>' : '');
     h += '<h2>Passo a passo</h2>' + L.passos.map(function (p, i) {
       return '<div class="passo" data-p="' + i + '"><div class="n">' + (i + 1) + '</div><div><b>' + esc(p.t) + '</b>' + (p.cmd ? '<pre><code>' + esc(p.cmd) + '</code></pre><button class="cp" data-cp="' + i + '">copiar</button>' : '') + '<p style="margin:6px 0 0">' + fmt(p.p) + '</p></div></div>';
     }).join('');
     h += '<h2>Como saber que funcionou</h2><div class="cx">' + par(L.verificar) + '</div>';
     if (L.erros && L.erros.length) h += '<h2>Se der erro</h2>' + L.erros.map(function (e) { return '<details style="margin-bottom:8px"><summary>' + fmt(e.s) + '</summary><div class="corpo"><p><b>Causa provável:</b> ' + fmt(e.c) + '</p><p><b>Como resolver:</b> ' + fmt(e.r) + '</p></div></details>'; }).join('');
-    h += '<h2>Limpar tudo (evita cobrança)</h2><ul>' + L.limpar.map(function (x) { return /^\s*(gcloud|bq|gsutil|gsutil|rm|kubectl)/.test(x) ? '<li><code>' + esc(x) + '</code></li>' : '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>';
-    h += '<div class="mo-btns"><button class="btn" id="l-ok">' + (feito ? 'Lab concluído ✓' : 'Concluí o lab e limpei os recursos') + '</button></div>';
-    abrir('Dia ' + n + ' · lab', h);
+    h += '<h2>' + esc(ROT('limpar', 'Limpar tudo (evita cobrança)')) + '</h2><ul>' + L.limpar.map(function (x) { return /^\s*(gcloud|bq|gsutil|gsutil|rm|kubectl)/.test(x) ? '<li><code>' + esc(x) + '</code></li>' : '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>';
+    h += '<div class="mo-btns"><button class="btn" id="l-ok">' + (feito ? 'Lab concluído ✓' : ROT('labOk', 'Concluí o lab e limpei os recursos')) + '</button></div>';
+    abrir(ROT('dia', 'Dia') + ' ' + n + ' · lab', h);
     modo.querySelectorAll('[data-cp]').forEach(function (b) { b.onclick = function () { try { navigator.clipboard.writeText(L.passos[+b.dataset.cp].cmd); b.textContent = 'copiado ✓'; } catch (e) { b.textContent = 'selecione e copie'; } }; });
     modo.querySelector('#l-ok').onclick = function () { var C = ctx.obter(), M = Object.assign({}, C.labs || {}); if (!M[n]) { M[n] = iso(ctx.hoje()); C.labs = M; sujo.labs = 1; descarregar(); } this.textContent = 'Lab concluído ✓'; };
   }

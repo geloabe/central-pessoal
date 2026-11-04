@@ -7,7 +7,7 @@
   'use strict';
   var INTERVALOS = [0, 1, 3, 7, 14, 30]; // dias até a próxima revisão ao chegar em cada caixa
   var QTD = { completo: [11, 13, 10, 7, 9], parcial: [7, 8, 6, 4, 5] }; // por seção; 50 e 30 questões (pesos 22/25/20/15/18)
-  function T() { return root.CP_CERT; }
+  function T() { return root.CP_PLANO_ESTUDO || root.CP_CERT; } // o PDI entrega o próprio plano; sem ele, vale a certificação
 
   /* nota: 0 errei, 1 difícil, 2 bom, 3 fácil */
   function proximo(e, nota, hoje) {

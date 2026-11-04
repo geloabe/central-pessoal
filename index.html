@@ -228,6 +228,7 @@ a.tile small{display:block;color:var(--mut);font-size:12.5px;line-height:1.3}
 <script src="assets/cert.js"></script>
 <script src="assets/pdi.js"></script>
 <script src="assets/ingles.js"></script>
+<script src="assets/imovel-acomp.js"></script>
 <script src="assets/progresso.js"></script>
 <script src="assets/integracoes.js"></script>
 <script src="assets/foco.js"></script>
@@ -268,10 +269,11 @@ async function carregar(){
     seguro(db.collection('captura').get().then(docs),[]),
     seguro(db.doc('cert/main').get().then(function(s){return s.exists?s.data():null}),null),
     seguro(db.doc('pdi/main').get().then(function(s){return s.exists?s.data():null}),null),
-    seguro(db.doc('ingles/main').get().then(function(s){return s.exists?s.data():null}),null)
+    seguro(db.doc('ingles/main').get().then(function(s){return s.exists?s.data():null}),null),
+    seguro(db.doc('imv_acomp/main').get().then(function(s){return s.exists?s.data():null}),null)
   ]);
   return {sessions:r[0],habitos:{config:json(r[1]),records:CP_INT.mesclar(json(r[2])||{},r[17],r[0])},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
-    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19],cert:r[20],pdi:r[21],ingles:r[22]};
+    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19],cert:r[20],pdi:r[21],ingles:r[22],imvAc:r[23]};
 }
 
 function card(id,href,titulo,corpo){
@@ -288,6 +290,7 @@ function render(p){
   if(pr&&(hoje-new Date(pr.data+'T12:00:00'))<=14*864e5)
     $('#pr').innerHTML='<div class="pr"><div class="selo">PR</div><div><b>Novo recorde: '+esc(pr.nome)+'</b><small>1RM estimado '+pr.para.toFixed(1).replace('.',',')+' kg · antes '+pr.de.toFixed(1).replace('.',',')+' kg (+'+Math.round(pr.pct)+'%)</small></div></div>';
 
+  var im=window.CP_IMV?CP_IMV.estado(DADOS.imvAc||{},new Date()):null;
   var rf=p.refeicoes, hb=p.habitos, t=p.treino, ce=p.cert, pd=p.pdi, ig=p.ingles, ds=p.desafios;
   function em(n){return 'Começa em '+n+' dia'+(n>1?'s':'')}
   var M={
@@ -302,7 +305,7 @@ function render(p){
     rota:['rota-internacional.html','Rota Internacional',p.rota.semana+' de '+p.rota.meta+' candidaturas',p.rota.semana+'/'+p.rota.meta+' candidaturas'],
     negocios:['negocios.html','Negócios','Prospecção e clientes',''],
     financeiro:['financeiro.html','Financeiro',p.financeiro.pct+'% da entrada',p.financeiro.pct+'% da entrada'],
-    imovel:['imovel.html','Imóvel','Primeira compra',''],
+    imovel:['imovel.html','Imóvel',im&&im.proxima?'Próxima parcela: '+im.proxima.data.slice(8)+'/'+im.proxima.data.slice(5,7)+(im.atrasadas.length?' · '+im.atrasadas.length+' atrasada'+(im.atrasadas.length>1?'s':''):''):'Acompanhar parcelas e juros de obra',im&&im.proxima?'parcela '+im.proxima.data.slice(8)+'/'+im.proxima.data.slice(5,7):''],
     mudanca:['mudanca.html','Mudança',p.mudanca.pct+'% do caminho',p.mudanca.pct+'% da mudança']
   };
   var AREAS=[['corpo','Corpo',['treino','plano']],['rotina','Rotina e mente',['habitos','desafios','grimorio']],['carreira','Carreira e estudos',['cert','pdi','ingles','rota','negocios']],['casa','Casa e dinheiro',['financeiro','imovel','mudanca']]];
@@ -315,6 +318,8 @@ function render(p){
   P=p; if(window.CP_FOCO)CP_FOCO.render(); renderAgua(p); renderHabitos(p); renderMetas(p);
   (function(){
     var l=[];
+    if(im&&im.atrasadas.length) l.push(['imovel.html','🏠','Tenda: '+im.atrasadas.length+(im.atrasadas.length>1?' parcelas vencidas':' parcela vencida')]);
+    else if(im&&im.proxima&&im.diasProxima<=7) l.push(['imovel.html','🏠','Tenda: parcela '+(im.diasProxima===0?'vence hoje':'em '+im.diasProxima+' dia'+(im.diasProxima===1?'':'s'))]);
     if(ce.ativo&&!ce.aprovada&&!ce.encerrado&&!ce.comecaEm&&ce.tarefasHoje&&ce.feitasHoje<ce.tarefasHoje) l.push(['certificacao.html','🎓','Certificação: '+ce.feitasHoje+' de '+ce.tarefasHoje]);
     if(pd.ativo&&!pd.encerrado&&!pd.comecaEm&&pd.proximo) l.push(['pdi.html','📈','PDI: '+pd.proximo]);
     if(ig.ativo&&!ig.encerrado&&!ig.comecaEm&&ig.proxima) l.push(['ingles.html','💬','Inglês: '+ig.proxima]);

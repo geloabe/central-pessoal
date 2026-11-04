@@ -223,10 +223,9 @@
   function pdi(d, hoje) {
     var P = root.CP_PDI, doc = d.pdi || {};
     if (!P || !doc.inicio) return { ativo: false, hoje: 0, pct: 0, feitas: 0, total: 0 };
-    var e = P.estado(doc, hoje), k = iso(hoje);
-    var h = Object.keys(doc.feitas || {}).filter(function (id) { return doc.feitas[id] === k; }).length;
-    return { ativo: true, hoje: h, pct: e.pct, feitas: e.feitasPdi, total: e.totalPdi, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, faltam: e.faltam,
-             atrasadas: e.atrasadas, proximo: e.proxPdi ? e.proxPdi.t.t : null };
+    var e = P.estado(doc, hoje);
+    return { ativo: true, hoje: e.hoje, pct: e.pct, feitas: e.completas, total: e.total, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, faltam: e.faltam,
+             atrasadas: e.atrasadas, proximo: e.prox ? e.prox.titulo : null };
   }
 
   /* ---------- Inglês pessoal (plano em assets/ingles.js; dados em ingles/main) ---------- */
@@ -317,8 +316,8 @@
     add('cs70', 'Simulado da certificação com 70% ou mais', p.cert.simMax >= 70);
     add('cs80', 'Simulado da certificação com 80% ou mais', p.cert.simMax >= 80);
     add('cok', 'Certificação Google Data Engineer conquistada', p.cert.aprovada);
-    add('pd1', '1ª entrega do PDI', p.pdi.feitas >= 1);
-    add('pd50', 'Metade das entregas do PDI', p.pdi.pct >= 50);
+    add('pd1', '1ª aula do PDI concluída (aula, quiz e lab)', p.pdi.feitas >= 1);
+    add('pd50', 'Metade das etapas do PDI', p.pdi.pct >= 50);
     return l;
   }
 
@@ -349,7 +348,7 @@
     o.push(m('vida', 'mudanca', 'Mudança (checklist)', p.mudanca.pct, 100, 'mudanca.html', p.mudanca.pct + '%'));
     if (p.desafios.ativos) o.push(m('vida', 'desafios', 'Desafios em andamento', p.desafios.pct, 100, 'desafios.html', p.desafios.pct + '%'));
     if (p.cert.ativo && !p.cert.aprovada) o.push(m('vida', 'cert', 'Plano da certificação', p.cert.pct, 100, 'certificacao.html', p.cert.pct + '%'));
-    if (p.pdi.ativo && !p.pdi.encerrado) o.push(m('vida', 'pdi', 'Entregas do PDI', p.pdi.pct, 100, 'pdi.html', p.pdi.pct + '%'));
+    if (p.pdi.ativo && !p.pdi.encerrado) o.push(m('vida', 'pdi', 'Estudo do PDI', p.pdi.pct, 100, 'pdi.html', p.pdi.pct + '%'));
     if (p.ingles.ativo && !p.ingles.encerrado) o.push(m('vida', 'ingles', 'Prática de inglês', p.ingles.pct, 100, 'ingles.html', p.ingles.pct + '%'));
     return { saude: s, vida: o };
   }

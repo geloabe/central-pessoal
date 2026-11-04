@@ -30,22 +30,15 @@ section{display:none}section.on{display:block}
 .stats .big{font:600 26px/1.1 var(--f-titulo);letter-spacing:var(--titulo-tracking);margin-top:6px}
 .stats small{display:block;color:var(--t-muted);font-size:12px;margin-top:2px}
 .resumo{margin-bottom:16px}
+.ok-msg{color:var(--t-ok);font-weight:600}
 .cartao+.cartao{margin-top:12px}
 .tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em;display:inline-block;margin-right:4px}
-.tag.q{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.ok{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.q{background:color-mix(in srgb,var(--t-ok) 14%,var(--t-surface));border-color:var(--t-ok)}
 .tag.ia{background:color-mix(in srgb,var(--t-accent2) 25%,var(--t-surface));border-color:var(--t-accent2)}
-.tar{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--t-line)}
-.tar:first-of-type{border-top:0}
-.tar .chk{flex:none;width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-bg);font:700 22px var(--f-texto);cursor:pointer;padding:0}
-.tar.ok .chk{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
-.tar .tx{flex:1;min-width:0;padding-top:2px}
-.tar .tx div{margin-top:5px;overflow-wrap:anywhere}
-.tar.ok .tx div{color:var(--t-muted)}
 .dica{margin-top:12px;padding:10px 12px;border-left:3px solid var(--t-accent2);background:var(--t-realce);font-size:14px}
-.btn{min-height:46px}
-.passos{margin:8px 0 0;padding-left:22px}
-.passos li{margin:8px 0;line-height:1.5;overflow-wrap:anywhere}
 .pronto{margin-top:10px;padding:10px 12px;border-left:3px solid var(--t-ok);background:var(--t-realce);font-size:14px}
+.btn{min-height:46px}
 details{border:1px solid var(--t-line);background:var(--t-surface);border-radius:var(--raio);margin-bottom:8px}
 details>summary{min-height:48px;display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;list-style:none}
 details>summary::-webkit-details-marker{display:none}
@@ -53,11 +46,16 @@ details>summary::before{content:"›";color:var(--t-muted);font-size:20px;transi
 details[open]>summary::before{transform:rotate(90deg)}
 details>.corpo{padding:2px 14px 14px}
 details.sem>summary{font:600 17px var(--f-titulo)}
-details.dia{margin:8px 0 0;background:var(--t-bg)}
-details.dia>summary{font-size:15px}
-.cont{display:flex;align-items:center;gap:8px;margin-top:8px}
-.cont button{width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);font:700 22px var(--f-texto);cursor:pointer;padding:0}
-.cont b{font:600 22px var(--f-titulo);min-width:64px;text-align:center}
+.lic{padding:12px 0;border-top:1px solid var(--t-line)}
+.lic:first-of-type{border-top:0}
+.lic .nm{font-size:16px;margin:6px 0 4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}
+.chip{font:500 12px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);color:var(--t-muted)}
+.chip.ok{border-color:var(--t-ok);color:var(--t-ink);background:color-mix(in srgb,var(--t-ok) 14%,var(--t-surface))}
+.proximo{margin-top:12px;padding:14px;border:2px solid var(--m);background:color-mix(in srgb,var(--m) 8%,var(--t-surface))}
+.passo-l{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--t-line)}
+.passo-l .n{flex:none;width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--t-borda);font:600 13px var(--f-mono)}
+.passo-l.ok .n{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
 form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 form.f label{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--t-muted)}
 form.f .full{grid-column:1/-1}
@@ -67,13 +65,12 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 .lk{min-height:44px;padding:0 4px;border:0;background:none;color:var(--t-accent);font:600 14px var(--f-texto);text-decoration:underline;cursor:pointer}
 .ev{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--t-line);overflow-wrap:anywhere}
 .ev a{color:var(--t-accent)}
-.frase{padding:10px 0;border-top:1px solid var(--t-line)}
-.frase:first-of-type{border-top:0}
-.frase b{display:block;font-size:16px}
 .copia{white-space:pre-wrap;font:13px/1.5 var(--f-mono);background:var(--t-realce);padding:12px;border:1px solid var(--t-line);overflow-wrap:anywhere}
 .campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
 .campos label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--t-muted)}
 .campos input{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.sim{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--t-line)}
+.sim .pc{font:600 22px var(--f-titulo);min-width:64px}
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -83,40 +80,48 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 <body class="t">
 <main>
   <h1>PDI Snowfox</h1>
-  <p class="sub">Quatro semanas, 4 horas por semana. Entrega atrasada não zera nada: ela só espera a sua vez.</p>
+  <p class="sub">Duas trilhas de estudo pela documentação oficial: qualidade de dados e CI/CD, e dados e agentes de IA. 16 aulas em 4 semanas, cerca de 1 hora cada (aula, cartões, quiz e lab).</p>
   <div id="topo"></div>
   <nav id="tabs" role="tablist">
     <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
-    <button role="tab" data-t="semana" aria-selected="false">Semanas</button>
+    <button role="tab" data-t="trilhas" aria-selected="false">Trilhas</button>
+    <button role="tab" data-t="revisar" aria-selected="false">Revisar</button>
     <button role="tab" data-t="metas" aria-selected="false">Metas</button>
     <button role="tab" data-t="resumo" aria-selected="false">Resumo</button>
   </nav>
   <section id="hoje" class="on"></section>
-  <section id="semana"></section>
+  <section id="trilhas"></section>
+  <section id="revisar"></section>
   <section id="metas"></section>
   <section id="resumo"></section>
 </main>
 <dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
 
 <script src="assets/progresso.js"></script>
-<script src="assets/cert.js"></script>
 <script src="assets/pdi.js"></script>
+<script src="assets/cert.js"></script>
+<script src="assets/cert-estudo.js"></script>
+<script src="assets/pdi/trilha_q_a.js"></script>
+<script src="assets/pdi/trilha_q_b.js"></script>
+<script src="assets/pdi/trilha_ia_a.js"></script>
+<script src="assets/pdi/trilha_ia_b.js"></script>
+<script src="assets/cert-estudo-ui.js"></script>
 <script>
 (function(){
 'use strict';
-var K=window.CP_PDI, ref=null, C={}, CERT=null, escrita=Promise.resolve(), ultimoSalvar=0;
+var K=window.CP_PDI, E=window.CP_ESTUDO, UI=window.CP_ESTUDO_UI, CONT=window.CP_CONTEUDO_ESTUDO||{dias:{}}, ref=null, C={}, CERT=null, escrita=Promise.resolve(), ultimoSalvar=0;
+Object.keys(CONT.dias).forEach(function(n){K.PLANO.DOCS_DIA[n]=CONT.dias[n].fontes||[]}); // fontes oficiais de cada aula, mostradas no fim da aula
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function hoje(){return new Date()}
 function dm(dt){return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
-var NOMEM={q:'Qualidade',ia:'IA e agentes',geral:'Fechamento'};
-function tag(m,extra){return '<span class="tag '+m+'">'+NOMEM[m]+(extra?' · '+extra:'')+'</span>'}
 function copiar(txt){
   function fallback(){var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(e){}t.remove()}
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).catch(fallback);else fallback();
 }
+function btn(txt,est,n,a,sec){return '<button class="btn'+(sec?' sec':'')+'" data-est="'+est+'" data-n="'+(n||'')+'" data-a="'+(a||'')+'" style="min-height:46px;font-size:15px">'+esc(txt)+'</button>'}
 
 /* Escritas em fila (uma de cada vez): o "update" lê e regrava o documento. */
 function salvar(patch){
@@ -128,63 +133,94 @@ function salvar(patch){
   return escrita;
 }
 
-/* ---------- peças ---------- */
-function passos(t){
-  return '<ol class="passos">'+t.como.map(function(c){return '<li>'+esc(c)+'</li>'}).join('')+'</ol>'+
-    (t.pronto?'<div class="pronto"><b>Pronto quando:</b> '+esc(t.pronto)+'</div>':'')+
-    (t.evid?'<div class="mini" style="margin-top:8px">Guarde como evidência: '+esc(t.evid)+' (aba Metas).</div>':'');
-}
-function tarefaPdi(x){
-  var t=x.t, f=!!(C.feitas&&C.feitas[t.id]);
-  return '<div class="tar'+(f?' ok':'')+'"><button type="button" class="chk" data-tar="'+t.id+'" aria-pressed="'+f+'" aria-label="'+(f?'Desmarcar: ':'Marcar como feita: ')+esc(t.t)+'">'+(f?'✓':'')+'</button>'+
-    '<div class="tx">'+tag(t.m,t.min+' min')+'<div><b>'+esc(t.t)+'</b></div><details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(t)+'</div></details></div></div>';
-}
 /* ---------- topo ---------- */
 function topo(e){
   var el=$('#topo');
   if(!e.ativo){el.innerHTML='';return}
-  var sem=e.comecaEm>0?'<div class="big">em '+e.comecaEm+' d</div><small>o ciclo começa</small>':e.encerrado?'<div class="big">fim</div><small>ciclo terminou em '+dm(K.parse(e.fim))+'</small>':'<div class="big">'+e.semana+' de 4</div><small>até '+dm(K.addDias(K.dataDaSemana(C,e.semana),6))+'</small>';
-  var pdi=e.semana?e.porSemana[e.semana]:null;
+  var sem=e.comecaEm>0?'<div class="big">em '+e.comecaEm+' d</div><small>o ciclo começa</small>':e.encerrado?'<div class="big">fim</div><small>terminou em '+dm(K.parse(e.fim))+'</small>':'<div class="big">'+e.semana+' de 4</div><small>até '+dm(K.addDias(K.dataDaSemana(C,e.semana),6))+'</small>';
   el.innerHTML='<div class="cartao resumo"><div class="stats">'+
     '<div><div class="rotulo">Semana</div>'+sem+'</div>'+
-    '<div><div class="rotulo">PDI na semana</div><div class="big">'+K.fmtMin(pdi?pdi.pdiFeito:0)+'</div><small>de '+K.fmtMin(pdi?pdi.pdiMin:K.MIN_PDI)+'</small></div>'+
-    '<div><div class="rotulo">Entregas</div><div class="big">'+e.feitasPdi+' de '+e.totalPdi+'</div><small>concluídas</small></div></div>'+
-    barra(e.pct)+'<div class="mini">'+e.pct+'% do PDI</div></div>';
+    '<div><div class="rotulo">Aulas</div><div class="big">'+e.completas+' de '+e.total+'</div><small>concluídas</small></div>'+
+    '<div><div class="rotulo">Etapas</div><div class="big">'+e.pct+'%</div><small>aula, quiz e lab</small></div></div>'+
+    barra(e.pct)+'<div class="mini">Qualidade '+e.porTrilha.q.pct+'% · IA e agentes '+e.porTrilha.ia.pct+'%</div></div>';
 }
 
 /* ---------- hoje ---------- */
 function setup(){
-  return '<div class="cartao"><h2>Começar o PDI</h2><p class="sub">Quatro semanas a partir da data de início. Sugestão: alinhado à certificação, que começa em 04/11/2026.</p>'+
-    '<form class="f" id="setup"><label class="full">Data de início<input type="date" name="inicio" value="'+K.iso(hoje())+'" required></label>'+
-    '<div class="full row"><button class="btn primary" type="submit">Começar</button></div></form>'+
-    '<div class="dica">Metas: qualidade de dados e CI/CD no Snowfox e um agente de dados com avaliação. A certificação continua no módulo dela.</div></div>';
+  return '<div class="cartao"><div class="rotulo">Começar</div><h2 style="margin:6px 0 8px">Quando você começa?</h2>'+
+    '<p class="mini" style="margin:0 0 12px">Quatro semanas, quatro aulas por semana (cerca de 1 hora cada): duas de qualidade de dados e CI/CD e duas de dados e agentes de IA. Cada aula tem leitura em blocos curtos com as fontes oficiais, cartões, quiz e um lab que gera evidência para o seu PDI.</p>'+
+    '<form class="f" id="setup"><label class="full">Início<input type="date" name="inicio" value="'+K.iso(hoje())+'" required></label>'+
+    '<div class="row full"><button class="btn" type="submit">Começar o PDI</button></div></form></div>';
 }
-function hojeHtml(e){
-  if(!e.ativo)return setup();
+function passosHtml(n){
+  var pa=E.passosDoDia(C,CONT,n); if(!pa)return '';
+  var d=CONT.dias[n], nc=pa.cartoesTotal, nq=pa.quizTotal;
+  var l=[
+    {ok:pa.aula,t:'Ler a aula',d:'Um bloco por vez, com "Traduzindo" antes de cada parte técnica e a fonte oficial no fim de cada bloco. ~'+UI.minutosAula(n)+' min.',est:'aula',r:pa.aula?'Reler a aula':'Começar a aula'},
+    {ok:pa.cartoes,t:'Cartões da aula',d:pa.cartoesVistos+' de '+nc+' vistos.',est:'cart',r:'Estudar cartões'},
+    {ok:pa.quiz,t:'Quiz (meta 80%)',d:pa.quizPct==null?nq+' questões com explicação de cada alternativa.':'Melhor nota: '+pa.quizPct+'%.',est:'quiz',r:pa.quizPct==null?'Começar o quiz':'Refazer o quiz'}
+  ];
+  if(pa.lab!==null)l.push({ok:pa.lab,t:'Lab prático',d:'Gera uma evidência para guardar na aba Metas. '+((d.lab&&d.lab.tempo)||''),est:'lab',r:'Abrir o lab'});
+  return l.map(function(x,i){return '<div class="passo-l'+(x.ok?' ok':'')+'"><div class="n">'+(x.ok?'✓':(i+1))+'</div><div style="flex:1;min-width:0"><b>'+esc(x.t)+'</b><div class="mini">'+esc(x.d)+'</div><div style="margin-top:6px">'+btn(x.r,x.est,n,'',true)+'</div></div></div>'}).join('');
+}
+function hojeSec(e){
+  var el=$('#hoje');
+  if(!e.ativo){el.innerHTML=setup();return}
   var h='';
-  if(e.comecaEm>0)h+='<div class="dica">O ciclo começa em '+e.comecaEm+' dia'+(e.comecaEm>1?'s':'')+'. Se quiser, já pode começar pela primeira entrega.</div>';
-  if(e.encerrado)h+='<div class="dica">O ciclo terminou. Abra a aba Resumo para copiar o texto do gestor; o que ficou para trás pode seguir no próximo ciclo.</div>';
-  if(e.atrasadas>0)h+='<div class="dica">'+e.atrasadas+' entrega'+(e.atrasadas>1?'s':'')+' de semanas anteriores ficou'+(e.atrasadas>1?'ram':'')+' para trás. Sem problema: elas vêm primeiro, uma de cada vez.</div>';
-  if(e.proxPdi){
-    var t=e.proxPdi.t;
-    h+='<div class="cartao"><div class="rotulo">Próximo passo do PDI'+(e.proxPdiAdiantada?' · adiantando a próxima semana':' · semana '+e.proxPdi.semana)+'</div>'+
-      '<h2 style="margin:6px 0">'+esc(t.t)+'</h2><div>'+tag(t.m,t.min+' min')+'</div>'+
-      '<div class="corpo">'+passos(t)+'</div><div class="row" style="margin-top:12px"><button class="btn primary" data-tar="'+t.id+'">Fiz ✓</button></div></div>';
-  }else h+='<div class="cartao"><h2>PDI completo</h2><p>Todas as entregas estão marcadas. Confira os números na aba Metas e copie o Resumo.</p></div>';
-  return h;
+  if(e.comecaEm>0)h+='<div class="dica">O ciclo começa em '+e.comecaEm+' dia'+(e.comecaEm>1?'s':'')+'. Se quiser adiantar, a primeira aula já está aberta.</div>';
+  if(e.encerrado)h+='<div class="dica">As 4 semanas já passaram. O que ficou para trás continua disponível; abra a aba Resumo para copiar o texto do gestor.</div>';
+  if(e.atrasadas>0)h+='<div class="dica">'+e.atrasadas+' aula'+(e.atrasadas>1?'s':'')+' de semanas anteriores ficou'+(e.atrasadas>1?'ram':'')+' para trás. Sem problema: elas vêm primeiro, uma de cada vez.</div>';
+  var px=e.prox;
+  if(!px){h+='<div class="cartao"><h2>PDI completo</h2><p>Todas as aulas estão concluídas. Registre os números na aba Metas e copie o Resumo.</p></div>';}
+  else{
+    var lic=K.licao(px.n), tem=UI.temConteudo(px.n);
+    var passoTxt={aula:'Ler a aula',quiz:'Fazer o quiz (meta 80%)',lab:'Fazer o lab'}[px.passo];
+    h+='<div class="cartao"><div class="row"><span class="tag '+px.trilha+'">'+(px.trilha==='q'?'QUALIDADE':'IA E AGENTES')+'</span><span class="tag">AULA '+px.n+' DE 16</span><span class="mini">semana '+px.semana+(e.proxAdiantada?' · adiantando':'')+'</span></div>'+
+      '<h2 style="margin:8px 0 4px">'+esc(lic.titulo)+'</h2>';
+    if(tem){
+      h+='<div class="proximo"><div class="rotulo">Próximo passo</div><div style="font:600 21px var(--f-titulo);margin:6px 0">'+esc(passoTxt)+'</div><div class="row">'+btn(passoTxt,px.passo==='aula'?'aula':px.passo==='quiz'?'quiz':'lab',px.n)+'</div></div>'+
+        '<details style="margin-top:12px"><summary>Ver todos os passos desta aula</summary><div class="corpo">'+passosHtml(px.n)+'</div></details>';
+    }else h+='<p class="mini" style="margin:8px 0">O conteúdo desta aula ainda não foi carregado. Recarregue a página.</p>';
+    h+='</div>';
+  }
+  var dp=e.diaPlano, f=E.filaCartoes(CONT,C.srs,hoje(),dp,{maxNovos:15}), qd=E.questoesDevidas(CONT,C.srs,hoje(),dp).length, er=E.cadernoErros(CONT,C.srs).length;
+  if(f.devidos.length||qd||er){
+    h+='<div class="cartao"><div class="rotulo" style="margin-bottom:8px">Revisões que venceram</div><div class="row">'+(f.devidos.length?btn('Cartões ('+f.devidos.length+')','cartrev'):'')+(qd?btn('Questões ('+qd+')','revisao','','',true):'')+(er?btn('Caderno de erros ('+er+')','erros','','',true):'')+'</div></div>';
+  }
+  el.innerHTML=h;
 }
 
-/* ---------- semanas ---------- */
-function semanaHtml(e){
-  if(!e.ativo)return setup();
-  return K.SEMANAS.map(function(s){
-    var ps=e.porSemana[s.n], aberto=(e.semana||1)===s.n?' open':'';
-    var data=C.inicio?dm(K.dataDaSemana(C,s.n))+' a '+dm(K.addDias(K.dataDaSemana(C,s.n),6)):'';
-    return '<details class="sem"'+aberto+'><summary>Semana '+s.n+' · '+esc(s.titulo)+' <span class="mini">'+data+'</span></summary><div class="corpo">'+
-      '<p class="mini">'+esc(s.resumo)+'</p>'+barra(ps.pdiMin?Math.round(ps.pdiFeito/ps.pdiMin*100):0)+
-      '<div class="rotulo">Metas · '+K.fmtMin(ps.pdiFeito)+' de '+K.fmtMin(ps.pdiMin)+'</div>'+
-      s.tarefas.map(function(t){return tarefaPdi({t:t,semana:s.n})}).join('')+'</div></details>';
-  }).join('');
+/* ---------- trilhas ---------- */
+function licaoHtml(l,e){
+  var pa=E.passosDoDia(C,CONT,l.n), tem=!!pa;
+  var chips=tem?'<span class="chip'+(pa.aula?' ok':'')+'">'+(pa.aula?'✓ ':'')+'aula</span><span class="chip'+(pa.cartoes?' ok':'')+'">cartões '+pa.cartoesVistos+'/'+pa.cartoesTotal+'</span><span class="chip'+(pa.quiz?' ok':'')+'">quiz '+(pa.quizPct==null?'—':pa.quizPct+'%')+'</span><span class="chip'+(pa.lab?' ok':'')+'">'+(pa.lab?'✓ ':'')+'lab</span>':'<span class="chip">em preparação</span>';
+  var livre=l.n>e.diaPlano;
+  return '<div class="lic"><div class="row"><span class="tag'+(tem&&pa.aula&&pa.quiz&&pa.lab?' ok':'')+'">AULA '+l.n+'</span><span class="mini">semana '+l.semana+(livre?' · adiantar é opcional':'')+'</span></div><div class="nm"><b>'+esc(l.titulo)+'</b></div><div class="chips">'+chips+'</div>'+
+    (tem?'<div class="row">'+btn('Aula','aula',l.n)+btn('Cartões','cart',l.n,'',true)+btn('Quiz','quiz',l.n,'',true)+btn('Lab','lab',l.n,'',true)+'</div>':'')+'</div>';
+}
+function trilhasSec(e){
+  var el=$('#trilhas');
+  if(!e.ativo){el.innerHTML=setup();return}
+  var h='<div class="cartao"><div class="rotulo">Duas trilhas, uma fonte: a documentação oficial</div><p class="mini" style="margin:6px 0 0">Cada aula cita, bloco a bloco, a página oficial de onde veio o conteúdo, e termina com os links para ler mais. Se a documentação diferir do que está na aula, vale a documentação (ferramentas mudam de versão).</p></div>';
+  K.TRILHAS.forEach(function(t){
+    var tr=e.porTrilha[t.id], ls=K.LICOES.filter(function(l){return l.trilha===t.id}), abre=e.prox&&e.prox.trilha===t.id;
+    h+='<details class="sem" style="margin-top:12px"'+(abre?' open':'')+'><summary><span style="flex:1">'+esc(t.nome)+'</span><span class="mini">'+tr.completas+' de '+tr.total+' · '+tr.pct+'%</span></summary><div class="corpo">'+barra(tr.pct)+ls.map(function(l){return licaoHtml(l,e)}).join('')+'</div></details>';
+  });
+  el.innerHTML=h;
+}
+
+/* ---------- revisar ---------- */
+function revisarSec(e){
+  var dp=e.ativo?e.diaPlano:4,f=E.filaCartoes(CONT,C.srs,hoje(),dp,{maxNovos:15}),qd=E.questoesDevidas(CONT,C.srs,hoje(),dp).length,er=E.cadernoErros(CONT,C.srs).length,dm2=E.dominio(CONT,C.srs),h='';
+  var srs=C.srs||{},dom=Object.keys(srs).filter(function(k){return srs[k].b>=3}).length;
+  h+='<div class="cartao"><div class="rotulo">Revisão espaçada</div><p class="mini" style="margin:6px 0 10px">O que você erra volta amanhã; o que acerta volta em 1, 3, 7, 14 e 30 dias. É isso que fixa o conteúdo na memória de longo prazo.</p>'+
+    '<div class="stats"><div><div class="rotulo">Cartões</div><div class="big">'+f.devidos.length+'</div><small>vencidos</small></div><div><div class="rotulo">Questões</div><div class="big">'+qd+'</div><small>para rever</small></div><div><div class="rotulo">Erros</div><div class="big">'+er+'</div><small>no caderno</small></div></div>'+
+    '<div class="row" style="margin-top:10px">'+btn('Cartões ('+(f.devidos.length+f.novos.length)+')','cartrev')+btn('Questões ('+qd+')','revisao','','',true)+btn('Caderno de erros ('+er+')','erros','','',true)+'</div>'+
+    '<div class="mini" style="margin-top:10px">Itens consolidados (3ª caixa ou mais): '+dom+'.</div></div>';
+  var tops=K.TOPICOS.filter(function(t){return dm2.porTopico[t.id]&&dm2.porTopico[t.id].resp>0}).sort(function(a,b){return dm2.porTopico[a.id].pct-dm2.porTopico[b.id].pct});
+  h+='<div class="cartao"><h3 style="margin-bottom:6px">Desempenho por aula</h3>'+(tops.length?tops.map(function(t){var p=dm2.porTopico[t.id];return '<div class="sim"><div class="pc">'+p.pct+'%</div><div style="flex:1;min-width:0"><b>'+esc(t.nome)+'</b><div class="mini">'+p.ok+' de '+p.resp+' questões certas na última tentativa</div></div>'+btn('Treinar','topico','',t.id,true)+'</div>'}).join(''):'<div class="mini">Responda quizzes para ver seu desempenho medido por aula.</div>')+
+    (tops.length>=2?'<div class="row" style="margin-top:10px">'+btn('Treinar as 3 aulas mais fracas','fracos','','',true)+'</div>':'')+'</div>';
+  $('#revisar').innerHTML=h;
 }
 
 /* ---------- metas ---------- */
@@ -196,53 +232,45 @@ function metaHtml(m,e){
     else h+='<div class="mini">Sem dados do plano de estudo.</div>';
     return h+'<div class="row" style="margin-top:10px"><a class="btn" href="certificacao.html">Abrir a certificação</a></div></div>';
   }
-  var pm=e.ativo&&e.porMeta[m.id];
-  h+='<p><b>Em 30 segundos:</b> '+esc(m.simples)+'</p>';
-  if(m.porque)h+='<p class="mini"><b>Por que importa:</b> '+esc(m.porque)+'</p>';
-  h+='<div class="pronto"><b>Resultado esperado:</b> '+esc(m.resultado)+'</div>';
+  var tr=e.ativo?e.porTrilha[m.trilha]:null;
+  h+='<p><b>Em 30 segundos:</b> '+esc(m.simples)+'</p><div class="pronto"><b>Resultado esperado:</b> '+esc(m.resultado)+'</div>';
   if(m.limite)h+='<div class="dica"><b>Limite:</b> '+esc(m.limite)+'</div>';
-  if(pm)h+=barra(pm.total?Math.round(pm.feito/pm.total*100):0)+'<div class="mini">'+pm.feitas+' de '+pm.tarefas+' entregas</div>';
+  if(tr)h+=barra(tr.pct)+'<div class="mini">'+tr.completas+' de '+tr.total+' aulas concluídas · '+tr.aulas+' lidas</div>';
   h+='<div class="rotulo" style="margin-top:12px">Resultados medidos</div><div class="campos">'+(m.campos||[]).map(function(c){
     return '<label>'+esc(c[1])+'<input data-res="'+c[0]+'" value="'+esc((C.res&&C.res[c[0]])||'')+'" placeholder="—" maxlength="40"></label>'}).join('')+'</div>';
   var ev=(C.evid&&C.evid[m.id])||[];
   h+='<div class="rotulo" style="margin-top:12px">Evidências</div>'+(ev.length?ev.map(function(x){
-    return '<div class="ev"><div class="sp">'+esc(x.t)+(x.url?' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">link</a>':'')+' <span class="mini">'+esc(x.d||'')+'</span></div><button class="lk" data-evrm="'+m.id+'|'+x.id+'">remover</button></div>'}).join(''):'<div class="mini">Nada guardado ainda.</div>')+
+    return '<div class="ev"><div class="sp">'+esc(x.t)+(x.url?' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">link</a>':'')+' <span class="mini">'+esc(x.d||'')+'</span></div><button class="lk" data-evrm="'+m.id+'|'+x.id+'">remover</button></div>'}).join(''):'<div class="mini">Nada guardado ainda. Cada lab termina com uma evidência para guardar aqui.</div>')+
     '<div class="row" style="margin-top:8px"><button class="btn" data-evadd="'+m.id+'">Guardar evidência</button></div></div>';
   return h;
 }
-function metasHtml(e){return K.METAS.map(function(m){return metaHtml(m,e)}).join('')}
+function metasSec(e){$('#metas').innerHTML=K.METAS.map(function(m){return metaHtml(m,e)}).join('')}
 
 /* ---------- resumo ---------- */
-function resumoHtml(e){
-  if(!e.ativo)return setup();
+function resumoSec(e){
+  if(!e.ativo){$('#resumo').innerHTML=setup();return}
   var txt=K.resumoTexto(C,CERT,hoje());
-  return '<div class="cartao"><h2>Resumo para o gestor</h2><p class="mini">Montado só com o que você marcou e mediu. Números com “—” ainda não foram medidos, e nada é estimado. Revise antes de enviar.</p>'+
+  $('#resumo').innerHTML='<div class="cartao"><h2>Resumo para o gestor</h2><p class="mini">Montado só com o que você concluiu e mediu. Números com “—” ainda não foram medidos, e nada é estimado. Revise antes de enviar.</p>'+
     '<div class="copia">'+esc(txt)+'</div><div class="row" style="margin-top:10px"><button class="btn primary" data-copia="1">Copiar texto</button></div></div>';
 }
 
-/* ---------- render ---------- */
 function render(){
   var ae=document.activeElement;
   if(ae&&ae.matches&&ae.matches('[data-res]'))return; // não pisa em quem está digitando
   var e=K.estado(C,hoje());
-  topo(e);
-  $('#hoje').innerHTML=hojeHtml(e);
-  var abertas=[].map.call(document.querySelectorAll('#semana details.sem'),function(d){return d.open});
-  $('#semana').innerHTML=semanaHtml(e);
-  if(abertas.length)document.querySelectorAll('#semana details.sem').forEach(function(d,i){d.open=!!abertas[i]});
-  $('#metas').innerHTML=metasHtml(e);
-  $('#resumo').innerHTML=resumoHtml(e);
+  topo(e);hojeSec(e);trilhasSec(e);revisarSec(e);metasSec(e);resumoSec(e);
 }
 
 /* ---------- eventos ---------- */
+var dlg=$('#dlg'),frm=$('#frm');
 document.addEventListener('submit',function(ev){
   var f=ev.target;
-  if(f.id==='setup'){ev.preventDefault();if(!f.inicio.value)return;var c=K.cfgPadrao(K.parse(f.inicio.value));salvar({inicio:c.inicio,feitas:C.feitas||{},evid:C.evid||{},res:C.res||{}})}
+  if(f.id==='setup'){ev.preventDefault();if(!f.inicio.value)return;salvar({inicio:f.inicio.value,aulas:C.aulas||{},quiz:C.quiz||{},labs:C.labs||{},notas:C.notas||{},leitura:C.leitura||{},srs:C.srs||{},evid:C.evid||{},res:C.res||{}})}
   else if(f.id==='frm'&&f.dataset.k==='ev'){
     var u=f.url.value.trim();
     if(u&&!/^https?:\/\//i.test(u)){ev.preventDefault();alert('O link precisa começar com http:// ou https://');return}
-    var m=f.dataset.m, E=Object.assign({},C.evid||{}); E[m]=(E[m]||[]).concat([{id:uid(),t:f.txt.value.trim().slice(0,200),url:u,d:K.iso(hoje())}]);
-    salvar({evid:E});
+    var m=f.dataset.m, X=Object.assign({},C.evid||{}); X[m]=(X[m]||[]).concat([{id:uid(),t:f.txt.value.trim().slice(0,200),url:u,d:K.iso(hoje())}]);
+    salvar({evid:X});
   }
 });
 document.addEventListener('change',function(ev){
@@ -252,24 +280,31 @@ document.addEventListener('change',function(ev){
 document.addEventListener('click',function(ev){
   var b=ev.target.closest('button');if(!b)return;
   var d=b.dataset;
-  if(d.tar){salvar({feitas:K.alternar(C,d.tar,hoje())})}
-  else if(d.copia){copiar(K.resumoTexto(C,CERT,hoje()));b.textContent='Copiado ✓'}
-  else if(d.evadd){
-    var fr=$('#frm');fr.dataset.k='ev';fr.dataset.m=d.evadd;
-    fr.innerHTML='<h3 class="full" style="margin:0">Guardar evidência</h3><label class="full">O que é (sem dados sensíveis)<input name="txt" required maxlength="200"></label><label class="full">Link (opcional)<input name="url" type="url" placeholder="https://"></label><div class="full row"><button class="btn primary" type="submit">Guardar</button><button class="btn" type="button" data-fechar="1">Cancelar</button></div>';
-    $('#dlg').showModal();
+  if(d.est){
+    var k=d.est,n=+d.n,a=d.a;
+    if(k==='aula')UI.abrirAula(n);else if(k==='cart')UI.abrirCartoes('dia',n);else if(k==='cartrev')UI.abrirCartoes('rev');
+    else if(k==='quiz')UI.abrirQuiz('dia',n);else if(k==='lab')UI.abrirLab(n);else if(k==='revisao')UI.abrirQuiz('revisao');
+    else if(k==='erros')UI.abrirQuiz('erros');else if(k==='fracos')UI.abrirQuiz('fracos');else if(k==='topico')UI.abrirQuiz('topico',a);
+    return;
   }
-  else if(d.fechar){$('#dlg').close()}
-  else if(d.evrm){var q=d.evrm.split('|');if(confirm('Remover esta evidência?')){var E=Object.assign({},C.evid||{});E[q[0]]=(E[q[0]]||[]).filter(function(x){return x.id!==q[1]});salvar({evid:E})}}
+  if(d.copia){copiar(K.resumoTexto(C,CERT,hoje()));b.textContent='Copiado ✓'}
+  else if(d.evadd){
+    frm.dataset.k='ev';frm.dataset.m=d.evadd;
+    frm.innerHTML='<h3 class="full" style="margin:0">Guardar evidência</h3><label class="full">O que é (sem dados sensíveis)<input name="txt" required maxlength="200"></label><label class="full">Link (opcional)<input name="url" type="url" placeholder="https://"></label><div class="full row"><button class="btn primary" type="submit">Guardar</button><button class="btn" type="button" data-fechar="1">Cancelar</button></div>';
+    dlg.showModal();
+  }
+  else if(d.fechar){dlg.close()}
+  else if(d.evrm){var q=d.evrm.split('|');if(confirm('Remover esta evidência?')){var X=Object.assign({},C.evid||{});X[q[0]]=(X[q[0]]||[]).filter(function(x){return x.id!==q[1]});salvar({evid:X})}}
 });
 $('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
   $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
   document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
 
+UI.init({obter:function(){return C},salvar:salvar,hoje:hoje,aoFechar:render});
 render();
 claude.use('db').then(function(db){
   ref=db.doc('pdi/main');
-  ref.onSnapshot(function(s){if(Date.now()-ultimoSalvar<2500)return;C=s.exists?(s.data()||{}):{};render()});
+  ref.onSnapshot(function(s){if(UI.ocupado()||Date.now()-ultimoSalvar<2500)return;C=s.exists?(s.data()||{}):{};render()});
   /* Lê (só leitura) o andamento da certificação para a aba Metas e o Resumo. */
   db.doc('cert/main').get().then(function(s){
     var doc=s.exists?s.data():null;

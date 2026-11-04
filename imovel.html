@@ -57,6 +57,13 @@ summary{cursor:pointer;font-weight:600}
 ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
 .kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--t-line);font-size:14px}
 .kv b{white-space:nowrap}
+.acomp .item{min-height:52px;align-items:center}
+.acomp .item input{width:26px;height:26px;margin-top:0}
+.acomp .item>span{flex:1;min-width:0;overflow-wrap:anywhere}
+.lk{border:0;background:none;color:var(--t-accent);text-decoration:underline;cursor:pointer;font:inherit;font-size:13px;min-height:44px;padding:0 4px}
+.acomp .grande{font:600 17px var(--f-texto);min-height:52px;padding:0 18px;border-radius:var(--raio);border:1px solid var(--m);background:var(--m);color:var(--t-accent-ink);cursor:pointer}
+.acomp input[type=date],.acomp input[type=text]{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-line);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.acomp label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--t-muted)}
 </style>
 <link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
@@ -66,10 +73,11 @@ ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
 <body class="t">
 <main>
   <h1>Imóvel</h1>
-  <p class="sub">Consultor da primeira compra: o que faz sentido para a sua vida, quanto cabe de verdade e por onde começar.</p>
+  <p class="sub">Compra fechada: acompanhe as parcelas da Tenda e os juros de obra. As outras abas guardam a pesquisa que levou até aqui.</p>
 
   <nav id="tabs" role="tablist">
-    <button role="tab" data-t="perfil" aria-selected="true">Perfil</button>
+    <button role="tab" data-t="acompanhar" aria-selected="true">Acompanhar</button>
+    <button role="tab" data-t="perfil" aria-selected="false">Perfil</button>
     <button role="tab" data-t="capacidade" aria-selected="false">Quanto cabe</button>
     <button role="tab" data-t="estrategias" aria-selected="false">Estratégias</button>
     <button role="tab" data-t="construtoras" aria-selected="false">Construtoras</button>
@@ -77,7 +85,8 @@ ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
     <button role="tab" data-t="plano" aria-selected="false">Plano de ação</button>
   </nav>
 
-  <section id="perfil" class="on"></section>
+  <section id="acompanhar" class="on"></section>
+  <section id="perfil"></section>
   <section id="capacidade"></section>
   <section id="estrategias"></section>
   <section id="construtoras"></section>
@@ -87,10 +96,11 @@ ul.l{margin:6px 0 0;padding-left:20px;font-size:14px}
 
 <dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
 
+<script src="assets/imovel-acomp.js"></script>
 <script>
 (function(){
 'use strict';
-var db=null, S={perfil:null,cap:null,constr:[],imv:[],plano:{done:{},extra:[]},estr:{}};
+var db=null, S={ac:{},perfil:null,cap:null,constr:[],imv:[],plano:{done:{},extra:[]},estr:{}};
 var $=function(s,r){return (r||document).querySelector(s)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function num(v){var s=String(v==null?'':v).trim();if(/,/.test(s))s=s.replace(/\./g,'').replace(',','.');else if(/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');var n=parseFloat(s);return isNaN(n)?0:n}
@@ -99,6 +109,61 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function dataBR(d){return d?String(d).split('-').reverse().join('/'):''}
 function barra(p){p=Math.max(0,Math.min(100,p));return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
 function ehMRV(t){return /\bmrv\b/i.test(t||'')}
+
+
+/* ---------- 0. Acompanhar: parcelas da Tenda e juros de obra ---------- */
+var A=window.CP_IMV;
+function brl2(n){return 'R$ '+Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function hojeD(){return new Date()}
+function saveAc(){return save('imv_acomp','main',S.ac)}
+function linhaParc(x){
+  var pg=(S.ac.pagas||{})[x.id], k=A.iso(hojeD()), atras=!pg&&x.data&&x.data<k, v=pg&&pg.v!=null&&pg.v!==''?+pg.v:x.valor;
+  return '<div class="item'+(pg?' feito':'')+'"><input type="checkbox" data-acpg="'+x.id+'"'+(pg?' checked':'')+' aria-label="Marcar como paga: '+esc(x.t)+'"><span>'+esc(x.t)+(x.data?' · '+dataBR(x.data):'')+
+    ' <span class="mini">'+brl2(v)+(pg?' · pago em '+dataBR(pg.d):(x.tipo==='pre'||x.tipo==='pos'?' (valor base)':''))+'</span>'+(atras?' <span class="tag ruim">atrasada</span>':'')+'</span>'+
+    (pg?'<button type="button" class="lk" data-acval="'+x.id+'">valor</button>':'')+'</div>';
+}
+function rAcomp(){
+  var el=$('#acompanhar');if(!el)return;
+  var ad=document.activeElement;if(ad&&ad.dataset&&(ad.dataset.acass||ad.dataset.actaxa))return;
+  S.ac=S.ac||{};var e=A.estado(S.ac,hojeD()),C=A.CRONO,h='<div class="acomp">';
+  var px=e.proxima;
+  h+='<div class="cartao"><div class="mini">Próxima parcela da Tenda</div>';
+  if(px){
+    var dp=e.diasProxima, quando=dp<0?'venceu há '+(-dp)+' dia'+(dp===-1?'':'s'):dp===0?'vence hoje':'em '+dp+' dia'+(dp===1?'':'s');
+    h+='<div class="big" style="margin:4px 0">'+dataBR(px.data)+' · '+brl2(px.valor)+'</div><div class="mini">'+esc(px.t)+' · '+quando+'. Valor base do contrato; a correção (INCC antes da AGI, IPCA depois) altera o boleto.</div>'+
+      '<div class="row" style="margin:10px 0"><button type="button" class="grande" data-acpaguei="'+px.id+'">Paguei</button></div>';
+  }else h+='<div class="big" style="margin:4px 0">Todas as parcelas pagas</div>';
+  h+=barra(e.pct)+'<div class="mini">'+e.pagas+' de '+e.total+' parcelas pagas · registrado: '+brl2(e.pago)+' à Tenda'+(e.obraTotal?' + '+brl2(e.obraTotal)+' de juros de obra':'')+'</div></div>';
+  if(e.atrasadas.length)h+='<div class="aviso ruim"><b>'+e.atrasadas.length+' parcela'+(e.atrasadas.length>1?'s':'')+' vencida'+(e.atrasadas.length>1?'s':'')+' sem pagamento registrado.</b> Se já pagou, marque abaixo. Se não, regularize logo: o contrato prevê consequências por atraso (cláusula de inadimplemento) e a Parcela Adimplente de '+brl2(A.CONTRATO.adimplente)+' tem condições; confira no contrato antes de atrasar qualquer parcela.</div>';
+
+  h+='<div class="cartao"><h3>Juros de obra (Caixa)</h3>'+
+    '<div class="mini" style="margin:4px 0 8px">São os encargos cobrados pelo banco durante a obra. Pelo texto da Tenda: vencem em até 30 dias depois de assinar o financiamento, variam com a evolução da obra, <b>não abatem o saldo devedor</b> e vão até a averbação do habite-se e a comprovação de 100% da obra pelo banco.</div>'+
+    '<label>Data de assinatura com a Caixa<input type="date" data-acass value="'+esc((S.ac.caixa||{}).assinatura||'')+'"></label>'+
+    (e.primeiroEncargoAte?'<div class="mini" style="margin-top:6px">O primeiro encargo vence em até <b>'+dataBR(e.primeiroEncargoAte)+'</b> (confira a data exata no contrato ou no extrato).</div>':'<div class="mini" style="margin-top:6px">Informe a data para ver quando vence o primeiro encargo.</div>')+
+    '<div class="row" style="margin-top:10px"><button type="button" class="btn" data-acobra="1">Registrar pagamento do mês</button></div>';
+  if(e.obra.length){
+    h+='<div style="margin-top:10px">'+e.obra.slice().reverse().slice(0,12).map(function(o){return '<div class="kv"><span>'+esc(o.mes.split('-').reverse().join('/'))+'</span><b>'+brl2(o.v)+' <button type="button" class="lk" data-acobrarm="'+o.id+'">remover</button></b></div>'}).join('')+
+      '<div class="kv"><span>Total pago em juros de obra</span><b>'+brl2(e.obraTotal)+'</b></div></div>';
+  }
+  h+='</div>';
+
+  var pre=C.filter(function(x){return x.tipo==='pre'}), pos=C.filter(function(x){return x.tipo==='pos'});
+  var n=function(l){return l.filter(function(x){return (S.ac.pagas||{})[x.id]}).length};
+  h+='<div class="cartao"><h3>Parcelas e marcos</h3><details style="border-top:0;padding-top:0"><summary>Marcos: ato e parcela do financiamento <span class="tag'+(e.atoPago&&e.finPago?' ok':'')+'">'+((e.atoPago?1:0)+(e.finPago?1:0))+'/2</span></summary>'+
+    C.filter(function(x){return !x.data}).map(linhaParc).join('')+'<div class="mini">A parcela do financiamento é paga pela Caixa à Tenda em até 30 dias da assinatura; marque quando confirmar.</div></details>'+
+    '<details><summary>Pré-chaves · 17 × R$ 350 <span class="tag'+(n(pre)===17?' ok':'')+'">'+n(pre)+'/17</span></summary>'+pre.map(linhaParc).join('')+'</details>'+
+    '<details><summary>Pós-obra · 84 × R$ 110,33 <span class="tag'+(n(pos)===84?' ok':'')+'">'+n(pos)+'/84</span></summary><div class="mini" style="margin:6px 0">Começa em '+dataBR(A.CONTRATO.pos.primeira)+', já com juros de 1% ao mês, corrigida pelo IPCA depois da AGI do condomínio.</div>'+pos.map(linhaParc).join('')+'</details></div>';
+
+  var tx=A.num((S.ac.caixa||{}).taxa), ef=e.taxaPosAnual;
+  h+='<div class="cartao"><h3>Quitar mais rápido</h3>'+
+    '<div class="aviso" style="margin-top:8px"><b>Antes de amortizar o financiamento:</b> o formulário de FGTS da Caixa diz "Restituirei o valor do subsídio, proporcionalmente ao prazo remanescente, se quitar, transferir ou amortizar o financiamento até o 5º ano de vigência do contrato". Isso só pesa se o seu contrato tiver subsídio ou desconto. Confira no contrato assinado.</div>'+
+    '<ul class="l"><li>A parcela pós-obra da Tenda rende <b>1% ao mês (≈ '+ef.toFixed(2).replace('.',',')+'% ao ano)</b> mais correção pelo IPCA. É uma dívida cara: vale comparar com a taxa do financiamento da Caixa.</li>'+
+    '<li>Juros de obra são cobrança de juros e não abatem o saldo: não há o que adiantar nessa fase. Pelo texto da Tenda, a amortização do saldo devedor da Caixa só começa depois do fim da obra.</li></ul>'+
+    '<label style="margin-top:8px">Taxa de juros anual da Caixa (do seu contrato)<input type="text" inputmode="decimal" data-actaxa value="'+esc((S.ac.caixa||{}).taxa||'')+'" placeholder="ex.: 6,5"></label>'+
+    (tx>0?'<div class="mini" style="margin-top:6px">'+(ef>tx?'A pós-obra da Tenda ('+ef.toFixed(2).replace('.',',')+'% a.a.) está <b>mais cara</b> que a taxa informada da Caixa ('+String(tx).replace('.',',')+'% a.a.): a ordem usual é quitar primeiro o que custa mais. Compare também as correções (IPCA na Tenda; confira o indexador da Caixa).':'A taxa da Caixa informada ('+String(tx).replace('.',',')+'% a.a.) não é menor que a da pós-obra ('+ef.toFixed(2).replace('.',',')+'% a.a.). Confira o indexador e o custo total (CET) antes de decidir.')+'</div>':'')+'</div>';
+  h+='<div class="mini" style="margin-top:10px">Conclusão prevista da obra: '+dataBR(e.conclusao)+' (até '+dataBR(e.conclusaoComTolerancia)+' com os 180 dias de tolerância do contrato). Valores base do quadro resumo; boletos reais podem diferir pela correção.</div></div>';
+  el.innerHTML=h;
+}
 
 /* ---------- 1. Perfil: ficha com status de cada informação ---------- */
 var ST_INFO={confirmado:'Confirmado',estimativa:'Estimativa',preferencia:'Preferência',desconhecido:'A descobrir'};
@@ -350,7 +415,7 @@ function rPlano(){
   h+='<form id="addItem" class="row" style="margin-top:12px"><input id="novoItem" placeholder="Adicionar um passo seu" style="flex:1;min-width:200px;font:inherit;padding:10px;border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink)"><button class="btn" type="submit">Adicionar</button></form>';
   $('#plano').innerHTML=h;
 }
-function renderAll(){rPerfil();if(!document.activeElement||!document.activeElement.dataset.cap)rCapacidade();rEstrategias();rConstrutoras();rFinalistas();rPlano()}
+function renderAll(){rAcomp();rPerfil();if(!document.activeElement||!document.activeElement.dataset.cap)rCapacidade();rEstrategias();rConstrutoras();rFinalistas();rPlano()}
 
 /* ---------- persistência ---------- */
 function save(col,id,data){return db?db.doc(col+'/'+id).set(data):Promise.resolve()}
@@ -387,6 +452,7 @@ function abrePerfil(k){
 }
 frm.addEventListener('submit',function(e){
   e.preventDefault();
+  if(atual.tipo==='obra'){var mes=frm.elements.mes.value,v=A.num(frm.elements.v.value);if(!mes||!(v>0)){alert('Informe o mês e um valor maior que zero.');return}S.ac.obra=A.addObra(S.ac,{id:atual.id,mes:mes,v:v});saveAc();dlg.close();rAcomp();return}
   if(atual.tipo==='pf'){var P=S.perfil||perfilBase();P[atual.id]={v:frm.elements.v.value.trim(),s:frm.elements.s.value};S.perfil=P;save('imv_config','perfil',P);dlg.close();rPerfil();return}
   var F=FORMS[atual.tipo],d={};
   F.campos.forEach(function(c){d[c[0]]=(frm.elements[c[0]].value||'').trim()});
@@ -397,6 +463,10 @@ frm.addEventListener('submit',function(e){
 /* ---------- eventos ---------- */
 document.addEventListener('click',function(e){
   var t=e.target.closest('button');if(!t)return;
+  if(t.dataset.acpaguei){S.ac.pagas=A.alternar(S.ac,t.dataset.acpaguei,hojeD());saveAc();rAcomp();return}
+  if(t.dataset.acval){var cur=((S.ac.pagas||{})[t.dataset.acval]||{}).v,x=A.CRONO.filter(function(y){return y.id===t.dataset.acval})[0],r=prompt('Valor pago (R$). Deixe vazio para usar o valor base.',cur!=null?String(cur).replace('.',','):String(x.valor).replace('.',','));if(r===null)return;S.ac.pagas=A.definirValor(S.ac,t.dataset.acval,A.num(r));saveAc();rAcomp();return}
+  if(t.dataset.acobra){var d0=hojeD();atual={tipo:'obra',id:'o'+uid()};frm.innerHTML='<h3 class="full">Juros de obra do mês</h3><label>Mês<input name="mes" type="month" value="'+d0.getFullYear()+'-'+String(d0.getMonth()+1).padStart(2,'0')+'" required></label><label>Valor pago (R$)<input name="v" type="text" inputmode="decimal" placeholder="ex.: 412,30" required></label><div class="row full"><button class="btn" value="ok">Salvar</button><button class="btn sec" type="button" id="cancela">Cancelar</button></div>';dlg.showModal();$('#cancela').onclick=function(){dlg.close()};return}
+  if(t.dataset.acobrarm){if(confirm('Remover este registro de juros de obra?')){S.ac.obra=A.rmObra(S.ac,t.dataset.acobrarm);saveAc();rAcomp()}return}
   if(t.dataset.novo)abre(t.dataset.novo);
   else if(t.dataset.pf)abrePerfil(t.dataset.pf);
   else if(t.dataset.edit){var p=t.dataset.edit.split(':'),L={con:S.constr,imv:S.imv}[p[0]];abre(p[0],L.filter(function(x){return x.id===p[1]})[0])}
@@ -412,6 +482,9 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('change',function(e){
   var el=e.target;
+  if(el.dataset.acpg){S.ac.pagas=A.alternar(S.ac,el.dataset.acpg,hojeD());saveAc();rAcomp();return}
+  if(el.dataset.acass!==undefined){S.ac.caixa=Object.assign({},S.ac.caixa,{assinatura:el.value});saveAc();rAcomp();return}
+  if(el.dataset.actaxa!==undefined){S.ac.caixa=Object.assign({},S.ac.caixa,{taxa:el.value.trim()});saveAc();rAcomp();return}
   if(el.dataset.cap==='sist'){S.cap=cap();S.cap.sist=el.value;saveCap();rCapacidade()}
   else if(el.dataset.estr){S.estr=S.estr||{};S.estr['st'+el.dataset.estr]=el.value;saveEstr()}
   else if(el.dataset.chk){if(el.checked)S.plano.done[el.dataset.chk]=true;else delete S.plano.done[el.dataset.chk];savePlano();rPlano()}
@@ -428,6 +501,7 @@ claude.use('db').then(function(d){
   db=d;
   db.collection('imv_construtoras').onSnapshot(function(s){S.constr=lista(s);rConstrutoras()});
   db.collection('imv_imoveis').onSnapshot(function(s){S.imv=lista(s);rFinalistas()});
+  db.doc('imv_acomp/main').onSnapshot(function(s){S.ac=s.exists?s.data():{};rAcomp()});
   db.doc('imv_plano/main').onSnapshot(function(s){var v=s.exists?s.data():{};S.plano={done:v.done||{},extra:v.extra||[]};rPlano()});
   db.doc('imv_config/perfil').onSnapshot(function(s){S.perfil=s.exists?Object.assign(perfilBase(),s.data()):null;rPerfil()});
   db.doc('imv_config/capacidade').onSnapshot(function(s){if(aguardaDigitacao())return;S.cap=s.exists?s.data():null;rCapacidade()});
