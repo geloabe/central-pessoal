@@ -219,6 +219,16 @@
              aprovada: !!doc.aprovada, simMax: e.sim.melhor || 0 };
   }
 
+  /* ---------- PDI (plano em assets/pdi.js; dados em pdi/main) ---------- */
+  function pdi(d, hoje) {
+    var P = root.CP_PDI, doc = d.pdi || {};
+    if (!P || !doc.inicio) return { ativo: false, hoje: 0, pct: 0, feitas: 0, total: 0 };
+    var e = P.estado(doc, hoje), k = iso(hoje);
+    var h = Object.keys(doc.feitas || {}).filter(function (id) { return doc.feitas[id] === k; }).length;
+    return { ativo: true, hoje: h, pct: e.pct, feitas: e.feitasPdi, total: e.totalPdi, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, faltam: e.faltam,
+             atrasadas: e.atrasadas, aulasSemana: e.aulasSemana, proximo: e.proxPdi ? e.proxPdi.t.t : null };
+  }
+
   /* ---------- Foco do dia e anotações rápidas ---------- */
   // foco: um documento por dia {date, texto, passo, feito, dispensado}. "Hoje não" não conta contra ninguém: só esconde o cartão.
   function foco(d, hoje) {
@@ -298,16 +308,18 @@
     add('cs70', 'Simulado da certificação com 70% ou mais', p.cert.simMax >= 70);
     add('cs80', 'Simulado da certificação com 80% ou mais', p.cert.simMax >= 80);
     add('cok', 'Certificação Google Data Engineer conquistada', p.cert.aprovada);
+    add('pd1', '1ª entrega do PDI', p.pdi.feitas >= 1);
+    add('pd50', 'Metade das entregas do PDI', p.pdi.pct >= 50);
     return l;
   }
 
   function coisasHoje(p) {
-    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0) + (p.foco.feito ? 1 : 0) + (p.cert.hoje > 0 ? 1 : 0);
+    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0) + (p.foco.feito ? 1 : 0) + (p.cert.hoje > 0 ? 1 : 0) + (p.pdi.hoje > 0 ? 1 : 0);
   }
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), cert: cert(d, hoje), ausencia: ausencia(d, hoje) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), cert: cert(d, hoje), pdi: pdi(d, hoje), ausencia: ausencia(d, hoje) };
     p.metas = metas(p, d); p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
@@ -328,6 +340,7 @@
     o.push(m('vida', 'mudanca', 'Mudança (checklist)', p.mudanca.pct, 100, 'mudanca.html', p.mudanca.pct + '%'));
     if (p.desafios.ativos) o.push(m('vida', 'desafios', 'Desafios em andamento', p.desafios.pct, 100, 'desafios.html', p.desafios.pct + '%'));
     if (p.cert.ativo && !p.cert.aprovada) o.push(m('vida', 'cert', 'Plano da certificação', p.cert.pct, 100, 'certificacao.html', p.cert.pct + '%'));
+    if (p.pdi.ativo && !p.pdi.encerrado) o.push(m('vida', 'pdi', 'Entregas do PDI', p.pdi.pct, 100, 'pdi.html', p.pdi.pct + '%'));
     return { saude: s, vida: o };
   }
 

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>document.documentElement.dataset.pg="pdi"</script>
+<link rel="stylesheet" href="assets/tema.css">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>PDI Snowfox</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:860px;margin:0 auto;padding:16px 16px calc(80px + env(safe-area-inset-bottom))}
+h1{font-size:28px}
+h2{font-size:21px}
+h3{font-size:18px}
+.sub{color:var(--t-muted);margin:4px 0 16px}
+.mini{font-size:13px;color:var(--t-muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:15px;min-height:44px;padding:8px 16px;border-radius:var(--raio);border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+section{display:none}section.on{display:block}
+.barra{height:8px;background:var(--t-line);overflow:hidden;margin:8px 0}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .8s ease-out}@keyframes cresce{from{width:0}}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.stats .big{font:600 26px/1.1 var(--f-titulo);letter-spacing:var(--titulo-tracking);margin-top:6px}
+.stats small{display:block;color:var(--t-muted);font-size:12px;margin-top:2px}
+.resumo{margin-bottom:16px}
+.cartao+.cartao{margin-top:12px}
+.tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em;display:inline-block;margin-right:4px}
+.tag.q{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.ia{background:color-mix(in srgb,var(--t-accent2) 25%,var(--t-surface));border-color:var(--t-accent2)}
+.tag.en{background:color-mix(in srgb,#C0392B 14%,var(--t-surface));border-color:#C0392B}
+.tar{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--t-line)}
+.tar:first-of-type{border-top:0}
+.tar .chk{flex:none;width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-bg);font:700 22px var(--f-texto);cursor:pointer;padding:0}
+.tar.ok .chk{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.tar .tx{flex:1;min-width:0;padding-top:2px}
+.tar .tx div{margin-top:5px;overflow-wrap:anywhere}
+.tar.ok .tx div{color:var(--t-muted)}
+.dica{margin-top:12px;padding:10px 12px;border-left:3px solid var(--t-accent2);background:var(--t-realce);font-size:14px}
+.btn{min-height:46px}
+.passos{margin:8px 0 0;padding-left:22px}
+.passos li{margin:8px 0;line-height:1.5;overflow-wrap:anywhere}
+.pronto{margin-top:10px;padding:10px 12px;border-left:3px solid var(--t-ok);background:var(--t-realce);font-size:14px}
+details{border:1px solid var(--t-line);background:var(--t-surface);border-radius:var(--raio);margin-bottom:8px}
+details>summary{min-height:48px;display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"›";color:var(--t-muted);font-size:20px;transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>.corpo{padding:2px 14px 14px}
+details.sem>summary{font:600 17px var(--f-titulo)}
+details.dia{margin:8px 0 0;background:var(--t-bg)}
+details.dia>summary{font-size:15px}
+.cont{display:flex;align-items:center;gap:8px;margin-top:8px}
+.cont button{width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);font:700 22px var(--f-texto);cursor:pointer;padding:0}
+.cont b{font:600 22px var(--f-titulo);min-width:64px;text-align:center}
+form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form.f label{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--t-muted)}
+form.f .full{grid-column:1/-1}
+form.f input,form.f select,form.f textarea{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+dialog{border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);padding:18px;width:min(520px,94vw)}
+dialog::backdrop{background:rgba(40,30,60,.35)}
+.lk{min-height:44px;padding:0 4px;border:0;background:none;color:var(--t-accent);font:600 14px var(--f-texto);text-decoration:underline;cursor:pointer}
+.ev{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--t-line);overflow-wrap:anywhere}
+.ev a{color:var(--t-accent)}
+.frase{padding:10px 0;border-top:1px solid var(--t-line)}
+.frase:first-of-type{border-top:0}
+.frase b{display:block;font-size:16px}
+.copia{white-space:pre-wrap;font:13px/1.5 var(--f-mono);background:var(--t-realce);padding:12px;border:1px solid var(--t-line);overflow-wrap:anywhere}
+.campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.campos label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--t-muted)}
+.campos input{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+</style>
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
+<link rel="stylesheet" href="assets/mobile.css">
+<script src="assets/rascunho.js" defer></script>
+</head>
+<body class="t">
+<main>
+  <h1>PDI Snowfox</h1>
+  <p class="sub">Quatro semanas, 4 horas por semana para as metas e cerca de 2h30 para o inglês. Semana atrasada não zera nada: as entregas só esperam a sua vez.</p>
+  <div id="topo"></div>
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
+    <button role="tab" data-t="semana" aria-selected="false">Semanas</button>
+    <button role="tab" data-t="metas" aria-selected="false">Metas</button>
+    <button role="tab" data-t="ingles" aria-selected="false">Inglês</button>
+    <button role="tab" data-t="resumo" aria-selected="false">Resumo</button>
+  </nav>
+  <section id="hoje" class="on"></section>
+  <section id="semana"></section>
+  <section id="metas"></section>
+  <section id="ingles"></section>
+  <section id="resumo"></section>
+</main>
+<dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
+
+<script src="assets/progresso.js"></script>
+<script src="assets/cert.js"></script>
+<script src="assets/pdi.js"></script>
+<script>
+(function(){
+'use strict';
+var K=window.CP_PDI, ref=null, C={}, CERT=null, escrita=Promise.resolve(), ultimoSalvar=0, semanaAba=0;
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function hoje(){return new Date()}
+function dm(dt){return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
+var NOMEM={q:'Qualidade',ia:'IA e agentes',en:'Inglês',geral:'Fechamento'};
+function tag(m,extra){return '<span class="tag '+m+'">'+NOMEM[m]+(extra?' · '+extra:'')+'</span>'}
+function copiar(txt){
+  function fallback(){var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(e){}t.remove()}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).catch(fallback);else fallback();
+}
+
+/* Escritas em fila (uma de cada vez): o "update" lê e regrava o documento. */
+function salvar(patch){
+  Object.keys(patch).forEach(function(k){C[k]=patch[k]});
+  ultimoSalvar=Date.now();
+  render();
+  if(!ref)return Promise.resolve();
+  escrita=escrita.then(function(){return ref.update(patch)}).catch(function(e){console.error('falha ao salvar',e)}).then(function(){ultimoSalvar=Date.now()});
+  return escrita;
+}
+
+/* ---------- peças ---------- */
+function passos(t){
+  return '<ol class="passos">'+t.como.map(function(c){return '<li>'+esc(c)+'</li>'}).join('')+'</ol>'+
+    (t.pronto?'<div class="pronto"><b>Pronto quando:</b> '+esc(t.pronto)+'</div>':'')+
+    (t.evid?'<div class="mini" style="margin-top:8px">Guarde como evidência: '+esc(t.evid)+' (aba Metas).</div>':'');
+}
+function tarefaPdi(x){
+  var t=x.t, f=!!(C.feitas&&C.feitas[t.id]);
+  return '<div class="tar'+(f?' ok':'')+'"><button type="button" class="chk" data-tar="'+t.id+'" aria-pressed="'+f+'" aria-label="'+(f?'Desmarcar: ':'Marcar como feita: ')+esc(t.t)+'">'+(f?'✓':'')+'</button>'+
+    '<div class="tx">'+tag(t.m,t.min+' min')+'<div><b>'+esc(t.t)+'</b></div><details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(t)+'</div></details></div></div>';
+}
+function tarefaIng(x){
+  var t=x.t, n=Math.min(t.vezes,(C.cont&&C.cont[t.id])||0), f=n>=t.vezes;
+  return '<div class="tar'+(f?' ok':'')+'"><div class="tx">'+tag('en',t.min+' min × '+t.vezes)+'<div><b>'+esc(t.t)+'</b></div>'+
+    '<div class="cont"><button type="button" data-c="'+t.id+'|-1" aria-label="Menos uma sessão">−</button><b>'+n+' de '+t.vezes+'</b><button type="button" data-c="'+t.id+'|1" aria-label="Mais uma sessão">+</button></div>'+
+    '<details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(t)+'</div></details></div></div>';
+}
+
+/* ---------- topo ---------- */
+function topo(e){
+  var el=$('#topo');
+  if(!e.ativo){el.innerHTML='';return}
+  var sem=e.comecaEm>0?'<div class="big">em '+e.comecaEm+' d</div><small>o ciclo começa</small>':e.encerrado?'<div class="big">fim</div><small>ciclo terminou em '+dm(K.parse(e.fim))+'</small>':'<div class="big">'+e.semana+' de 4</div><small>até '+dm(K.addDias(K.dataDaSemana(C,e.semana),6))+'</small>';
+  var pdi=e.semanaAtual?e.semanaAtual.pdi:null;
+  el.innerHTML='<div class="cartao resumo"><div class="stats">'+
+    '<div><div class="rotulo">Semana</div>'+sem+'</div>'+
+    '<div><div class="rotulo">PDI na semana</div><div class="big">'+K.fmtMin(pdi?pdi.pdiFeito:0)+'</div><small>de '+K.fmtMin(pdi?pdi.pdiMin:K.MIN_PDI)+'</small></div>'+
+    '<div><div class="rotulo">Inglês na semana</div><div class="big">'+(e.semanaAtual?e.aulasSemana:0)+' de 5</div><small>aulas · '+K.fmtMin(pdi?pdi.ingFeito:0)+' de '+K.fmtMin(K.MIN_ING)+'</small></div></div>'+
+    barra(e.pct)+'<div class="mini">'+e.pct+'% do PDI · '+e.feitasPdi+' de '+e.totalPdi+' entregas</div></div>';
+}
+
+/* ---------- hoje ---------- */
+function setup(){
+  return '<div class="cartao"><h2>Começar o PDI</h2><p class="sub">Quatro semanas a partir da data de início. Sugestão: alinhado à certificação, que começa em 04/11/2026.</p>'+
+    '<form class="f" id="setup"><label class="full">Data de início<input type="date" name="inicio" value="'+K.iso(hoje())+'" required></label>'+
+    '<div class="full row"><button class="btn primary" type="submit">Começar</button></div></form>'+
+    '<div class="dica">Metas: qualidade de dados e CI/CD no Snowfox, agente de dados com avaliação, e inglês. A certificação continua no módulo dela.</div></div>';
+}
+function hojeHtml(e){
+  if(!e.ativo)return setup();
+  var h='';
+  if(e.comecaEm>0)h+='<div class="dica">O ciclo começa em '+e.comecaEm+' dia'+(e.comecaEm>1?'s':'')+'. Se quiser, já pode começar pela primeira entrega.</div>';
+  if(e.encerrado)h+='<div class="dica">O ciclo terminou. Abra a aba Resumo para copiar o texto do gestor; o que ficou para trás pode seguir no próximo ciclo.</div>';
+  if(e.atrasadas>0)h+='<div class="dica">'+e.atrasadas+' entrega'+(e.atrasadas>1?'s':'')+' de semanas anteriores ficou'+(e.atrasadas>1?'ram':'')+' para trás. Sem problema: elas vêm primeiro, uma de cada vez.</div>';
+  if(e.proxPdi){
+    var t=e.proxPdi.t;
+    h+='<div class="cartao"><div class="rotulo">Próximo passo do PDI'+(e.proxPdiAdiantada?' · adiantando a próxima semana':' · semana '+e.proxPdi.semana)+'</div>'+
+      '<h2 style="margin:6px 0">'+esc(t.t)+'</h2><div>'+tag(t.m,t.min+' min')+'</div>'+
+      '<div class="corpo">'+passos(t)+'</div><div class="row" style="margin-top:12px"><button class="btn primary" data-tar="'+t.id+'">Fiz ✓</button></div></div>';
+  }else h+='<div class="cartao"><h2>PDI completo</h2><p>Todas as entregas estão marcadas. Confira os números na aba Metas e copie o Resumo.</p></div>';
+  if(e.proxIng){
+    var ti=e.proxIng.t, n=Math.min(ti.vezes,(C.cont&&C.cont[ti.id])||0);
+    h+='<div class="cartao"><div class="rotulo">Inglês · próxima prática'+(e.proxIngAdiantada?' · adiantando':' · semana '+e.proxIng.semana)+'</div>'+
+      '<h3 style="margin:6px 0">'+esc(ti.t)+'</h3><div>'+tag('en',ti.min+' min por sessão')+'</div>'+
+      '<details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(ti)+'</div></details>'+
+      '<div class="cont"><button type="button" data-c="'+ti.id+'|-1" aria-label="Menos uma sessão">−</button><b>'+n+' de '+ti.vezes+'</b><button type="button" data-c="'+ti.id+'|1" aria-label="Mais uma sessão">+</button></div></div>';
+  }
+  if(e.semana){
+    h+='<div class="cartao"><div class="rotulo">Aulas de inglês desta semana</div><div class="cont"><button type="button" data-aula="-1" aria-label="Menos uma aula">−</button><b>'+e.aulasSemana+' de 5</b><button type="button" data-aula="1" aria-label="Mais uma aula">+</button></div>'+
+      '<div class="mini" style="margin-top:6px">Meta: 5 aulas por semana. Passar de 5 também vale.</div></div>';
+  }
+  return h;
+}
+
+/* ---------- semanas ---------- */
+function semanaHtml(e){
+  if(!e.ativo)return setup();
+  return K.SEMANAS.map(function(s,i){
+    var ing=K.INGLES[i], ps=e.porSemana[s.n], aberto=(e.semana||1)===s.n?' open':'';
+    var data=C.inicio?dm(K.dataDaSemana(C,s.n))+' a '+dm(K.addDias(K.dataDaSemana(C,s.n),6)):'';
+    return '<details class="sem"'+aberto+'><summary>Semana '+s.n+' · '+esc(s.titulo)+' <span class="mini">'+data+'</span></summary><div class="corpo">'+
+      '<p class="mini">'+esc(s.resumo)+'</p>'+barra(ps.pdiMin?Math.round(ps.pdiFeito/ps.pdiMin*100):0)+
+      '<div class="rotulo">Metas · '+K.fmtMin(ps.pdiFeito)+' de '+K.fmtMin(ps.pdiMin)+'</div>'+
+      s.tarefas.map(function(t){return tarefaPdi({t:t,semana:s.n})}).join('')+
+      '<div class="rotulo" style="margin-top:14px">Inglês · foco: '+esc(ing.foco)+' · '+K.fmtMin(ps.ingFeito)+' de '+K.fmtMin(ps.ingMin)+'</div>'+
+      ing.tarefas.map(function(t){return tarefaIng({t:t,semana:s.n})}).join('')+'</div></details>';
+  }).join('');
+}
+
+/* ---------- metas ---------- */
+function metaHtml(m,e){
+  var h='<div class="cartao"><h2>'+esc(m.nome)+'</h2>';
+  if(m.externa){
+    h+='<p>'+esc(m.simples)+'</p>';
+    if(CERT&&CERT.ativo)h+=barra(CERT.pct)+'<div class="mini">Plano de estudo: '+CERT.pct+'% · prontidão '+CERT.prontidao+'%'+(CERT.simMax?' · melhor simulado '+CERT.simMax+'%':'')+(CERT.aprovada?' · aprovada':'')+'</div>';
+    else h+='<div class="mini">Sem dados do plano de estudo.</div>';
+    return h+'<div class="row" style="margin-top:10px"><a class="btn" href="certificacao.html">Abrir a certificação</a></div></div>';
+  }
+  var pm=e.ativo&&e.porMeta[m.id];
+  h+='<p><b>Em 30 segundos:</b> '+esc(m.simples)+'</p>';
+  if(m.porque)h+='<p class="mini"><b>Por que importa:</b> '+esc(m.porque)+'</p>';
+  h+='<div class="pronto"><b>Resultado esperado:</b> '+esc(m.resultado)+'</div>';
+  if(m.limite)h+='<div class="dica"><b>Limite:</b> '+esc(m.limite)+'</div>';
+  if(pm)h+=barra(pm.total?Math.round(pm.feito/pm.total*100):0)+'<div class="mini">'+pm.feitas+' de '+pm.tarefas+' entregas</div>';
+  else if(m.id==='en'&&e.ativo)h+=barra(e.ingTotal?Math.round(e.ingFeito/e.ingTotal*100):0)+'<div class="mini">'+K.fmtMin(e.ingFeito)+' de '+K.fmtMin(e.ingTotal)+' de prática · '+e.aulasTotal+' aulas</div>';
+  h+='<div class="rotulo" style="margin-top:12px">Resultados medidos</div><div class="campos">'+(m.campos||[]).map(function(c){
+    return '<label>'+esc(c[1])+'<input data-res="'+c[0]+'" value="'+esc((C.res&&C.res[c[0]])||'')+'" placeholder="—" maxlength="40"></label>'}).join('')+'</div>';
+  var ev=(C.evid&&C.evid[m.id])||[];
+  h+='<div class="rotulo" style="margin-top:12px">Evidências</div>'+(ev.length?ev.map(function(x){
+    return '<div class="ev"><div class="sp">'+esc(x.t)+(x.url?' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">link</a>':'')+' <span class="mini">'+esc(x.d||'')+'</span></div><button class="lk" data-evrm="'+m.id+'|'+x.id+'">remover</button></div>'}).join(''):'<div class="mini">Nada guardado ainda.</div>')+
+    '<div class="row" style="margin-top:8px"><button class="btn" data-evadd="'+m.id+'">Guardar evidência</button></div></div>';
+  return h;
+}
+function metasHtml(e){return K.METAS.map(function(m){return metaHtml(m,e)}).join('')}
+
+/* ---------- inglês ---------- */
+function inglesHtml(e){
+  var n=semanaAba||e.semana||1, s=K.INGLES[n-1];
+  var h='<div class="cartao"><h2>Inglês além das aulas</h2><p>'+esc(K.METAS[3].simples)+'</p>'+
+    '<div class="cont"><b style="min-width:auto">Aulas no ciclo: '+e.aulasTotal+'</b></div>'+
+    '<div class="dica">As ferramentas (corretor de fala, log de erros, medição de palavras por minuto e Anki) ficam na aba Inglês da <a href="rota-internacional.html">Rota Internacional</a>. Aqui está o plano semanal.</div></div>';
+  h+='<div class="cartao"><div class="row"><h3 class="sp" style="margin:0">Frases da semana '+n+'</h3><select id="selsem" aria-label="Semana">'+K.INGLES.map(function(x){return '<option value="'+x.n+'"'+(x.n===n?' selected':'')+'>Semana '+x.n+'</option>'}).join('')+'</select></div>'+
+    '<p class="mini"><b>Foco:</b> '+esc(s.foco)+'. '+esc(s.porque)+'</p>'+
+    s.frases.map(function(f){return '<div class="frase"><b>'+esc(f[0])+'</b><span class="mini">'+esc(f[1])+'</span></div>'}).join('')+
+    '<div class="row" style="margin-top:10px"><button class="btn" data-anki="'+n+'">Copiar para o Anki</button></div>'+
+    '<div class="mini" style="margin-top:6px">No Anki: Arquivo › Importar, separador ponto e vírgula (frase;uso).</div></div>';
+  h+='<div class="cartao"><h3>Fontes para a escuta ativa</h3><p class="mini">Tema da semana '+n+': '+esc(s.tema)+'. Sugestões para procurar (confira se há episódio atual no tema):</p><ul class="passos">'+K.ESCUTA.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
+  return h;
+}
+
+/* ---------- resumo ---------- */
+function resumoHtml(e){
+  if(!e.ativo)return setup();
+  var txt=K.resumoTexto(C,CERT,hoje());
+  return '<div class="cartao"><h2>Resumo para o gestor</h2><p class="mini">Montado só com o que você marcou e mediu. Números com “—” ainda não foram medidos, e nada é estimado. Revise antes de enviar.</p>'+
+    '<div class="copia">'+esc(txt)+'</div><div class="row" style="margin-top:10px"><button class="btn primary" data-copia="1">Copiar texto</button></div></div>';
+}
+
+/* ---------- render ---------- */
+function render(){
+  var ae=document.activeElement;
+  if(ae&&ae.matches&&ae.matches('[data-res]'))return; // não pisa em quem está digitando
+  var e=K.estado(C,hoje());
+  topo(e);
+  $('#hoje').innerHTML=hojeHtml(e);
+  var abertas=[].map.call(document.querySelectorAll('#semana details.sem'),function(d){return d.open});
+  $('#semana').innerHTML=semanaHtml(e);
+  if(abertas.length)document.querySelectorAll('#semana details.sem').forEach(function(d,i){d.open=!!abertas[i]});
+  $('#metas').innerHTML=metasHtml(e);
+  $('#ingles').innerHTML=e.ativo?inglesHtml(e):setup();
+  $('#resumo').innerHTML=resumoHtml(e);
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('submit',function(ev){
+  var f=ev.target;
+  if(f.id==='setup'){ev.preventDefault();if(!f.inicio.value)return;var c=K.cfgPadrao(K.parse(f.inicio.value));salvar({inicio:c.inicio,feitas:C.feitas||{},cont:C.cont||{},aulas:C.aulas||{},evid:C.evid||{},res:C.res||{}})}
+  else if(f.id==='frm'&&f.dataset.k==='ev'){
+    var u=f.url.value.trim();
+    if(u&&!/^https?:\/\//i.test(u)){ev.preventDefault();alert('O link precisa começar com http:// ou https://');return}
+    var m=f.dataset.m, E=Object.assign({},C.evid||{}); E[m]=(E[m]||[]).concat([{id:uid(),t:f.txt.value.trim().slice(0,200),url:u,d:K.iso(hoje())}]);
+    salvar({evid:E});
+  }
+});
+document.addEventListener('change',function(ev){
+  var t=ev.target;
+  if(t.dataset&&t.dataset.res){var R=Object.assign({},C.res||{});R[t.dataset.res]=t.value.trim();salvar({res:R})}
+  if(t.id==='selsem'){semanaAba=+t.value;render()}
+});
+document.addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  var d=b.dataset;
+  if(d.tar){salvar({feitas:K.alternar(C,d.tar,hoje())})}
+  else if(d.c){var p=d.c.split('|');salvar({cont:K.contar(C,p[0],+p[1])})}
+  else if(d.aula){var e=K.estado(C,hoje());if(e.semana)salvar({aulas:K.ajustarAulas(C,e.semana,+d.aula)})}
+  else if(d.anki){copiar(K.cartoesAnki(+d.anki));b.textContent='Copiado ✓'}
+  else if(d.copia){copiar(K.resumoTexto(C,CERT,hoje()));b.textContent='Copiado ✓'}
+  else if(d.evadd){
+    var fr=$('#frm');fr.dataset.k='ev';fr.dataset.m=d.evadd;
+    fr.innerHTML='<h3 class="full" style="margin:0">Guardar evidência</h3><label class="full">O que é (sem dados sensíveis)<input name="txt" required maxlength="200"></label><label class="full">Link (opcional)<input name="url" type="url" placeholder="https://"></label><div class="full row"><button class="btn primary" type="submit">Guardar</button><button class="btn" type="button" data-fechar="1">Cancelar</button></div>';
+    $('#dlg').showModal();
+  }
+  else if(d.fechar){$('#dlg').close()}
+  else if(d.evrm){var q=d.evrm.split('|');if(confirm('Remover esta evidência?')){var E=Object.assign({},C.evid||{});E[q[0]]=(E[q[0]]||[]).filter(function(x){return x.id!==q[1]});salvar({evid:E})}}
+});
+$('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
+  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
+
+render();
+claude.use('db').then(function(db){
+  ref=db.doc('pdi/main');
+  ref.onSnapshot(function(s){if(Date.now()-ultimoSalvar<2500)return;C=s.exists?(s.data()||{}):{};render()});
+  /* Lê (só leitura) o andamento da certificação para a aba Metas e o Resumo. */
+  db.doc('cert/main').get().then(function(s){
+    var doc=s.exists?s.data():null;
+    if(doc&&doc.inicio&&window.CP_CERT){var e=CP_CERT.estado(doc,hoje());CERT={ativo:true,pct:e.pct,prontidao:e.prontidao,simMax:e.sim.melhor||0,aprovada:!!doc.aprovada,prova:doc.prova||null}}
+    render();
+  }).catch(function(){});
+});
+})();
+</script>
+<script src="assets/modulo.js"></script>
+</body>
+</html>

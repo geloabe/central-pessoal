@@ -67,3 +67,6 @@ html[data-pg="habitos"] .brand h1{color:var(--t-ink)}
 html[data-pg="treino"] .set-input{border-color:var(--t-borda)}
 html[data-pg="mudanca"] form.f input,html[data-pg="mudanca"] form.f select,html[data-pg="mudanca"] form.f textarea,html[data-pg="mudanca"] #addItem input{border-color:var(--t-borda)}
 html[data-pg="plano"] form.m input,html[data-pg="plano"] form.m textarea{border-color:var(--t-borda)}
+html[data-pg="pdi"]:not(#a):not(#b),.m-pdi{--m:#A4507A;--t-accent:#A4507A}
+@media not all{html[data-pg="pdi"]:not([data-modo="claro"]):not(#a):not(#b),.m-pdi{--m:#E0A0C4;--t-accent:#E0A0C4}}
+html[data-modo="escuro"][data-pg="pdi"]:not(#a):not(#b){--m:#E0A0C4;--t-accent:#E0A0C4}
