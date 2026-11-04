@@ -1,6 +1,6 @@
 /* Faixa de topo + ícones dos módulos. Cada página define <html data-pg="..."> e carrega este arquivo. */
 (function(){
-  var NOMES={treino:'Treino',plano:'Plano alimentar',habitos:'Hábitos',grimorio:'Grimório',rota:'Rota Internacional',financeiro:'Financeiro',mudanca:'Mudança',imovel:'Imóvel',negocios:'Negócios',desafios:'Desafios',cert:'Certificação',pdi:'PDI Snowfox',ingles:'Inglês'};
+  var NOMES={treino:'Treino',plano:'Plano alimentar',habitos:'Hábitos',grimorio:'Grimório',rota:'Rota Internacional',financeiro:'Financeiro',mudanca:'Mudança',imovel:'Imóvel',negocios:'Negócios',desafios:'Desafios',cert:'Certificação',pdi:'PDI Snowfox',ingles:'Inglês',plat:'Plataformas de dados'};
   var ICONES={
     treino:'<rect class="i1" x="5" y="13" width="6" height="22"/><rect class="i2" x="13" y="18" width="5" height="12"/><rect class="i0" x="18" y="22" width="12" height="4"/><rect class="i2" x="30" y="18" width="5" height="12"/><rect class="i1" x="37" y="13" width="6" height="22"/>',
     plano:'<circle class="i1" cx="24" cy="24" r="19"/><circle class="i0" cx="24" cy="24" r="12" opacity=".2"/><path class="i2" d="M24 11C34 14 35 25 24 37 13 25 14 14 24 11Z"/>',
@@ -14,6 +14,7 @@
     cert:'<rect class="i1" x="5" y="8" width="38" height="26"/><rect class="i0" x="11" y="15" width="26" height="3"/><rect class="i0" x="11" y="22" width="16" height="3"/><path class="i2" d="M30 31L34 44L38 31Z"/><circle class="i2" cx="34" cy="30" r="7"/>',
     pdi:'<rect class="i1" x="5" y="31" width="10" height="11"/><rect class="i1" x="16" y="23" width="10" height="19"/><rect class="i0" x="27" y="15" width="10" height="27"/><path class="i2" d="M33 3L42 8L33 13Z"/>',
     ingles:'<path class="i1" d="M4 8H30V28H16L8 36V28H4Z"/><path class="i2" d="M20 20H44V38H40V45L32 38H20Z"/><rect class="i0" x="9" y="14" width="16" height="3"/><rect class="i0" x="9" y="20" width="10" height="3"/>',
+    plat:'<path class="i1" d="M8 12V36C8 39.3 15.2 42 24 42S40 39.3 40 36V12Z"/><ellipse class="i2" cx="24" cy="12" rx="16" ry="6"/><path class="s1" d="M8 24C8 27.3 15.2 30 24 30S40 27.3 40 24"/>',
     financeiro:'<rect class="i1" x="6" y="32" width="36" height="9"/><rect class="i2" x="10" y="21" width="32" height="9"/><rect class="i0" x="14" y="10" width="28" height="9"/>'
   };
   window.CP_ICONE=function(id,size){return '<svg class="ic" viewBox="0 0 48 48" width="'+(size||30)+'" height="'+(size||30)+'" aria-hidden="true">'+ICONES[id]+'</svg>'};

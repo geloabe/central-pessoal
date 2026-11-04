@@ -73,3 +73,6 @@ html[data-modo="escuro"][data-pg="pdi"]:not(#a):not(#b){--m:#E0A0C4;--t-accent:#
 html[data-pg="ingles"]:not(#a):not(#b),.m-ingles{--m:#2E8A99;--t-accent:#2E8A99}
 @media not all{html[data-pg="ingles"]:not([data-modo="claro"]):not(#a):not(#b),.m-ingles{--m:#7FD0DC;--t-accent:#7FD0DC}}
 html[data-modo="escuro"][data-pg="ingles"]:not(#a):not(#b){--m:#7FD0DC;--t-accent:#7FD0DC}
+html[data-pg="plat"]:not(#a):not(#b),.m-plat{--m:#C2561F;--t-accent:#C2561F}
+@media not all{html[data-pg="plat"]:not([data-modo="claro"]):not(#a):not(#b),.m-plat{--m:#F0A27A;--t-accent:#F0A27A}}
+html[data-modo="escuro"][data-pg="plat"]:not(#a):not(#b){--m:#F0A27A;--t-accent:#F0A27A}
