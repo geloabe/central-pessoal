@@ -102,7 +102,7 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 </style>
 <main>
   <h1>Inglês</h1>
-  <p class="sub">Foco em fala e vocabulário, voltados à sua carreira: entrevistas, conversa técnica, reuniões, apresentação e negociação. 5 aulas por semana mais 2h30 de prática. Semana atrasada não zera nada.</p>
+  <p class="sub">Foco em fala, vocabulário e gramática, voltados à sua carreira: entrevistas, conversa técnica, reuniões, apresentação e negociação. 5 aulas por semana mais 2h30 de prática. Semana atrasada não zera nada.</p>
   <div id="topo"></div>
   <nav id="tabs" role="tablist">
     <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
@@ -119,10 +119,11 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 
 <script src="assets/progresso.js"></script>
 <script src="assets/ingles.js"></script>
+<script src="assets/gram.js"></script>
 <script>
 (function(){
 'use strict';
-var K=window.CP_INGLES, ref=null, C={}, escrita=Promise.resolve(), ultimoSalvar=0, semanaAba=0, R=null, tp=null;
+var K=window.CP_INGLES, G=window.CP_GRAM, GC={}, ref=null, C={}, escrita=Promise.resolve(), ultimoSalvar=0, semanaAba=0, R=null, tp=null;
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function hoje(){return new Date()}
@@ -180,12 +181,18 @@ function setup(){
     '<div class="full row"><button class="btn primary" type="submit">Começar</button></div></form>'+
     '<div class="dica">Por semana: 3 gravações de fala em cenários de carreira (entrevista, conversa técnica, reuniões, negociação), shadowing, escuta ativa e 15 expressões novas em cartões com repetição espaçada.</div></div>';
 }
+function gramCard(){
+  var g=G.estado(GC,hoje()), px=g.prox;
+  return '<div class="cartao"><div class="rotulo">Gramática · 12 aulas</div><h3 style="margin:6px 0">'+(px?'Aula '+px.ordem+': '+esc(px.titulo):'Trilha de gramática concluída')+'</h3>'+barra(g.pct)+'<div class="mini">'+g.completas+' de '+g.total+' aulas concluídas · '+g.pct+'% das etapas. Gramática aplicada ao que você fala em entrevista, reunião e negociação.</div>'+
+    '<div class="row" style="margin-top:10px"><a class="btn primary" href="gramatica.html" style="text-decoration:none;display:inline-flex;align-items:center">'+(g.passos?'Continuar a gramática':'Começar a gramática')+'</a></div></div>';
+}
 function hojeHtml(e){
-  if(!e.ativo)return setup();
+  if(!e.ativo)return gramCard()+setup();
   var h='', n=Math.max(1,e.semana||1), s=K.INGLES[n-1];
   if(e.comecaEm>0)h+='<div class="dica">O ciclo começa em '+e.comecaEm+' dia'+(e.comecaEm>1?'s':'')+'. Se quiser, já pode começar pela primeira prática.</div>';
   if(e.encerrado)h+='<div class="dica">O ciclo terminou. Veja a aba Medição para comparar o início e o fim; para continuar, comece um novo ciclo ajustando a data de início.</div>';
   if(e.atrasadas>0)h+='<div class="dica">'+e.atrasadas+' sessão'+(e.atrasadas>1?'ões':'')+' de semanas anteriores ficou'+(e.atrasadas>1?'ram':'')+' para trás. Sem problema: elas vêm primeiro, uma de cada vez.</div>';
+  h+=gramCard();
   var v=e.vocab;
   h+='<div class="cartao"><div class="rotulo">Vocabulário de hoje</div><h3 style="margin:6px 0">'+(v.sessao?v.devidos+' para revisar · '+v.novosHoje+' novas':'Nada para hoje')+'</h3>'+
     '<div class="mini">'+(v.sessao?'Uma sessão leva uns 7 minutos. Antes de ver a resposta, tente dizer em voz alta.':'Você já fez as revisões e as novas de hoje. Volte amanhã.')+'</div>'+
@@ -333,6 +340,7 @@ render();
 claude.use('db').then(function(db){
   ref=db.doc('ingles/main');
   ref.onSnapshot(function(s){if(R||Date.now()-ultimoSalvar<2500)return;C=s.exists?(s.data()||{}):{};render()});
+  db.doc('gram/main').onSnapshot(function(s){GC=s.exists?(s.data()||{}):{};if(!R)render()});
 });
 })();
 </script>

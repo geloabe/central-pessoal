@@ -340,7 +340,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: o PII está em texto livre, e Sensitive Data Protection inspeciona infoTypes dentro do texto e os substitui (infoType replacement), sem necessidade de reversão. B erra: policy tags protegem colunas inteiras conhecidas, não trechos dentro de um campo de texto, e esconderiam a coluna toda, inutilizando a análise. C erra: VPC SC controla de onde as APIs são chamadas e a exfiltração, não remove PII do conteúdo. D erra: CMEK é criptografia em repouso; quem acessa o bucket via IAM continua lendo o texto em claro."
+   "x": "A opção “Run a Sensitive Data Protection de-identification job that replaces detected email…” está certa: o PII está em texto livre, e Sensitive Data Protection inspeciona infoTypes dentro do texto e os substitui (infoType replacement), sem necessidade de reversão. “Apply BigQuery policy tags to the transcript column and grant Fine-Grained Reader…” erra: policy tags protegem colunas inteiras conhecidas, não trechos dentro de um campo de texto, e esconderiam a coluna toda, inutilizando a análise. “Place the bucket in a VPC Service Controls perimeter and keep the analysts outside it” erra: VPC SC controla de onde as APIs são chamadas e a exfiltração, não remove PII do conteúdo. “Encrypt the bucket with a customer-managed encryption key and share the key…” erra: CMEK é criptografia em repouso; quem acessa o bucket via IAM continua lendo o texto em claro."
   },
   {
    "id": "d15q2",
@@ -356,7 +356,7 @@
    "c": [
     3
    ],
-   "x": "D está certa: criptografia determinística (AES-SIV) gera o mesmo token para o mesmo valor, o que permite join, e é reversível por reidentify para quem controla a chave no KMS; o surrogate infoType marca o token. A erra: crypto hash permite join, mas não é reversível. B erra: masking cobre caracteres, não é reversível e os valores ficam iguais, quebrando o join. C erra: bucketing generaliza em faixas, não identifica indivíduos nem volta ao original."
+   "x": "A opção “Deterministic encryption with a Cloud KMS wrapped key and a surrogate infoType” está certa: criptografia determinística (AES-SIV) gera o mesmo token para o mesmo valor, o que permite join, e é reversível por reidentify para quem controla a chave no KMS; o surrogate infoType marca o token. “Crypto hash of the ID” erra: crypto hash permite join, mas não é reversível. “Masking with the character # for all digits” erra: masking cobre caracteres, não é reversível e os valores ficam iguais, quebrando o join. “Bucketing the IDs into ranges” erra: bucketing generaliza em faixas, não identifica indivíduos nem volta ao original."
   },
   {
    "id": "d15q3",
@@ -372,7 +372,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: policy tag mais data policy de mascaramento (últimos quatro caracteres) com BigQuery Masked Reader para marketing e Fine-Grained Reader para finance entrega mascaramento dinâmico sem cópia. A erra: funciona, mas duplica dados e cria um pipeline para manter. B erra: row-level policy filtra linhas, não mascara colunas, e bloquearia a tabela inteira para marketing. D erra: remover o acesso impede que a consulta inclua a coluna, contrariando o requisito de ver os quatro últimos caracteres."
+   "x": "A opção “Attach a policy tag to the column, create a data policy with a last-four-characters…” está certa: policy tag mais data policy de mascaramento (últimos quatro caracteres) com BigQuery Masked Reader para marketing e Fine-Grained Reader para finance entrega mascaramento dinâmico sem cópia. “Create a second table for marketing with the column truncated and refresh it nightly” erra: funciona, mas duplica dados e cria um pipeline para manter. “Add a row-level access policy that filters marketing users out of the table” erra: row-level policy filtra linhas, não mascara colunas, e bloquearia a tabela inteira para marketing. “Move the column to a separate dataset and remove all marketing access to it” erra: remover o acesso impede que a consulta inclua a coluna, contrariando o requisito de ver os quatro últimos caracteres."
   },
   {
    "id": "d15q4",
@@ -390,7 +390,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: o constraint gcp.resourceLocations é o controle preventivo que bloqueia a criação de recursos fora das localizações permitidas, e os datasets precisam ser criados em local da UE (a localização é definida na criação). C erra: audit logs registram, não impedem. D erra: a localização do dataset é imutável; é preciso copiar para um novo dataset, e o constraint também não move recursos existentes. E erra: VPC SC protege contra exfiltração entre perímetros, não restringe a localização geográfica de novos recursos."
+   "x": "As opções “Set the organization policy constraint gcp.resourceLocations to allow only in:eu-locations” e “Create the datasets in the EU multi-region or in an EU region” estão corretas: o constraint gcp.resourceLocations é o controle preventivo que bloqueia a criação de recursos fora das localizações permitidas, e os datasets precisam ser criados em local da UE (a localização é definida na criação). “Enable Data Access audit logs on the organization” erra: audit logs registram, não impedem. “Change the location of existing US datasets by editing dataset properties” erra: a localização do dataset é imutável; é preciso copiar para um novo dataset, e o constraint também não move recursos existentes. “Create a VPC Service Controls perimeter around all projects” erra: VPC SC protege contra exfiltração entre perímetros, não restringe a localização geográfica de novos recursos."
   },
   {
    "id": "d15q5",
@@ -406,7 +406,7 @@
    "c": [
     3
    ],
-   "x": "D está certa: VPC SC bloqueia chamadas de API que levam dados para fora do perímetro mesmo com IAM correto, que é o requisito de exfiltração. A erra: o usuário já tem acesso legítimo de leitura, e reduzir papéis não impede quem precisa ler de exportar. B erra: restringe onde recursos são criados, não para onde dados podem ser enviados, e o bucket externo poderia estar na mesma região. C erra: Admin Activity é sempre ligado e apenas registra, não previne."
+   "x": "A opção “Create a VPC Service Controls perimeter around the production projects with no egress…” está certa: VPC SC bloqueia chamadas de API que levam dados para fora do perímetro mesmo com IAM correto, que é o requisito de exfiltração. “Grant the engineer only the BigQuery Data Viewer role” erra: o usuário já tem acesso legítimo de leitura, e reduzir papéis não impede quem precisa ler de exportar. “Set the organization policy gcp.resourceLocations to the home region” erra: restringe onde recursos são criados, não para onde dados podem ser enviados, e o bucket externo poderia estar na mesma região. “Enable Admin Activity audit logs for the production project” erra: Admin Activity é sempre ligado e apenas registra, não previne."
   },
   {
    "id": "d15q6",
@@ -422,7 +422,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: leituras de objeto são Data Access logs, desligados por padrão no Cloud Storage; habilitar DATA_READ e rotear para um sink no BigQuery dá retenção e consulta SQL (vale apenas dali em diante, não retroage). A erra: INFORMATION_SCHEMA.JOBS lista jobs do BigQuery, não downloads de objetos. C erra: Policy Denied registra acessos negados por política, não leituras permitidas. D erra: o bucket _Required guarda Admin Activity e System Event, que não contêm leituras de objeto."
+   "x": "A opção “Enable Data Access audit logs (DATA_READ) for Cloud Storage and route them to a log sink…” está certa: leituras de objeto são Data Access logs, desligados por padrão no Cloud Storage; habilitar DATA_READ e rotear para um sink no BigQuery dá retenção e consulta SQL (vale apenas dali em diante, não retroage). “Query INFORMATION_SCHEMA.JOBS in BigQuery” erra: INFORMATION_SCHEMA.JOBS lista jobs do BigQuery, não downloads de objetos. “Create a Policy Denied log filter” erra: Policy Denied registra acessos negados por política, não leituras permitidas. “Increase the retention of the _Required log bucket” erra: o bucket _Required guarda Admin Activity e System Event, que não contêm leituras de objeto."
   },
   {
    "id": "d15q7",
@@ -438,7 +438,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: violações de VPC SC geram audit logs do tipo Policy Denied com identificador e detalhes da violação (origem, serviço, regra), que permitem criar a ingress rule correta. A erra: uso de slots não explica um 403 de política. C erra: o job nem chega a executar, então não há plano de execução. D erra: taxonomias de policy tags controlam acesso a colunas, não o perímetro de serviço; o erro de coluna tem mensagem própria sobre acesso negado à tag."
+   "x": "A opção “The Policy Denied audit logs, which include the VPC Service Controls violation details” está certa: violações de VPC SC geram audit logs do tipo Policy Denied com identificador e detalhes da violação (origem, serviço, regra), que permitem criar a ingress rule correta. “Cloud Monitoring dashboards for BigQuery slot utilization” erra: uso de slots não explica um 403 de política. “The BigQuery query plan of the failed job” erra: o job nem chega a executar, então não há plano de execução. “Data Catalog taxonomy permissions” erra: taxonomias de policy tags controlam acesso a colunas, não o perímetro de serviço; o erro de coluna tem mensagem própria sobre acesso negado à tag."
   },
   {
    "id": "d15q8",
@@ -454,7 +454,7 @@
    "c": [
     3
    ],
-   "x": "D está certa: projeto separado é uma fronteira forte de IAM, e os dados de-identificados dão realismo sem expor PII. A erra: dá acesso real ao PII, violando a conformidade. B erra: um dataset no projeto de produção mistura ambientes, e a cópia continua com PII sem de-identificação; a fronteira de projeto é preferível. C erra: compartilhar chave de service account é prática insegura e concede acesso total à produção."
+   "x": "A opção “Create a separate dev project loaded with de-identified or sampled and masked copies…” está certa: projeto separado é uma fronteira forte de IAM, e os dados de-identificados dão realismo sem expor PII. “Grant developers the BigQuery Data Viewer role on the production dataset and let them…” erra: dá acesso real ao PII, violando a conformidade. “Create a dev dataset in the production project and give developers access to it” erra: um dataset no projeto de produção mistura ambientes, e a cópia continua com PII sem de-identificação; a fronteira de projeto é preferível. “Share the production service account key with the development team” erra: compartilhar chave de service account é prática insegura e concede acesso total à produção."
   },
   {
    "id": "d15q9",
@@ -470,7 +470,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: a linhagem do Knowledge Catalog (antigo Dataplex Universal Catalog) mostra origem e destino do dado, inclusive no nível de coluna no BigQuery, o que permite análise de impacto. A erra: audit logs dizem quem acessou, não como o dado flui entre tabelas. B erra: INFORMATION_SCHEMA.TABLES lista metadados de tabelas, sem relação entre colunas de origem e destino. D erra: dry run estima bytes processados de uma consulta, nada sobre dependências."
+   "x": "A opção “Knowledge Catalog (Dataplex Universal Catalog) lineage” está certa: a linhagem do Knowledge Catalog (antigo Dataplex Universal Catalog) mostra origem e destino do dado, inclusive no nível de coluna no BigQuery, o que permite análise de impacto. “Cloud Audit Logs Data Access” erra: audit logs dizem quem acessou, não como o dado flui entre tabelas. “BigQuery INFORMATION_SCHEMA.TABLES” erra: INFORMATION_SCHEMA.TABLES lista metadados de tabelas, sem relação entre colunas de origem e destino. “BigQuery dry run” erra: dry run estima bytes processados de uma consulta, nada sobre dependências."
   },
   {
    "id": "d15q10",
@@ -488,7 +488,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: o column-level security exige a policy tag na coluna, o controle de acesso ativo na taxonomia e o papel Fine-Grained Reader apenas para o grupo HR; sem o papel na tag, mesmo quem tem Data Viewer falha ao consultar a coluna. C erra: row-level policy filtra linhas, não colunas. D erra: retirar Data Viewer impede qualquer pessoa de ler a tabela, inclusive as demais colunas de que outros precisam. E erra: audit logs registram acesso, não o impedem."
+   "x": "As opções “Create a taxonomy and policy tag, attach the tag to the salary column, and enforce access…” e “Grant the Fine-Grained Reader role on the policy tag to the HR group only” estão corretas: o column-level security exige a policy tag na coluna, o controle de acesso ativo na taxonomia e o papel Fine-Grained Reader apenas para o grupo HR; sem o papel na tag, mesmo quem tem Data Viewer falha ao consultar a coluna. “Create a row-level access policy for the HR group” erra: row-level policy filtra linhas, não colunas. “Remove BigQuery Data Viewer from the dataset so only HR keeps it” erra: retirar Data Viewer impede qualquer pessoa de ler a tabela, inclusive as demais colunas de que outros precisam. “Enable Data Access audit logs on the table” erra: audit logs registram acesso, não o impedem."
   }
  ]
 };
@@ -770,7 +770,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: Spanner multirregional replica de forma síncrona com consenso, dá consistência forte, transações ACID multilinha, escala horizontal e RPO zero. A erra: a réplica entre regiões do Cloud SQL é assíncrona, então pode haver perda de dados e a promoção é manual; também não escala escrita globalmente. B erra: Bigtable só tem atomicidade por linha e consistência eventual entre clusters. D erra: consistência eventual contraria o requisito de consistência forte e transações multilinha para razão financeira."
+   "x": "A opção “Spanner in a multi-region configuration” está certa: Spanner multirregional replica de forma síncrona com consenso, dá consistência forte, transações ACID multilinha, escala horizontal e RPO zero. “Cloud SQL with a cross-region read replica” erra: a réplica entre regiões do Cloud SQL é assíncrona, então pode haver perda de dados e a promoção é manual; também não escala escrita globalmente. “Bigtable with multi-cluster routing” erra: Bigtable só tem atomicidade por linha e consistência eventual entre clusters. “Firestore in Datastore mode with eventual consistency” erra: consistência eventual contraria o requisito de consistência forte e transações multilinha para razão financeira."
   },
   {
    "id": "d16q2",
@@ -786,7 +786,7 @@
    "c": [
     3
    ],
-   "x": "D está certa: três dias está dentro da janela padrão de time travel de 7 dias, então a consulta no passado recupera as linhas imediatamente e sem suporte. A erra: fail-safe só vale depois da janela de time travel, não é consultável e exige chamado, sendo mais lento. B erra: exportação antiga não tem as alterações dos últimos dias e dá mais trabalho. C erra: a réplica também recebeu o DELETE; replicação não protege de erro lógico e failover não desfaz a operação."
+   "x": "A opção “Query the table with FOR SYSTEM_TIME AS OF a timestamp before the DELETE and write…” está certa: três dias está dentro da janela padrão de time travel de 7 dias, então a consulta no passado recupera as linhas imediatamente e sem suporte. “Open a ticket with Cloud Customer Care to use fail-safe storage” erra: fail-safe só vale depois da janela de time travel, não é consultável e exige chamado, sendo mais lento. “Restore from a Cloud Storage export of the table made last month” erra: exportação antiga não tem as alterações dos últimos dias e dá mais trabalho. “Fail over to the secondary region replica of the dataset” erra: a réplica também recebeu o DELETE; replicação não protege de erro lógico e failover não desfaz a operação."
   },
   {
    "id": "d16q3",
@@ -802,7 +802,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: com janela padrão de 7 dias, o time travel já expirou, mas o fail-safe cobre mais 7 dias e a recuperação é feita via Cloud Customer Care. A erra: dez dias está fora da janela de time travel e a consulta falha. C erra: snapshots não são criados automaticamente; precisam ser criados por você ou por agendamento. D erra: a réplica replica também a exclusão e a promoção de réplica não recupera tabela apagada."
+   "x": "A opção “Contact Cloud Customer Care to request recovery from fail-safe storage and then copy…” está certa: com janela padrão de 7 dias, o time travel já expirou, mas o fail-safe cobre mais 7 dias e a recuperação é feita via Cloud Customer Care. “Use FOR SYSTEM_TIME AS OF with a timestamp from ten days ago” erra: dez dias está fora da janela de time travel e a consulta falha. “Restore the table from a table snapshot, which BigQuery creates automatically every day” erra: snapshots não são criados automaticamente; precisam ser criados por você ou por agendamento. “Wait for the cross-region replica to promote the dropped table” erra: a réplica replica também a exclusão e a promoção de réplica não recupera tabela apagada."
   },
   {
    "id": "d16q4",
@@ -818,7 +818,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: managed DR do BigQuery (Enterprise Plus) combina réplica de dataset e reserva de failover, com meta de RPO de 15 minutos e RTO de minutos, de forma gerenciada. A erra: cópia noturna dá RPO de até 24 horas e exige reconstruir reservas e consultas na hora do desastre. B erra: multirregião sozinha não é estratégia de DR entre regiões segundo a documentação. D erra: exportação horária dá RPO de uma hora, exige recarga com RTO alto e muito trabalho operacional."
+   "x": "A opção “Use managed disaster recovery: replicate the dataset to a secondary region and attach it…” está certa: managed DR do BigQuery (Enterprise Plus) combina réplica de dataset e reserva de failover, com meta de RPO de 15 minutos e RTO de minutos, de forma gerenciada. “Create a nightly scheduled query that copies all tables to a dataset in another region” erra: cópia noturna dá RPO de até 24 horas e exige reconstruir reservas e consultas na hora do desastre. “Create the dataset in the US multi-region and rely on its built-in redundancy” erra: multirregião sozinha não é estratégia de DR entre regiões segundo a documentação. “Export tables to a dual-region Cloud Storage bucket every hour” erra: exportação horária dá RPO de uma hora, exige recarga com RTO alto e muito trabalho operacional."
   },
   {
    "id": "d16q5",
@@ -834,7 +834,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: roteamento multi-cluster faz failover automático para outro cluster disponível e aceita consistência eventual, que é tolerada no enunciado. A erra: cluster único exige failover manual, contrariando o requisito de automático. C erra: backup diário implica perda de dados e restauração lenta, não é failover. D erra: mais nós em um cluster regional não protegem contra a indisponibilidade de uma região inteira."
+   "x": "A opção “Multi-cluster routing across the clusters in both regions” está certa: roteamento multi-cluster faz failover automático para outro cluster disponível e aceita consistência eventual, que é tolerada no enunciado. “Single-cluster routing to the primary cluster and manual failover” erra: cluster único exige failover manual, contrariando o requisito de automático. “Create a daily backup and restore it in the other region during an outage” erra: backup diário implica perda de dados e restauração lenta, não é failover. “Use a single cluster with more nodes in multiple zones of one region” erra: mais nós em um cluster regional não protegem contra a indisponibilidade de uma região inteira."
   },
   {
    "id": "d16q6",
@@ -852,7 +852,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: HA cria standby em outra zona com replicação síncrona e failover automático, cobrindo a falha de zona; a réplica entre regiões, promovida manualmente, cobre o desastre regional aceitando o passo manual. C erra: mais vCPU melhora desempenho, não disponibilidade. D erra: query insights é diagnóstico de desempenho. E erra: réplica na mesma zona cai junto com a zona e não ajuda na falha regional."
+   "x": "As opções “Enable high availability so a standby instance in another zone takes over automatically” e “Create a cross-region read replica that can be promoted during a regional disaster” estão corretas: HA cria standby em outra zona com replicação síncrona e failover automático, cobrindo a falha de zona; a réplica entre regiões, promovida manualmente, cobre o desastre regional aceitando o passo manual. “Add more vCPUs to the primary instance” erra: mais vCPU melhora desempenho, não disponibilidade. “Enable query insights on the instance” erra: query insights é diagnóstico de desempenho. “Create a read replica in the same zone as the primary” erra: réplica na mesma zona cai junto com a zona e não ajuda na falha regional."
   },
   {
    "id": "d16q7",
@@ -868,7 +868,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: dual-region mantém um nome de bucket com dados em duas regiões, o failover é transparente, e turbo replication tem meta de RPO de 15 minutos. A erra: cópia noturna dá RPO de horas e muda o bucket em caso de falha. C erra: versionamento protege contra apagamento e sobrescrita, mas os dados continuam em uma só região. D erra: funciona, mas transfere a complexidade e o risco de inconsistência para a aplicação, contra o requisito de simplicidade com um nome de bucket."
+   "x": "A opção “A dual-region bucket with turbo replication enabled” está certa: dual-region mantém um nome de bucket com dados em duas regiões, o failover é transparente, e turbo replication tem meta de RPO de 15 minutos. “A regional bucket with a scheduled Storage Transfer Service job to another region each…” erra: cópia noturna dá RPO de horas e muda o bucket em caso de falha. “A regional bucket with object versioning enabled” erra: versionamento protege contra apagamento e sobrescrita, mas os dados continuam em uma só região. “Two regional buckets and application logic that writes to both” erra: funciona, mas transfere a complexidade e o risco de inconsistência para a aplicação, contra o requisito de simplicidade com um nome de bucket."
   },
   {
    "id": "d16q8",
@@ -884,7 +884,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: assertions uniqueKey e nonNull do Dataform são consultas que falham quando acham problemas e, como dependências, bloqueiam as ações seguintes, evitando publicar dado ruim. B erra: LIMIT não valida nada. C erra: exportar copia o dado ruim sem detectar problemas. D erra: BI Engine acelera consultas, não valida qualidade."
+   "x": "A opção “Add Dataform assertions (uniqueKey on order_id and nonNull on customer_id)…” está certa: assertions uniqueKey e nonNull do Dataform são consultas que falham quando acham problemas e, como dependências, bloqueiam as ações seguintes, evitando publicar dado ruim. “Add a LIMIT clause to the reporting queries” erra: LIMIT não valida nada. “Schedule a daily export of the reporting tables to Cloud Storage” erra: exportar copia o dado ruim sem detectar problemas. “Enable BI Engine on the reporting dataset” erra: BI Engine acelera consultas, não valida qualidade."
   },
   {
    "id": "d16q9",
@@ -900,7 +900,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: o padrão dead-letter com side output isola os registros inválidos sem parar o fluxo e sem perdê-los, permitindo análise e reprocessamento. A erra: descartar perde eventos, contra o requisito. B erra: mais workers não corrigem uma exceção de parsing determinística. D erra: desativar acks causaria reentrega contínua e não resolve o dado inválido."
+   "x": "A opção “Send malformed events to a dead-letter output (side output) written to a separate…” está certa: o padrão dead-letter com side output isola os registros inválidos sem parar o fluxo e sem perdê-los, permitindo análise e reprocessamento. “Catch the exception and silently drop the malformed event” erra: descartar perde eventos, contra o requisito. “Increase the number of Dataflow workers” erra: mais workers não corrigem uma exceção de parsing determinística. “Disable acknowledgements in the Pub/Sub subscription” erra: desativar acks causaria reentrega contínua e não resolve o dado inválido."
   },
   {
    "id": "d16q10",
@@ -918,7 +918,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: time travel resolve erros recentes sem custo operacional, e snapshots mensais com expiração de 365 dias guardam pontos no tempo cobrando só a diferença em relação à tabela base. C erra: cópia completa duplica o armazenamento da tabela grande a cada mês, o que é o mais caro. D erra: o fail-safe é fixo em 7 dias e não pode ser estendido. E erra: clone é gravável e útil para testes, mas sem expiração acumula custo e não é feito para retenção de auditoria; snapshot é o recurso certo."
+   "x": "As opções “Rely on time travel with the default window for recent accidental changes” e “Create a monthly table snapshot with a 365-day expiration” estão corretas: time travel resolve erros recentes sem custo operacional, e snapshots mensais com expiração de 365 dias guardam pontos no tempo cobrando só a diferença em relação à tabela base. “Create a monthly full copy of the table using CREATE TABLE AS SELECT” erra: cópia completa duplica o armazenamento da tabela grande a cada mês, o que é o mais caro. “Increase the fail-safe period to one year” erra: o fail-safe é fixo em 7 dias e não pode ser estendido. “Create a clone every month and never expire it” erra: clone é gravável e útil para testes, mas sem expiração acumula custo e não é feito para retenção de auditoria; snapshot é o recurso certo."
   }
  ]
 };
@@ -1201,7 +1201,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: BI Engine mantém em memória as colunas e partições consultadas e entrega subsegundo sem mudar as consultas do dashboard. A erra: CSV é mais lento, perde o SQL e a governança. C erra: migrar para Bigtable exige reescrever o acesso e é uma mudança desproporcional. D erra: o limite de slots não é o gargalo de latência de leitura; o problema é a latência de leitura repetida, não a falta de slots."
+   "x": "A opção “Create a BI Engine capacity reservation for the project and location, optionally limited…” está certa: BI Engine mantém em memória as colunas e partições consultadas e entrega subsegundo sem mudar as consultas do dashboard. “Export the table to Cloud Storage and use a CSV data source” erra: CSV é mais lento, perde o SQL e a governança. “Convert the table to a Bigtable table” erra: migrar para Bigtable exige reescrever o acesso e é uma mudança desproporcional. “Increase the on-demand slot limit for the project” erra: o limite de slots não é o gargalo de latência de leitura; o problema é a latência de leitura repetida, não a falta de slots."
   },
   {
    "id": "d17q2",
@@ -1217,7 +1217,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: a materialized view pré-computa a agregação, é atualizada de forma incremental e automática, e com smart tuning serve as consultas sem alterá-las. A erra: view lógica não guarda resultado e reexecuta a consulta completa sempre. C erra: a tabela diária fica defasada em até um dia e exige manutenção do agendamento. D erra: o cache só ajuda consultas idênticas e é invalidado sempre que a tabela base recebe novas linhas, o que acontece a cada poucos minutos."
+   "x": "A opção “A materialized view that aggregates revenue by store and day” está certa: a materialized view pré-computa a agregação, é atualizada de forma incremental e automática, e com smart tuning serve as consultas sem alterá-las. “A logical view with the aggregation query” erra: view lógica não guarda resultado e reexecuta a consulta completa sempre. “A scheduled query that rewrites a summary table once a day” erra: a tabela diária fica defasada em até um dia e exige manutenção do agendamento. “Query result caching only” erra: o cache só ajuda consultas idênticas e é invalidado sempre que a tabela base recebe novas linhas, o que acontece a cada poucos minutos."
   },
   {
    "id": "d17q3",
@@ -1233,7 +1233,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: a authorized view lê a tabela de origem em nome do usuário, que só precisa de acesso ao dataset da view, entregando agregados sem dar acesso aos dados base. A erra: Data Viewer no dataset dá acesso à tabela completa com salários. B erra: a cópia exporia os mesmos dados no projeto B e envelhece. D erra: CSV por e-mail é uma cópia manual, fora de governança, sem consulta interativa."
+   "x": "A opção “Create a view in a separate dataset that returns department averages, authorize it…” está certa: a authorized view lê a tabela de origem em nome do usuário, que só precisa de acesso ao dataset da view, entregando agregados sem dar acesso aos dados base. “Grant the HR analytics team BigQuery Data Viewer on the finance dataset” erra: Data Viewer no dataset dá acesso à tabela completa com salários. “Copy the table to project B every night” erra: a cópia exporia os mesmos dados no projeto B e envelhece. “Export a CSV with the averages and email it every week” erra: CSV por e-mail é uma cópia manual, fora de governança, sem consulta interativa."
   },
   {
    "id": "d17q4",
@@ -1249,7 +1249,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: o Analytics Hub entrega um linked dataset somente leitura por assinante, sem cópia, com o publisher controlando e podendo revogar a assinatura. B erra: exportação cria cópias que envelhecem e perde a consulta em SQL. C erra: concede acesso direto ao projeto do provedor, é difícil de gerenciar em dezenas de organizações e mistura o custo de consulta com o provedor. D erra: copiar para cada cliente multiplica armazenamento e manutenção, justamente o que o enunciado quer evitar."
+   "x": "A opção “Publish the dataset as a listing in a private Analytics Hub exchange and let customers…” está certa: o Analytics Hub entrega um linked dataset somente leitura por assinante, sem cópia, com o publisher controlando e podendo revogar a assinatura. “Export the dataset to Cloud Storage weekly and share the bucket URL” erra: exportação cria cópias que envelhecem e perde a consulta em SQL. “Add each customer user as BigQuery Data Viewer on the provider dataset one by one” erra: concede acesso direto ao projeto do provedor, é difícil de gerenciar em dezenas de organizações e mistura o custo de consulta com o provedor. “Create one copy of the dataset per customer with a scheduled copy job” erra: copiar para cada cliente multiplica armazenamento e manutenção, justamente o que o enunciado quer evitar."
   },
   {
    "id": "d17q5",
@@ -1265,7 +1265,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: INFORMATION_SCHEMA.JOBS traz bytes cobrados, slot time, usuário e texto de cada job, permitindo ranquear as consultas mais caras. A erra: uptime checks medem disponibilidade de endpoints, não custo de consultas. B erra: Admin Activity registra mudanças de configuração, não o consumo de cada consulta. D erra: o cache guarda resultados, não estatísticas de custo."
+   "x": "A opção “Query the INFORMATION_SCHEMA.JOBS view and order by total_bytes_billed or total_slot_ms” está certa: INFORMATION_SCHEMA.JOBS traz bytes cobrados, slot time, usuário e texto de cada job, permitindo ranquear as consultas mais caras. “Cloud Monitoring uptime checks” erra: uptime checks medem disponibilidade de endpoints, não custo de consultas. “Cloud Audit Logs Admin Activity” erra: Admin Activity registra mudanças de configuração, não o consumo de cada consulta. “The BigQuery query result cache” erra: o cache guarda resultados, não estatísticas de custo."
   },
   {
    "id": "d17q6",
@@ -1281,7 +1281,7 @@
    "c": [
     3
    ],
-   "x": "D está certa: máximo muito acima da média em um stage indica skew, e muitos NULL na chave concentram o trabalho em poucos workers; filtrar ou tratar a chave e agregar antes do join resolve. A erra: SELECT * é um problema de bytes lidos, mas não explica workers desbalanceados. B erra: mais slots não resolvem uma chave concentrada em poucos workers. C erra: cache afeta repetição de consultas idênticas, não o desempenho de uma execução com skew."
+   "x": "A opção “Data skew on the join key; filter or handle NULL keys before the join and aggregate early” está certa: máximo muito acima da média em um stage indica skew, e muitos NULL na chave concentram o trabalho em poucos workers; filtrar ou tratar a chave e agregar antes do join resolve. “The query is reading too many columns; replace SELECT * with a column list” erra: SELECT * é um problema de bytes lidos, mas não explica workers desbalanceados. “The slot reservation is too small; buy more slots” erra: mais slots não resolvem uma chave concentrada em poucos workers. “Result caching is disabled; enable it” erra: cache afeta repetição de consultas idênticas, não o desempenho de uma execução com skew."
   },
   {
    "id": "d17q7",
@@ -1299,7 +1299,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: partição por event_date poda partições inteiras e cluster por customer_id organiza os blocos para pular dados dentro de cada partição, reduzindo bytes lidos e tempo. C erra: tabelas fragmentadas por sufixo geram sobrecarga de metadados e são pior que a tabela particionada. D erra: LIMIT não reduz bytes lidos em consulta sem cluster que precisa agregar. E erra: converter tudo para STRING piora compressão, tipos e filtros e não ajuda a podar dados."
+   "x": "As opções “Partition the table by event_date” e “Cluster the table by customer_id” estão corretas: partição por event_date poda partições inteiras e cluster por customer_id organiza os blocos para pular dados dentro de cada partição, reduzindo bytes lidos e tempo. “Create one table per day with a date suffix instead of partitioning” erra: tabelas fragmentadas por sufixo geram sobrecarga de metadados e são pior que a tabela particionada. “Add LIMIT 1000 to every dashboard query” erra: LIMIT não reduz bytes lidos em consulta sem cluster que precisa agregar. “Convert all columns to STRING to simplify filtering” erra: converter tudo para STRING piora compressão, tipos e filtros e não ajuda a podar dados."
   },
   {
    "id": "d17q8",
@@ -1315,7 +1315,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: o Looker oferece camada semântica em LookML, em código versionável, com métricas definidas uma vez e SQL gerado sobre o BigQuery. B erra: campos calculados em cada relatório permitem definições divergentes. C erra: fórmulas compartilhadas manualmente não são governadas nem versionadas. D erra: exportação em CSV não é camada semântica e envelhece."
+   "x": "A opção “Looker with LookML modeling the business metrics” está certa: o Looker oferece camada semântica em LookML, em código versionável, com métricas definidas uma vez e SQL gerado sobre o BigQuery. “Looker Studio with separate calculated fields in each report” erra: campos calculados em cada relatório permitem definições divergentes. “Connected Sheets with manually shared formulas” erra: fórmulas compartilhadas manualmente não são governadas nem versionadas. “A weekly CSV export maintained by the finance team” erra: exportação em CSV não é camada semântica e envelhece."
   },
   {
    "id": "d17q9",
@@ -1331,7 +1331,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: funções não determinísticas como CURRENT_TIMESTAMP() impedem o uso do cache, e passar o limite de tempo como parâmetro ou literal (por exemplo arredondado) permite acertos de cache gratuitos. A erra: o cache dura cerca de 24 horas e não é configurável por projeto. C erra: o cache não depende de papel de administrador. D erra: usar tabela de destino também desabilita o cache, é o oposto do necessário."
+   "x": "A opção “Queries with non-deterministic functions such as CURRENT_TIMESTAMP are not served…” está certa: funções não determinísticas como CURRENT_TIMESTAMP() impedem o uso do cache, e passar o limite de tempo como parâmetro ou literal (por exemplo arredondado) permite acertos de cache gratuitos. “Cached results are only kept for one second; extend the cache duration in project settings” erra: o cache dura cerca de 24 horas e não é configurável por projeto. “The dashboard user needs the BigQuery Admin role to use the cache” erra: o cache não depende de papel de administrador. “Cached results require a destination table; add one to the query” erra: usar tabela de destino também desabilita o cache, é o oposto do necessário."
   },
   {
    "id": "d17q10",
@@ -1347,7 +1347,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: uma consulta só pode referenciar dados na mesma localização, então é preciso trazer os dados para a mesma localização (respeitando a política de residência de dados) ou copiar as tabelas públicas necessárias para o dataset na UE. A erra: o SQL legado também respeita localização. B erra: permissão não resolve incompatibilidade de localização. D erra: definir uma terceira localização não faz os dados existirem nela."
+   "x": "A opção “Create the working dataset in the US multi-region if policy allows, or copy the needed…” está certa: uma consulta só pode referenciar dados na mesma localização, então é preciso trazer os dados para a mesma localização (respeitando a política de residência de dados) ou copiar as tabelas públicas necessárias para o dataset na UE. “Use a legacy SQL query, which ignores locations” erra: o SQL legado também respeita localização. “Grant the analyst BigQuery Admin on the public project” erra: permissão não resolve incompatibilidade de localização. “Set the query job location to Asia to match both datasets” erra: definir uma terceira localização não faz os dados existirem nela."
   }
  ],
  "lab": {
@@ -1695,7 +1695,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: BQML treina e prevê com SQL dentro do BigQuery, sem mover dados nem gerenciar infraestrutura, e ML.PREDICT pode rodar em consulta agendada. A erra: exige exportar dados, engenharia de ML e infraestrutura de GPU, desnecessários para dados tabulares. C erra: Cloud SQL não é plataforma de ML e obriga a mover os dados. D erra: implementar o algoritmo no Beam é complexo e não gerenciado; o BQML já oferece o modelo pronto."
+   "x": "A opção “Use BigQuery ML with CREATE MODEL (for example a logistic regression or boosted tree…” está certa: BQML treina e prevê com SQL dentro do BigQuery, sem mover dados nem gerenciar infraestrutura, e ML.PREDICT pode rodar em consulta agendada. “Export the data to Cloud Storage and train a custom TensorFlow model on a GPU cluster” erra: exige exportar dados, engenharia de ML e infraestrutura de GPU, desnecessários para dados tabulares. “Load the data into Cloud SQL and run a stored procedure for scoring” erra: Cloud SQL não é plataforma de ML e obriga a mover os dados. “Build a Dataflow pipeline that implements gradient boosting in Beam” erra: implementar o algoritmo no Beam é complexo e não gerenciado; o BQML já oferece o modelo pronto."
   },
   {
    "id": "d18q2",
@@ -1711,7 +1711,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: com TRANSFORM, o pré-processamento fica dentro do modelo e ML.PREDICT aplica as mesmas transformações às colunas brutas, evitando o desvio entre treino e previsão. B erra: repetir manualmente é frágil e é a causa do erro. C erra: menos features não resolve a inconsistência de pré-processamento. D erra: exportar pesos para planilha é impraticável e continua sem aplicar o pré-processamento."
+   "x": "A opção “Use the TRANSFORM clause in CREATE MODEL so preprocessing is stored in the model…” está certa: com TRANSFORM, o pré-processamento fica dentro do modelo e ML.PREDICT aplica as mesmas transformações às colunas brutas, evitando o desvio entre treino e previsão. “Ask every analyst to repeat the preprocessing SQL manually before each prediction” erra: repetir manualmente é frágil e é a causa do erro. “Train the model with fewer features” erra: menos features não resolve a inconsistência de pré-processamento. “Export the model weights and apply them in a spreadsheet” erra: exportar pesos para planilha é impraticável e continua sem aplicar o pré-processamento."
   },
   {
    "id": "d18q3",
@@ -1729,7 +1729,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: pesos de classe ou reamostragem fazem o modelo dar importância à classe rara, e métricas como precisão, recall, F1 e AUC com ajuste de limiar mostram o desempenho real nos casos de fraude. C erra: a acurácia é enganosa, pois um modelo que nunca prevê fraude já tem 99,6%. D erra: avaliar no treino esconde o sobreajuste. E erra: remover o rótulo impede o aprendizado supervisionado."
+   "x": "As opções “Set class weights (for example AUTO_CLASS_WEIGHTS=TRUE) or resample the training data” e “Evaluate with precision, recall, F1 or AUC and tune the decision threshold” estão corretas: pesos de classe ou reamostragem fazem o modelo dar importância à classe rara, e métricas como precisão, recall, F1 e AUC com ajuste de limiar mostram o desempenho real nos casos de fraude. “Report accuracy only, because it is already very high” erra: a acurácia é enganosa, pois um modelo que nunca prevê fraude já tem 99,6%. “Evaluate the model on the training data to get stable metrics” erra: avaliar no treino esconde o sobreajuste. “Remove the label column to reduce bias” erra: remover o rótulo impede o aprendizado supervisionado."
   },
   {
    "id": "d18q4",
@@ -1745,7 +1745,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: a feature só existe depois do evento que se quer prever, o que revela o rótulo (vazamento), explicando a métrica irreal; deve-se remover a coluna e construir features só com dados anteriores ao momento da previsão, dividindo por tempo. A erra: o sintoma é métrica altíssima, não subajuste. C erra: mais ou menos linhas não corrige uma coluna que contém a resposta. D erra: aumentar a taxa de aprendizado não afeta o vazamento."
+   "x": "A opção “Data leakage; remove features not available at prediction time and split data by time” está certa: a feature só existe depois do evento que se quer prever, o que revela o rótulo (vazamento), explicando a métrica irreal; deve-se remover a coluna e construir features só com dados anteriores ao momento da previsão, dividindo por tempo. “Underfitting; use a simpler model” erra: o sintoma é métrica altíssima, não subajuste. “Too many training rows; sample fewer rows” erra: mais ou menos linhas não corrige uma coluna que contém a resposta. “Missing regularization; increase the learning rate” erra: aumentar a taxa de aprendizado não afeta o vazamento."
   },
   {
    "id": "d18q5",
@@ -1761,7 +1761,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: ARIMA_PLUS é o modelo de séries temporais do BQML, trata sazonalidade e feriados, e ML.FORECAST gera a previsão. A erra: k-means agrupa sem rótulo, não prevê séries. B erra: matrix factorization serve para recomendação a partir de interações usuário-item. D erra: regressão logística é classificação e não modela sazonalidade temporal."
+   "x": "A opção “A BigQuery ML ARIMA_PLUS model with ML.FORECAST” está certa: ARIMA_PLUS é o modelo de séries temporais do BQML, trata sazonalidade e feriados, e ML.FORECAST gera a previsão. “A BigQuery ML k-means model” erra: k-means agrupa sem rótulo, não prevê séries. “A BigQuery ML matrix factorization model” erra: matrix factorization serve para recomendação a partir de interações usuário-item. “A logistic regression model on the date column” erra: regressão logística é classificação e não modela sazonalidade temporal."
   },
   {
    "id": "d18q6",
@@ -1777,7 +1777,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: o modelo remoto aponta para o endpoint do Vertex AI por uma conexão, e a inferência é feita lá (com GPU) enquanto o SQL permanece no BigQuery. A erra: importar exige modelo compatível e pequeno o bastante para rodar dentro do BigQuery, e perderia a GPU do endpoint. C erra: move dados e exige código de aplicação. D erra: exportar CSV e envio manual não é uma solução escalável nem automatizada."
+   "x": "A opção “Create a BigQuery ML remote model that references the Vertex AI endpoint through…” está certa: o modelo remoto aponta para o endpoint do Vertex AI por uma conexão, e a inferência é feita lá (com GPU) enquanto o SQL permanece no BigQuery. “Import the model into BigQuery ML as a TensorFlow SavedModel regardless of its size” erra: importar exige modelo compatível e pequeno o bastante para rodar dentro do BigQuery, e perderia a GPU do endpoint. “Copy the data to Bigtable and call the endpoint from the application” erra: move dados e exige código de aplicação. “Export the table to CSV and send it to the endpoint manually” erra: exportar CSV e envio manual não é uma solução escalável nem automatizada."
   },
   {
    "id": "d18q7",
@@ -1793,7 +1793,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: embeddings capturam significado, o índice vetorial dá busca aproximada rápida em milhões de vetores e VECTOR_SEARCH devolve os 10 mais próximos. A erra: LIKE é correspondência literal de texto, não encontra sinônimos nem semelhança de significado. C erra: ordenar alfabeticamente não tem relação com semelhança. D erra: k-means por preço agrupa por valor e não por descrição."
+   "x": "A opção “Generate embeddings with ML.GENERATE_EMBEDDING, create a vector index, and use…” está certa: embeddings capturam significado, o índice vetorial dá busca aproximada rápida em milhões de vetores e VECTOR_SEARCH devolve os 10 mais próximos. “Use LIKE '%query%' filters on the description column” erra: LIKE é correspondência literal de texto, não encontra sinônimos nem semelhança de significado. “Export descriptions to CSV and sort them alphabetically” erra: ordenar alfabeticamente não tem relação com semelhança. “Train a k-means model on product price” erra: k-means por preço agrupa por valor e não por descrição."
   },
   {
    "id": "d18q8",
@@ -1811,7 +1811,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: são as etapas centrais do RAG: indexar os documentos como embeddings e, na pergunta, recuperar os trechos mais próximos e colocá-los no prompt para ancorar a resposta; atualizar os documentos significa apenas reindexar. C erra: ajustar o LLM a cada semana é caro e lento e não garante respostas atuais. D erra: milhares de PDFs não cabem na janela de contexto e seriam muito caros. E erra: o nome do arquivo não representa o conteúdo."
+   "x": "As opções “Split the extracted text into chunks, generate embeddings for them, and store them…” e “At question time, embed the question, retrieve the nearest chunks with VECTOR_SEARCH,…” estão corretas: são as etapas centrais do RAG: indexar os documentos como embeddings e, na pergunta, recuperar os trechos mais próximos e colocá-los no prompt para ancorar a resposta; atualizar os documentos significa apenas reindexar. “Fine-tune the LLM from scratch every time a PDF changes” erra: ajustar o LLM a cada semana é caro e lento e não garante respostas atuais. “Place all the PDFs in every prompt” erra: milhares de PDFs não cabem na janela de contexto e seriam muito caros. “Disable embeddings and search only by file name” erra: o nome do arquivo não representa o conteúdo."
   },
   {
    "id": "d18q9",
@@ -1827,7 +1827,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: menor privilégio e views autorizadas limitam o que pode ser lido, dry run e bytes máximos limitam custo, e a revisão humana reduz o risco de métricas erradas ou alucinadas. B erra: Admin permite escrita e remoção e amplia o dano de uma consulta errada ou de injeção de prompt. C erra: desligar auditoria remove a rastreabilidade. D erra: acesso amplo aumenta a exposição de dados."
+   "x": "A opção “Run the generated SQL with a read-only identity limited to authorized views, enforce dry…” está certa: menor privilégio e views autorizadas limitam o que pode ser lido, dry run e bytes máximos limitam custo, e a revisão humana reduz o risco de métricas erradas ou alucinadas. “Give the service account BigQuery Admin so the model can fix its own errors” erra: Admin permite escrita e remoção e amplia o dano de uma consulta errada ou de injeção de prompt. “Disable audit logs to reduce cost” erra: desligar auditoria remove a rastreabilidade. “Allow the model to choose any dataset in the organization for better answers” erra: acesso amplo aumenta a exposição de dados."
   },
   {
    "id": "d18q10",
@@ -1843,7 +1843,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: o Feature Store serve features online com baixa latência e mantém a consistência entre treino e serving (com o BigQuery como armazenamento offline), e o Vertex AI Pipelines orquestra o retreinamento repetível. B erra: consultar o BigQuery a cada requisição não entrega a latência de serving online e não garante consistência. C erra: arquivos CSV não são versionados nem servem features frescas em baixa latência. D erra: Cloud SQL replicado cria cópia sem gestão de features e sem orquestração de ML."
+   "x": "A opção “Vertex AI Feature Store for feature serving and Vertex AI Pipelines for the retraining…” está certa: o Feature Store serve features online com baixa latência e mantém a consistência entre treino e serving (com o BigQuery como armazenamento offline), e o Vertex AI Pipelines orquestra o retreinamento repetível. “BigQuery scheduled queries only, with the application querying BigQuery on every request” erra: consultar o BigQuery a cada requisição não entrega a latência de serving online e não garante consistência. “Cloud Storage CSV files read by the application at startup” erra: arquivos CSV não são versionados nem servem features frescas em baixa latência. “A Cloud SQL replica of the BigQuery tables” erra: Cloud SQL replicado cria cópia sem gestão de features e sem orquestração de ML."
   }
  ],
  "lab": {
@@ -2194,7 +2194,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: carga constante e previsível é mais barata em capacidade reservada, o commitment dá desconto para o baseline, o autoscaling cobre os picos pagando só quando usados, e a Enterprise suporta CMEK. A erra: sob demanda tende a ser mais cara para carga constante e a quota só limita, não reduz custo. B erra: a Standard não tem baseline nem suporta CMEK. D erra: um baseline de 1.500 slots paga a capacidade de pico continuamente e a Enterprise Plus não é necessária, pois não há requisito de DR ou conformidade."
+   "x": "A opção “Buy Enterprise edition capacity with a baseline sized near the steady load (using…” está certa: carga constante e previsível é mais barata em capacidade reservada, o commitment dá desconto para o baseline, o autoscaling cobre os picos pagando só quando usados, e a Enterprise suporta CMEK. “Stay on on-demand pricing and add custom quotas” erra: sob demanda tende a ser mais cara para carga constante e a quota só limita, não reduz custo. “Use the Standard edition with a baseline of 800 slots” erra: a Standard não tem baseline nem suporta CMEK. “Use Enterprise Plus with a baseline of 1,500 slots permanently” erra: um baseline de 1.500 slots paga a capacidade de pico continuamente e a Enterprise Plus não é necessária, pois não há requisito de DR ou conformidade."
   },
   {
    "id": "d19q2",
@@ -2210,7 +2210,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: com uso esporádico e baixo volume (600 GB por mês cabe na cota gratuita sob demanda), pagar por bytes lidos é o mais barato, sem custo fixo. B erra: commitment de 3 anos de 500 slots é um custo fixo enorme para uso mínimo. C erra: Enterprise Plus acrescenta recursos desnecessários e capacidade reservada. D erra: a Standard não tem baseline e, de qualquer forma, pagar por slots fixos num uso tão baixo desperdiça dinheiro."
+   "x": "A opção “On-demand pricing” está certa: com uso esporádico e baixo volume (600 GB por mês cabe na cota gratuita sob demanda), pagar por bytes lidos é o mais barato, sem custo fixo. “Enterprise edition with a 3-year commitment of 500 slots” erra: commitment de 3 anos de 500 slots é um custo fixo enorme para uso mínimo. “Enterprise Plus edition with managed disaster recovery” erra: Enterprise Plus acrescenta recursos desnecessários e capacidade reservada. “Standard edition with a baseline of 100 slots” erra: a Standard não tem baseline e, de qualquer forma, pagar por slots fixos num uso tão baixo desperdiça dinheiro."
   },
   {
    "id": "d19q3",
@@ -2226,7 +2226,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: CMEK e controle de acesso por coluna exigem pelo menos a Enterprise, que é a mais barata das edições que os suportam. A erra: a Standard não suporta CMEK nem controles por coluna e linha. C erra: funciona, mas é mais cara e seus extras (managed DR, conformidade) não são requeridos. D erra: os recursos de segurança variam entre as edições."
+   "x": "A opção “Enterprise edition” está certa: CMEK e controle de acesso por coluna exigem pelo menos a Enterprise, que é a mais barata das edições que os suportam. “Standard edition” erra: a Standard não suporta CMEK nem controles por coluna e linha. “Enterprise Plus edition” erra: funciona, mas é mais cara e seus extras (managed DR, conformidade) não são requeridos. “Any edition, since all editions support these features” erra: os recursos de segurança variam entre as edições."
   },
   {
    "id": "d19q4",
@@ -2242,7 +2242,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: reservas separadas isolam as cargas, e o idle slot sharing deixa uma reserva usar a capacidade ociosa da outra, evitando desperdício. A erra: pode ajudar, mas muda o modelo de custo dos dashboards e não resolve o desenho; o enunciado pede isolamento dentro de capacidade reservada. C erra: depende de comportamento humano e não isola. D erra: prioridade interativa não cria isolamento e aumenta a competição por slots."
+   "x": "A opção “Create separate reservations for ETL and for BI with assignments for each project…” está certa: reservas separadas isolam as cargas, e o idle slot sharing deixa uma reserva usar a capacidade ociosa da outra, evitando desperdício. “Move dashboards to on-demand and leave ETL in the reservation with no change” erra: pode ajudar, mas muda o modelo de custo dos dashboards e não resolve o desenho; o enunciado pede isolamento dentro de capacidade reservada. “Ask analysts to run dashboards later in the day” erra: depende de comportamento humano e não isola. “Convert all ETL jobs to interactive priority” erra: prioridade interativa não cria isolamento e aumenta a competição por slots."
   },
   {
    "id": "d19q5",
@@ -2260,7 +2260,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: com compressão alta, o armazenamento físico cobra os bytes compactados e tende a custar menos, e como no modelo físico time travel e fail-safe são cobrados, reduzir a janela de time travel para o mínimo de 2 dias diminui a conta. C erra: o fail-safe é fixo em 7 dias e não é configurável. D erra: BI Engine acelera consultas e não reduz armazenamento. E erra: externalizar muda o desempenho e os recursos e não é uma otimização equivalente, além de a pergunta tratar de armazenamento do BigQuery."
+   "x": "As opções “Switch the dataset to the physical storage billing model” e “Reduce the time travel window to 2 days, because physical billing charges for time travel…” estão corretas: com compressão alta, o armazenamento físico cobra os bytes compactados e tende a custar menos, e como no modelo físico time travel e fail-safe são cobrados, reduzir a janela de time travel para o mínimo de 2 dias diminui a conta. “Reduce the fail-safe period to 1 day” erra: o fail-safe é fixo em 7 dias e não é configurável. “Enable BI Engine on the dataset” erra: BI Engine acelera consultas e não reduz armazenamento. “Convert the tables to external tables in a regional Cloud Storage bucket without any…” erra: externalizar muda o desempenho e os recursos e não é uma otimização equivalente, além de a pergunta tratar de armazenamento do BigQuery."
   },
   {
    "id": "d19q6",
@@ -2276,7 +2276,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: consultas batch esperam capacidade ociosa, não contam para o limite de concorrência e têm o mesmo preço, ideal para trabalho que tolera espera. B erra: bytes máximos cobrados é um limite de custo por consulta, não afeta prioridade nem concorrência. C erra: projetos novos não resolvem a contenção de slots e criam sobrecarga administrativa. D erra: LIMIT não reduz os bytes lidos nem a concorrência."
+   "x": "A opção “Run the reports as batch priority queries” está certa: consultas batch esperam capacidade ociosa, não contam para o limite de concorrência e têm o mesmo preço, ideal para trabalho que tolera espera. “Increase the maximum bytes billed on each report” erra: bytes máximos cobrados é um limite de custo por consulta, não afeta prioridade nem concorrência. “Create a new project for every report” erra: projetos novos não resolvem a contenção de slots e criam sobrecarga administrativa. “Add LIMIT clauses to the report queries” erra: LIMIT não reduz os bytes lidos nem a concorrência."
   },
   {
    "id": "d19q7",
@@ -2294,7 +2294,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: maximum bytes billed faz o job falhar sem custo se ultrapassar o valor, e a cota customizada limita os bytes processados por dia no projeto como teto rígido. C erra: budgets apenas alertam e não interrompem o uso. D erra: armazenamento de longo prazo reduz o preço de armazenamento, não de consultas. E erra: LIMIT não reduz os bytes lidos."
+   "x": "As opções “Set maximum bytes billed on queries (job-level limit)” e “Configure a custom quota for query usage per day on the project” estão corretas: maximum bytes billed faz o job falhar sem custo se ultrapassar o valor, e a cota customizada limita os bytes processados por dia no projeto como teto rígido. “Create a Cloud Billing budget with alerts at 100 percent” erra: budgets apenas alertam e não interrompem o uso. “Move the tables to long-term storage” erra: armazenamento de longo prazo reduz o preço de armazenamento, não de consultas. “Add a LIMIT 100 to every query” erra: LIMIT não reduz os bytes lidos."
   },
   {
    "id": "d19q8",
@@ -2310,7 +2310,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: budgets do Cloud Billing definem um valor e regras de limite que notificam por e-mail ou Pub/Sub ao cruzar percentuais. A erra: cota customizada limita o uso de um serviço, não alerta sobre gasto geral. C erra: o máximo de slots limita capacidade de uma reserva e não notifica gasto. D erra: um sink de logs exporta logs e não monitora custo."
+   "x": "A opção “A Cloud Billing budget with threshold alert rules” está certa: budgets do Cloud Billing definem um valor e regras de limite que notificam por e-mail ou Pub/Sub ao cruzar percentuais. “A BigQuery custom quota” erra: cota customizada limita o uso de um serviço, não alerta sobre gasto geral. “A BigQuery reservation with a maximum slot count” erra: o máximo de slots limita capacidade de uma reserva e não notifica gasto. “A log sink to Cloud Storage” erra: um sink de logs exporta logs e não monitora custo."
   },
   {
    "id": "d19q9",
@@ -2326,7 +2326,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: com os dados no Cloud Storage, o cluster vira descartável e você paga só durante as 2 horas, e workers preemptíveis reduzem ainda mais; Serverless elimina o cluster. A erra: redimensionar manualmente é trabalho operacional e o cluster segue existindo. C erra: máquinas maiores aumentam o custo do cluster ocioso. D erra: desativar autoscaling não reduz custo e mantém o cluster ocioso."
+   "x": "A opção “Move the data to Cloud Storage and run the job on an ephemeral cluster (or Serverless…” está certa: com os dados no Cloud Storage, o cluster vira descartável e você paga só durante as 2 horas, e workers preemptíveis reduzem ainda mais; Serverless elimina o cluster. “Keep the persistent cluster and resize it manually every evening” erra: redimensionar manualmente é trabalho operacional e o cluster segue existindo. “Use a larger machine type for the persistent cluster so the job finishes faster” erra: máquinas maiores aumentam o custo do cluster ocioso. “Keep the cluster but disable autoscaling” erra: desativar autoscaling não reduz custo e mantém o cluster ocioso."
   },
   {
    "id": "d19q10",
@@ -2342,7 +2342,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: FlexRS é para pipelines batch tolerantes a atraso e reduz o custo usando VMs preemptíveis e regulares e agendando o início em até 6 horas. A erra: Streaming Engine é para pipelines de streaming. B erra: máquinas maiores aumentam o custo por hora e não reduzem custo total necessariamente. D erra: o pipeline é batch, e a solução de custo para batch tolerante a atraso é o FlexRS."
+   "x": "A opção “FlexRS (Flexible Resource Scheduling)” está certa: FlexRS é para pipelines batch tolerantes a atraso e reduz o custo usando VMs preemptíveis e regulares e agendando o início em até 6 horas. “Streaming Engine” erra: Streaming Engine é para pipelines de streaming. “A larger worker machine type” erra: máquinas maiores aumentam o custo por hora e não reduzem custo total necessariamente. “Dataflow Prime on a streaming job” erra: o pipeline é batch, e a solução de custo para batch tolerante a atraso é o FlexRS."
   }
  ],
  "lab": {
@@ -2745,7 +2745,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: a idade da marca d'água (data freshness) mede o atraso do dado mais recente processado em relação ao tempo do evento, exatamente o requisito de 5 minutos. A erra: o número de workers é uma causa ou resposta de autoscaling, não o sintoma de atraso percebido. C erra: slots do BigQuery não medem a latência do pipeline Dataflow. D erra: tamanho de bucket não indica atraso de processamento."
+   "x": "A opção “The Dataflow data freshness (watermark age) metric” está certa: a idade da marca d'água (data freshness) mede o atraso do dado mais recente processado em relação ao tempo do evento, exatamente o requisito de 5 minutos. “The number of Dataflow workers” erra: o número de workers é uma causa ou resposta de autoscaling, não o sintoma de atraso percebido. “The BigQuery slot utilization of the project” erra: slots do BigQuery não medem a latência do pipeline Dataflow. “The Cloud Storage bucket size” erra: tamanho de bucket não indica atraso de processamento."
   },
   {
    "id": "d20q2",
@@ -2761,7 +2761,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: a idade da mensagem mais antiga sem ack cresce quando o consumidor trava, e um alerta com limiar e duração a detecta rapidamente. A erra: logs de administração registram mudanças de configuração, não o atraso de consumo. C erra: budget alerta sobre gasto, não sobre atraso. D erra: aumentar a retenção apenas guarda mais mensagens e não avisa de nada."
+   "x": "A opção “A Cloud Monitoring alerting policy on the subscription oldest unacked message age” está certa: a idade da mensagem mais antiga sem ack cresce quando o consumidor trava, e um alerta com limiar e duração a detecta rapidamente. “A log sink that exports Pub/Sub admin logs to BigQuery” erra: logs de administração registram mudanças de configuração, não o atraso de consumo. “A budget alert on the Pub/Sub topic” erra: budget alerta sobre gasto, não sobre atraso. “A larger retention period on the topic” erra: aumentar a retenção apenas guarda mais mensagens e não avisa de nada."
   },
   {
    "id": "d20q3",
@@ -2777,7 +2777,7 @@
    "c": [
     0
    ],
-   "x": "A está certa: um alerta no Cloud Monitoring sobre falhas de execução de DAG (ou alerta baseado em log) com canal de notificação para a ferramenta de plantão avisa em minutos e quase sem código. B erra: mais workers melhoram capacidade, não notificam falhas. C erra: revisão semanal é o oposto de notificação rápida. D erra: desativar retries piora a confiabilidade e não notifica ninguém."
+   "x": "A opção “Create a Cloud Monitoring alerting policy on Composer DAG run failures (or a log-based…” está certa: um alerta no Cloud Monitoring sobre falhas de execução de DAG (ou alerta baseado em log) com canal de notificação para a ferramenta de plantão avisa em minutos e quase sem código. “Increase the number of Airflow workers” erra: mais workers melhoram capacidade, não notificam falhas. “Export the Composer logs to Cloud Storage and review them weekly” erra: revisão semanal é o oposto de notificação rápida. “Disable retries on all tasks” erra: desativar retries piora a confiabilidade e não notifica ninguém."
   },
   {
    "id": "d20q4",
@@ -2793,7 +2793,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: o sink roteia os logs filtrados para o BigQuery, onde há retenção configurável e análise em SQL; a identidade de escrita do sink precisa de permissão de escrita no dataset. A erra: o bucket _Default retém por 30 dias por padrão e não permite análise em SQL por si só. C erra: imprimir e arquivar não é analisável nem escalável. D erra: Pub/Sub não é armazenamento de longo prazo e guardar em memória perde os dados."
+   "x": "A opção “Create a log sink with a filter for the relevant errors that routes to a BigQuery…” está certa: o sink roteia os logs filtrados para o BigQuery, onde há retenção configurável e análise em SQL; a identidade de escrita do sink precisa de permissão de escrita no dataset. “Leave logs in the _Default bucket and increase nothing” erra: o bucket _Default retém por 30 dias por padrão e não permite análise em SQL por si só. “Print the logs and archive them” erra: imprimir e arquivar não é analisável nem escalável. “Create a Pub/Sub topic and store the messages in memory” erra: Pub/Sub não é armazenamento de longo prazo e guardar em memória perde os dados."
   },
   {
    "id": "d20q5",
@@ -2809,7 +2809,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: o ORDER BY global força o resultado completo a passar por um único stage de ordenação que estoura memória, e mais slots não aumentam essa memória; remover a ordenação, usar LIMIT ou ordenar só o resultado final reduzido resolve. A erra: prioridade batch muda quando executa, não quanto de memória cada stage usa. C erra: o modelo de cobrança de armazenamento não afeta recursos de execução. D erra: uma materialized view sobre a tabela inteira não elimina a ordenação do resultado completo."
+   "x": "A opção “Remove the unnecessary global ORDER BY (or apply LIMIT, or sort only the final small…” está certa: o ORDER BY global força o resultado completo a passar por um único stage de ordenação que estoura memória, e mais slots não aumentam essa memória; remover a ordenação, usar LIMIT ou ordenar só o resultado final reduzido resolve. “Increase the query priority to batch” erra: prioridade batch muda quando executa, não quanto de memória cada stage usa. “Switch the table to physical storage billing” erra: o modelo de cobrança de armazenamento não afeta recursos de execução. “Add a materialized view over the whole table” erra: uma materialized view sobre a tabela inteira não elimina a ordenação do resultado completo."
   },
   {
    "id": "d20q6",
@@ -2827,7 +2827,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: adicionar a coluna NULLABLE acomoda o campo novo sem quebrar os dados antigos, e o dead-letter isola os registros inválidos sem parar o fluxo e sem perdê-los. C erra: recriar a tabela perde histórico e não resolve o desencontro de schema. D erra: descartar sem registrar perde dados silenciosamente. E erra: parar a origem interrompe o negócio e não corrige o pipeline."
+   "x": "As opções “Add the new field to the destination table schema as a NULLABLE column” e “Route rows that fail validation to a dead-letter table or topic for later analysis…” estão corretas: adicionar a coluna NULLABLE acomoda o campo novo sem quebrar os dados antigos, e o dead-letter isola os registros inválidos sem parar o fluxo e sem perdê-los. “Delete the destination table and recreate it every night” erra: recriar a tabela perde histórico e não resolve o desencontro de schema. “Drop all rows that contain unknown fields without recording them” erra: descartar sem registrar perde dados silenciosamente. “Turn off the upstream system until the schema is stable” erra: parar a origem interrompe o negócio e não corrige o pipeline."
   },
   {
    "id": "d20q7",
@@ -2843,7 +2843,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: fanout ou salting distribui o trabalho da chave quente em vários workers e combina os resultados parciais depois. A erra: máquinas maiores não eliminam o fato de uma só chave ir para um só worker. C erra: mais workers ficam ociosos, pois a chave quente continua sendo processada em um único lugar. D erra: o modo de execução não muda a concentração de dados na chave."
+   "x": "A opção “Use Combine with fanout or salt the key and aggregate in two stages so the work…” está certa: fanout ou salting distribui o trabalho da chave quente em vários workers e combina os resultados parciais depois. “Use a larger machine type for every worker” erra: máquinas maiores não eliminam o fato de uma só chave ir para um só worker. “Increase the maximum number of workers only” erra: mais workers ficam ociosos, pois a chave quente continua sendo processada em um único lugar. “Convert the pipeline to a streaming pipeline” erra: o modo de execução não muda a concentração de dados na chave."
   },
   {
    "id": "d20q8",
@@ -2859,7 +2859,7 @@
    "c": [
     2
    ],
-   "x": "C está certa: 429 e 503 são transitórios; backoff exponencial com jitter evita sobrecarregar o serviço e o dead-letter guarda o que esgotou as tentativas. A erra: retry imediato em laço agrava a sobrecarga e pode piorar o 429. B erra: ignorar perde enriquecimento silenciosamente. D erra: timeout longo não resolve limite de taxa nem indisponibilidade, e sem retry a falha continua."
+   "x": "A opção “Retry with exponential backoff and jitter, with a maximum number of attempts, and send…” está certa: 429 e 503 são transitórios; backoff exponencial com jitter evita sobrecarregar o serviço e o dead-letter guarda o que esgotou as tentativas. “Retry immediately in a tight loop until the call succeeds” erra: retry imediato em laço agrava a sobrecarga e pode piorar o 429. “Ignore failed calls and continue without enrichment” erra: ignorar perde enriquecimento silenciosamente. “Increase the API client timeout to 10 minutes and do not retry” erra: timeout longo não resolve limite de taxa nem indisponibilidade, e sem retry a falha continua."
   },
   {
    "id": "d20q9",
@@ -2875,7 +2875,7 @@
    "c": [
     1
    ],
-   "x": "B está certa: com escrita idempotente por chave única (MERGE por event_id), reprocessar ou reentregar não gera duplicatas, o que é necessário em sistemas com entrega pelo menos uma vez. A erra: reduzir o prazo de ack provoca mais reentregas, não menos. C erra: mudar a frequência não resolve duplicatas. D erra: reinícios acontecem mesmo com mais workers; é preciso tolerá-los, não evitá-los."
+   "x": "A opção “Make the write idempotent by deduplicating on a unique event_id, for example with a MERGE…” está certa: com escrita idempotente por chave única (MERGE por event_id), reprocessar ou reentregar não gera duplicatas, o que é necessário em sistemas com entrega pelo menos uma vez. “Reduce the Pub/Sub ack deadline to avoid redelivery” erra: reduzir o prazo de ack provoca mais reentregas, não menos. “Run the pipeline only once a month” erra: mudar a frequência não resolve duplicatas. “Add more workers to avoid restarts” erra: reinícios acontecem mesmo com mais workers; é preciso tolerá-los, não evitá-los."
   },
   {
    "id": "d20q10",
@@ -2893,7 +2893,7 @@
     0,
     1
    ],
-   "x": "A e B corretas: corrigir a lógica e reprocessar a camada bruta de forma idempotente recompõe os dados certos, e time travel ou snapshot devolve a tabela ao estado anterior à carga defeituosa (dentro da janela). C erra: apagar o arquivo bruto elimina a única fonte de reprocessamento. D erra: ignorar valores errados compromete as decisões. E erra: mensagens confirmadas não são retidas para sempre; o Pub/Sub tem retenção limitada e a reentrega depende de seek dentro desse limite."
+   "x": "As opções “Fix the transformation and reprocess the archived raw events with an idempotent job” e “Restore the table to its state before the bad deployment using time travel or a snapshot…” estão corretas: corrigir a lógica e reprocessar a camada bruta de forma idempotente recompõe os dados certos, e time travel ou snapshot devolve a tabela ao estado anterior à carga defeituosa (dentro da janela). “Delete the raw archive to save cost” erra: apagar o arquivo bruto elimina a única fonte de reprocessamento. “Ask users to ignore the wrong values” erra: ignorar valores errados compromete as decisões. “Rely on the Pub/Sub topic alone, because acknowledged messages are always retained forever” erra: mensagens confirmadas não são retidas para sempre; o Pub/Sub tem retenção limitada e a reentrega depende de seek dentro desse limite."
   }
  ]
 };

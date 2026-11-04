@@ -245,6 +245,14 @@
     return { ativo: true, hoje: e.hoje, pct: e.pct, completas: e.completas, total: e.total, projetosOk: e.projetosOk, iniciado: e.passos > 0, proximo: e.prox ? e.prox.titulo : null };
   }
 
+  /* ---------- Espanhol A1→A2 (plano em assets/esp.js; dados em esp/main) ---------- */
+  function esp(d, hoje) {
+    var P = root.CP_ESP, doc = d.esp || {};
+    if (!P) return { ativo: false, hoje: 0, pct: 0, completas: 0, total: 0, iniciado: false, proximo: null };
+    var e = P.estado(doc, hoje);
+    return { ativo: true, hoje: e.hoje, pct: e.pct, completas: e.completas, total: e.total, iniciado: e.passos > 0, proximo: e.prox ? e.prox.titulo : null };
+  }
+
   /* ---------- Foco do dia e anotações rápidas ---------- */
   // foco: um documento por dia {date, texto, passo, feito, dispensado}. "Hoje não" não conta contra ninguém: só esconde o cartão.
   function foco(d, hoje) {
@@ -330,12 +338,12 @@
   }
 
   function coisasHoje(p) {
-    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0) + (p.foco.feito ? 1 : 0) + (p.cert.hoje > 0 ? 1 : 0) + (p.pdi.hoje > 0 ? 1 : 0) + (p.plat.hoje > 0 ? 1 : 0);
+    return p.treino.hoje + p.habitos.feitosHoje + p.rota.hoje + (p.grimorio.hoje ? 1 : 0) + p.plano.hoje + p.desafios.hoje + (p.refeicoes.hoje > 0 ? 1 : 0) + (p.agua.hoje > 0 ? 1 : 0) + (p.foco.feito ? 1 : 0) + (p.cert.hoje > 0 ? 1 : 0) + (p.pdi.hoje > 0 ? 1 : 0) + (p.plat.hoje > 0 ? 1 : 0) + (p.esp.hoje > 0 ? 1 : 0);
   }
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), cert: cert(d, hoje), pdi: pdi(d, hoje), ingles: ingles(d, hoje), plat: plat(d, hoje), ausencia: ausencia(d, hoje) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), cert: cert(d, hoje), pdi: pdi(d, hoje), ingles: ingles(d, hoje), plat: plat(d, hoje), esp: esp(d, hoje), ausencia: ausencia(d, hoje) };
     p.metas = metas(p, d); p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
@@ -359,6 +367,7 @@
     if (p.pdi.ativo && !p.pdi.encerrado) o.push(m('vida', 'pdi', 'Estudo do PDI', p.pdi.pct, 100, 'pdi.html', p.pdi.pct + '%'));
     if (p.ingles.ativo && !p.ingles.encerrado) o.push(m('vida', 'ingles', 'Prática de inglês', p.ingles.pct, 100, 'ingles.html', p.ingles.pct + '%'));
     if (p.plat.ativo && p.plat.iniciado) o.push(m('vida', 'plat', 'Plataformas de dados', p.plat.pct, 100, 'plataformas.html', p.plat.pct + '%'));
+    if (p.esp.ativo && p.esp.iniciado) o.push(m('vida', 'esp', 'Espanhol', p.esp.pct, 100, 'espanhol.html', p.esp.pct + '%'));
     return { saude: s, vida: o };
   }
 

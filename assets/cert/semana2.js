@@ -175,7 +175,7 @@ C.dias[8] = {
       e: 'A bug in a streaming consumer wrote incorrect values for the past 5 hours. All messages were acknowledged. The subscription was created with default settings. Which statement is correct about replaying the data?',
       o: ['Seek to a timestamp cannot redeliver acknowledged messages under any configuration.', 'You can seek back only if acknowledged messages are retained, for example with retain acknowledged messages enabled on the subscription, or topic retention.', 'You must recreate the topic and republish from the source.', 'Dead-letter topics automatically store all acknowledged messages for replay.'],
       c: [1],
-      x: 'Seek para timestamp reentrega mensagens já confirmadas, mas somente se elas ainda estiverem retidas: com a opção de reter mensagens confirmadas na assinatura (ou retenção no tópico). Na configuração padrão isso não está ativo, então é preciso planejar antes do incidente. A primeira alternativa é falsa, pois seek é justamente o mecanismo de replay. Recriar o tópico não recupera nada. Dead-letter guarda apenas mensagens que excederam tentativas de entrega, não as confirmadas.'
+      x: 'Seek para timestamp reentrega mensagens já confirmadas, mas somente se elas ainda estiverem retidas: com a opção de reter mensagens confirmadas na assinatura (ou retenção no tópico). Na configuração padrão isso não está ativo, então é preciso planejar antes do incidente. A afirmação de que seek não reentrega mensagens confirmadas é falsa, pois seek é justamente o mecanismo de replay. Recriar o tópico não recupera nada. Dead-letter guarda apenas mensagens que excederam tentativas de entrega, não as confirmadas.'
     },
     {
       id: 'd8q5', s: 2, t: '2.2',

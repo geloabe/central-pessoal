@@ -233,7 +233,7 @@
           "Open TCP port 12345 between the workers"
         ],
         c: [0],
-        x: "A está certa: sem IP externo, os workers só alcançam a VPC, e o Private Google Access, ligado por sub-rede, libera as APIs do Google (Pub/Sub e BigQuery). B erra: funcionaria, mas quebra o requisito de não ter IP externo. C erra: peering liga redes por IP interno e não dá acesso às APIs do Google. D erra: a porta 12345 é tráfego entre workers, não o caminho até as APIs, e nem é necessária com Streaming Engine."
+        x: "A opção “Enable Private Google Access on the subnet used by the workers” está certa: sem IP externo, os workers só alcançam a VPC, e o Private Google Access, ligado por sub-rede, libera as APIs do Google (Pub/Sub e BigQuery). “Assign an external IP address to every worker” erra: funcionaria, mas quebra o requisito de não ter IP externo. “Create a VPC peering connection with the default network” erra: peering liga redes por IP interno e não dá acesso às APIs do Google. “Open TCP port 12345 between the workers” erra: a porta 12345 é tráfego entre workers, não o caminho até as APIs, e nem é necessária com Streaming Engine."
       },
       {
         id: "d24q2", s: 2, t: "2.1",
@@ -245,7 +245,7 @@
           "Move the job to a different region"
         ],
         c: [0],
-        x: "A está certa: em batch, os workers trocam dados pela porta TCP 12346, e a regra de ingress deve permitir esse tráfego entre eles, usando a tag dataflow ou a tag própria. B erra: 12345 é de streaming e abrir para a internet é inseguro e desnecessário. C erra: o NAT dá saída para a internet, e o problema é a comunicação interna. D erra: a região não causa o bloqueio por firewall."
+        x: "A opção “Create a firewall rule allowing TCP 12346 between the worker VMs using the worker network…” está certa: em batch, os workers trocam dados pela porta TCP 12346, e a regra de ingress deve permitir esse tráfego entre eles, usando a tag dataflow ou a tag própria. “Create a firewall rule allowing TCP 12345 from the internet to the workers” erra: 12345 é de streaming e abrir para a internet é inseguro e desnecessário. “Deploy a Cloud NAT gateway in the region” erra: o NAT dá saída para a internet, e o problema é a comunicação interna. “Move the job to a different region” erra: a região não causa o bloqueio por firewall."
       },
       {
         id: "d24q3", s: 2, t: "2.1",
@@ -257,7 +257,7 @@
           "Enable Private Google Access in project A"
         ],
         c: [0],
-        x: "A está certa: o peering não é transitivo, então A só alcança C com um peering direto entre eles (outra saída seria colocar os projetos numa Shared VPC). B erra: o problema é de rota e de peering, não de porta, e o tráfego nem atravessa B. C erra: NAT serve para saída à internet, não para rotas entre VPCs. D erra: PGA só dá acesso às APIs do Google."
+        x: "A opção “Create a direct VPC peering connection between the VPC of project A and the VPC…” está certa: o peering não é transitivo, então A só alcança C com um peering direto entre eles (outra saída seria colocar os projetos numa Shared VPC). “Add a firewall rule in project B allowing all traffic from project A” erra: o problema é de rota e de peering, não de porta, e o tráfego nem atravessa B. “Deploy Cloud NAT in project B” erra: NAT serve para saída à internet, não para rotas entre VPCs. “Enable Private Google Access in project A” erra: PGA só dá acesso às APIs do Google."
       },
       {
         id: "d24q4", s: 2, t: "2.1",
@@ -269,7 +269,7 @@
           "Add network tags to the workers"
         ],
         c: [0],
-        x: "A está certa: o acesso privado antigo (private services access) conecta de uma única VPC, e o Private Service Connect permite conectar de várias redes, mantendo só IP interno (a Shared VPC entre os projetos também resolveria). B erra: expõe o banco à internet e quebra o requisito. C erra: NAT é para saída à internet, não para chegar a um banco privado. D erra: tags só escolhem alvos de firewall e não criam rota."
+        x: "A opção “Create a Private Service Connect endpoint in the VPC of project A that connects…” está certa: o acesso privado antigo (private services access) conecta de uma única VPC, e o Private Service Connect permite conectar de várias redes, mantendo só IP interno (a Shared VPC entre os projetos também resolveria). “Assign a public IP to the instance and authorize 0.0.0.0/0” erra: expõe o banco à internet e quebra o requisito. “Deploy Cloud NAT in project A” erra: NAT é para saída à internet, não para chegar a um banco privado. “Add network tags to the workers” erra: tags só escolhem alvos de firewall e não criam rota."
       },
       {
         id: "d24q5", s: 1, t: "1.4",
@@ -281,7 +281,7 @@
           "Public internet with TLS"
         ],
         c: [0],
-        x: "A está certa: o Interconnect liga o datacenter à rede do Google sem usar a internet pública, com banda alta, latência estável e previsível. B erra: a HA VPN passa pela internet pública, e cada túnel suporta cerca de 1 a 3 Gbps. C erra: o Transfer Appliance é um envio físico para carga única, não para fluxo diário contínuo. D erra: usa a internet pública, justamente o que o requisito proíbe, e sem garantia de latência."
+        x: "A opção “Dedicated or Partner Cloud Interconnect” está certa: o Interconnect liga o datacenter à rede do Google sem usar a internet pública, com banda alta, latência estável e previsível. “HA VPN with two tunnels” erra: a HA VPN passa pela internet pública, e cada túnel suporta cerca de 1 a 3 Gbps. “Transfer Appliance” erra: o Transfer Appliance é um envio físico para carga única, não para fluxo diário contínuo. “Public internet with TLS” erra: usa a internet pública, justamente o que o requisito proíbe, e sem garantia de latência."
       },
       {
         id: "d24q6", s: 1, t: "1.1",
@@ -293,7 +293,7 @@
           "Remove the BigQuery Data Viewer role from the engineer"
         ],
         c: [0],
-        x: "A está certa: o perímetro do VPC Service Controls barra a cópia de dados por APIs para fora dele, mesmo com credencial válida. B erra: o firewall controla pacotes entre máquinas, e a exportação é uma chamada de API do Google. C erra: CMEK criptografa em repouso, mas quem tem permissão lê e exporta normalmente. D erra: remover o papel tira o acesso legítimo e não trata exfiltração por quem precisa dele."
+        x: "A opção “A VPC Service Controls perimeter around the projects and services holding the data” está certa: o perímetro do VPC Service Controls barra a cópia de dados por APIs para fora dele, mesmo com credencial válida. “A VPC firewall egress deny rule for all VMs” erra: o firewall controla pacotes entre máquinas, e a exportação é uma chamada de API do Google. “Customer-managed encryption keys on the source tables” erra: CMEK criptografa em repouso, mas quem tem permissão lê e exporta normalmente. “Remove the BigQuery Data Viewer role from the engineer” erra: remover o papel tira o acesso legítimo e não trata exfiltração por quem precisa dele."
       },
       {
         id: "d24q7", s: 1, t: "1.1",
@@ -306,7 +306,7 @@
           "Place the bucket inside a VPC Service Controls perimeter and keep the old key"
         ],
         c: [0, 1],
-        x: "A e B estão certas: primeiro nova versão primária e reencriptação (ou novo recurso com a nova chave), depois validação e só então desabilitar ou destruir a antiga. C erra: a decifragem precisa da versão antiga, e destruir antes de reencriptar causa perda de dados. D erra: a rotação não reencripta os dados já gravados, que continuam sob a chave comprometida. E erra: o perímetro protege contra exfiltração por API e não troca a chave exposta."
+        x: "As opções “Create a new primary key version and re-encrypt the data with it” e “After validating the re-encrypted data, disable or schedule destruction…” estão certas: primeiro nova versão primária e reencriptação (ou novo recurso com a nova chave), depois validação e só então desabilitar ou destruir a antiga. “Schedule destruction of the compromised key version immediately, before copying any data” erra: a decifragem precisa da versão antiga, e destruir antes de reencriptar causa perda de dados. “Enable automatic rotation and keep the existing data as it is” erra: a rotação não reencripta os dados já gravados, que continuam sob a chave comprometida. “Place the bucket inside a VPC Service Controls perimeter and keep the old key” erra: o perímetro protege contra exfiltração por API e não troca a chave exposta."
       },
       {
         id: "d24q8", s: 1, t: "1.1",
@@ -318,7 +318,7 @@
           "Grant Editor on the organization to the engineer who launches the job"
         ],
         c: [0],
-        x: "A está certa: a conta de serviço dos workers precisa de escrita só no dataset de B e de permissão para criar jobs no projeto onde eles rodam, que é o A. B erra: Owner do projeto é amplo demais. C erra: chave no código é risco de vazamento, e contas de serviço devem ser usadas sem exportar chaves. D erra: Editor na organização viola o menor privilégio e nem é a identidade que o job usa."
+        x: "A opção “Grant the job's worker service account write access on the target dataset in project B…” está certa: a conta de serviço dos workers precisa de escrita só no dataset de B e de permissão para criar jobs no projeto onde eles rodam, que é o A. “Grant the worker service account the Owner role on project B” erra: Owner do projeto é amplo demais. “Create a service account key and store it in the pipeline code” erra: chave no código é risco de vazamento, e contas de serviço devem ser usadas sem exportar chaves. “Grant Editor on the organization to the engineer who launches the job” erra: Editor na organização viola o menor privilégio e nem é a identidade que o job usa."
       },
       {
         id: "d24q9", s: 2, t: "2.1",
@@ -330,7 +330,7 @@
           "A Cloud Interconnect attachment between Datastream and Cloud SQL"
         ],
         c: [0],
-        x: "A está certa: a conectividade privada do Datastream usa peering com uma faixa /29 livre, e, para um Cloud SQL, a documentação pede um proxy reverso (VM que repassa a porta). B erra: expõe o banco com IP público, contra o requisito. C erra: NAT serve para saída à internet de máquinas, não cria rota privada para o banco. D erra: Interconnect liga redes locais ao Google, e não é a forma de ligar o Datastream a um banco na nuvem."
+        x: "A opção “A private connectivity configuration with a free /29 range, plus a reverse proxy VM…” está certa: a conectividade privada do Datastream usa peering com uma faixa /29 livre, e, para um Cloud SQL, a documentação pede um proxy reverso (VM que repassa a porta). “Allowlist the Datastream public IP addresses on the instance and enable a public IP” erra: expõe o banco com IP público, contra o requisito. “Cloud NAT in the Datastream project” erra: NAT serve para saída à internet de máquinas, não cria rota privada para o banco. “A Cloud Interconnect attachment between Datastream and Cloud SQL” erra: Interconnect liga redes locais ao Google, e não é a forma de ligar o Datastream a um banco na nuvem."
       },
       {
         id: "d24q10", s: 1, t: "1.1",
@@ -342,7 +342,7 @@
           "Add a VPC Service Controls perimeter around the folder"
         ],
         c: [0],
-        x: "A está certa: a IAM deny policy na pasta é herdada por cada projeto da pasta, é avaliada antes das permissões concedidas e nega a ação apesar do papel Editor. B erra: o papel foi concedido na pasta, e não se retira no projeto um papel herdado. C erra: política de permissão só soma acesso e não anula um papel herdado. D erra: o perímetro controla saída de dados por API, não impede um usuário autorizado de apagar um dataset."
+        x: "A opção “Create an IAM deny policy on the folder denying the dataset deletion permission…” está certa: a IAM deny policy na pasta é herdada por cada projeto da pasta, é avaliada antes das permissões concedidas e nega a ação apesar do papel Editor. “Remove the Editor role at the project level for each project” erra: o papel foi concedido na pasta, e não se retira no projeto um papel herdado. “Create an allow policy at the dataset level without delete permissions” erra: política de permissão só soma acesso e não anula um papel herdado. “Add a VPC Service Controls perimeter around the folder” erra: o perímetro controla saída de dados por API, não impede um usuário autorizado de apagar um dataset."
       },
       {
         id: "d24q11", s: 2, t: "2.1",
@@ -355,7 +355,7 @@
           "Allow ingress TCP 443 from 0.0.0.0/0 to the cluster VMs"
         ],
         c: [0, 1],
-        x: "A e B estão certas: o Cloud NAT dá saída à internet sem IP externo, e uma imagem customizada ou dependências no Cloud Storage dispensam a internet. C erra: o Private Google Access alcança as APIs do Google, não repositórios públicos (e o Dataproc já o liga na sub-rede). D erra: peering liga redes e não dá saída à internet. E erra: é regra de entrada, e o problema é de saída, além de expor o cluster."
+        x: "As opções “Create a Cloud NAT gateway for the cluster subnet region” e “Build a custom image with the libraries or stage them in Cloud Storage” estão certas: o Cloud NAT dá saída à internet sem IP externo, e uma imagem customizada ou dependências no Cloud Storage dispensam a internet. “Enable Private Google Access on the subnet” erra: o Private Google Access alcança as APIs do Google, não repositórios públicos (e o Dataproc já o liga na sub-rede). “Create VPC peering with the default network” erra: peering liga redes e não dá saída à internet. “Allow ingress TCP 443 from 0.0.0.0/0 to the cluster VMs” erra: é regra de entrada, e o problema é de saída, além de expor o cluster."
       },
       {
         id: "d24q12", s: 1, t: "1.1",
@@ -367,7 +367,7 @@
           "Move the table into a VPC Service Controls perimeter"
         ],
         c: [0],
-        x: "A está certa: o Masked Reader mostra o valor mascarado e o Fine-Grained Reader mostra o original, ambos ligados à tag e à política de dados da coluna. B erra: Fine-Grained Reader para qualquer pessoa mostra o valor original aos analistas. C erra: o papel de administrador é amplo e não cria mascaramento para os analistas. D erra: o perímetro controla saída por API, não o que cada usuário vê numa coluna."
+        x: "A opção “Grant the Masked Reader role to the analysts and the Fine-Grained Reader role…” está certa: o Masked Reader mostra o valor mascarado e o Fine-Grained Reader mostra o original, ambos ligados à tag e à política de dados da coluna. “Grant Fine-Grained Reader to all users and hide the column in a view” erra: Fine-Grained Reader para qualquer pessoa mostra o valor original aos analistas. “Grant BigQuery Admin to the privacy team only” erra: o papel de administrador é amplo e não cria mascaramento para os analistas. “Move the table into a VPC Service Controls perimeter” erra: o perímetro controla saída por API, não o que cada usuário vê numa coluna."
       },
       {
         id: "d24q13", s: 2, t: "2.1",
@@ -379,7 +379,7 @@
           "Use an instance name pattern as the target"
         ],
         c: [0],
-        x: "A está certa: a conta de serviço só muda com permissão específica (Service Account User) e com reinício da VM, e quem só edita a instância não escolhe o alvo da regra. B erra: tags são texto livre, e quem edita a instância as altera. C erra: a regra valeria para tudo, contra o requisito. D erra: o firewall do Google Cloud não escolhe alvos por padrão de nome de instância."
+        x: "A opção “Use a dedicated service account as the target of the rule” está certa: a conta de serviço só muda com permissão específica (Service Account User) e com reinício da VM, e quem só edita a instância não escolhe o alvo da regra. “Use a network tag as the target of the rule” erra: tags são texto livre, e quem edita a instância as altera. “Apply the rule to all instances in the network” erra: a regra valeria para tudo, contra o requisito. “Use an instance name pattern as the target” erra: o firewall do Google Cloud não escolhe alvos por padrão de nome de instância."
       }
     ]
   };

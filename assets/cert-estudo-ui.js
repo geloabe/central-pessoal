@@ -360,17 +360,17 @@
   function abrirLab(n) {
     var d = CONT.dias[n]; if (!d || !d.lab) { alert('Este dia não tem lab.'); return; }
     var L = d.lab, feito = !!(ctx.obter().labs || {})[n];
-    var h = '<div class="mo-tags"><span class="tag">' + ROT('dia', 'Dia').toUpperCase() + ' ' + n + '</span><span class="tag">LAB</span>' + (L.custo.length <= 36 ? '<span class="tag za">CUSTO: ' + esc(L.custo) + '</span>' : '') + (L.tempo ? '<span class="tag">' + esc(L.tempo) + '</span>' : '') + '</div><h1>' + esc(L.t) + '</h1>' + (L.custo.length > 36 ? '<div class="call"><b class="rt">Custo estimado</b>' + fmt(L.custo) + '</div>' : '') + (L.porque ? '<p class="mo-lead">' + fmt(L.porque) + '</p>' : '') + (L.antes ? '<div class="cx"><div class="rotulo" style="margin-bottom:6px">Antes de começar</div>' + par(L.antes) + '</div>' : '');
+    var h = '<div class="mo-tags"><span class="tag">' + ROT('dia', 'Dia').toUpperCase() + ' ' + n + '</span><span class="tag">' + ROT('lab', 'LAB') + '</span>' + (L.custo.length <= 36 ? '<span class="tag za">CUSTO: ' + esc(L.custo) + '</span>' : '') + (L.tempo ? '<span class="tag">' + esc(L.tempo) + '</span>' : '') + '</div><h1>' + esc(L.t) + '</h1>' + (L.custo.length > 36 ? '<div class="call"><b class="rt">Custo estimado</b>' + fmt(L.custo) + '</div>' : '') + (L.porque ? '<p class="mo-lead">' + fmt(L.porque) + '</p>' : '') + (L.antes ? '<div class="cx"><div class="rotulo" style="margin-bottom:6px">Antes de começar</div>' + par(L.antes) + '</div>' : '');
     h += '<h2>Passo a passo</h2>' + L.passos.map(function (p, i) {
       return '<div class="passo" data-p="' + i + '"><div class="n">' + (i + 1) + '</div><div><b>' + esc(p.t) + '</b>' + (p.cmd ? '<pre><code>' + esc(p.cmd) + '</code></pre><button class="cp" data-cp="' + i + '">copiar</button>' : '') + '<p style="margin:6px 0 0">' + fmt(p.p) + '</p></div></div>';
     }).join('');
     h += '<h2>Como saber que funcionou</h2><div class="cx">' + par(L.verificar) + '</div>';
     if (L.erros && L.erros.length) h += '<h2>Se der erro</h2>' + L.erros.map(function (e) { return '<details style="margin-bottom:8px"><summary>' + fmt(e.s) + '</summary><div class="corpo"><p><b>Causa provável:</b> ' + fmt(e.c) + '</p><p><b>Como resolver:</b> ' + fmt(e.r) + '</p></div></details>'; }).join('');
     h += '<h2>' + esc(ROT('limpar', 'Limpar tudo (evita cobrança)')) + '</h2><ul>' + L.limpar.map(function (x) { return /^\s*(gcloud|bq|gsutil|gsutil|rm|kubectl)/.test(x) ? '<li><code>' + esc(x) + '</code></li>' : '<li>' + fmt(x) + '</li>'; }).join('') + '</ul>';
-    h += '<div class="mo-btns"><button class="btn" id="l-ok">' + (feito ? 'Lab concluído ✓' : ROT('labOk', 'Concluí o lab e limpei os recursos')) + '</button></div>';
+    h += '<div class="mo-btns"><button class="btn" id="l-ok">' + (feito ? ROT('labFeito', 'Lab concluído ✓') : ROT('labOk', 'Concluí o lab e limpei os recursos')) + '</button></div>';
     abrir(ROT('dia', 'Dia') + ' ' + n + ' · lab', h);
     modo.querySelectorAll('[data-cp]').forEach(function (b) { b.onclick = function () { try { navigator.clipboard.writeText(L.passos[+b.dataset.cp].cmd); b.textContent = 'copiado ✓'; } catch (e) { b.textContent = 'selecione e copie'; } }; });
-    modo.querySelector('#l-ok').onclick = function () { var C = ctx.obter(), M = Object.assign({}, C.labs || {}); if (!M[n]) { M[n] = iso(ctx.hoje()); C.labs = M; sujo.labs = 1; descarregar(); } this.textContent = 'Lab concluído ✓'; };
+    modo.querySelector('#l-ok').onclick = function () { var C = ctx.obter(), M = Object.assign({}, C.labs || {}); if (!M[n]) { M[n] = iso(ctx.hoje()); C.labs = M; sujo.labs = 1; descarregar(); } this.textContent = ROT('labFeito', 'Lab concluído ✓'); };
   }
 
   root.CP_ESTUDO_UI = {

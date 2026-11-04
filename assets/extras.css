@@ -76,3 +76,6 @@ html[data-modo="escuro"][data-pg="ingles"]:not(#a):not(#b){--m:#7FD0DC;--t-accen
 html[data-pg="plat"]:not(#a):not(#b),.m-plat{--m:#C2561F;--t-accent:#C2561F}
 @media not all{html[data-pg="plat"]:not([data-modo="claro"]):not(#a):not(#b),.m-plat{--m:#F0A27A;--t-accent:#F0A27A}}
 html[data-modo="escuro"][data-pg="plat"]:not(#a):not(#b){--m:#F0A27A;--t-accent:#F0A27A}
+html[data-pg="esp"]:not(#a):not(#b),.m-esp{--m:#C0392B;--t-accent:#C0392B}
+@media not all{html[data-pg="esp"]:not([data-modo="claro"]):not(#a):not(#b),.m-esp{--m:#F08A7E;--t-accent:#F08A7E}}
+html[data-modo="escuro"][data-pg="esp"]:not(#a):not(#b){--m:#F08A7E;--t-accent:#F08A7E}

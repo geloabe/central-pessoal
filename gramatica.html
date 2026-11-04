@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>document.documentElement.dataset.pg="ingles"</script>
+<link rel="stylesheet" href="assets/tema.css">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Gramática do inglês</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:860px;margin:0 auto;padding:16px 16px calc(80px + env(safe-area-inset-bottom))}
+h1{font-size:28px}
+h2{font-size:21px}
+h3{font-size:18px}
+.sub{color:var(--t-muted);margin:4px 0 16px}
+.mini{font-size:13px;color:var(--t-muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:15px;min-height:44px;padding:8px 16px;border-radius:var(--raio);border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+section{display:none}section.on{display:block}
+.barra{height:8px;background:var(--t-line);overflow:hidden;margin:8px 0}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .8s ease-out}@keyframes cresce{from{width:0}}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.stats .big{font:600 26px/1.1 var(--f-titulo);letter-spacing:var(--titulo-tracking);margin-top:6px}
+.stats small{display:block;color:var(--t-muted);font-size:12px;margin-top:2px}
+.resumo{margin-bottom:16px}
+.cartao+.cartao{margin-top:12px}
+.tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em;display:inline-block;margin-right:4px}
+.tag.ok{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.dica{margin-top:12px;padding:10px 12px;border-left:3px solid var(--t-accent2);background:var(--t-realce);font-size:14px}
+.pronto{margin-top:10px;padding:10px 12px;border-left:3px solid var(--t-ok);background:var(--t-realce);font-size:14px}
+.btn{min-height:46px}
+details{border:1px solid var(--t-line);background:var(--t-surface);border-radius:var(--raio);margin-bottom:8px}
+details>summary{min-height:48px;display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"›";color:var(--t-muted);font-size:20px;transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>.corpo{padding:2px 14px 14px}
+details.sem>summary{font:600 17px var(--f-titulo)}
+.lic{padding:12px 0;border-top:1px solid var(--t-line)}
+.lic:first-of-type{border-top:0}
+.lic .nm{font-size:16px;margin:6px 0 4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}
+.chip{font:500 12px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);color:var(--t-muted)}
+.chip.ok{border-color:var(--t-ok);color:var(--t-ink);background:color-mix(in srgb,var(--t-ok) 14%,var(--t-surface))}
+.proximo{margin-top:12px;padding:14px;border:2px solid var(--m);background:color-mix(in srgb,var(--m) 8%,var(--t-surface))}
+.passo-l{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--t-line)}
+.passo-l .n{flex:none;width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--t-borda);font:600 13px var(--f-mono)}
+.passo-l.ok .n{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:96px;min-height:48px;font:600 15px var(--f-texto);border:1px solid var(--t-borda);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+.proj ul{margin:6px 0 0;padding-left:20px;font-size:14px}
+.proj li{margin:4px 0}
+.proj input{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+.proj label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--t-muted);margin-top:10px}
+.sim{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--t-line)}
+.sim .pc{font:600 22px var(--f-titulo);min-width:64px}
+</style>
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
+<link rel="stylesheet" href="assets/mobile.css">
+<script src="assets/rascunho.js" defer></script>
+</head>
+<body class="t">
+<main>
+  <p class="mini" style="margin:0 0 6px"><a href="ingles.html" style="color:inherit">← Inglês</a></p>
+  <h1>Gramática do inglês</h1>
+  <p class="sub">12 aulas curtas de gramática para a fala de carreira: entrevista, conversa técnica, reuniões e negociação. Cada aula tem leitura, cartões de produção, quiz e um treino de fala. Sem calendário: o ritmo é seu (sugestão: 3 aulas por semana).</p>
+  <div id="topo"></div>
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
+    <button role="tab" data-t="trilhas" aria-selected="false">Aulas</button>
+    <button role="tab" data-t="revisar" aria-selected="false">Revisar</button>
+  </nav>
+  <section id="hoje" class="on"></section>
+  <section id="trilhas"></section>
+  <section id="revisar"></section>
+</main>
+
+<script src="assets/progresso.js"></script>
+<script src="assets/gram.js"></script>
+<script src="assets/cert-estudo.js"></script>
+<script src="assets/gram/gram_a.js"></script>
+<script src="assets/gram/gram_b.js"></script>
+<script src="assets/gram/gram_c.js"></script>
+<script src="assets/cert-estudo-ui.js"></script>
+<script>
+(function(){
+'use strict';
+var K=window.CP_GRAM, E=window.CP_ESTUDO, UI=window.CP_ESTUDO_UI, CONT=window.CP_CONTEUDO_ESTUDO||{dias:{}}, ref=null, C={}, escrita=Promise.resolve(), ultimoSalvar=0;
+Object.keys(CONT.dias).forEach(function(n){K.PLANO.DOCS_DIA[n]=CONT.dias[n].fontes||[]}); // fontes de cada aula, mostradas no fim da aula
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function hoje(){return new Date()}
+function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
+function btn(txt,est,n,a,sec){return '<button class="btn'+(sec?' sec':'')+'" data-est="'+est+'" data-n="'+(n||'')+'" data-a="'+(a||'')+'" style="min-height:46px;font-size:15px">'+esc(txt)+'</button>'}
+
+/* Escritas em fila (uma de cada vez): o "update" lê e regrava o documento. */
+function salvar(patch){
+  Object.keys(patch).forEach(function(k){C[k]=patch[k]});
+  ultimoSalvar=Date.now();
+  render();
+  if(!ref)return Promise.resolve();
+  escrita=escrita.then(function(){return ref.update(patch)}).catch(function(e){console.error('falha ao salvar',e)}).then(function(){ultimoSalvar=Date.now()});
+  return escrita;
+}
+
+/* ---------- topo ---------- */
+function topo(e){
+  $('#topo').innerHTML='<div class="cartao resumo"><div class="stats">'+
+    '<div><div class="rotulo">Aulas</div><div class="big">'+e.completas+' de '+e.total+'</div><small>concluídas</small></div>'+
+    '<div><div class="rotulo">Etapas</div><div class="big">'+e.pct+'%</div><small>aula, quiz e treino</small></div>'+
+    '<div><div class="rotulo">Hoje</div><div class="big">'+e.hoje+'</div><small>etapas feitas</small></div></div>'+
+    barra(e.pct)+'<div class="mini">'+K.BLOCOS.map(function(b){return 'Semana '+b.id+' '+e.porBloco[b.id].pct+'%'}).join(' · ')+'</div></div>';
+}
+
+/* ---------- hoje ---------- */
+function passosHtml(n){
+  var pa=E.passosDoDia(C,CONT,n); if(!pa)return '';
+  var d=CONT.dias[n], nc=pa.cartoesTotal, nq=pa.quizTotal;
+  var l=[
+    {ok:pa.aula,t:'Ler a aula',d:'Regra curta, exemplo logo depois e a armadilha de quem pensa em português. ~'+UI.minutosAula(n)+' min.',est:'aula',r:pa.aula?'Reler a aula':'Começar a aula'},
+    {ok:pa.cartoes,t:'Cartões da aula',d:pa.cartoesVistos+' de '+nc+' vistos. Responda em voz alta antes de virar.',est:'cart',r:'Estudar cartões'},
+    {ok:pa.quiz,t:'Quiz (meta 80%)',d:pa.quizPct==null?nq+' questões de escolher, completar e corrigir, com explicação.':'Melhor nota: '+pa.quizPct+'%.',est:'quiz',r:pa.quizPct==null?'Começar o quiz':'Refazer o quiz'}
+  ];
+  if(pa.lab!==null)l.push({ok:pa.lab,t:'Treino de fala',d:'Grave e ouça. '+((d.lab&&d.lab.tempo)||''),est:'lab',r:'Abrir o treino'});
+  return l.map(function(x,i){return '<div class="passo-l'+(x.ok?' ok':'')+'"><div class="n">'+(x.ok?'✓':(i+1))+'</div><div style="flex:1;min-width:0"><b>'+esc(x.t)+'</b><div class="mini">'+esc(x.d)+'</div><div style="margin-top:6px">'+btn(x.r,x.est,n,'',true)+'</div></div></div>'}).join('');
+}
+function hojeSec(e){
+  var h='', px=e.prox;
+  if(!px){h+='<div class="cartao"><h2>Trilha concluída</h2><p>As 12 aulas estão concluídas. Continue com os cartões e as questões que vencem na aba Revisar, e use as estruturas nas gravações do módulo Inglês.</p></div>'}
+  else{
+    var lic=K.licao(px.n), tem=UI.temConteudo(px.n);
+    var passoTxt={aula:'Ler a aula',quiz:'Fazer o quiz (meta 80%)',lab:'Fazer o treino de fala'}[px.passo];
+    h+='<div class="cartao"><div class="row"><span class="tag">SEMANA '+px.bloco+'</span><span class="tag">AULA '+px.ordem+' DE '+K.N_AULAS+'</span></div>'+
+      '<h2 style="margin:8px 0 4px">'+esc(lic.titulo)+'</h2>';
+    if(tem){
+      h+='<div class="proximo"><div class="rotulo">Próximo passo</div><div style="font:600 21px var(--f-titulo);margin:6px 0">'+esc(passoTxt)+'</div><div class="row">'+btn(passoTxt,px.passo,px.n)+'</div></div>'+
+        '<details style="margin-top:12px"><summary>Ver todos os passos desta aula</summary><div class="corpo">'+passosHtml(px.n)+'</div></details>';
+    }else h+='<p class="mini" style="margin:8px 0">O conteúdo desta aula ainda não foi carregado. Recarregue a página.</p>';
+    h+='</div>';
+  }
+  h+='<div class="cartao"><div class="rotulo">Como aprender gramática de verdade</div><ul style="margin:8px 0 0;padding-left:20px;font-size:14px"><li style="margin:6px 0">Gramática se aprende falando: depois de cada aula, diga em voz alta 3 frases suas sobre o seu trabalho com a estrutura.</li><li style="margin:6px 0">Nos cartões, tente responder em voz alta antes de virar. Errou? Ele volta amanhã.</li><li style="margin:6px 0">No quiz, leia a explicação de cada alternativa, inclusive das que você acertou.</li><li style="margin:6px 0">Use a estrutura da semana nas gravações de fala do módulo Inglês e leve seus erros reais para o treino.</li></ul></div>';
+  var dp=e.diaPlano, f=E.filaCartoes(CONT,C.srs,hoje(),dp,{maxNovos:15}), qd=E.questoesDevidas(CONT,C.srs,hoje(),dp).length, er=E.cadernoErros(CONT,C.srs).length;
+  if(f.devidos.length||qd||er){
+    h+='<div class="cartao"><div class="rotulo" style="margin-bottom:8px">Revisões que venceram</div><div class="row">'+(f.devidos.length?btn('Cartões ('+f.devidos.length+')','cartrev'):'')+(qd?btn('Questões ('+qd+')','revisao','','',true):'')+(er?btn('Caderno de erros ('+er+')','erros','','',true):'')+'</div></div>';
+  }
+  $('#hoje').innerHTML=h;
+}
+
+/* ---------- aulas ---------- */
+function licaoHtml(l){
+  var pa=E.passosDoDia(C,CONT,l.n), tem=!!pa;
+  var chips=tem?'<span class="chip'+(pa.aula?' ok':'')+'">'+(pa.aula?'✓ ':'')+'aula</span><span class="chip'+(pa.cartoes?' ok':'')+'">cartões '+pa.cartoesVistos+'/'+pa.cartoesTotal+'</span><span class="chip'+(pa.quiz?' ok':'')+'">quiz '+(pa.quizPct==null?'—':pa.quizPct+'%')+'</span><span class="chip'+(pa.lab?' ok':'')+'">'+(pa.lab?'✓ ':'')+'treino</span>':'<span class="chip">em preparação</span>';
+  return '<div class="lic"><div class="row"><span class="tag'+(tem&&pa.aula&&pa.quiz&&pa.lab?' ok':'')+'">AULA '+l.ordem+'</span></div><div class="nm"><b>'+esc(l.titulo)+'</b></div><div class="chips">'+chips+'</div>'+
+    (tem?'<div class="row">'+btn('Aula','aula',l.n)+btn('Cartões','cart',l.n,'',true)+btn('Quiz','quiz',l.n,'',true)+btn('Treino','lab',l.n,'',true)+'</div>':'')+'</div>';
+}
+function aulasSec(e){
+  var h='<div class="cartao"><div class="rotulo">12 aulas, 4 semanas do módulo Inglês</div><p class="mini" style="margin:6px 0 0">Cada bloco combina com o tema da semana no módulo Inglês, para você usar a gramática no mesmo dia em que treina a fala. Cada aula cita, bloco a bloco, a página de referência de onde veio a regra.</p></div>';
+  K.BLOCOS.forEach(function(b){
+    var tr=e.porBloco[b.id], ls=K.LICOES.filter(function(l){return l.bloco===b.id});
+    var aberto=e.prox?e.prox.bloco===b.id:false;
+    h+='<details class="sem" style="margin-top:12px"'+(aberto?' open':'')+'><summary><span style="flex:1">'+esc(b.nome)+'</span><span class="mini">'+tr.completas+' de '+tr.total+' · '+tr.pct+'%</span></summary><div class="corpo">'+barra(tr.pct)+ls.map(licaoHtml).join('')+'</div></details>';
+  });
+  $('#trilhas').innerHTML=h;
+}
+
+/* ---------- revisar ---------- */
+function revisarSec(e){
+  var dp=e.diaPlano,f=E.filaCartoes(CONT,C.srs,hoje(),dp,{maxNovos:15}),qd=E.questoesDevidas(CONT,C.srs,hoje(),dp).length,er=E.cadernoErros(CONT,C.srs).length,dm=E.dominio(CONT,C.srs),h='';
+  var srs=C.srs||{},dom=Object.keys(srs).filter(function(k){return srs[k].b>=3}).length;
+  h+='<div class="cartao"><div class="rotulo">Revisão espaçada</div><p class="mini" style="margin:6px 0 10px">O que você erra volta amanhã; o que acerta volta em 1, 3, 7, 14 e 30 dias. É isso que transforma a regra em hábito na fala.</p>'+
+    '<div class="stats"><div><div class="rotulo">Cartões</div><div class="big">'+f.devidos.length+'</div><small>vencidos</small></div><div><div class="rotulo">Questões</div><div class="big">'+qd+'</div><small>para rever</small></div><div><div class="rotulo">Erros</div><div class="big">'+er+'</div><small>no caderno</small></div></div>'+
+    '<div class="row" style="margin-top:10px">'+btn('Cartões ('+(f.devidos.length+f.novos.length)+')','cartrev')+btn('Questões ('+qd+')','revisao','','',true)+btn('Caderno de erros ('+er+')','erros','','',true)+'</div>'+
+    '<div class="mini" style="margin-top:10px">Itens consolidados (3ª caixa ou mais): '+dom+'.</div></div>';
+  var tops=K.TOPICOS.filter(function(t){return dm.porTopico[t.id]&&dm.porTopico[t.id].resp>0}).sort(function(a,b){return dm.porTopico[a.id].pct-dm.porTopico[b.id].pct});
+  h+='<div class="cartao"><h3 style="margin-bottom:6px">Desempenho por aula</h3>'+(tops.length?tops.map(function(t){var p=dm.porTopico[t.id];return '<div class="sim"><div class="pc">'+p.pct+'%</div><div style="flex:1;min-width:0"><b>'+esc(t.nome)+'</b><div class="mini">'+p.ok+' de '+p.resp+' questões certas na última tentativa</div></div>'+btn('Treinar','topico','',t.id,true)+'</div>'}).join(''):'<div class="mini">Responda quizzes para ver seu desempenho medido por aula.</div>')+
+    (tops.length>=2?'<div class="row" style="margin-top:10px">'+btn('Treinar as 3 aulas mais fracas','fracos','','',true)+'</div>':'')+'</div>';
+  $('#revisar').innerHTML=h;
+}
+
+function render(){
+  var e=K.estado(C,hoje());
+  topo(e);hojeSec(e);aulasSec(e);revisarSec(e);
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  var d=b.dataset;
+  if(d.est){
+    var k=d.est,n=+d.n,a=d.a;
+    if(k==='aula')UI.abrirAula(n);else if(k==='cart')UI.abrirCartoes('dia',n);else if(k==='cartrev')UI.abrirCartoes('rev');
+    else if(k==='quiz')UI.abrirQuiz('dia',n);else if(k==='lab')UI.abrirLab(n);else if(k==='revisao')UI.abrirQuiz('revisao');
+    else if(k==='erros')UI.abrirQuiz('erros');else if(k==='fracos')UI.abrirQuiz('fracos');else if(k==='topico')UI.abrirQuiz('topico',a);
+  }
+});
+$('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
+  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
+
+UI.init({obter:function(){return C},salvar:salvar,hoje:hoje,aoFechar:render});
+render();
+claude.use('db').then(function(db){
+  ref=db.doc('gram/main');
+  ref.onSnapshot(function(s){if(UI.ocupado()||Date.now()-ultimoSalvar<2500)return;C=s.exists?(s.data()||{}):{};render()});
+});
+})();
+</script>
+<script src="assets/modulo.js"></script>
+</body>
+</html>
