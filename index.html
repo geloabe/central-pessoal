@@ -150,6 +150,32 @@ a.meta+a.meta{border-top:1px solid var(--lin)}
 a.meta .l{display:flex;justify-content:space-between;gap:10px;font-size:15px;margin-bottom:6px}
 a.meta .l span:last-child{font:500 13px var(--f-mono);color:var(--mut);white-space:nowrap}
 a.meta.ok .l span:last-child{color:var(--t-ok);font-weight:700}
+
+/* home enxuta: topo curto, rotina recolhida e módulos agrupados em áreas */
+header.top .marcos-btn{margin:0;min-height:40px;padding:0 12px;font-size:13px;white-space:nowrap}
+.destaque{padding:16px 18px}
+.destaque h2{font-size:clamp(24px,6vw,32px)}
+.destaque p{margin-top:6px}
+.habs-d{margin-top:12px}
+.habs-d>summary,.area>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px;padding:6px 16px;background:var(--t-surface);border:1px solid var(--lin);border-radius:var(--raio);cursor:pointer;font-size:16px;list-style:none}
+.habs-d>summary::-webkit-details-marker,.area>summary::-webkit-details-marker{display:none}
+.habs-d>summary span{font:600 13px var(--f-mono);color:var(--t-accent);white-space:nowrap}
+.habs-d[open]>summary,.area[open]>summary{margin-bottom:10px}
+.area{margin-bottom:10px}
+.area>summary .nm{display:block;font:600 18px var(--f-titulo)}
+.area>summary .ht{display:block;font-size:13px;color:var(--mut);margin-top:2px;overflow-wrap:anywhere}
+.area>summary::after{content:"›";flex:none;color:var(--mut);font-size:22px;transition:transform .15s}
+.area[open]>summary::after{transform:rotate(90deg)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-bottom:6px}
+@media (min-width:700px){.tiles{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}}
+a.tile{display:flex;align-items:center;gap:10px;min-height:64px;padding:10px 12px;background:var(--t-surface);border:1px solid var(--lin);border-left:4px solid var(--m);border-radius:var(--raio);color:inherit;text-decoration:none}
+a.tile .ic{width:26px;height:26px;flex:none}
+a.tile b{display:block;font:600 15px var(--f-texto)}
+a.tile small{display:block;color:var(--mut);font-size:12.5px;line-height:1.3}
+.parahoje{margin-top:12px}
+.agua .big{font-size:24px}
+.parahoje a{max-width:100%}
+.parahoje a .tx{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 <link rel="stylesheet" href="assets/mobile.css">
 </head>
@@ -159,27 +185,28 @@ a.meta.ok .l span:last-child{color:var(--t-ok);font-weight:700}
     <svg class="marca" width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><use href="#marca"/></svg>
     <div><h1>Central Pessoal</h1><div class="rotulo" id="data"></div></div>
     <span class="sp"></span>
+    <button type="button" class="marcos-btn" id="marcosBtn" aria-haspopup="dialog" hidden></button>
   </header>
 
   <section class="destaque" aria-live="polite">
-    <div class="rotulo" style="color:var(--t-muted)">Hoje</div>
     <h2 id="titulo">Carregando…</h2>
     <p id="sub"></p>
     <div id="pr"></div>
-    <button type="button" class="marcos-btn" id="marcosBtn" aria-haspopup="dialog" hidden></button>
   </section>
+
+  <div class="parahoje" id="parahoje"></div>
 
   <section class="foco" id="foco" aria-label="Foco de hoje"></section>
 
-  <h2 class="sec rotulo">Saúde hoje</h2>
-  <div class="hoje-lista" id="hoje-saude"></div>
   <section class="agua" id="agua" aria-label="Água de hoje"></section>
 
-  <h2 class="sec rotulo">Painéis</h2>
-  <div class="grid" id="cards"></div>
+  <details class="habs-d" id="habsD">
+    <summary><b>Hábitos de hoje</b><span id="habsRes"></span></summary>
+    <div class="habhoje" id="habhoje"></div>
+  </details>
 
-  <h2 class="sec rotulo">Hábitos</h2>
-  <div class="habhoje" id="habhoje"></div>
+  <h2 class="sec rotulo">Áreas</h2>
+  <div id="areas"></div>
 
   <h2 class="sec rotulo">Metas da semana</h2>
   <div id="metas"></div>
@@ -261,49 +288,43 @@ function render(p){
   if(pr&&(hoje-new Date(pr.data+'T12:00:00'))<=14*864e5)
     $('#pr').innerHTML='<div class="pr"><div class="selo">PR</div><div><b>Novo recorde: '+esc(pr.nome)+'</b><small>1RM estimado '+pr.para.toFixed(1).replace('.',',')+' kg · antes '+pr.de.toFixed(1).replace('.',',')+' kg (+'+Math.round(pr.pct)+'%)</small></div></div>';
 
-  var h=p.habitos, sem='';
-  if(h.ativo)sem='<div class="sem" role="list" aria-label="Semana">'+h.semana.map(function(d,i){var L='STQQSSD'.charAt(i),nomes=['segunda','terça','quarta','quinta','sexta','sábado','domingo'];
-      var estado=d.feito?'feito':d.pausa?'pausa':d.futuro?'a fazer':'sem registro';
-      return '<div role="listitem" aria-label="'+nomes[i]+': '+estado+'" class="'+(d.feito?'f':d.pausa?'p':'')+(d.hoje?' h':'')+'">'+(d.feito?'✓':d.pausa?'⏸':L)+'</div>'}).join('')+'</div>';
-  var rf=p.refeicoes, semR='';
-  if(rf.total)semR='<div class="sem" role="list" aria-label="Semana de refeições">'+rf.semana.map(function(d,i){var L='STQQSSD'.charAt(i),nomes=['segunda','terça','quarta','quinta','sexta','sábado','domingo'];
-      var estado=d.feito?'dia bom':d.pausa?'pausa':d.futuro?'a fazer':d.n?'parcial':'sem registro';
-      return '<div role="listitem" aria-label="'+nomes[i]+': '+estado+'" class="'+(d.feito?'f':d.pausa?'p':'')+(d.hoje?' h':'')+'">'+(d.feito?'✓':d.pausa?'⏸':L)+'</div>'}).join('')+'</div>';
-  var msgR=rf.emRisco?'Hoje ainda dá tempo de manter os '+rf.sequencia+' dias.':rf.total&&rf.sequencia===0&&rf.melhor>0?'Recomeço — sua melhor sequência foi de '+rf.melhor+' dias.':rf.melhor>rf.sequencia?'Melhor sequência: '+rf.melhor+' dias.':'';
-  var peso=p.plano.ultimoPeso?'<div class="mini">'+p.plano.ultimoPeso.toFixed(1).replace('.',',')+' kg'+(p.plano.variacao!=null?' ('+(p.plano.variacao>0?'+':'')+p.plano.variacao.toFixed(1).replace('.',',')+' kg desde a 1ª medição)':'')+'</div>':'';
-  var corpoPlano=rf.total?'<div class="num">'+rf.sequencia+' <small>dia'+(rf.sequencia===1?'':'s')+' seguidos</small></div>'+semR+'<div class="mini">Hoje: '+rf.hoje+' de 6 refeições'+(rf.hojeInfo.bom?' · dia bom ✓':'')+'</div>'+(msgR?'<div class="mini">'+msgR+'</div>':'')+peso
-    :'<div class="mini">'+(rf.hoje?'Hoje: '+rf.hoje+' de 6 refeições.':'Marque as refeições do dia para acompanhar sua sequência.')+'</div>'+peso;
-  var rotaPct=Math.round(p.rota.semana/p.rota.meta*100);
-  var cards=[
-    card('treino','treino.html','Treino','<div class="num">'+p.treino.semana+' <small>treino'+(p.treino.semana===1?'':'s')+' esta semana</small></div>'+delta(p.treino.semana,p.treino.anterior)+'<div class="mini">'+p.treino.total+(p.treino.total===1?' sessão':' sessões')+' · '+p.treino.prs.length+' recorde'+(p.treino.prs.length===1?'':'s')+'</div>'),
-    card('plano','plano.html','Plano alimentar',corpoPlano),
-    card('habitos','habitos.html','Hábitos',h.ativo?'<div class="num">'+h.sequencia+' <small>dia'+(h.sequencia===1?'':'s')+' seguidos</small></div>'+sem+'<div class="mini">Hoje: '+h.feitosHoje+' de '+h.totalHoje+(h.pausas?' · '+h.pausas+' pausa'+(h.pausas>1?'s':'')+' usada'+(h.pausas>1?'s':''):'')+'</div>'+
-        '<div class="mini">'+(h.emRisco?'Hoje ainda dá tempo de manter os '+h.sequencia+' dias.':h.sequencia===0&&h.melhor>0?'Recomeço — sua melhor sequência foi de '+h.melhor+' dias.':h.melhor>h.sequencia?'Melhor sequência: '+h.melhor+' dias.':'')+'</div>':'<div class="mini">Comece o check-in de hoje.</div>'),
-    card('grimorio','grimorio.html','Grimório','<div class="num">'+p.grimorio.sequencia+' <small>dia'+(p.grimorio.sequencia===1?'':'s')+' de estudo</small></div><div class="mini">'+(p.grimorio.total?p.grimorio.total+' dias com registro':'Seu caderno de estudo e prática.')+'</div>'),
-    card('rota','rota-internacional.html','Rota Internacional','<div class="num">'+p.rota.semana+' <small>de '+p.rota.meta+' candidaturas</small></div>'+barra(rotaPct)+delta(p.rota.semana,p.rota.anterior)+(p.rota.melhorSemana>p.rota.semana||p.rota.semanasMeta?'<div class="mini">'+(p.rota.semanasMeta?p.rota.semanasMeta+' semana'+(p.rota.semanasMeta===1?'':'s')+' seguida'+(p.rota.semanasMeta===1?'':'s')+' na meta · ':'')+'melhor semana: '+p.rota.melhorSemana+'</div>':'')),
-    card('financeiro','financeiro.html','Financeiro','<div class="num">'+p.financeiro.pct+'% <small>da entrada</small></div>'+barra(p.financeiro.pct)+'<div class="mini">'+brl(p.financeiro.guardado)+' de '+brl(p.financeiro.meta)+'</div>'),
-    card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
-    card('cert','certificacao.html','Certificação',p.cert.ativo?(p.cert.aprovada?'<div class="num">Aprovada <small>Google Data Engineer</small></div>':'<div class="num">'+p.cert.pct+'% <small>do plano</small></div>'+barra(p.cert.pct)+'<div class="mini">'+(p.cert.comecaEm>0?'Começa em '+p.cert.comecaEm+' dia'+(p.cert.comecaEm>1?'s':''):p.cert.faltamProva>0?'Prova em '+p.cert.faltamProva+' dias':'Prova: hoje ou já passou')+' · prontidão '+p.cert.prontidao+'%</div>'):'<div class="mini">Plano relâmpago de 4 semanas para o Google Professional Data Engineer.</div>'),
-    card('pdi','pdi.html','PDI Snowfox',p.pdi.ativo?'<div class="num">'+p.pdi.pct+'% <small>das entregas</small></div>'+barra(p.pdi.pct)+'<div class="mini">'+(p.pdi.comecaEm>0?'Começa em '+p.pdi.comecaEm+' dia'+(p.pdi.comecaEm>1?'s':''):p.pdi.encerrado?'Ciclo encerrado: veja o resumo':'Semana '+p.pdi.semana+' de 4')+'</div>':'<div class="mini">Plano de desenvolvimento: qualidade de dados, agentes de IA e inglês, em 4 semanas.</div>'),
-    card('ingles','ingles.html','Inglês',p.ingles.ativo?'<div class="num">'+p.ingles.aulasSemana+' <small>de 5 aulas nesta semana</small></div>'+barra(p.ingles.pct)+'<div class="mini">'+(p.ingles.comecaEm>0?'Começa em '+p.ingles.comecaEm+' dia'+(p.ingles.comecaEm>1?'s':''):p.ingles.encerrado?'Ciclo encerrado: veja a medição':'Semana '+p.ingles.semana+' de 4')+' · prática '+p.ingles.pct+'%</div>':'<div class="mini">Prática pessoal além das aulas: shadowing, escuta, fala, escrita e frases, em 4 semanas.</div>'),
-    card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>'),
-    card('imovel','imovel.html','Imóvel','<div class="mini">Perfil, quanto cabe, estratégias, construtoras e finalistas da primeira compra.</div>'),
-    card('negocios','negocios.html','Negócios','<div class="mini">Prospecção, clientes e oportunidades para a renda extra.</div>')
-  ];
-  P=p; if(window.CP_FOCO)CP_FOCO.render(); renderAgua(p); renderHoje(p); renderHabitos(p); renderMetas(p);
+  var rf=p.refeicoes, hb=p.habitos, t=p.treino, ce=p.cert, pd=p.pdi, ig=p.ingles, ds=p.desafios;
+  function em(n){return 'Começa em '+n+' dia'+(n>1?'s':'')}
+  var M={
+    treino:['treino.html','Treino',t.hoje?'Feito hoje ✓':t.semana+(t.semana===1?' treino':' treinos')+' na semana',t.semana+(t.semana===1?' treino':' treinos')],
+    plano:['plano.html','Plano alimentar',rf.hoje+' de 6 refeições hoje',rf.hoje+' de 6 refeições'],
+    habitos:['habitos.html','Hábitos',hb.ativo?hb.feitosHoje+' de '+hb.totalHoje+' hoje':'Começar o check-in',hb.ativo?hb.feitosHoje+' de '+hb.totalHoje+' hábitos':''],
+    desafios:['desafios.html','Desafios',ds.ativos?ds.ativos+' em andamento':'Escolher um desafio',ds.ativos?ds.ativos+(ds.ativos===1?' desafio':' desafios'):''],
+    grimorio:['grimorio.html','Grimório',p.grimorio.sequencia+(p.grimorio.sequencia===1?' dia':' dias')+' de estudo',''],
+    cert:['certificacao.html','Certificação',ce.ativo?(ce.aprovada?'Aprovada ✓':ce.comecaEm>0?em(ce.comecaEm):ce.pct+'% · '+(ce.faltamProva>0?'prova em '+ce.faltamProva+' d':'prova hoje ou já passou')):'Plano de 4 semanas',ce.ativo&&!ce.aprovada&&!ce.comecaEm?'certificação '+ce.pct+'%':''],
+    pdi:['pdi.html','PDI Snowfox',pd.ativo?(pd.comecaEm>0?em(pd.comecaEm):pd.encerrado?'Ciclo encerrado':pd.pct+'% · semana '+pd.semana+' de 4'):'4 semanas, 4 h por semana',pd.ativo&&!pd.encerrado&&!pd.comecaEm?'PDI '+pd.pct+'%':''],
+    ingles:['ingles.html','Inglês',ig.ativo?(ig.comecaEm>0?em(ig.comecaEm):ig.encerrado?'Ciclo encerrado':ig.aulasSemana+' de 5 aulas na semana'):'Fala e vocabulário',ig.ativo&&!ig.encerrado&&!ig.comecaEm?ig.aulasSemana+'/5 aulas':''],
+    rota:['rota-internacional.html','Rota Internacional',p.rota.semana+' de '+p.rota.meta+' candidaturas',p.rota.semana+'/'+p.rota.meta+' candidaturas'],
+    negocios:['negocios.html','Negócios','Prospecção e clientes',''],
+    financeiro:['financeiro.html','Financeiro',p.financeiro.pct+'% da entrada',p.financeiro.pct+'% da entrada'],
+    imovel:['imovel.html','Imóvel','Primeira compra',''],
+    mudanca:['mudanca.html','Mudança',p.mudanca.pct+'% do caminho',p.mudanca.pct+'% da mudança']
+  };
+  var AREAS=[['corpo','Corpo',['treino','plano']],['rotina','Rotina e mente',['habitos','desafios','grimorio']],['carreira','Carreira e estudos',['cert','pdi','ingles','rota','negocios']],['casa','Casa e dinheiro',['financeiro','imovel','mudanca']]];
+  var abertas={};try{abertas=JSON.parse(localStorage.getItem('cp-areas')||'{}')}catch(e){}
+  $('#areas').innerHTML=AREAS.map(function(a){
+    var ht=a[2].map(function(id){return M[id][3]}).filter(Boolean).slice(0,3).join(' · ')||a[2].map(function(id){return M[id][1]}).join(' · ');
+    return '<details class="area" data-a="'+a[0]+'"'+(abertas[a[0]]?' open':'')+'><summary><span><span class="nm">'+a[1]+'</span><span class="ht">'+esc(ht)+'</span></span></summary><div class="tiles">'+
+      a[2].map(function(id){var m=M[id];return '<a class="tile m-'+id+'" href="'+m[0]+'">'+CP_ICONE(id,26)+'<span><b>'+esc(m[1])+'</b><small>'+esc(m[2])+'</small></span></a>'}).join('')+'</div></details>';
+  }).join('');
+  P=p; if(window.CP_FOCO)CP_FOCO.render(); renderAgua(p); renderHabitos(p); renderMetas(p);
   (function(){
-    var l=[], r=p.refeicoes, hb=p.habitos, ds=p.desafios;
-    if(r.hoje<6) l.push(['plano.html','🍽️',r.hoje?'Refeições: '+r.hoje+' de 6':'Marcar as refeições']);
-    if(!hb.ativo||hb.feitosHoje<hb.totalHoje) l.push(['habitos.html','✅',hb.ativo?'Hábitos: '+hb.feitosHoje+' de '+hb.totalHoje:'Check-in de hábitos']);
+    var l=[];
+    if(ce.ativo&&!ce.aprovada&&!ce.encerrado&&!ce.comecaEm&&ce.tarefasHoje&&ce.feitasHoje<ce.tarefasHoje) l.push(['certificacao.html','🎓','Certificação: '+ce.feitasHoje+' de '+ce.tarefasHoje]);
+    if(pd.ativo&&!pd.encerrado&&!pd.comecaEm&&pd.proximo) l.push(['pdi.html','📈','PDI: '+pd.proximo]);
+    if(ig.ativo&&!ig.encerrado&&!ig.comecaEm&&ig.proxima) l.push(['ingles.html','💬','Inglês: '+ig.proxima]);
+    if(!hb.ativo||hb.feitosHoje<hb.totalHoje) l.push(['#habsD','✅',hb.ativo?'Hábitos: '+hb.feitosHoje+' de '+hb.totalHoje:'Check-in de hábitos']);
+    if(rf.hoje<6) l.push(['plano.html','🍽️',rf.hoje?'Refeições: '+rf.hoje+' de 6':'Marcar as refeições']);
     if(ds.ativos&&ds.hoje<ds.ativos) l.push(['desafios.html','🎯','Desafio: falta marcar hoje']);
-    var ce=p.cert; if(ce.ativo&&!ce.aprovada&&!ce.encerrado&&!ce.comecaEm&&ce.tarefasHoje&&ce.feitasHoje<ce.tarefasHoje) l.push(['certificacao.html','🎓','Certificação: '+ce.feitasHoje+' de '+ce.tarefasHoje]);
-    var pd=p.pdi; if(pd.ativo&&!pd.encerrado&&!pd.comecaEm&&pd.proximo) l.push(['pdi.html','📈','PDI: '+pd.proximo]);
-    var ig=p.ingles; if(ig.ativo&&!ig.encerrado&&!ig.comecaEm&&ig.proxima) l.push(['ingles.html','💬','Inglês: '+ig.proxima]);
     var el=$('#parahoje'); if(!el)return;
     if(!l.length){el.innerHTML='<div class="rotulo">Para hoje</div><div class="chips"><a class="ok" href="#">✓ Tudo em dia hoje</a></div>';return}
-    el.innerHTML='<div class="rotulo">Para hoje · toque para ir</div><div class="chips">'+l.slice(0,3).map(function(x){return '<a href="'+x[0]+'"><span aria-hidden="true">'+x[1]+'</span>'+esc(x[2])+'</a>'}).join('')+'</div>';
+    el.innerHTML='<div class="rotulo">Para hoje · toque para ir</div><div class="chips">'+l.slice(0,4).map(function(x){return '<a href="'+x[0]+'" data-aqui="'+(x[0].charAt(0)==='#'?'1':'')+'"><span aria-hidden="true">'+x[1]+'</span><span class="tx">'+esc(x[2])+'</span></a>'}).join('')+'</div>';
   })();
-  $('#cards').innerHTML=cards.join('');
 
   var feitos=p.marcos.filter(function(m){return m.ok}), faltam=p.marcos.filter(function(m){return !m.ok}).slice(0,4);
   $('#marcos').innerHTML=feitos.map(function(m){return '<span class="on">'+esc(m.nome)+'</span>'}).join('')+faltam.map(function(m){return '<span>'+esc(m.nome)+'</span>'}).join('');
@@ -334,19 +355,9 @@ var DADOS=null,P=null;
 function litros(ml){return String(Math.round(ml/10)/100).replace('.',',')}
 function hojeISO(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 
-function linhasHoje(p){
-  var t=p.treino, rf=p.refeicoes, mt=p.metas.saude[0];
-  return [
-    ['treino.html','🏋️','Treino',t.hoje?'Feito hoje ✓':'Ainda não hoje',(t.hoje?'':'')+t.semana+' de '+mt.meta+' na semana',!!t.hoje],
-    ['plano.html','🍽️','Refeições',rf.hoje+' de 6 marcadas'+(rf.hojeInfo&&rf.hojeInfo.bom?' · dia bom ✓':''),rf.sequencia?rf.sequencia+' dia'+(rf.sequencia===1?'':'s')+' seguidos':'Toque para marcar',rf.hoje>=4]
-  ];
-}
-function renderHoje(p){
-  $('#hoje-saude').innerHTML=linhasHoje(p).map(function(x){
-    return '<a class="lin'+(x[5]?' ok':'')+'" href="'+x[0]+'"><span class="ico" aria-hidden="true">'+x[1]+'</span><span class="tx"><b>'+x[2]+' · '+esc(x[3])+'</b><small>'+esc(x[4])+'</small></span><span class="go" aria-hidden="true">→</span></a>'}).join('');
-}
 function renderHabitos(p){
   var l=p.habitos.lista||[], el=$('#habhoje');
+  $('#habsRes').textContent=p.habitos.ativo&&l.length?p.habitos.feitosHoje+' de '+p.habitos.totalHoje:'';
   if(!p.habitos.ativo||!l.length){el.innerHTML='<div class="hab"><span class="vazio">Nenhum hábito na lista. <a href="habitos.html">Veja as sugestões</a>.</span></div>';return}
   function linha(x){
     var sub=x.freq==='week'?(x.semanaN+' de '+x.meta+' esta semana'+(x.semanaOk?' ✓':'')):(x.kind==='boolean'?'Todo dia':'Meta: '+x.meta+(x.unit.length>1?' ':'')+x.unit);
@@ -392,13 +403,8 @@ function renderMetas(p){
   $('#metas').innerHTML='<details class="metas-d"'+(aberto?' open':'')+'><summary><b>'+ok+' de '+todas.length+'</b> em dia nesta semana<span aria-hidden="true">Ver</span></summary>'+grupo('saude','Saúde e fitness',m.saude)+grupo('vida','Carreira, dinheiro e mudança',m.vida)+'</details>';
 }
 function renderAgua(p){
-  var a=p.agua, msg, cls='';
-  if(a.bateu){msg='Meta de 3 L batida 💧 Bom trabalho.';cls=' ok'}
-  else if(a.bomHoje){msg='Dia bom ✓ (mais de 2,4 L). Faltam '+litros(a.meta-a.hoje)+' L para a meta.';cls=' ok'}
-  else if(a.hoje===0){msg='Toque no copo ou na garrafa cada vez que beber.'}
-  else{msg='Faltam '+litros(a.meta-a.hoje)+' L para a meta.'}
-  var seq=a.sequencia?'<div class="msg" hidden>'+a.sequencia+' dia'+(a.sequencia===1?'':'s')+' seguidos acima de 2,4 L'+(a.melhor>a.sequencia?' · melhor: '+a.melhor:'')+(a.emRisco?' · hoje ainda dá tempo de manter':'')+'</div>':(a.melhor>0?'<div class="msg">Recomeço — sua melhor sequência foi de '+a.melhor+' dias.</div>':'');
-  $('#agua').innerHTML='<div class="topo"><div><div class="rotulo">Água hoje</div><div class="big">'+litros(a.hoje)+' L <small>de 3 L</small></div></div></div>'+barra(a.pct)+'<div class="msg'+cls+'">'+msg+'</div>'+seq+
+  var a=p.agua;
+  $('#agua').innerHTML='<div class="topo"><div class="rotulo">Água hoje</div><div class="big">'+litros(a.hoje)+' L <small>de 3 L</small></div></div>'+barra(a.pct)+(a.bateu?'<div class="msg ok">Meta batida 💧</div>':'')+
     '<div class="bts"><button type="button" data-ml="250">+ copo<br><small>250 ml</small></button><button type="button" class="pri" data-ml="500">+ garrafa<br><small>500 ml</small></button><button type="button" data-ml="-1">Outro valor</button></div>'+
     (a.hoje>0?'<button type="button" class="desf" data-desf="1">Desfazer o último</button>':'');
 }
@@ -415,6 +421,17 @@ $('#agua').addEventListener('click',function(e){
   CP_INT.mesclar(DADOS.habitos.records,DADOS.agua,[]);
   salvaAgua(d);render(CP_PROG.calcular(DADOS,new Date()));
 });
+
+/* lembra o que ficou aberto */
+document.addEventListener('toggle',function(e){
+  var d=e.target;if(!d||!d.matches)return;
+  try{
+    if(d.matches('#areas .area')){var o=JSON.parse(localStorage.getItem('cp-areas')||'{}');o[d.dataset.a]=d.open;localStorage.setItem('cp-areas',JSON.stringify(o))}
+    else if(d.id==='habsD')localStorage.setItem('cp-habs',d.open?'1':'0');
+  }catch(x){}
+},true);
+try{if(localStorage.getItem('cp-habs')==='1')$('#habsD').open=true}catch(e){}
+$('#parahoje').addEventListener('click',function(e){var a=e.target.closest('a[data-aqui="1"]');if(!a)return;e.preventDefault();var d=$('#habsD');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})});
 carregar().then(function(d){DADOS=d;
   CP_FOCO.init({dados:function(){return DADOS},db:function(){return claude.use('db')},calc:function(){return P},refresh:function(){render(CP_PROG.calcular(DADOS,new Date()))}},$('#foco'));
   render(CP_PROG.calcular(d,new Date()));avaliacao(d)},function(e){
