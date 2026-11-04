@@ -70,3 +70,6 @@ html[data-pg="plano"] form.m input,html[data-pg="plano"] form.m textarea{border-
 html[data-pg="pdi"]:not(#a):not(#b),.m-pdi{--m:#A4507A;--t-accent:#A4507A}
 @media not all{html[data-pg="pdi"]:not([data-modo="claro"]):not(#a):not(#b),.m-pdi{--m:#E0A0C4;--t-accent:#E0A0C4}}
 html[data-modo="escuro"][data-pg="pdi"]:not(#a):not(#b){--m:#E0A0C4;--t-accent:#E0A0C4}
+html[data-pg="ingles"]:not(#a):not(#b),.m-ingles{--m:#2E8A99;--t-accent:#2E8A99}
+@media not all{html[data-pg="ingles"]:not([data-modo="claro"]):not(#a):not(#b),.m-ingles{--m:#7FD0DC;--t-accent:#7FD0DC}}
+html[data-modo="escuro"][data-pg="ingles"]:not(#a):not(#b){--m:#7FD0DC;--t-accent:#7FD0DC}

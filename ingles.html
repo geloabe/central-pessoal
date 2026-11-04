@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>document.documentElement.dataset.pg="ingles"</script>
+<link rel="stylesheet" href="assets/tema.css">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<title>Inglês</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:860px;margin:0 auto;padding:16px 16px calc(80px + env(safe-area-inset-bottom))}
+h1{font-size:28px}
+h2{font-size:21px}
+h3{font-size:18px}
+.sub{color:var(--t-muted);margin:4px 0 16px}
+.mini{font-size:13px;color:var(--t-muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px}
+nav button{font:inherit;font-size:15px;min-height:44px;padding:8px 16px;border-radius:var(--raio);border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);white-space:nowrap;cursor:pointer}
+nav button[aria-selected=true]{background:var(--m);border-color:var(--m);color:var(--t-accent-ink)}
+section{display:none}section.on{display:block}
+.barra{height:8px;background:var(--t-line);overflow:hidden;margin:8px 0}
+.barra i{display:block;height:100%;background:var(--t-ok)}
+@media (prefers-reduced-motion:no-preference){.barra i{animation:cresce .8s ease-out}@keyframes cresce{from{width:0}}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.stats .big{font:600 26px/1.1 var(--f-titulo);letter-spacing:var(--titulo-tracking);margin-top:6px}
+.stats small{display:block;color:var(--t-muted);font-size:12px;margin-top:2px}
+.resumo{margin-bottom:16px}
+.cartao+.cartao{margin-top:12px}
+.tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em;display:inline-block;margin-right:4px}
+.tag.q{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
+.tag.ia{background:color-mix(in srgb,var(--t-accent2) 25%,var(--t-surface));border-color:var(--t-accent2)}
+.tag.en{background:color-mix(in srgb,#C0392B 14%,var(--t-surface));border-color:#C0392B}
+.tar{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--t-line)}
+.tar:first-of-type{border-top:0}
+.tar .chk{flex:none;width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-bg);font:700 22px var(--f-texto);cursor:pointer;padding:0}
+.tar.ok .chk{background:var(--t-ok);border-color:var(--t-ok);color:#fff}
+.tar .tx{flex:1;min-width:0;padding-top:2px}
+.tar .tx div{margin-top:5px;overflow-wrap:anywhere}
+.tar.ok .tx div{color:var(--t-muted)}
+.dica{margin-top:12px;padding:10px 12px;border-left:3px solid var(--t-accent2);background:var(--t-realce);font-size:14px}
+.btn{min-height:46px}
+.passos{margin:8px 0 0;padding-left:22px}
+.passos li{margin:8px 0;line-height:1.5;overflow-wrap:anywhere}
+.pronto{margin-top:10px;padding:10px 12px;border-left:3px solid var(--t-ok);background:var(--t-realce);font-size:14px}
+details{border:1px solid var(--t-line);background:var(--t-surface);border-radius:var(--raio);margin-bottom:8px}
+details>summary{min-height:48px;display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"›";color:var(--t-muted);font-size:20px;transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>.corpo{padding:2px 14px 14px}
+details.sem>summary{font:600 17px var(--f-titulo)}
+details.dia{margin:8px 0 0;background:var(--t-bg)}
+details.dia>summary{font-size:15px}
+.cont{display:flex;align-items:center;gap:8px;margin-top:8px}
+.cont button{width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);font:700 22px var(--f-texto);cursor:pointer;padding:0}
+.cont b{font:600 22px var(--f-titulo);min-width:64px;text-align:center}
+form.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form.f label{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--t-muted)}
+form.f .full{grid-column:1/-1}
+form.f input,form.f select,form.f textarea{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+dialog{border:1px solid var(--t-line);background:var(--t-surface);color:var(--t-ink);border-radius:var(--raio);padding:18px;width:min(520px,94vw)}
+dialog::backdrop{background:rgba(40,30,60,.35)}
+.lk{min-height:44px;padding:0 4px;border:0;background:none;color:var(--t-accent);font:600 14px var(--f-texto);text-decoration:underline;cursor:pointer}
+.ev{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--t-line);overflow-wrap:anywhere}
+.ev a{color:var(--t-accent)}
+.frase{padding:10px 0;border-top:1px solid var(--t-line)}
+.frase:first-of-type{border-top:0}
+.frase b{display:block;font-size:16px}
+.copia{white-space:pre-wrap;font:13px/1.5 var(--f-mono);background:var(--t-realce);padding:12px;border:1px solid var(--t-line);overflow-wrap:anywhere}
+.campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.campos label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--t-muted)}
+.campos input{font:inherit;font-size:16px;padding:10px;min-height:46px;border:1px solid var(--t-borda);background:var(--t-bg);color:var(--t-ink);border-radius:var(--raio);width:100%}
+</style>
+<link rel="stylesheet" href="assets/modulos.css">
+<link rel="stylesheet" href="assets/extras.css">
+<link rel="stylesheet" href="assets/mobile.css">
+<script src="assets/rascunho.js" defer></script>
+</head>
+<body class="t">
+<main>
+  <h1>Inglês</h1>
+  <p class="sub">Quatro semanas além das aulas: 5 aulas por semana e cerca de 2h30 de prática. Semana atrasada não zera nada: a prática só espera a sua vez.</p>
+  <div id="topo"></div>
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
+    <button role="tab" data-t="semana" aria-selected="false">Semanas</button>
+    <button role="tab" data-t="frases" aria-selected="false">Frases</button>
+    <button role="tab" data-t="medicao" aria-selected="false">Medição</button>
+  </nav>
+  <section id="hoje" class="on"></section>
+  <section id="semana"></section>
+  <section id="frases"></section>
+  <section id="medicao"></section>
+</main>
+
+<script src="assets/progresso.js"></script>
+<script src="assets/ingles.js"></script>
+<script>
+(function(){
+'use strict';
+var K=window.CP_INGLES, ref=null, C={}, escrita=Promise.resolve(), ultimoSalvar=0, semanaAba=0;
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function hoje(){return new Date()}
+function dm(dt){return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')}
+function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
+function copiar(txt){
+  function fallback(){var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(e){}t.remove()}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).catch(fallback);else fallback();
+}
+
+/* Escritas em fila (uma de cada vez): o "update" lê e regrava o documento. */
+function salvar(patch){
+  Object.keys(patch).forEach(function(k){C[k]=patch[k]});
+  ultimoSalvar=Date.now();
+  render();
+  if(!ref)return Promise.resolve();
+  escrita=escrita.then(function(){return ref.update(patch)}).catch(function(e){console.error('falha ao salvar',e)}).then(function(){ultimoSalvar=Date.now()});
+  return escrita;
+}
+
+/* ---------- peças ---------- */
+function passos(t){
+  return '<ol class="passos">'+t.como.map(function(c){return '<li>'+esc(c)+'</li>'}).join('')+'</ol>'+(t.pronto?'<div class="pronto"><b>Pronto quando:</b> '+esc(t.pronto)+'</div>':'');
+}
+function contador(t){
+  var n=Math.min(t.vezes,(C.cont&&C.cont[t.id])||0);
+  return '<div class="cont"><button type="button" data-c="'+t.id+'|-1" aria-label="Menos uma sessão">−</button><b>'+n+' de '+t.vezes+'</b><button type="button" data-c="'+t.id+'|1" aria-label="Mais uma sessão">+</button></div>';
+}
+function tarefa(x){
+  var t=x.t, n=Math.min(t.vezes,(C.cont&&C.cont[t.id])||0), f=n>=t.vezes;
+  return '<div class="tar'+(f?' ok':'')+'"><div class="tx"><span class="tag">'+t.min+' min × '+t.vezes+'</span><div><b>'+esc(t.t)+'</b></div>'+contador(t)+
+    '<details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(t)+'</div></details></div></div>';
+}
+
+/* ---------- topo ---------- */
+function topo(e){
+  var el=$('#topo');
+  if(!e.ativo){el.innerHTML='';return}
+  var sem=e.comecaEm>0?'<div class="big">em '+e.comecaEm+' d</div><small>o ciclo começa</small>':e.encerrado?'<div class="big">fim</div><small>ciclo terminou em '+dm(K.parse(e.fim))+'</small>':'<div class="big">'+e.semana+' de 4</div><small>até '+dm(K.addDias(K.dataDaSemana(C,e.semana),6))+'</small>';
+  var ps=e.semana?e.porSemana[e.semana]:null;
+  el.innerHTML='<div class="cartao resumo"><div class="stats">'+
+    '<div><div class="rotulo">Semana</div>'+sem+'</div>'+
+    '<div><div class="rotulo">Prática</div><div class="big">'+K.fmtMin(ps?ps.feito:0)+'</div><small>de '+K.fmtMin(K.MIN_ING)+'</small></div>'+
+    '<div><div class="rotulo">Aulas</div><div class="big">'+e.aulasSemana+' de 5</div><small>nesta semana</small></div></div>'+
+    barra(e.pct)+'<div class="mini">'+e.pct+'% da prática do ciclo · '+e.aulasTotal+' aulas no total</div></div>';
+}
+
+/* ---------- hoje ---------- */
+function setup(){
+  return '<div class="cartao"><h2>Começar</h2><p class="sub">Quatro semanas a partir da data de início.</p>'+
+    '<form class="f" id="setup"><label class="full">Data de início<input type="date" name="inicio" value="'+K.iso(hoje())+'" required></label>'+
+    '<div class="full row"><button class="btn primary" type="submit">Começar</button></div></form>'+
+    '<div class="dica">Cada semana tem shadowing, escuta ativa, fala gravada, uma escrita e frases novas, com um foco C1 diferente. As ferramentas de correção e o log de erros ficam na Rota Internacional.</div></div>';
+}
+function hojeHtml(e){
+  if(!e.ativo)return setup();
+  var h='';
+  if(e.comecaEm>0)h+='<div class="dica">O ciclo começa em '+e.comecaEm+' dia'+(e.comecaEm>1?'s':'')+'. Se quiser, já pode começar pela primeira prática.</div>';
+  if(e.encerrado)h+='<div class="dica">O ciclo terminou. Veja a aba Medição para comparar o início e o fim; para continuar, comece um novo ciclo ajustando a data de início.</div>';
+  if(e.atrasadas>0)h+='<div class="dica">'+e.atrasadas+' prática'+(e.atrasadas>1?'s':'')+' de semanas anteriores ficou'+(e.atrasadas>1?'ram':'')+' para trás. Sem problema: elas vêm primeiro, uma de cada vez.</div>';
+  if(e.prox){
+    var t=e.prox.t;
+    h+='<div class="cartao"><div class="rotulo">Próxima prática'+(e.proxAdiantada?' · adiantando':' · semana '+e.prox.semana)+'</div>'+
+      '<h2 style="margin:6px 0">'+esc(t.t)+'</h2><div><span class="tag">'+t.min+' min por sessão</span></div>'+
+      '<div class="corpo">'+passos(t)+'</div>'+contador(t)+'</div>';
+  }else h+='<div class="cartao"><h2>Prática completa</h2><p>Todas as práticas do ciclo estão marcadas.</p></div>';
+  if(e.semana)h+='<div class="cartao"><div class="rotulo">Aulas desta semana</div><div class="cont"><button type="button" data-aula="-1" aria-label="Menos uma aula">−</button><b>'+e.aulasSemana+' de 5</b><button type="button" data-aula="1" aria-label="Mais uma aula">+</button></div>'+
+    '<div class="mini" style="margin-top:6px">Meta: 5 aulas por semana. Passar de 5 também vale.</div></div>';
+  return h;
+}
+
+/* ---------- semanas ---------- */
+function semanaHtml(e){
+  if(!e.ativo)return setup();
+  return K.INGLES.map(function(s){
+    var ps=e.porSemana[s.n], aberto=(e.semana||1)===s.n?' open':'';
+    return '<details class="sem"'+aberto+'><summary>Semana '+s.n+' · '+esc(s.foco)+' <span class="mini">'+dm(K.dataDaSemana(C,s.n))+' a '+dm(K.addDias(K.dataDaSemana(C,s.n),6))+'</span></summary><div class="corpo">'+
+      '<p class="mini">'+esc(s.porque)+'</p>'+barra(ps.min?Math.round(ps.feito/ps.min*100):0)+
+      '<div class="rotulo">Prática · '+K.fmtMin(ps.feito)+' de '+K.fmtMin(ps.min)+' · tema da escuta: '+esc(s.tema)+'</div>'+
+      s.tarefas.map(function(t){return tarefa({t:t,semana:s.n})}).join('')+'</div></details>';
+  }).join('');
+}
+
+/* ---------- frases ---------- */
+function frasesHtml(e){
+  if(!e.ativo)return setup();
+  var n=semanaAba||e.semana||1, s=K.INGLES[n-1];
+  return '<div class="cartao"><div class="row"><h3 class="sp" style="margin:0">Frases da semana '+n+'</h3><select id="selsem" aria-label="Semana">'+K.INGLES.map(function(x){return '<option value="'+x.n+'"'+(x.n===n?' selected':'')+'>Semana '+x.n+'</option>'}).join('')+'</select></div>'+
+    '<p class="mini"><b>Foco:</b> '+esc(s.foco)+'. '+esc(s.porque)+'</p>'+
+    s.frases.map(function(f){return '<div class="frase"><b>'+esc(f[0])+'</b><span class="mini">'+esc(f[1])+'</span></div>'}).join('')+
+    '<div class="row" style="margin-top:10px"><button class="btn" data-anki="'+n+'">Copiar para o Anki</button></div>'+
+    '<div class="mini" style="margin-top:6px">No Anki: Arquivo › Importar, separador ponto e vírgula (frase;uso).</div></div>'+
+    '<div class="cartao"><h3>Fontes para a escuta ativa</h3><p class="mini">Tema da semana '+n+': '+esc(s.tema)+'. Sugestões para procurar (confira se há episódio atual no tema):</p><ul class="passos">'+K.ESCUTA.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
+}
+
+/* ---------- medição ---------- */
+function medicaoHtml(e){
+  if(!e.ativo)return setup();
+  var r=C.res||{}, a=+String(r.wpm0||'').replace(',','.'), b=+String(r.wpm1||'').replace(',','.');
+  var delta=a>0&&b>0?'<div class="pronto"><b>Diferença:</b> '+(b-a>0?'+':'')+Math.round(b-a)+' palavras por minuto ('+(b-a>0?'+':'')+Math.round((b-a)/a*100)+'%).</div>':'';
+  return '<div class="cartao"><h2>Medição de fala</h2><p>Palavras por minuto é só um dos sinais da fluência. Meça do mesmo jeito no início e no fim: 2 minutos respondendo “Tell me about yourself and your last project”.</p>'+
+    '<div class="campos"><label>Palavras/min no início (semana 1)<input data-res="wpm0" inputmode="decimal" value="'+esc(r.wpm0||'')+'" placeholder="—" maxlength="8"></label>'+
+    '<label>Palavras/min no fim (semana 4)<input data-res="wpm1" inputmode="decimal" value="'+esc(r.wpm1||'')+'" placeholder="—" maxlength="8"></label></div>'+delta+
+    '<div class="dica">Como medir: grave a resposta, cole a transcrição no corretor da aba Inglês da <a href="rota-internacional.html">Rota Internacional</a>, informe a duração e clique em “Registrar só a medição”. Ela calcula as palavras por minuto; copie o número para cá.</div></div>';
+}
+
+/* ---------- render ---------- */
+function render(){
+  var ae=document.activeElement;
+  if(ae&&ae.matches&&ae.matches('[data-res]'))return; // não pisa em quem está digitando
+  var e=K.estado(C,hoje());
+  topo(e);
+  $('#hoje').innerHTML=hojeHtml(e);
+  var abertas=[].map.call(document.querySelectorAll('#semana details.sem'),function(d){return d.open});
+  $('#semana').innerHTML=semanaHtml(e);
+  if(abertas.length)document.querySelectorAll('#semana details.sem').forEach(function(d,i){d.open=!!abertas[i]});
+  $('#frases').innerHTML=frasesHtml(e);
+  $('#medicao').innerHTML=medicaoHtml(e);
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('submit',function(ev){
+  var f=ev.target;
+  if(f.id==='setup'){ev.preventDefault();if(!f.inicio.value)return;salvar({inicio:f.inicio.value,cont:{},aulas:{},res:C.res||{}})}
+});
+document.addEventListener('change',function(ev){
+  var t=ev.target;
+  if(t.dataset&&t.dataset.res){var R=Object.assign({},C.res||{});R[t.dataset.res]=t.value.trim();salvar({res:R})}
+  if(t.id==='selsem'){semanaAba=+t.value;render()}
+});
+document.addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  var d=b.dataset;
+  if(d.c){var p=d.c.split('|');salvar({cont:K.contar(C,p[0],+p[1])})}
+  else if(d.aula){var e=K.estado(C,hoje());if(e.semana)salvar({aulas:K.ajustarAulas(C,e.semana,+d.aula)})}
+  else if(d.anki){copiar(K.cartoesAnki(+d.anki));b.textContent='Copiado ✓'}
+});
+$('#tabs').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
+  $('#tabs').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)})});
+
+render();
+claude.use('db').then(function(db){
+  ref=db.doc('ingles/main');
+  ref.onSnapshot(function(s){if(Date.now()-ultimoSalvar<2500)return;C=s.exists?(s.data()||{}):{};render()});
+});
+})();
+</script>
+<script src="assets/modulo.js"></script>
+</body>
+</html>

@@ -226,7 +226,16 @@
     var e = P.estado(doc, hoje), k = iso(hoje);
     var h = Object.keys(doc.feitas || {}).filter(function (id) { return doc.feitas[id] === k; }).length;
     return { ativo: true, hoje: h, pct: e.pct, feitas: e.feitasPdi, total: e.totalPdi, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, faltam: e.faltam,
-             atrasadas: e.atrasadas, aulasSemana: e.aulasSemana, proximo: e.proxPdi ? e.proxPdi.t.t : null };
+             atrasadas: e.atrasadas, proximo: e.proxPdi ? e.proxPdi.t.t : null };
+  }
+
+  /* ---------- Inglês pessoal (plano em assets/ingles.js; dados em ingles/main) ---------- */
+  function ingles(d, hoje) {
+    var I = root.CP_INGLES, doc = d.ingles || {};
+    if (!I || !doc.inicio) return { ativo: false, pct: 0, aulasSemana: 0, aulasTotal: 0 };
+    var e = I.estado(doc, hoje);
+    return { ativo: true, pct: e.pct, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, atrasadas: e.atrasadas,
+             aulasSemana: e.aulasSemana, aulasTotal: e.aulasTotal, proxima: e.prox ? e.prox.t.t : null };
   }
 
   /* ---------- Foco do dia e anotações rápidas ---------- */
@@ -319,7 +328,7 @@
 
   function calcular(d, hoje) {
     hoje = hoje || new Date();
-    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), cert: cert(d, hoje), pdi: pdi(d, hoje), ausencia: ausencia(d, hoje) };
+    var p = { treino: treino(d, hoje), habitos: habitos(d, hoje), grimorio: grimorio(d, hoje), rota: rota(d, hoje), plano: plano(d, hoje), financeiro: financeiro(d), mudanca: mudanca(d), desafios: desafios(d, hoje), refeicoes: refeicoes(d, hoje), agua: agua(d, hoje), foco: foco(d, hoje), captura: captura(d), cert: cert(d, hoje), pdi: pdi(d, hoje), ingles: ingles(d, hoje), ausencia: ausencia(d, hoje) };
     p.metas = metas(p, d); p.marcos = marcos(p); p.hoje = coisasHoje(p); return p;
   }
 
@@ -341,6 +350,7 @@
     if (p.desafios.ativos) o.push(m('vida', 'desafios', 'Desafios em andamento', p.desafios.pct, 100, 'desafios.html', p.desafios.pct + '%'));
     if (p.cert.ativo && !p.cert.aprovada) o.push(m('vida', 'cert', 'Plano da certificação', p.cert.pct, 100, 'certificacao.html', p.cert.pct + '%'));
     if (p.pdi.ativo && !p.pdi.encerrado) o.push(m('vida', 'pdi', 'Entregas do PDI', p.pdi.pct, 100, 'pdi.html', p.pdi.pct + '%'));
+    if (p.ingles.ativo && !p.ingles.encerrado) o.push(m('vida', 'ingles', 'Prática de inglês', p.ingles.pct, 100, 'ingles.html', p.ingles.pct + '%'));
     return { saude: s, vida: o };
   }
 

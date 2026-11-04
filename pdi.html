@@ -34,7 +34,6 @@ section{display:none}section.on{display:block}
 .tag{font:500 11px var(--f-mono);padding:3px 8px;border:1px solid var(--t-line);background:var(--t-realce);color:var(--t-ink);letter-spacing:.04em;display:inline-block;margin-right:4px}
 .tag.q{background:color-mix(in srgb,var(--t-ok) 18%,var(--t-surface));border-color:var(--t-ok)}
 .tag.ia{background:color-mix(in srgb,var(--t-accent2) 25%,var(--t-surface));border-color:var(--t-accent2)}
-.tag.en{background:color-mix(in srgb,#C0392B 14%,var(--t-surface));border-color:#C0392B}
 .tar{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--t-line)}
 .tar:first-of-type{border-top:0}
 .tar .chk{flex:none;width:48px;height:48px;border-radius:24px;border:2px solid var(--t-borda);background:var(--t-bg);color:var(--t-bg);font:700 22px var(--f-texto);cursor:pointer;padding:0}
@@ -84,19 +83,17 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 <body class="t">
 <main>
   <h1>PDI Snowfox</h1>
-  <p class="sub">Quatro semanas, 4 horas por semana para as metas e cerca de 2h30 para o inglês. Semana atrasada não zera nada: as entregas só esperam a sua vez.</p>
+  <p class="sub">Quatro semanas, 4 horas por semana. Entrega atrasada não zera nada: ela só espera a sua vez.</p>
   <div id="topo"></div>
   <nav id="tabs" role="tablist">
     <button role="tab" data-t="hoje" aria-selected="true">Hoje</button>
     <button role="tab" data-t="semana" aria-selected="false">Semanas</button>
     <button role="tab" data-t="metas" aria-selected="false">Metas</button>
-    <button role="tab" data-t="ingles" aria-selected="false">Inglês</button>
     <button role="tab" data-t="resumo" aria-selected="false">Resumo</button>
   </nav>
   <section id="hoje" class="on"></section>
   <section id="semana"></section>
   <section id="metas"></section>
-  <section id="ingles"></section>
   <section id="resumo"></section>
 </main>
 <dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
@@ -107,14 +104,14 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 <script>
 (function(){
 'use strict';
-var K=window.CP_PDI, ref=null, C={}, CERT=null, escrita=Promise.resolve(), ultimoSalvar=0, semanaAba=0;
+var K=window.CP_PDI, ref=null, C={}, CERT=null, escrita=Promise.resolve(), ultimoSalvar=0;
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function hoje(){return new Date()}
 function dm(dt){return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function barra(p){return '<div class="barra" role="progressbar" aria-valuenow="'+p+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+p+'%"></i></div>'}
-var NOMEM={q:'Qualidade',ia:'IA e agentes',en:'Inglês',geral:'Fechamento'};
+var NOMEM={q:'Qualidade',ia:'IA e agentes',geral:'Fechamento'};
 function tag(m,extra){return '<span class="tag '+m+'">'+NOMEM[m]+(extra?' · '+extra:'')+'</span>'}
 function copiar(txt){
   function fallback(){var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(e){}t.remove()}
@@ -142,24 +139,17 @@ function tarefaPdi(x){
   return '<div class="tar'+(f?' ok':'')+'"><button type="button" class="chk" data-tar="'+t.id+'" aria-pressed="'+f+'" aria-label="'+(f?'Desmarcar: ':'Marcar como feita: ')+esc(t.t)+'">'+(f?'✓':'')+'</button>'+
     '<div class="tx">'+tag(t.m,t.min+' min')+'<div><b>'+esc(t.t)+'</b></div><details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(t)+'</div></details></div></div>';
 }
-function tarefaIng(x){
-  var t=x.t, n=Math.min(t.vezes,(C.cont&&C.cont[t.id])||0), f=n>=t.vezes;
-  return '<div class="tar'+(f?' ok':'')+'"><div class="tx">'+tag('en',t.min+' min × '+t.vezes)+'<div><b>'+esc(t.t)+'</b></div>'+
-    '<div class="cont"><button type="button" data-c="'+t.id+'|-1" aria-label="Menos uma sessão">−</button><b>'+n+' de '+t.vezes+'</b><button type="button" data-c="'+t.id+'|1" aria-label="Mais uma sessão">+</button></div>'+
-    '<details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(t)+'</div></details></div></div>';
-}
-
 /* ---------- topo ---------- */
 function topo(e){
   var el=$('#topo');
   if(!e.ativo){el.innerHTML='';return}
   var sem=e.comecaEm>0?'<div class="big">em '+e.comecaEm+' d</div><small>o ciclo começa</small>':e.encerrado?'<div class="big">fim</div><small>ciclo terminou em '+dm(K.parse(e.fim))+'</small>':'<div class="big">'+e.semana+' de 4</div><small>até '+dm(K.addDias(K.dataDaSemana(C,e.semana),6))+'</small>';
-  var pdi=e.semanaAtual?e.semanaAtual.pdi:null;
+  var pdi=e.semana?e.porSemana[e.semana]:null;
   el.innerHTML='<div class="cartao resumo"><div class="stats">'+
     '<div><div class="rotulo">Semana</div>'+sem+'</div>'+
     '<div><div class="rotulo">PDI na semana</div><div class="big">'+K.fmtMin(pdi?pdi.pdiFeito:0)+'</div><small>de '+K.fmtMin(pdi?pdi.pdiMin:K.MIN_PDI)+'</small></div>'+
-    '<div><div class="rotulo">Inglês na semana</div><div class="big">'+(e.semanaAtual?e.aulasSemana:0)+' de 5</div><small>aulas · '+K.fmtMin(pdi?pdi.ingFeito:0)+' de '+K.fmtMin(K.MIN_ING)+'</small></div></div>'+
-    barra(e.pct)+'<div class="mini">'+e.pct+'% do PDI · '+e.feitasPdi+' de '+e.totalPdi+' entregas</div></div>';
+    '<div><div class="rotulo">Entregas</div><div class="big">'+e.feitasPdi+' de '+e.totalPdi+'</div><small>concluídas</small></div></div>'+
+    barra(e.pct)+'<div class="mini">'+e.pct+'% do PDI</div></div>';
 }
 
 /* ---------- hoje ---------- */
@@ -167,7 +157,7 @@ function setup(){
   return '<div class="cartao"><h2>Começar o PDI</h2><p class="sub">Quatro semanas a partir da data de início. Sugestão: alinhado à certificação, que começa em 04/11/2026.</p>'+
     '<form class="f" id="setup"><label class="full">Data de início<input type="date" name="inicio" value="'+K.iso(hoje())+'" required></label>'+
     '<div class="full row"><button class="btn primary" type="submit">Começar</button></div></form>'+
-    '<div class="dica">Metas: qualidade de dados e CI/CD no Snowfox, agente de dados com avaliação, e inglês. A certificação continua no módulo dela.</div></div>';
+    '<div class="dica">Metas: qualidade de dados e CI/CD no Snowfox e um agente de dados com avaliação. A certificação continua no módulo dela.</div></div>';
 }
 function hojeHtml(e){
   if(!e.ativo)return setup();
@@ -181,32 +171,19 @@ function hojeHtml(e){
       '<h2 style="margin:6px 0">'+esc(t.t)+'</h2><div>'+tag(t.m,t.min+' min')+'</div>'+
       '<div class="corpo">'+passos(t)+'</div><div class="row" style="margin-top:12px"><button class="btn primary" data-tar="'+t.id+'">Fiz ✓</button></div></div>';
   }else h+='<div class="cartao"><h2>PDI completo</h2><p>Todas as entregas estão marcadas. Confira os números na aba Metas e copie o Resumo.</p></div>';
-  if(e.proxIng){
-    var ti=e.proxIng.t, n=Math.min(ti.vezes,(C.cont&&C.cont[ti.id])||0);
-    h+='<div class="cartao"><div class="rotulo">Inglês · próxima prática'+(e.proxIngAdiantada?' · adiantando':' · semana '+e.proxIng.semana)+'</div>'+
-      '<h3 style="margin:6px 0">'+esc(ti.t)+'</h3><div>'+tag('en',ti.min+' min por sessão')+'</div>'+
-      '<details class="dia"><summary>Como fazer</summary><div class="corpo">'+passos(ti)+'</div></details>'+
-      '<div class="cont"><button type="button" data-c="'+ti.id+'|-1" aria-label="Menos uma sessão">−</button><b>'+n+' de '+ti.vezes+'</b><button type="button" data-c="'+ti.id+'|1" aria-label="Mais uma sessão">+</button></div></div>';
-  }
-  if(e.semana){
-    h+='<div class="cartao"><div class="rotulo">Aulas de inglês desta semana</div><div class="cont"><button type="button" data-aula="-1" aria-label="Menos uma aula">−</button><b>'+e.aulasSemana+' de 5</b><button type="button" data-aula="1" aria-label="Mais uma aula">+</button></div>'+
-      '<div class="mini" style="margin-top:6px">Meta: 5 aulas por semana. Passar de 5 também vale.</div></div>';
-  }
   return h;
 }
 
 /* ---------- semanas ---------- */
 function semanaHtml(e){
   if(!e.ativo)return setup();
-  return K.SEMANAS.map(function(s,i){
-    var ing=K.INGLES[i], ps=e.porSemana[s.n], aberto=(e.semana||1)===s.n?' open':'';
+  return K.SEMANAS.map(function(s){
+    var ps=e.porSemana[s.n], aberto=(e.semana||1)===s.n?' open':'';
     var data=C.inicio?dm(K.dataDaSemana(C,s.n))+' a '+dm(K.addDias(K.dataDaSemana(C,s.n),6)):'';
     return '<details class="sem"'+aberto+'><summary>Semana '+s.n+' · '+esc(s.titulo)+' <span class="mini">'+data+'</span></summary><div class="corpo">'+
       '<p class="mini">'+esc(s.resumo)+'</p>'+barra(ps.pdiMin?Math.round(ps.pdiFeito/ps.pdiMin*100):0)+
       '<div class="rotulo">Metas · '+K.fmtMin(ps.pdiFeito)+' de '+K.fmtMin(ps.pdiMin)+'</div>'+
-      s.tarefas.map(function(t){return tarefaPdi({t:t,semana:s.n})}).join('')+
-      '<div class="rotulo" style="margin-top:14px">Inglês · foco: '+esc(ing.foco)+' · '+K.fmtMin(ps.ingFeito)+' de '+K.fmtMin(ps.ingMin)+'</div>'+
-      ing.tarefas.map(function(t){return tarefaIng({t:t,semana:s.n})}).join('')+'</div></details>';
+      s.tarefas.map(function(t){return tarefaPdi({t:t,semana:s.n})}).join('')+'</div></details>';
   }).join('');
 }
 
@@ -225,7 +202,6 @@ function metaHtml(m,e){
   h+='<div class="pronto"><b>Resultado esperado:</b> '+esc(m.resultado)+'</div>';
   if(m.limite)h+='<div class="dica"><b>Limite:</b> '+esc(m.limite)+'</div>';
   if(pm)h+=barra(pm.total?Math.round(pm.feito/pm.total*100):0)+'<div class="mini">'+pm.feitas+' de '+pm.tarefas+' entregas</div>';
-  else if(m.id==='en'&&e.ativo)h+=barra(e.ingTotal?Math.round(e.ingFeito/e.ingTotal*100):0)+'<div class="mini">'+K.fmtMin(e.ingFeito)+' de '+K.fmtMin(e.ingTotal)+' de prática · '+e.aulasTotal+' aulas</div>';
   h+='<div class="rotulo" style="margin-top:12px">Resultados medidos</div><div class="campos">'+(m.campos||[]).map(function(c){
     return '<label>'+esc(c[1])+'<input data-res="'+c[0]+'" value="'+esc((C.res&&C.res[c[0]])||'')+'" placeholder="—" maxlength="40"></label>'}).join('')+'</div>';
   var ev=(C.evid&&C.evid[m.id])||[];
@@ -235,21 +211,6 @@ function metaHtml(m,e){
   return h;
 }
 function metasHtml(e){return K.METAS.map(function(m){return metaHtml(m,e)}).join('')}
-
-/* ---------- inglês ---------- */
-function inglesHtml(e){
-  var n=semanaAba||e.semana||1, s=K.INGLES[n-1];
-  var h='<div class="cartao"><h2>Inglês além das aulas</h2><p>'+esc(K.METAS[3].simples)+'</p>'+
-    '<div class="cont"><b style="min-width:auto">Aulas no ciclo: '+e.aulasTotal+'</b></div>'+
-    '<div class="dica">As ferramentas (corretor de fala, log de erros, medição de palavras por minuto e Anki) ficam na aba Inglês da <a href="rota-internacional.html">Rota Internacional</a>. Aqui está o plano semanal.</div></div>';
-  h+='<div class="cartao"><div class="row"><h3 class="sp" style="margin:0">Frases da semana '+n+'</h3><select id="selsem" aria-label="Semana">'+K.INGLES.map(function(x){return '<option value="'+x.n+'"'+(x.n===n?' selected':'')+'>Semana '+x.n+'</option>'}).join('')+'</select></div>'+
-    '<p class="mini"><b>Foco:</b> '+esc(s.foco)+'. '+esc(s.porque)+'</p>'+
-    s.frases.map(function(f){return '<div class="frase"><b>'+esc(f[0])+'</b><span class="mini">'+esc(f[1])+'</span></div>'}).join('')+
-    '<div class="row" style="margin-top:10px"><button class="btn" data-anki="'+n+'">Copiar para o Anki</button></div>'+
-    '<div class="mini" style="margin-top:6px">No Anki: Arquivo › Importar, separador ponto e vírgula (frase;uso).</div></div>';
-  h+='<div class="cartao"><h3>Fontes para a escuta ativa</h3><p class="mini">Tema da semana '+n+': '+esc(s.tema)+'. Sugestões para procurar (confira se há episódio atual no tema):</p><ul class="passos">'+K.ESCUTA.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
-  return h;
-}
 
 /* ---------- resumo ---------- */
 function resumoHtml(e){
@@ -270,14 +231,13 @@ function render(){
   $('#semana').innerHTML=semanaHtml(e);
   if(abertas.length)document.querySelectorAll('#semana details.sem').forEach(function(d,i){d.open=!!abertas[i]});
   $('#metas').innerHTML=metasHtml(e);
-  $('#ingles').innerHTML=e.ativo?inglesHtml(e):setup();
   $('#resumo').innerHTML=resumoHtml(e);
 }
 
 /* ---------- eventos ---------- */
 document.addEventListener('submit',function(ev){
   var f=ev.target;
-  if(f.id==='setup'){ev.preventDefault();if(!f.inicio.value)return;var c=K.cfgPadrao(K.parse(f.inicio.value));salvar({inicio:c.inicio,feitas:C.feitas||{},cont:C.cont||{},aulas:C.aulas||{},evid:C.evid||{},res:C.res||{}})}
+  if(f.id==='setup'){ev.preventDefault();if(!f.inicio.value)return;var c=K.cfgPadrao(K.parse(f.inicio.value));salvar({inicio:c.inicio,feitas:C.feitas||{},evid:C.evid||{},res:C.res||{}})}
   else if(f.id==='frm'&&f.dataset.k==='ev'){
     var u=f.url.value.trim();
     if(u&&!/^https?:\/\//i.test(u)){ev.preventDefault();alert('O link precisa começar com http:// ou https://');return}
@@ -288,15 +248,11 @@ document.addEventListener('submit',function(ev){
 document.addEventListener('change',function(ev){
   var t=ev.target;
   if(t.dataset&&t.dataset.res){var R=Object.assign({},C.res||{});R[t.dataset.res]=t.value.trim();salvar({res:R})}
-  if(t.id==='selsem'){semanaAba=+t.value;render()}
 });
 document.addEventListener('click',function(ev){
   var b=ev.target.closest('button');if(!b)return;
   var d=b.dataset;
   if(d.tar){salvar({feitas:K.alternar(C,d.tar,hoje())})}
-  else if(d.c){var p=d.c.split('|');salvar({cont:K.contar(C,p[0],+p[1])})}
-  else if(d.aula){var e=K.estado(C,hoje());if(e.semana)salvar({aulas:K.ajustarAulas(C,e.semana,+d.aula)})}
-  else if(d.anki){copiar(K.cartoesAnki(+d.anki));b.textContent='Copiado ✓'}
   else if(d.copia){copiar(K.resumoTexto(C,CERT,hoje()));b.textContent='Copiado ✓'}
   else if(d.evadd){
     var fr=$('#frm');fr.dataset.k='ev';fr.dataset.m=d.evadd;

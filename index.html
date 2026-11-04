@@ -200,6 +200,7 @@ a.meta.ok .l span:last-child{color:var(--t-ok);font-weight:700}
 <script src="assets/modulo.js"></script>
 <script src="assets/cert.js"></script>
 <script src="assets/pdi.js"></script>
+<script src="assets/ingles.js"></script>
 <script src="assets/progresso.js"></script>
 <script src="assets/integracoes.js"></script>
 <script src="assets/foco.js"></script>
@@ -239,10 +240,11 @@ async function carregar(){
     seguro(db.collection('foco').get().then(docs),[]),
     seguro(db.collection('captura').get().then(docs),[]),
     seguro(db.doc('cert/main').get().then(function(s){return s.exists?s.data():null}),null),
-    seguro(db.doc('pdi/main').get().then(function(s){return s.exists?s.data():null}),null)
+    seguro(db.doc('pdi/main').get().then(function(s){return s.exists?s.data():null}),null),
+    seguro(db.doc('ingles/main').get().then(function(s){return s.exists?s.data():null}),null)
   ]);
   return {sessions:r[0],habitos:{config:json(r[1]),records:CP_INT.mesclar(json(r[2])||{},r[17],r[0])},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
-    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19],cert:r[20],pdi:r[21]};
+    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19],cert:r[20],pdi:r[21],ingles:r[22]};
 }
 
 function card(id,href,titulo,corpo){
@@ -282,7 +284,8 @@ function render(p){
     card('financeiro','financeiro.html','Financeiro','<div class="num">'+p.financeiro.pct+'% <small>da entrada</small></div>'+barra(p.financeiro.pct)+'<div class="mini">'+brl(p.financeiro.guardado)+' de '+brl(p.financeiro.meta)+'</div>'),
     card('desafios','desafios.html','Desafios',p.desafios.ativos||p.desafios.concluidos?'<div class="num">'+p.desafios.ativos+' <small>em andamento</small></div>'+barra(p.desafios.pct)+'<div class="mini">'+p.desafios.concluidos+' concluído'+(p.desafios.concluidos===1?'':'s')+(p.desafios.ativos&&p.desafios.hoje<p.desafios.ativos?' · falta marcar '+(p.desafios.ativos-p.desafios.hoje)+' hoje':'')+'</div>':'<div class="mini">Escolha um desafio curto para começar — dá para falhar dias e continuar.</div>'),
     card('cert','certificacao.html','Certificação',p.cert.ativo?(p.cert.aprovada?'<div class="num">Aprovada <small>Google Data Engineer</small></div>':'<div class="num">'+p.cert.pct+'% <small>do plano</small></div>'+barra(p.cert.pct)+'<div class="mini">'+(p.cert.comecaEm>0?'Começa em '+p.cert.comecaEm+' dia'+(p.cert.comecaEm>1?'s':''):p.cert.faltamProva>0?'Prova em '+p.cert.faltamProva+' dias':'Prova: hoje ou já passou')+' · prontidão '+p.cert.prontidao+'%</div>'):'<div class="mini">Plano relâmpago de 4 semanas para o Google Professional Data Engineer.</div>'),
-    card('pdi','pdi.html','PDI Snowfox',p.pdi.ativo?'<div class="num">'+p.pdi.pct+'% <small>das entregas</small></div>'+barra(p.pdi.pct)+'<div class="mini">'+(p.pdi.comecaEm>0?'Começa em '+p.pdi.comecaEm+' dia'+(p.pdi.comecaEm>1?'s':''):p.pdi.encerrado?'Ciclo encerrado: veja o resumo':'Semana '+p.pdi.semana+' de 4')+' · aulas de inglês '+p.pdi.aulasSemana+' de 5</div>':'<div class="mini">Plano de desenvolvimento: qualidade de dados, agentes de IA e inglês, em 4 semanas.</div>'),
+    card('pdi','pdi.html','PDI Snowfox',p.pdi.ativo?'<div class="num">'+p.pdi.pct+'% <small>das entregas</small></div>'+barra(p.pdi.pct)+'<div class="mini">'+(p.pdi.comecaEm>0?'Começa em '+p.pdi.comecaEm+' dia'+(p.pdi.comecaEm>1?'s':''):p.pdi.encerrado?'Ciclo encerrado: veja o resumo':'Semana '+p.pdi.semana+' de 4')+'</div>':'<div class="mini">Plano de desenvolvimento: qualidade de dados, agentes de IA e inglês, em 4 semanas.</div>'),
+    card('ingles','ingles.html','Inglês',p.ingles.ativo?'<div class="num">'+p.ingles.aulasSemana+' <small>de 5 aulas nesta semana</small></div>'+barra(p.ingles.pct)+'<div class="mini">'+(p.ingles.comecaEm>0?'Começa em '+p.ingles.comecaEm+' dia'+(p.ingles.comecaEm>1?'s':''):p.ingles.encerrado?'Ciclo encerrado: veja a medição':'Semana '+p.ingles.semana+' de 4')+' · prática '+p.ingles.pct+'%</div>':'<div class="mini">Prática pessoal além das aulas: shadowing, escuta, fala, escrita e frases, em 4 semanas.</div>'),
     card('mudanca','mudanca.html','Mudança','<div class="num">'+p.mudanca.pct+'% <small>do caminho</small></div>'+barra(p.mudanca.pct)+'<div class="mini">'+p.mudanca.imoveis+' imóvel(is) · '+p.mudanca.cotacoes+' orçamento(s) de mudança</div>'),
     card('imovel','imovel.html','Imóvel','<div class="mini">Perfil, quanto cabe, estratégias, construtoras e finalistas da primeira compra.</div>'),
     card('negocios','negocios.html','Negócios','<div class="mini">Prospecção, clientes e oportunidades para a renda extra.</div>')
@@ -295,6 +298,7 @@ function render(p){
     if(ds.ativos&&ds.hoje<ds.ativos) l.push(['desafios.html','🎯','Desafio: falta marcar hoje']);
     var ce=p.cert; if(ce.ativo&&!ce.aprovada&&!ce.encerrado&&!ce.comecaEm&&ce.tarefasHoje&&ce.feitasHoje<ce.tarefasHoje) l.push(['certificacao.html','🎓','Certificação: '+ce.feitasHoje+' de '+ce.tarefasHoje]);
     var pd=p.pdi; if(pd.ativo&&!pd.encerrado&&!pd.comecaEm&&pd.proximo) l.push(['pdi.html','📈','PDI: '+pd.proximo]);
+    var ig=p.ingles; if(ig.ativo&&!ig.encerrado&&!ig.comecaEm&&ig.proxima) l.push(['ingles.html','💬','Inglês: '+ig.proxima]);
     var el=$('#parahoje'); if(!el)return;
     if(!l.length){el.innerHTML='<div class="rotulo">Para hoje</div><div class="chips"><a class="ok" href="#">✓ Tudo em dia hoje</a></div>';return}
     el.innerHTML='<div class="rotulo">Para hoje · toque para ir</div><div class="chips">'+l.slice(0,3).map(function(x){return '<a href="'+x[0]+'"><span aria-hidden="true">'+x[1]+'</span>'+esc(x[2])+'</a>'}).join('')+'</div>';
