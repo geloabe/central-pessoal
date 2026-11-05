@@ -231,10 +231,12 @@
   /* ---------- Inglês pessoal (plano em assets/ingles.js; dados em ingles/main) ---------- */
   function ingles(d, hoje) {
     var I = root.CP_INGLES, doc = d.ingles || {};
-    if (!I || !doc.inicio) return { ativo: false, pct: 0, aulasSemana: 0, aulasTotal: 0 };
+    var cu = I ? I.cursoResumo(doc, hoje) : { semana: 0, meta: 7, hoje: false, total: 0 };
+    var curso = { cursoSemana: cu.semana, cursoMeta: cu.meta, cursoHoje: cu.hoje, cursoTotal: cu.total };
+    if (!I || !doc.inicio) return Object.assign({ ativo: false, pct: 0, aulasSemana: 0, aulasTotal: 0 }, curso);
     var e = I.estado(doc, hoje);
-    return { ativo: true, pct: e.pct, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, atrasadas: e.atrasadas,
-             aulasSemana: e.aulasSemana, aulasTotal: e.aulasTotal, proxima: e.prox ? e.prox.t.t : null };
+    return Object.assign(curso, { ativo: true, pct: e.pct, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, atrasadas: e.atrasadas,
+             aulasSemana: e.aulasSemana, aulasTotal: e.aulasTotal, proxima: e.prox ? e.prox.t.t : null });
   }
 
   /* ---------- Plataformas de dados (plano em assets/plat.js; dados em plat/main) ---------- */

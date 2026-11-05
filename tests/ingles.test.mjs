@@ -142,3 +142,27 @@ test('integração com o painel', async () => {
   assert.equal(p.ingles.ativo, true); assert.equal(p.ingles.aulasSemana, 3); assert.equal(p.ingles.aulasTotal, 3);
   assert.ok(p.metas.vida.some((m) => m.id === 'ingles'));
 });
+
+test('aulas do curso por dia: meta 7, semana de segunda a domingo, nota e remoção', () => {
+  assert.equal(I.AULAS_SEMANA, 7);
+  const qua = new Date(2026, 10, 4); // quarta 04/11/2026
+  let cfg = {};
+  cfg = { ...cfg, curso: I.cursoMarcar(cfg, '2026-11-04') };
+  cfg = { ...cfg, curso: I.cursoMarcar(cfg, '2026-11-02', 'verbos') }; // segunda da mesma semana
+  cfg = { ...cfg, curso: I.cursoMarcar(cfg, '2026-11-01') };           // domingo anterior: fora da semana
+  cfg = { ...cfg, curso: I.cursoMarcar(cfg, '2026-13-45') };           // data inválida é ignorada
+  const r = I.cursoResumo(cfg, qua);
+  assert.equal(r.semana, 2); assert.equal(r.total, 3); assert.equal(r.hoje, true); assert.equal(r.meta, 7);
+  assert.equal(r.lista[0].data, '2026-11-04'); assert.equal(r.lista.find(x => x.data === '2026-11-02').nota, 'verbos');
+  cfg = { ...cfg, curso: I.cursoMarcar(cfg, '2026-11-04', 'novo texto') };
+  assert.equal(I.cursoResumo(cfg, qua).lista[0].nota, 'novo texto');
+  cfg = { ...cfg, curso: I.cursoRemover(cfg, '2026-11-04') };
+  assert.equal(I.cursoResumo(cfg, qua).hoje, false);
+  assert.equal(I.cursoResumo(undefined, qua).semana, 0);
+});
+
+test('home: aulas do curso aparecem mesmo sem ciclo iniciado', async () => {
+  await import('../assets/progresso.js'); const G = globalThis.CP_PROG;
+  const p = G.calcular({ ingles: { curso: { '2026-11-04': { nota: '' } } } }, new Date(2026, 10, 4));
+  assert.equal(p.ingles.ativo, false); assert.equal(p.ingles.cursoSemana, 1); assert.equal(p.ingles.cursoMeta, 7); assert.equal(p.ingles.cursoHoje, true);
+});

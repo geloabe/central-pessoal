@@ -307,7 +307,7 @@ function render(p){
     pdi:['pdi.html','PDI Snowfox',pd.ativo?(pd.comecaEm>0?em(pd.comecaEm):pd.encerrado?'Ciclo encerrado':pd.pct+'% · semana '+pd.semana+' de 4'):'4 semanas, 4 h por semana',pd.ativo&&!pd.encerrado&&!pd.comecaEm?'PDI '+pd.pct+'%':''],
     plat:['plataformas.html','Plataformas de dados',pl.ativo?(pl.iniciado?pl.completas+' de '+pl.total+' aulas · '+pl.projetosOk+' de 9 projetos':'Databricks, Snowflake e dbt'):'Databricks, Snowflake e dbt',pl.iniciado?'plataformas '+pl.pct+'%':''],
     esp:['espanhol.html','Espanhol',es.ativo&&es.iniciado?es.completas+' de '+es.total+' aulas':'Do A1 ao A2, 16 aulas',es.iniciado?'espanhol '+es.pct+'%':''],
-    ingles:['ingles.html','Inglês',ig.ativo?(ig.comecaEm>0?em(ig.comecaEm):ig.encerrado?'Ciclo encerrado':ig.aulasSemana+' de 5 aulas na semana'):'Fala e vocabulário',ig.ativo&&!ig.encerrado&&!ig.comecaEm?ig.aulasSemana+'/5 aulas':''],
+    ingles:['ingles.html','Inglês',ig.cursoSemana+' de '+ig.cursoMeta+' aulas do curso na semana'+(ig.cursoHoje?' · hoje ✓':''),ig.cursoSemana+'/'+ig.cursoMeta+' aulas'],
     rota:['rota-internacional.html','Rota Internacional',p.rota.semana+' de '+p.rota.meta+' candidaturas',p.rota.semana+'/'+p.rota.meta+' candidaturas'],
     negocios:['negocios.html','Negócios','Prospecção e clientes',''],
     financeiro:['financeiro.html','Financeiro',p.financeiro.pct+'% da entrada',p.financeiro.pct+'% da entrada'],

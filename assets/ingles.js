@@ -1,10 +1,10 @@
 /* Inglês pessoal para a carreira — 4 semanas, foco em FALA e VOCABULÁRIO.
-   Por semana: 5 aulas (meta da pessoa) + 150 min de prática: shadowing, escuta ativa, fala gravada em cenários de carreira e cartões de vocabulário.
+   Por semana: 7 aulas do curso (meta da pessoa, registradas por dia em cfg.curso) + 150 min de prática: shadowing, escuta ativa, fala gravada em cenários de carreira e cartões de vocabulário.
    Funções puras (sem DOM nem rede), testáveis no Node. Dados (documento ingles/main):
-   { inicio:'AAAA-MM-DD', cont:{'1-sh':2}, aulas:{'1':4}, res:{wpm0:'110', wpm1:'135', hes0:'12', hes1:'6'}, srs:{'v1':{c:2,p:'AAAA-MM-DD',d:'AAAA-MM-DD'}} } */
+   { inicio:'AAAA-MM-DD', cont:{'1-sh':2}, aulas:{'1':4}, curso:{'AAAA-MM-DD':{nota:'texto'}}, res:{wpm0:'110', wpm1:'135', hes0:'12', hes1:'6'}, srs:{'v1':{c:2,p:'AAAA-MM-DD',d:'AAAA-MM-DD'}} } */
 (function (root) {
   'use strict';
-  var DIA = 864e5, N_SEMANAS = 4, MIN_ING = 150, AULAS_SEMANA = 5, NOVOS_DIA = 8, SESSAO_MAX = 20, INT = [1, 1, 3, 7, 14, 30];
+  var DIA = 864e5, N_SEMANAS = 4, MIN_ING = 150, AULAS_SEMANA = 7, NOVOS_DIA = 8, SESSAO_MAX = 20, INT = [1, 1, 3, 7, 14, 30];
   function pad(n) { return String(n).padStart(2, '0'); }
   function iso(dt) { return dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate()); }
   function parse(s) { var p = String(s).slice(0, 10).split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]); }
@@ -92,7 +92,7 @@
         ['Problema, papel, ação, resultado (projeto)', 'The problem was… / My role was… / What I did was… / As a result, …'],
         ['STAR (pergunta comportamental)', 'At the time, … (situação) / I was responsible for… (tarefa) / So I… (ação) / In the end, … (resultado)']],
       fala: [F('Tell me about yourself. (esta é a sua linha de base: dois minutos, depois registre na aba Medição)', 0), F('Walk me through a project you’re proud of.', 1), F('Tell me about a time something went wrong in production.', 2)],
-      pauta: 'Peça ao professor uma entrevista simulada de Data Engineer: 15 minutos de perguntas (Tell me about yourself, um projeto, uma pergunta STAR) e feedback focado em pausas, vocabulário e clareza.' },
+      pauta: 'Aula em grupo: use as falas da turma como treino. Quando alguém responder uma pergunta, responda baixinho a mesma com a sua história (Tell me about yourself, um projeto, uma situação STAR). Anote 3 expressões novas que ouvir e treine na prática da semana.' },
     { n: 2, foco: 'Conversa técnica: explicar, discutir e decidir',
       porque: 'Ser vista como sênior é, em boa parte, explicar uma decisão técnica com clareza, discordar sem atrito e adaptar a explicação a quem ouve. É o que se testa nas etapas técnicas e nas reuniões de design.',
       tema: 'arquitetura e engenharia de dados no dia a dia',
@@ -101,7 +101,7 @@
         ['Manchete primeiro', 'In short, … Here’s why: …'],
         ['Trade-off', 'The upside is…, the downside is… If X matters most, I’d choose…']],
       fala: [F('Explain what a data pipeline does to someone who isn’t technical.', 1), F('Batch or streaming for daily sales reports? Pick one and defend it.', 0), F('Walk me through how you would move data from an API into a warehouse.', 2)],
-      pauta: 'Peça uma discussão técnica: você explica uma decisão de arquitetura e o professor discorda de propósito. Treine defender com PREP e discordar com educação.' },
+      pauta: 'Aula em grupo: quando o professor ou a turma explicar algo, pratique em voz baixa explicar uma decisão técnica sua com PREP. Se houver chance de falar, tente discordar com educação em uma frase e anote como os outros fazem.' },
     { n: 3, foco: 'Reuniões e stakeholders: status, bloqueios e expectativas',
       porque: 'No dia a dia remoto, a carreira anda pelo que as pessoas entendem do seu trabalho: status claro, riscos avisados cedo e prazos negociados sem conflito.',
       tema: 'comunicação em times remotos e gestão de expectativas',
@@ -110,7 +110,7 @@
         ['Status (manchete, detalhe, próximo passo)', 'The short version is… / The details: … / Next step: …'],
         ['Resistência educada', 'I understand you need… / The constraint is… / What I can do is…']],
       fala: [F('Give your stand-up in 60 to 90 seconds.', 0), F('A stakeholder wants a dashboard by Friday, but the data isn’t ready. Respond.', 2), F('Give the team an incident update: what happened, impact, fix, next steps.', 1)],
-      pauta: 'Peça um roleplay: um stand-up e uma conversa em que o “stakeholder” pede um prazo impossível. Treine a resistência educada com uma alternativa.' },
+      pauta: 'Aula em grupo: quando surgir um pedido ou prazo na aula, pense em como você resistiria com educação e uma alternativa (“I can’t do it by Friday, but I can do X”). Anote frases de reunião que ouvir e use nas gravações.' },
     { n: 4, foco: 'Apresentar, negociar e crescer na carreira',
       porque: 'É aqui que o inglês vira dinheiro e cargo: apresentar para quem decide, negociar valor sem se encolher e pedir mais escopo com argumentos.',
       tema: 'carreira em dados, liderança técnica e negociação',
@@ -119,7 +119,7 @@
         ['Negociação', 'Thank you for the offer. (apreço) / Based on…, I was expecting… (âncora) / I’m open to discussing… (flexibilidade)'],
         ['Crescimento: impacto, escopo, pedido', 'Over the past months I… / I’d like to take on… / What would it take to get there?']],
       fala: [F('Tell me about yourself. (nova medição: os mesmos dois minutos da semana 1)', 0), F('Present one of your projects in 3 minutes: problem, approach, result.', 0), F('The recruiter offers a rate below what you expected. Negotiate.', 1)],
-      pauta: 'Peça duas simulações: uma apresentação de 3 minutos com perguntas e uma negociação de valor (rate) com contraproposta. Se sobrar tempo, treine pedir mais escopo ao gestor.' }
+      pauta: 'Aula em grupo: se houver espaço, ofereça-se para falar 1 minuto sobre um projeto. Em casa, grave a apresentação de 3 minutos e a negociação de valor (rate) com contraproposta, que a aula em grupo não costuma dar tempo de treinar.' }
   ];
   var ESCUTA = ['Data Engineering Podcast', 'Software Engineering Daily', 'Soft Skills Engineering (podcast)', 'Lenny’s Podcast (carreira e produto)', 'Palestras da conferência Coalesce (dbt) no YouTube', 'Canal Google Cloud Tech no YouTube'];
 
@@ -205,12 +205,28 @@
     c[id] = Math.min(t.t.vezes, Math.max(0, (+c[id] || 0) + delta)); if (!c[id]) delete c[id]; return c;
   }
   function ajustarAulas(cfg, semana, delta) { var a = Object.assign({}, (cfg && cfg.aulas) || {}); a[semana] = Math.min(9, Math.max(0, (+a[semana] || 0) + delta)); return a; }
+  /* Aulas do curso, registradas por dia (cfg.curso = { 'AAAA-MM-DD': { nota } }); independe do ciclo de 4 semanas */
+  function segunda(dt) { var d = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+  function cursoValida(d) { return /^\d{4}-\d{2}-\d{2}$/.test(String(d)) && iso(parse(d)) === d; }
+  function cursoMarcar(cfg, data, nota) {
+    var c = Object.assign({}, (cfg && cfg.curso) || {});
+    if (!cursoValida(data)) return c;
+    c[data] = { nota: String(nota == null ? ((c[data] && c[data].nota) || '') : nota).slice(0, 500) };
+    return c;
+  }
+  function cursoRemover(cfg, data) { var c = Object.assign({}, (cfg && cfg.curso) || {}); delete c[data]; return c; }
+  function cursoResumo(cfg, hoje) {
+    var c = (cfg && cfg.curso) || {}, ds = Object.keys(c).filter(cursoValida).sort().reverse();
+    var ini = iso(segunda(hoje)), fim = iso(addDias(segunda(hoje), 6));
+    return { hoje: !!c[iso(hoje)], total: ds.length, semana: ds.filter(function (d) { return d >= ini && d <= fim; }).length, meta: AULAS_SEMANA,
+      lista: ds.slice(0, 30).map(function (d) { return { data: d, nota: (c[d] && c[d].nota) || '' }; }) };
+  }
   function cfgPadrao(hoje) { return { inicio: iso(hoje), cont: {}, aulas: {}, res: {}, srs: {} }; }
   function dataDaSemana(cfg, n) { return addDias(parse(cfg.inicio), (n - 1) * 7); }
   function cartoesAnki(n) { return VOCAB.filter(function (c) { return c.w === n; }).map(function (c) { return c.pt + ';' + c.en + ' — ' + c.ex; }).join('\n'); }
 
   var api = { N_SEMANAS: N_SEMANAS, MIN_ING: MIN_ING, AULAS_SEMANA: AULAS_SEMANA, NOVOS_DIA: NOVOS_DIA, INT: INT, INGLES: INGLES, VOCAB: VOCAB, ESCUTA: ESCUTA,
     iso: iso, parse: parse, addDias: addDias, dias: dias, fmtMin: fmtMin, todas: todas, estado: estado, fila: fila, responder: responder, statsVocab: statsVocab,
-    contar: contar, ajustarAulas: ajustarAulas, cfgPadrao: cfgPadrao, dataDaSemana: dataDaSemana, cartoesAnki: cartoesAnki };
+    contar: contar, ajustarAulas: ajustarAulas, cursoMarcar: cursoMarcar, cursoRemover: cursoRemover, cursoResumo: cursoResumo, cfgPadrao: cfgPadrao, dataDaSemana: dataDaSemana, cartoesAnki: cartoesAnki };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_INGLES = api;
 })(typeof window !== 'undefined' ? window : globalThis);
