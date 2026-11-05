@@ -166,3 +166,21 @@ test('home: aulas do curso aparecem mesmo sem ciclo iniciado', async () => {
   const p = G.calcular({ ingles: { curso: { '2026-11-04': { nota: '' } } } }, new Date(2026, 10, 4));
   assert.equal(p.ingles.ativo, false); assert.equal(p.ingles.cursoSemana, 1); assert.equal(p.ingles.cursoMeta, 7); assert.equal(p.ingles.cursoHoje, true);
 });
+
+test('aulas do curso: várias no mesmo dia (n), teto 9, zero remove o dia', () => {
+  const qua = new Date(2026, 10, 4);
+  let cfg = { curso: { '2026-11-02': { nota: 'antigo, sem n' } } }; // formato anterior conta 1
+  cfg = { curso: I.cursoAjustar(cfg, '2026-11-04', 1) };
+  cfg = { curso: I.cursoAjustar(cfg, '2026-11-04', 1) };
+  let r = I.cursoResumo(cfg, qua);
+  assert.equal(r.hojeN, 2); assert.equal(r.semana, 3); assert.equal(r.lista[0].n, 2);
+  cfg = { curso: I.cursoAjustar(cfg, '2026-11-02', 1) };
+  assert.equal(I.cursoResumo(cfg, qua).semana, 4);
+  assert.equal(I.cursoResumo(cfg, qua).lista.find(x => x.data === '2026-11-02').nota, 'antigo, sem n');
+  for (let i = 0; i < 12; i++) cfg = { curso: I.cursoAjustar(cfg, '2026-11-04', 1) };
+  assert.equal(I.cursoResumo(cfg, qua).hojeN, 9);
+  cfg = { curso: I.cursoMarcar(cfg, '2026-11-04', 'nota') };
+  assert.equal(I.cursoResumo(cfg, qua).hojeN, 9);
+  for (let i = 0; i < 9; i++) cfg = { curso: I.cursoAjustar(cfg, '2026-11-04', -1) };
+  assert.equal(I.cursoResumo(cfg, qua).hoje, false);
+});

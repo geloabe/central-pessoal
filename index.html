@@ -227,11 +227,11 @@ a.tile small{display:block;color:var(--mut);font-size:12.5px;line-height:1.3}
 <script src="assets/modulo.js"></script>
 <script src="assets/cert.js"></script>
 <script src="assets/pdi.js"></script>
-<script src="assets/ingles.js?v=20261105"></script>
+<script src="assets/ingles.js?v=20261106"></script>
 <script src="assets/imovel-acomp.js"></script>
 <script src="assets/plat.js"></script>
 <script src="assets/esp.js"></script>
-<script src="assets/progresso.js?v=20261105"></script>
+<script src="assets/progresso.js?v=20261106"></script>
 <script src="assets/integracoes.js"></script>
 <script src="assets/foco.js"></script>
 <script>
@@ -307,7 +307,7 @@ function render(p){
     pdi:['pdi.html','PDI Snowfox',pd.ativo?(pd.comecaEm>0?em(pd.comecaEm):pd.encerrado?'Ciclo encerrado':pd.pct+'% · semana '+pd.semana+' de 4'):'4 semanas, 4 h por semana',pd.ativo&&!pd.encerrado&&!pd.comecaEm?'PDI '+pd.pct+'%':''],
     plat:['plataformas.html','Plataformas de dados',pl.ativo?(pl.iniciado?pl.completas+' de '+pl.total+' aulas · '+pl.projetosOk+' de 9 projetos':'Databricks, Snowflake e dbt'):'Databricks, Snowflake e dbt',pl.iniciado?'plataformas '+pl.pct+'%':''],
     esp:['espanhol.html','Espanhol',es.ativo&&es.iniciado?es.completas+' de '+es.total+' aulas':'Do A1 ao A2, 16 aulas',es.iniciado?'espanhol '+es.pct+'%':''],
-    ingles:['ingles.html','Inglês',ig.cursoSemana+' de '+ig.cursoMeta+' aulas do curso na semana'+(ig.cursoHoje?' · hoje ✓':''),ig.cursoSemana+'/'+ig.cursoMeta+' aulas'],
+    ingles:['ingles.html','Inglês',ig.cursoSemana+' de '+ig.cursoMeta+' aulas do curso na semana'+(ig.cursoHoje?' · hoje '+ig.cursoHojeN+' ✓':''),ig.cursoSemana+'/'+ig.cursoMeta+' aulas'],
     rota:['rota-internacional.html','Rota Internacional',p.rota.semana+' de '+p.rota.meta+' candidaturas',p.rota.semana+'/'+p.rota.meta+' candidaturas'],
     negocios:['negocios.html','Negócios','Prospecção e clientes',''],
     financeiro:['financeiro.html','Financeiro',p.financeiro.pct+'% da entrada',p.financeiro.pct+'% da entrada'],

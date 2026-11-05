@@ -232,7 +232,7 @@
   function ingles(d, hoje) {
     var I = root.CP_INGLES, doc = d.ingles || {};
     var cu = I ? I.cursoResumo(doc, hoje) : { semana: 0, meta: 7, hoje: false, total: 0 };
-    var curso = { cursoSemana: cu.semana, cursoMeta: cu.meta, cursoHoje: cu.hoje, cursoTotal: cu.total };
+    var curso = { cursoSemana: cu.semana, cursoMeta: cu.meta, cursoHoje: cu.hoje, cursoHojeN: cu.hojeN, cursoTotal: cu.total };
     if (!I || !doc.inicio) return Object.assign({ ativo: false, pct: 0, aulasSemana: 0, aulasTotal: 0 }, curso);
     var e = I.estado(doc, hoje);
     return Object.assign(curso, { ativo: true, pct: e.pct, semana: e.semana, comecaEm: e.comecaEm, encerrado: e.encerrado, atrasadas: e.atrasadas,

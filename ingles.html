@@ -118,8 +118,8 @@ dialog::backdrop{background:rgba(40,30,60,.35)}
 </main>
 <div id="modo" hidden></div>
 
-<script src="assets/progresso.js?v=20261105"></script>
-<script src="assets/ingles.js?v=20261105"></script>
+<script src="assets/progresso.js?v=20261106"></script>
+<script src="assets/ingles.js?v=20261106"></script>
 <script src="assets/gram.js"></script>
 <script>
 (function(){
@@ -168,11 +168,11 @@ function cursoBloco(){
   var r=K.cursoResumo(C,hoje()), pct=Math.min(100,Math.round(r.semana/r.meta*100));
   var h='<div class="cartao resumo"><div class="rotulo">Minhas aulas do curso</div>'+
     '<h3 style="margin:6px 0">'+r.semana+' de '+r.meta+' nesta semana'+(r.semana>=r.meta?' · meta batida ✓':'')+'</h3>'+barra(pct)+
-    '<div class="row"><button class="btn primary" data-cursohoje="1"'+(r.hoje?' disabled':'')+'>'+(r.hoje?'Aula de hoje registrada ✓':'Tive aula hoje')+'</button></div>'+
-    '<div class="row" style="margin-top:8px"><label class="mini" for="cursodata">Outro dia</label><input type="date" id="cursodata" max="'+K.iso(hoje())+'" value="'+K.iso(hoje())+'"><button class="btn" data-cursodata="1">Registrar</button></div>'+
+    '<div class="row"><button class="btn primary" data-cursohoje="1">'+(r.hojeN?'+1 aula hoje (hoje: '+r.hojeN+')':'Tive aula hoje')+'</button>'+(r.hojeN?'<button class="btn" data-cursohojemenos="1" aria-label="Menos uma aula hoje">−1</button>':'')+'</div>'+
+    '<div class="row" style="margin-top:8px"><label class="mini" for="cursodata">Outro dia</label><input type="date" id="cursodata" max="'+K.iso(hoje())+'" value="'+K.iso(hoje())+'"><button class="btn" data-cursodata="1">+1 nesse dia</button></div>'+
     '<div class="mini" style="margin-top:8px">Semana de segunda a domingo. '+r.total+' aula'+(r.total===1?'':'s')+' registrada'+(r.total===1?'':'s')+' no total.</div>';
   if(r.lista.length)h+='<details style="margin-top:10px"><summary>Dias com aula</summary><div class="corpo">'+r.lista.map(function(x){
-    return '<div style="padding:8px 0;border-top:1px solid var(--t-line)"><div class="row"><b>'+ddmm(x.data)+'</b><span class="sp"></span><button class="btn" data-cursodel="'+x.data+'" aria-label="Remover aula de '+ddmm(x.data)+'">Remover</button></div>'+
+    return '<div style="padding:8px 0;border-top:1px solid var(--t-line)"><div class="row"><b>'+ddmm(x.data)+' · '+x.n+(x.n===1?' aula':' aulas')+'</b><span class="sp"></span><button class="btn" data-cursomenos="'+x.data+'" aria-label="Menos uma aula em '+ddmm(x.data)+'">−1</button><button class="btn" data-cursomais="'+x.data+'" aria-label="Mais uma aula em '+ddmm(x.data)+'">+1</button><button class="btn" data-cursodel="'+x.data+'" aria-label="Remover o dia '+ddmm(x.data)+'">Remover dia</button></div>'+
       '<input type="text" maxlength="500" style="width:100%;margin-top:6px" placeholder="O que viu na aula (opcional)" value="'+esc(x.nota)+'" data-cursonota="'+x.data+'" aria-label="Nota da aula de '+ddmm(x.data)+'"></div>';}).join('')+'</div></details>';
   $('#curso').innerHTML=h+'</div>';
 }
@@ -340,8 +340,11 @@ document.addEventListener('click',function(ev){
   var b=ev.target.closest('button');if(!b)return;
   var d=b.dataset;
   if(d.c){var p=d.c.split('|');salvar({cont:K.contar(C,p[0],+p[1])})}
-  else if(d.cursohoje){salvar({curso:K.cursoMarcar(C,K.iso(hoje()))})}
-  else if(d.cursodata){var dt=$('#cursodata').value;if(dt&&dt<=K.iso(hoje()))salvar({curso:K.cursoMarcar(C,dt)})}
+  else if(d.cursohoje){salvar({curso:K.cursoAjustar(C,K.iso(hoje()),1)})}
+  else if(d.cursohojemenos){salvar({curso:K.cursoAjustar(C,K.iso(hoje()),-1)})}
+  else if(d.cursomais){salvar({curso:K.cursoAjustar(C,d.cursomais,1)})}
+  else if(d.cursomenos){salvar({curso:K.cursoAjustar(C,d.cursomenos,-1)})}
+  else if(d.cursodata){var dt=$('#cursodata').value;if(dt&&dt<=K.iso(hoje()))salvar({curso:K.cursoAjustar(C,dt,1)})}
   else if(d.cursodel){if(confirm('Remover a aula de '+d.cursodel.split('-').reverse().join('/')+'?'))salvar({curso:K.cursoRemover(C,d.cursodel)})}
   else if(d.anki){copiar(K.cartoesAnki(+d.anki));b.textContent='Copiado ✓'}
   else if(d.cart){abrirCartoes()}

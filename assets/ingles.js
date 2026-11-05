@@ -1,7 +1,7 @@
 /* Inglês pessoal para a carreira — 4 semanas, foco em FALA e VOCABULÁRIO.
    Por semana: 7 aulas do curso (meta da pessoa, registradas por dia em cfg.curso) + 150 min de prática: shadowing, escuta ativa, fala gravada em cenários de carreira e cartões de vocabulário.
    Funções puras (sem DOM nem rede), testáveis no Node. Dados (documento ingles/main):
-   { inicio:'AAAA-MM-DD', cont:{'1-sh':2}, aulas:{'1':4}, curso:{'AAAA-MM-DD':{nota:'texto'}}, res:{wpm0:'110', wpm1:'135', hes0:'12', hes1:'6'}, srs:{'v1':{c:2,p:'AAAA-MM-DD',d:'AAAA-MM-DD'}} } */
+   { inicio:'AAAA-MM-DD', cont:{'1-sh':2}, aulas:{'1':4}, curso:{'AAAA-MM-DD':{n:2,nota:'texto'}}, res:{wpm0:'110', wpm1:'135', hes0:'12', hes1:'6'}, srs:{'v1':{c:2,p:'AAAA-MM-DD',d:'AAAA-MM-DD'}} } */
 (function (root) {
   'use strict';
   var DIA = 864e5, N_SEMANAS = 4, MIN_ING = 150, AULAS_SEMANA = 7, NOVOS_DIA = 8, SESSAO_MAX = 20, INT = [1, 1, 3, 7, 14, 30];
@@ -211,15 +211,26 @@
   function cursoMarcar(cfg, data, nota) {
     var c = Object.assign({}, (cfg && cfg.curso) || {});
     if (!cursoValida(data)) return c;
-    c[data] = { nota: String(nota == null ? ((c[data] && c[data].nota) || '') : nota).slice(0, 500) };
+    c[data] = { n: nDia(c[data] || { n: 1 }), nota: String(nota == null ? ((c[data] && c[data].nota) || '') : nota).slice(0, 500) };
+    return c;
+  }
+  /* várias aulas no mesmo dia: n (1 a 9; sem n conta 1). Chegar a 0 remove o dia. */
+  function nDia(x) { var n = x && x.n != null ? Math.floor(+x.n) : 1; return Math.min(9, Math.max(1, n || 1)); }
+  function cursoAjustar(cfg, data, delta) {
+    var c = Object.assign({}, (cfg && cfg.curso) || {});
+    if (!cursoValida(data)) return c;
+    var n = (c[data] ? nDia(c[data]) : 0) + delta;
+    if (n <= 0) { delete c[data]; return c; }
+    c[data] = { n: Math.min(9, n), nota: (c[data] && c[data].nota) || '' };
     return c;
   }
   function cursoRemover(cfg, data) { var c = Object.assign({}, (cfg && cfg.curso) || {}); delete c[data]; return c; }
   function cursoResumo(cfg, hoje) {
     var c = (cfg && cfg.curso) || {}, ds = Object.keys(c).filter(cursoValida).sort().reverse();
     var ini = iso(segunda(hoje)), fim = iso(addDias(segunda(hoje), 6));
-    return { hoje: !!c[iso(hoje)], total: ds.length, semana: ds.filter(function (d) { return d >= ini && d <= fim; }).length, meta: AULAS_SEMANA,
-      lista: ds.slice(0, 30).map(function (d) { return { data: d, nota: (c[d] && c[d].nota) || '' }; }) };
+    var soma = function (l) { return l.reduce(function (a, d) { return a + nDia(c[d]); }, 0); };
+    return { hoje: !!c[iso(hoje)], hojeN: c[iso(hoje)] ? nDia(c[iso(hoje)]) : 0, total: soma(ds), semana: soma(ds.filter(function (d) { return d >= ini && d <= fim; })), meta: AULAS_SEMANA,
+      lista: ds.slice(0, 30).map(function (d) { return { data: d, n: nDia(c[d]), nota: (c[d] && c[d].nota) || '' }; }) };
   }
   function cfgPadrao(hoje) { return { inicio: iso(hoje), cont: {}, aulas: {}, res: {}, srs: {} }; }
   function dataDaSemana(cfg, n) { return addDias(parse(cfg.inicio), (n - 1) * 7); }
@@ -227,6 +238,6 @@
 
   var api = { N_SEMANAS: N_SEMANAS, MIN_ING: MIN_ING, AULAS_SEMANA: AULAS_SEMANA, NOVOS_DIA: NOVOS_DIA, INT: INT, INGLES: INGLES, VOCAB: VOCAB, ESCUTA: ESCUTA,
     iso: iso, parse: parse, addDias: addDias, dias: dias, fmtMin: fmtMin, todas: todas, estado: estado, fila: fila, responder: responder, statsVocab: statsVocab,
-    contar: contar, ajustarAulas: ajustarAulas, cursoMarcar: cursoMarcar, cursoRemover: cursoRemover, cursoResumo: cursoResumo, cfgPadrao: cfgPadrao, dataDaSemana: dataDaSemana, cartoesAnki: cartoesAnki };
+    contar: contar, ajustarAulas: ajustarAulas, cursoMarcar: cursoMarcar, cursoAjustar: cursoAjustar, cursoRemover: cursoRemover, cursoResumo: cursoResumo, cfgPadrao: cfgPadrao, dataDaSemana: dataDaSemana, cartoesAnki: cartoesAnki };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.CP_INGLES = api;
 })(typeof window !== 'undefined' ? window : globalThis);
