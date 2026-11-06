@@ -1,0 +1,28 @@
+name: Sincronizar Nubank (Pluggy)
+on:
+  schedule:
+    - cron: '0 9 * * *'   # 09:00 UTC = 06:00 em Brasília, uma vez por dia
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pluggy-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Puxa os lançamentos (só leitura) e grava no Supabase
+        run: node scripts/pluggy-sync.mjs
+        env:
+          PLUGGY_CLIENT_ID: ${{ secrets.PLUGGY_CLIENT_ID }}
+          PLUGGY_CLIENT_SECRET: ${{ secrets.PLUGGY_CLIENT_SECRET }}
+          PLUGGY_ITEM_IDS: ${{ secrets.PLUGGY_ITEM_IDS }}
+          APP_EMAIL: ${{ secrets.APP_EMAIL }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
