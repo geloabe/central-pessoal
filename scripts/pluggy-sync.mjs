@@ -2,7 +2,7 @@
 //
 //   npm run pluggy -- --dry     -> baixa e salva em dados/pluggy-AAAA-MM-DD.json (nada vai ao Supabase)
 //   npm run pluggy              -> baixa e grava no Supabase (docs, coleção "pluggy-tx"; idempotente)
-//   npm run pluggy -- --desde 2026-01-01   -> só lançamentos a partir dessa data (padrão: 120 dias)
+//   npm run pluggy -- --desde 2026-01-01   -> só lançamentos a partir dessa data (padrão: 2026-11-01, ou PLUGGY_DESDE no .env)
 //
 // Variáveis no .env (nunca no front-end, nunca no git):
 //   PLUGGY_CLIENT_ID, PLUGGY_CLIENT_SECRET  -> da Development Application no dashboard.pluggy.ai
@@ -71,7 +71,7 @@ async function main() {
   try { process.loadEnvFile(join(root, '.env')); } catch {}
   const args = process.argv.slice(2);
   const dry = args.includes('--dry');
-  const desde = args.includes('--desde') ? args[args.indexOf('--desde') + 1] : new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10);
+  const desde = args.includes('--desde') ? args[args.indexOf('--desde') + 1] : process.env.PLUGGY_DESDE || '2026-11-01';
   const { PLUGGY_CLIENT_ID: id, PLUGGY_CLIENT_SECRET: secret } = process.env;
   if (!id || !secret) die('Faltam PLUGGY_CLIENT_ID e PLUGGY_CLIENT_SECRET no .env.');
 

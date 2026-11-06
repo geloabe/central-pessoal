@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="assets/tema.css">
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/pluggy-fin.js?v=1"></script>
 <meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
 <link rel="stylesheet" href="assets/mobile.css">
@@ -385,6 +386,8 @@
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'];
 const MONTH_ALL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const NEXT_MONTH = 'Outubro'; // mês em que os novos tetos/cortes passam a valer
+// Meses depois de NEXT_MONTH que já têm lançamentos do Nubank (Pluggy). Entram só nos seletores; as médias seguem usando MONTHS.
+function mesesExtra(campo){ return MONTH_ALL.slice(MONTH_ALL.indexOf(NEXT_MONTH)+1).filter(m=>state.pluggyTx.some(t=>t[campo]===m)); }
 const MONTH_SHORT = {Janeiro:'Jan',Fevereiro:'Fev',Março:'Mar',Abril:'Abr',Maio:'Mai',Junho:'Jun',Julho:'Jul',Agosto:'Ago',Setembro:'Set',Outubro:'Out',Novembro:'Nov',Dezembro:'Dez'};
 const CAT_COLORS = {
   supermercado:'#5fc9b8', restaurante:'#e8757a', transporte:'#e8b86d', lazer:'#9b8ce8',
@@ -422,6 +425,7 @@ let state = {
   habits: {},
   investEntries: {}, // {label: value}
   extraTx: [], // manually added transactions (weekly updates)
+  pluggyTx: [], // lançamentos do Nubank sincronizados via Pluggy (a partir de 01/11/2026), já convertidos
   categoryOverrides: {}, // {txId: newCategory} — manual corrections, discreet & persistent
   goalMonthly: null, // meta: aporte mensal escolhido pelo usuário
   budgetCaps: {}, // {categoria: teto mensal}
@@ -433,7 +437,7 @@ let state = {
 // ---------------- Derived data helpers ----------------
 let extraIdCounter = 0;
 function allTransactions(){
-  return DASHBOARD_DATA.transactions.concat(state.extraTx);
+  return DASHBOARD_DATA.transactions.concat(state.pluggyTx, state.extraTx);
 }
 // effective category = manual override (if any) wins over the original classification
 function txCategory(t){
@@ -443,7 +447,7 @@ function txCategory(t){
 // importado por mim) com a mesma data e o mesmo valor. Ajuda a limpar quando o extrato chega.
 function findPossibleDuplicate(manualTx){
   if (manualTx.type === 'income') return null;
-  return DASHBOARD_DATA.transactions.find(t =>
+  return DASHBOARD_DATA.transactions.concat(state.pluggyTx).find(t =>
     t.date === manualTx.date && Math.abs(t.value - manualTx.value) < 0.02
   ) || null;
 }
@@ -760,7 +764,7 @@ function renderMensal(){
 
   el.innerHTML = `
     <div class="month-select">
-      ${MONTHS.concat([NEXT_MONTH]).map(mo=>`<button data-month="${mo}" class="${mo===m?'active':''}">${MONTH_SHORT[mo]}</button>`).join('')}
+      ${MONTHS.concat([NEXT_MONTH], mesesExtra('budgetMonth')).map(mo=>`<button data-month="${mo}" class="${mo===m?'active':''}">${MONTH_SHORT[mo]}</button>`).join('')}
     </div>
 
     <section class="block">
@@ -880,7 +884,7 @@ function renderGastos(){
       <div class="filters">
         <input type="text" id="fText" placeholder="Buscar por descrição..." value="${state.filterText}">
         <select id="fCat"><option value="">Todas categorias</option>${cats.map(c=>`<option value="${c}" ${state.filterCat===c?'selected':''}>${catLabel(c)}</option>`).join('')}</select>
-        <select id="fMonth"><option value="">Todos os meses</option>${MONTHS.map(m=>`<option value="${m}" ${state.filterMonth===m?'selected':''}>${m}</option>`).join('')}</select>
+        <select id="fMonth"><option value="">Todos os meses</option>${MONTHS.concat(mesesExtra('month')).map(m=>`<option value="${m}" ${state.filterMonth===m?'selected':''}>${m}</option>`).join('')}</select>
       </div>
       <div class="table-scroll"><table class="tx" id="gastosTable"></table></div>
     </section>
@@ -1601,6 +1605,11 @@ async function init(){
   const dbh = await claude.use('db');
   const base = await dbh.doc('fin/base').get();
   if(base.exists) Object.assign(DASHBOARD_DATA, base.data());
+  try{
+    const pl = await dbh.collection('pluggy-tx').get();
+    const brutos = []; pl.forEach(d=>brutos.push(d.data()));
+    state.pluggyTx = window.CP_PLUGGY ? window.CP_PLUGGY.paraPainel(brutos, DASHBOARD_DATA.transactions, '2026-11-01').lancamentos : [];
+  }catch(e){ console.error('pluggy-tx', e); state.pluggyTx = []; }
   state.habits = await Store.get('habits', {});
   state.investEntries = await Store.get('investEntries', DASHBOARD_DATA.investDefaults || {});
   state.extraTx = await Store.get('extraTx', []);
