@@ -67,6 +67,20 @@ a.mod .go{margin-left:auto;color:var(--mut);font-size:18px}
 .marcos span.on::before{content:"✓ ";color:var(--t-ok);font-weight:700}
 .erro{padding:14px;border:1px solid var(--t-bad);color:var(--t-bad);margin-top:12px}
 
+.gastos{margin-top:12px;padding:14px 16px;background:var(--t-surface);border:1px solid var(--lin);border-left:4px solid var(--t-accent);display:block}
+.gastos a.cab{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;color:inherit;text-decoration:none}
+.gastos .big{font:600 28px var(--f-titulo);letter-spacing:var(--titulo-tracking)}
+.gastos .big small{font:400 15px var(--f-texto);color:var(--mut)}
+.gastos .sub{font-size:13px;color:var(--mut);margin-top:2px}
+.gastos .lin{margin-top:12px}
+.gastos .lin .l{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.gastos .lin .l b{font-weight:600}
+.gastos .lin .barra{margin-top:4px}
+.gastos .lin .barra i{background:var(--t-ok)}
+.gastos .lin.atencao .barra i{background:var(--t-accent2)}
+.gastos .lin.estourou .barra i{background:var(--t-bad)}
+.gastos .lin.estourou .v{color:var(--t-bad);font-weight:600}
+.gastos .vazio{font-size:14px;color:var(--mut);margin-top:8px}
 .agua{margin-top:12px;padding:14px 16px;background:var(--t-surface);border:1px solid var(--lin);border-left:4px solid var(--t-c3)}
 .agua .topo{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .agua .big{font:600 28px var(--f-titulo);letter-spacing:var(--titulo-tracking)}
@@ -198,6 +212,8 @@ a.tile small{display:block;color:var(--mut);font-size:12.5px;line-height:1.3}
 
   <section class="foco" id="foco" aria-label="Foco de hoje"></section>
 
+  <section class="gastos" id="gastos" aria-label="Gastos da semana e do mês"></section>
+
   <section class="agua" id="agua" aria-label="Água de hoje"></section>
 
   <details class="habs-d" id="habsD">
@@ -231,6 +247,8 @@ a.tile small{display:block;color:var(--mut);font-size:12.5px;line-height:1.3}
 <script src="assets/imovel-acomp.js"></script>
 <script src="assets/plat.js"></script>
 <script src="assets/esp.js"></script>
+<script src="assets/pluggy-fin.js?v=1"></script>
+<script src="assets/gastos.js?v=1"></script>
 <script src="assets/progresso.js?v=20261106"></script>
 <script src="assets/integracoes.js"></script>
 <script src="assets/foco.js"></script>
@@ -274,10 +292,12 @@ async function carregar(){
     seguro(db.doc('ingles/main').get().then(function(s){return s.exists?s.data():null}),null),
     seguro(db.doc('imv_acomp/main').get().then(function(s){return s.exists?s.data():null}),null),
     seguro(db.doc('plat/main').get().then(function(s){return s.exists?s.data():null}),null),
-    seguro(db.doc('esp/main').get().then(function(s){return s.exists?s.data():null}),null)
+    seguro(db.doc('esp/main').get().then(function(s){return s.exists?s.data():null}),null),
+    seguro(db.collection('pluggy-tx').get().then(docs),[]), seguro(db.doc('pluggy-meta/ultima').get().then(function(s){return s.exists?s.data():null}),null),
+    seguro(st.get('extraTx'),null), seguro(st.get('categoryOverrides'),null), seguro(st.get('budgetCaps'),null), seguro(st.get('budgetCapsSemana'),null)
   ]);
   return {sessions:r[0],habitos:{config:json(r[1]),records:CP_INT.mesclar(json(r[2])||{},r[17],r[0])},grimorio:{entries:json(r[3])||[]},apps:r[4],profile:r[5],medidas:r[6],
-    fin:{portfolio:(r[7]||{}).portfolio||[]},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19],cert:r[20],pdi:r[21],ingles:r[22],imvAc:r[23],plat:r[24],esp:r[25]};
+    fin:{portfolio:(r[7]||{}).portfolio||[],transactions:(r[7]||{}).transactions||[]},gastosIn:{pluggy:r[26],meta:r[27],extraTx:json(r[28])||[],overrides:json(r[29])||{},capsMes:r[30]?json(r[30]):{restaurante:150,transporte:150},capsSemana:json(r[31])||{}},investEntries:json(r[8])||{},mud:{imoveis:r[9],cotacoes:r[10],check:r[11],cfg:r[12]},exercicios:r[13],avaliacoes:r[14],desafios:r[15],refeicoes:r[16],agua:r[17],foco:r[18],captura:r[19],cert:r[20],pdi:r[21],ingles:r[22],imvAc:r[23],plat:r[24],esp:r[25]};
 }
 
 function card(id,href,titulo,corpo){
@@ -321,7 +341,7 @@ function render(p){
     return '<details class="area" data-a="'+a[0]+'"'+(abertas[a[0]]?' open':'')+'><summary><span><span class="nm">'+a[1]+'</span><span class="ht">'+esc(ht)+'</span></span></summary><div class="tiles">'+
       a[2].map(function(id){var m=M[id];return '<a class="tile m-'+id+'" href="'+m[0]+'">'+CP_ICONE(id,26)+'<span><b>'+esc(m[1])+'</b><small>'+esc(m[2])+'</small></span></a>'}).join('')+'</div></details>';
   }).join('');
-  P=p; if(window.CP_FOCO)CP_FOCO.render(); renderAgua(p); renderHabitos(p); renderMetas(p);
+  P=p; if(window.CP_FOCO)CP_FOCO.render(); renderGastos(); renderAgua(p); renderHabitos(p); renderMetas(p);
   (function(){
     var l=[];
     if(im&&im.atrasadas.length) l.push(['imovel.html','🏠','Tenda: '+im.atrasadas.length+(im.atrasadas.length>1?' parcelas vencidas':' parcela vencida')]);
@@ -415,6 +435,26 @@ function renderMetas(p){
   var aberto=$('#metas details')&&$('#metas details').open;
   $('#metas').innerHTML='<details class="metas-d"'+(aberto?' open':'')+'><summary><b>'+ok+' de '+todas.length+'</b> em dia nesta semana<span aria-hidden="true">Ver</span></summary>'+grupo('saude','Saúde e fitness',m.saude)+grupo('vida','Carreira, dinheiro e mudança',m.vida)+'</details>';
 }
+function renderGastos(){
+  var el=$('#gastos'); if(!el||!DADOS||!DADOS.gastosIn||!window.CP_GASTOS)return;
+  var g=DADOS.gastosIn, hist=DADOS.fin.transactions||[], agora=new Date();
+  var conv=CP_PLUGGY.paraPainel(g.pluggy.map(function(x){return x.data||x}),hist,'2026-11-01').lancamentos;
+  var r=CP_GASTOS.resumo({pluggy:conv,manuais:g.extraTx,base:hist,overrides:g.overrides,capsMes:g.capsMes||{},capsSemana:g.capsSemana||{},hoje:agora});
+  var p=r.periodo, f=function(s){return s.slice(8)+'/'+s.slice(5,7)};
+  var com=r.linhas.filter(function(l){return l.tetoSemana||l.tetoMes}), sem=r.linhas.filter(function(l){return !l.tetoSemana&&!l.tetoMes}).slice(0,3);
+  function lin(l,rot,v,t,est,pct){return '<div class="lin '+(est||'')+'"><div class="l"><b>'+esc(rot)+'</b><span class="v">'+brl(v)+(t?' de '+brl(t):'')+(est==='estourou'?' ⚠':'')+'</span></div>'+(t?barra(pct*100):'')+'</div>'}
+  var corpo=com.map(function(l){
+    var nome=CATN[l.cat]||l.cat, o='';
+    if(l.tetoSemana)o+=lin(l,nome+' · semana',l.semana,l.tetoSemana,l.estSemana,l.pctSemana);
+    if(l.tetoMes)o+=lin(l,nome+' · mês',l.mes,l.tetoMes,l.estMes,l.pctMes);
+    return o}).join('');
+  if(!com.length)corpo='<div class="vazio">Defina tetos por categoria (semana e mês) no Financeiro para acompanhar aqui.</div>'+sem.map(function(l){return lin(l,(CATN[l.cat]||l.cat),l.mes,0,null,0)}).join('');
+  var meta=g.meta&&g.meta.syncedAt?new Date(g.meta.syncedAt):null, ate=meta?Math.max(0,Math.round((agora-meta)/36e5)):null;
+  var atualiz=meta?'Nubank atualizado '+(ate<1?'agora há pouco':ate<24?'há '+ate+' h':'em '+meta.toLocaleDateString('pt-BR'))+(ate>=36?' · sincronização parada?':''):'Nubank ainda não sincronizado';
+  el.innerHTML='<a class="cab" href="financeiro.html"><div><div class="rotulo">Gastos · semana '+f(p.semIni)+'–'+f(p.semFim)+'</div><div class="big">'+brl(r.semana.total)+' <small>na semana · '+brl(r.mes.total)+' em '+esc(p.mesNome.toLowerCase())+'</small></div></div></a>'+
+    '<div class="sub">'+esc(atualiz)+'</div>'+corpo;
+}
+var CATN={supermercado:'Supermercado',restaurante:'Restaurante e delivery',transporte:'Transporte',lazer:'Lazer',educacao:'Educação',saude:'Saúde',compras_online:'Compras online',servicos:'Serviços',vestuario:'Vestuário',assinaturas:'Assinaturas',viagem:'Viagem',aluguel:'Aluguel',financiamento:'Financiamento',energia:'Energia',internet:'Internet',moradia:'Moradia',pix_pessoas:'Pix para pessoas',outros:'Outros'};
 function renderAgua(p){
   var a=p.agua;
   $('#agua').innerHTML='<div class="topo"><div class="rotulo">Água hoje</div><div class="big">'+litros(a.hoje)+' L <small>de 3 L</small></div></div>'+barra(a.pct)+(a.bateu?'<div class="msg ok">Meta batida 💧</div>':'')+

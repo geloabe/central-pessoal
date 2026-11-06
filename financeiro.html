@@ -4,6 +4,7 @@
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/pluggy-fin.js?v=1"></script>
+<script src="assets/gastos.js?v=1"></script>
 <meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="assets/modulos.css">
 <link rel="stylesheet" href="assets/extras.css">
 <link rel="stylesheet" href="assets/mobile.css">
@@ -429,6 +430,7 @@ let state = {
   categoryOverrides: {}, // {txId: newCategory} — manual corrections, discreet & persistent
   goalMonthly: null, // meta: aporte mensal escolhido pelo usuário
   budgetCaps: {}, // {categoria: teto mensal}
+  budgetCapsSemana: {}, // {categoria: teto semanal (segunda a domingo)}
   filterCat: '',
   filterText: '',
   filterMonth: ''
@@ -1423,17 +1425,18 @@ function renderRotina(){
   const el = document.getElementById('view-rotina');
   const cats = Object.keys(DASHBOARD_DATA.categoryLabels);
   const today = new Date().toISOString().slice(0,10);
-  const currentMonth = NEXT_MONTH; // tetos passam a valer a partir daqui, não retroagem a agosto
-  const spent = monthExpenseByCat(currentMonth);
-  const activeCaps = Object.entries(state.budgetCaps).filter(([c,cap])=>cap);
-  const hasSeptData = allTransactions().some(t=>t.month===currentMonth);
+  const per = CP_GASTOS.periodo(new Date());
+  const dm = (x)=>x.slice(8)+'/'+x.slice(5,7);
 
   el.innerHTML = `
     <section class="block">
-      <h2>Tetos do mês — ${currentMonth}</h2>
-      <p class="lead">Os tetos valem a partir de setembro (primeiro mês com os cortes em vigor) — o mês corrente agora é ${currentMonth}. Conta pela data da compra (cartão, débito ou Pix), não pela data da fatura — é sobre a decisão de gastar, não sobre quando o dinheiro sai da conta. Pra adicionar ou mudar um teto, isso fica na aba Resumo mensal.</p>
-      ${!hasSeptData ? `<div class="diag-item good" style="margin-bottom:12px;"><p>Ainda não há nenhum gasto lançado em ${currentMonth}. Assim que você lançar algo aqui embaixo (ou eu importar o próximo extrato), a barra abaixo começa a se mexer.</p></div>` : ''}
+      <h2>Tetos — semana ${dm(per.semIni)}–${dm(per.semFim)} e ${per.mesNome}</h2>
+      <p class="lead">Cada categoria pode ter um teto por semana (segunda a domingo) e um por mês. Conta pela data da compra (cartão, débito ou Pix), não pela fatura. Os gastos do Nubank entram sozinhos, uma vez por dia.</p>
       <div class="card" id="capsCard"></div>
+      <details class="disclose" style="margin-top:10px;">
+        <summary><span>Definir tetos (semana e mês)</span><span class="hint" id="capsHint"></span><span class="chev">▸</span></summary>
+        <div class="disclose-body" id="capsEdit"></div>
+      </details>
     </section>
 
     <section class="block">
@@ -1480,18 +1483,37 @@ function renderRotina(){
     </section>
   `;
 
-  document.getElementById('capsCard').innerHTML = activeCaps.length ? activeCaps.map(([c,cap])=>{
-    const v = spent[c] || 0;
-    const pct = Math.min(100, v/cap*100);
-    const over = v > cap;
-    const barColor = over ? 'var(--coral)' : (pct>80 ? 'var(--amber)' : 'var(--teal)');
-    return `
-      <div class="catbar-row">
-        <div class="catbar-label">${catLabel(c)}</div>
-        <div class="catbar-track"><div class="catbar-fill" style="width:${pct}%; background:${barColor}"></div></div>
-        <div class="catbar-val" style="color:${over?'var(--coral)':'var(--ink-dim)'}">${fmtShort(v)} / ${fmtShort(cap)}${over?' ⚠':''}</div>
-      </div>`;
-  }).join('') : '<div class="empty">Nenhum teto definido ainda — configure na aba Resumo mensal.</div>';
+  function renderTetos(){
+    const r = CP_GASTOS.resumo({pluggy: state.pluggyTx, manuais: state.extraTx, base: DASHBOARD_DATA.transactions, overrides: state.categoryOverrides, capsMes: state.budgetCaps, capsSemana: state.budgetCapsSemana, hoje: new Date()});
+    const barra = (rot, v, teto, est, pct)=>{
+      const cor = est==='estourou' ? 'var(--coral)' : (est==='atencao' ? 'var(--amber)' : 'var(--teal)');
+      return `<div class="catbar-row"><div class="catbar-label">${rot}</div><div class="catbar-track"><div class="catbar-fill" style="width:${Math.min(100,pct*100)}%; background:${cor}"></div></div><div class="catbar-val" style="color:${est==='estourou'?'var(--coral)':'var(--ink-dim)'}">${fmtShort(v)} / ${fmtShort(teto)}${est==='estourou'?' ⚠':''}</div></div>`;
+    };
+    const com = r.linhas.filter(l=>l.tetoSemana||l.tetoMes);
+    document.getElementById('capsCard').innerHTML = (com.length ? com.map(l=>
+      (l.tetoSemana ? barra(catLabel(l.cat)+' · semana', l.semana, l.tetoSemana, l.estSemana, l.pctSemana) : '') +
+      (l.tetoMes ? barra(catLabel(l.cat)+' · mês', l.mes, l.tetoMes, l.estMes, l.pctMes) : '')
+    ).join('') : '<div class="empty">Nenhum teto definido ainda — abra "Definir tetos" logo abaixo.</div>')
+      + `<p class="lead" style="margin-top:10px;">Total: ${fmtShort(r.semana.total)} na semana · ${fmtShort(r.mes.total)} em ${per.mesNome.toLowerCase()}</p>`;
+    document.getElementById('capsHint').textContent = com.length + ' categoria(s) com teto';
+  }
+  renderTetos();
+  document.getElementById('capsEdit').innerHTML = '<div class="invest-input-row"><label></label><span style="display:flex; gap:8px; width:230px; font-size:12px; color:var(--ink-dim);"><span style="flex:1">por semana</span><span style="flex:1">por mês</span></span></div>' + cats.map(c=>`
+    <div class="invest-input-row">
+      <label>${catLabel(c)}</label>
+      <span style="display:flex; gap:8px; width:230px;">
+        <input type="number" step="10" class="cap-s" data-cat="${c}" value="${state.budgetCapsSemana[c]||''}" placeholder="sem teto" style="flex:1; min-width:0;">
+        <input type="number" step="10" class="cap-m" data-cat="${c}" value="${state.budgetCaps[c]||''}" placeholder="sem teto" style="flex:1; min-width:0;">
+      </span>
+    </div>`).join('');
+  document.querySelectorAll('#capsEdit input').forEach(inp=>{
+    inp.addEventListener('change', async (e)=>{
+      const v = parseFloat(e.target.value), c = e.target.dataset.cat, val = isNaN(v) || v<=0 ? null : v;
+      if(e.target.classList.contains('cap-s')){ state.budgetCapsSemana[c] = val; await Store.set('budgetCapsSemana', state.budgetCapsSemana); }
+      else { state.budgetCaps[c] = val; await Store.set('budgetCaps', state.budgetCaps); }
+      renderTetos();
+    });
+  });
 
   document.getElementById('txType').addEventListener('change', (e)=>{
     const isIncome = e.target.value==='income';
@@ -1616,6 +1638,7 @@ async function init(){
   state.categoryOverrides = await Store.get('categoryOverrides', {});
   state.goalMonthly = await Store.get('goalMonthly', null);
   state.budgetCaps = await Store.get('budgetCaps', {restaurante: 150, transporte: 150});
+  state.budgetCapsSemana = await Store.get('budgetCapsSemana', {});
   document.getElementById('lastUpdated').textContent = 'dados de: ' + new Date().toLocaleDateString('pt-BR');
   showView('geral');
 }

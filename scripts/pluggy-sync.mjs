@@ -113,6 +113,8 @@ async function main() {
     const r = await sb.from('docs').upsert(rows.slice(i, i + 100));
     if (r.error) die('Supabase: ' + r.error.message);
   }
+  const meta = await sb.from('docs').upsert({ user_id: auth.user.id, collection: 'pluggy-meta', id: 'ultima', data: { syncedAt: new Date().toISOString(), total: rows.length }, updated_at: new Date().toISOString() });
+  if (meta.error) die('Supabase: ' + meta.error.message);
   console.log(`${rows.length} lançamentos gravados no Supabase (coleção pluggy-tx).`);
 }
 
