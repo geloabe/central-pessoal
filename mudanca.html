@@ -68,6 +68,7 @@ a{color:var(--t-accent)}
     <button role="tab" data-t="checklist" aria-selected="false">Checklist</button>
     <button role="tab" data-t="cotacoes" aria-selected="false">Mudança</button>
     <button role="tab" data-t="orcamento" aria-selected="false">Orçamento</button>
+    <button role="tab" data-t="projecao" aria-selected="false">Ficar ou mudar</button>
   </nav>
 
   <section id="geral" class="on"></section>
@@ -75,6 +76,7 @@ a{color:var(--t-accent)}
   <section id="checklist"></section>
   <section id="cotacoes"></section>
   <section id="orcamento"></section>
+  <section id="projecao"></section>
 </main>
 
 <dialog id="dlg"><form class="f" id="frm" method="dialog"></form></dialog>
@@ -188,7 +190,67 @@ function rOrcamento(){
     '<tr><td><b>Total</b></td><td class="n"><b>'+brl(t.previsto)+'</b></td><td class="n"><b>'+brl(t.real)+'</b></td><td></td><td></td></tr></tbody></table></div>';
   $('#orcamento').innerHTML=h;
 }
-function renderAll(){rGeral();rImoveis();rChecklist();rCotacoes();rOrcamento()}
+function renderAll(){rGeral();rImoveis();rChecklist();rCotacoes();rOrcamento();rProj(true)}
+
+/* ---------- projeção: ficar x mudar agora ---------- */
+var PROJ_CAMPOS=[
+ ['aluguelAtual','Aluguel atual, total por mês','1.440 (já com condomínio)'],
+ ['outrosAtual','Outros custos mensais do atual','só se IPTU/água não estiverem no valor acima'],
+ ['aluguelNovo','Aluguel novo','800'],
+ ['condNovo','Condomínio do novo, por mês','pergunte ao proprietário — é o que decide'],
+ ['iptuAnoNovo','IPTU do novo, por ano','150'],
+ ['aguaNovo','Água do novo, por mês','30'],
+ ['multa','Multa para sair','2.000'],
+ ['mudanca','Custo da mudança agora','800'],
+ ['mesSaida','Mês da mudança','','month'],
+ ['mesEntrega','Mês da entrega do apê próprio','','month']
+];
+function mm(n){return (n<0?'−':'')+brl(Math.abs(n))}
+function rProj(forca){
+  var el=$('#projecao');if(!el||!window.CP_MUDPROJ)return;
+  if(el.querySelector('#projForm')&&!forca)return rProjRes();
+  var v=S.cfg.proj||{}, P=CP_MUDPROJ.PADRAO;
+  el.innerHTML='<p class="mini">Compara morar no aluguel atual até a entrega do seu apê com se mudar agora para um aluguel mais barato. Altere qualquer valor: fica salvo.</p>'+
+   '<div class="cartao"><form id="projForm" class="f">'+PROJ_CAMPOS.map(function(c){
+     var val=v[c[0]]!=null&&v[c[0]]!==''?v[c[0]]:(c[0]==='condNovo'?'':P[c[0]]);
+     return '<label>'+esc(c[1])+'<input name="'+c[0]+'" type="'+(c[3]||'text')+'" '+(c[3]?'':'inputmode="decimal" ')+'value="'+esc(val==null?'':val)+'"'+(c[2]?' placeholder="'+esc(c[2])+'"':'')+'></label>'}).join('')+'</form></div>'+
+   '<div id="projRes"></div>';
+  rProjRes();
+}
+function projEntrada(){
+  var f=$('#projForm'),o={};if(!f)return S.cfg.proj||{};
+  PROJ_CAMPOS.forEach(function(c){o[c[0]]=f.elements[c[0]].value.trim()});return o;
+}
+function rProjRes(){
+  var host=$('#projRes');if(!host)return;
+  var r=CP_MUDPROJ.calcular(S.cfg.proj||projEntrada()), h='';
+  if(!r.condInformado){
+    h+='<div class="cartao prox" style="margin-top:12px"><div class="rotulo">Falta um número</div><div class="big" style="font-size:22px;margin:6px 0">Condomínio do aluguel novo</div>'+
+      '<div class="mini">Com IPTU e água incluídos, a mudança compensa se o condomínio for de até <b>'+brl(r.condMax)+' por mês</b>. Preencha o valor acima para ver o resultado exato.</div></div>';
+  }else{
+    var ok=r.compensa;
+    h+='<div class="cartao '+(ok?'prox':'')+'" style="margin-top:12px'+(ok?'':';border-left:4px solid var(--t-bad)')+'"><div class="rotulo">'+(ok?'Compensa mudar':'Não compensa mudar')+'</div>'+
+      '<div class="big">'+mm(r.ganho)+'</div><div class="mini">ganho líquido até a entrega do apê ('+r.meses+' meses)'+
+      (r.equilibrio!=null?' · se paga em '+String(r.equilibrio).replace('.',',')+' meses ('+esc(r.mesEquilibrio)+')':' · a economia mensal não cobre o custo de sair')+'</div></div>';
+  }
+  h+='<div class="grid" style="margin-top:12px">'+
+   '<div class="cartao"><div class="rotulo">Morar hoje</div><div class="big">'+brl(r.atual)+'</div><div class="mini">por mês</div></div>'+
+   '<div class="cartao"><div class="rotulo">Morar no novo</div><div class="big">'+brl(r.novo)+'</div><div class="mini">por mês'+(r.condInformado?'':' · sem condomínio ainda')+'</div></div>'+
+   '<div class="cartao"><div class="rotulo">Economia</div><div class="big">'+mm(r.economiaMes)+'</div><div class="mini">por mês</div></div>'+
+   '<div class="cartao"><div class="rotulo">Custo de sair</div><div class="big">'+brl(r.custoExtra)+'</div><div class="mini">multa + mudança agora</div></div></div>';
+  h+='<div class="cartao scroll" style="margin-top:12px"><h3>E se o condomínio for…</h3><table><thead><tr><th>Condomínio</th><th class="n">Economia/mês</th><th class="n">Ganho líquido</th><th class="n">Se paga em</th></tr></thead><tbody>'+
+    r.sensibilidade.map(function(s){return '<tr><td>'+brl(s.cond)+'</td><td class="n">'+mm(s.economiaMes)+'</td><td class="n" style="color:'+(s.ganho>0?'var(--t-ok)':'var(--t-bad)')+'">'+mm(s.ganho)+'</td><td class="n">'+(s.equilibrio!=null?String(s.equilibrio).replace('.',',')+' meses':'—')+'</td></tr>'}).join('')+'</tbody></table></div>';
+  h+='<div class="cartao scroll" style="margin-top:12px"><h3>Caixa no começo</h3><div class="mini">A caução ('+brl(r.caucao)+') volta no fim do contrato: pesa no caixa, não é custo.</div><table><tbody>'+
+    r.caixa.map(function(c){return '<tr><td>'+esc(c.mes)+'</td><td>'+esc(c.nota)+'</td><td class="n">'+brl(c.valor)+'</td></tr>'}).join('')+'</tbody></table></div>';
+  h+='<div class="cartao scroll" style="margin-top:12px"><h3>Saldo acumulado, mês a mês</h3><div class="mini">Começa negativo (o custo de sair) e cruza o zero no ponto de equilíbrio.</div><table><tbody>'+
+    r.serie.map(function(s){return '<tr><td>'+esc(s.mes)+'</td><td class="n" style="color:'+(s.acumulado>=0?'var(--t-ok)':'var(--t-bad)')+'">'+mm(s.acumulado)+'</td></tr>'}).join('')+'</tbody></table></div>';
+  h+='<p class="mini" style="margin-top:12px">A segunda mudança (para o apê próprio) e a pintura não entram: acontecem de qualquer jeito, morando aqui ou lá.</p>';
+  host.innerHTML=h;
+}
+document.addEventListener('change',function(e){
+  if(!e.target.closest||!e.target.closest('#projForm'))return;
+  S.cfg.proj=projEntrada();saveCfg();rProjRes();
+});
 
 /* ---------- formulários ---------- */
 var FORMS={
@@ -239,11 +301,12 @@ claude.use('db').then(function(d){
   db.collection('mud_cotacoes').onSnapshot(function(s){S.cotacoes=lista(s);rGeral();rCotacoes()});
   db.collection('mud_orcamento').onSnapshot(function(s){S.orc=lista(s);rGeral();rOrcamento()});
   db.doc('mud_checklist/main').onSnapshot(function(s){var v=s.exists?s.data():{};S.check={done:v.done||{},extra:v.extra||[]};rGeral();rChecklist()});
-  db.doc('mud_config/main').onSnapshot(function(s){S.cfg=s.exists?s.data():{entrada:'75000',valor:'300000'};rGeral();rOrcamento()});
+  db.doc('mud_config/main').onSnapshot(function(s){S.cfg=s.exists?s.data():{entrada:'75000',valor:'300000'};rGeral();rOrcamento();var a=document.activeElement;rProj(!(a&&a.closest&&a.closest('#projForm')))});
 });
 renderAll();
 })();
 </script>
+<script src="assets/mudanca-proj.js?v=1"></script>
 <script src="assets/modulo.js"></script>
 </body>
 </html>
