@@ -5,6 +5,7 @@
   "scripts": {
     "import": "node scripts/data.mjs import",
     "backup": "node scripts/data.mjs backup",
+    "pluggy": "node scripts/pluggy-sync.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
