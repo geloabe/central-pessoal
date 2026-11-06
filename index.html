@@ -72,7 +72,8 @@ a.mod .go{margin-left:auto;color:var(--mut);font-size:18px}
 .gastos .big{font:600 28px var(--f-titulo);letter-spacing:var(--titulo-tracking)}
 .gastos .big small{font:400 15px var(--f-texto);color:var(--mut)}
 .gastos .sub{font-size:13px;color:var(--mut);margin-top:2px}
-.gastos .lin{margin-top:12px}
+.gastos .lin{margin-top:12px;display:block;color:inherit;text-decoration:none}
+.gastos .ver{display:block;margin-top:14px;font-size:14px;font-weight:600;color:var(--t-accent);text-decoration:none}
 .gastos .lin .l{display:flex;justify-content:space-between;gap:8px;font-size:14px}
 .gastos .lin .l b{font-weight:600}
 .gastos .lin .barra{margin-top:4px}
@@ -441,17 +442,16 @@ function renderGastos(){
   var conv=CP_PLUGGY.paraPainel(g.pluggy.map(function(x){return x.data||x}),hist,'2026-11-01').lancamentos;
   var r=CP_GASTOS.resumo({pluggy:conv,manuais:g.extraTx,base:hist,overrides:g.overrides,capsMes:g.capsMes||{},capsSemana:g.capsSemana||{},hoje:agora});
   var p=r.periodo, f=function(s){return s.slice(8)+'/'+s.slice(5,7)};
-  var com=r.linhas.filter(function(l){return l.tetoSemana||l.tetoMes}), sem=r.linhas.filter(function(l){return !l.tetoSemana&&!l.tetoMes}).slice(0,3);
-  function lin(l,rot,v,t,est,pct){return '<div class="lin '+(est||'')+'"><div class="l"><b>'+esc(rot)+'</b><span class="v">'+brl(v)+(t?' de '+brl(t):'')+(est==='estourou'?' ⚠':'')+'</span></div>'+(t?barra(pct*100):'')+'</div>'}
-  var corpo=com.map(function(l){
-    var nome=CATN[l.cat]||l.cat, o='';
-    if(l.tetoSemana)o+=lin(l,nome+' · semana',l.semana,l.tetoSemana,l.estSemana,l.pctSemana);
-    if(l.tetoMes)o+=lin(l,nome+' · mês',l.mes,l.tetoMes,l.estMes,l.pctMes);
-    return o}).join('');
-  if(!com.length)corpo='<div class="vazio">Defina tetos por categoria (semana e mês) no Financeiro para acompanhar aqui.</div>'+sem.map(function(l){return lin(l,(CATN[l.cat]||l.cat),l.mes,0,null,0)}).join('');
+  var base='financeiro.html?v=gastos&de='+p.semIni+'&ate='+p.semFim;
+  var com=r.linhas.filter(function(l){return l.tetoSemana}), sem=r.linhas.filter(function(l){return !l.tetoSemana&&l.semana}).sort(function(x,y){return y.semana-x.semana});
+  function lin(l,v,t,est,pct){var nome=CATN[l.cat]||l.cat;return '<a class="lin '+(est||'')+'" href="'+base+'&cat='+encodeURIComponent(l.cat)+'"><div class="l"><b>'+esc(nome)+'</b><span class="v">'+brl(v)+(t?' de '+brl(t):'')+(est==='estourou'?' ⚠':'')+' ›</span></div>'+(t?barra(pct*100):'')+'</a>'}
+  var corpo=com.map(function(l){return lin(l,l.semana,l.tetoSemana,l.estSemana,l.pctSemana)}).join('');
+  if(!com.length)corpo='<div class="vazio">Defina tetos semanais por categoria no Financeiro para acompanhar aqui.</div>';
+  corpo+=sem.slice(0,com.length?2:4).map(function(l){return lin(l,l.semana,0,null,0)}).join('');
+  corpo+='<a class="ver" href="'+base+'">Ver todos os lançamentos da semana ›</a>';
   var meta=g.meta&&g.meta.syncedAt?new Date(g.meta.syncedAt):null, ate=meta?Math.max(0,Math.round((agora-meta)/36e5)):null;
   var atualiz=meta?'Nubank atualizado '+(ate<1?'agora há pouco':ate<24?'há '+ate+' h':'em '+meta.toLocaleDateString('pt-BR'))+(ate>=36?' · sincronização parada?':''):'Nubank ainda não sincronizado';
-  el.innerHTML='<a class="cab" href="financeiro.html"><div><div class="rotulo">Gastos · semana '+f(p.semIni)+'–'+f(p.semFim)+'</div><div class="big">'+brl(r.semana.total)+' <small>na semana · '+brl(r.mes.total)+' em '+esc(p.mesNome.toLowerCase())+'</small></div></div></a>'+
+  el.innerHTML='<a class="cab" href="'+base+'"><div><div class="rotulo">Gastos · semana '+f(p.semIni)+'–'+f(p.semFim)+'</div><div class="big">'+brl(r.semana.total)+' <small>na semana</small></div></div></a>'+
     '<div class="sub">'+esc(atualiz)+'</div>'+corpo;
 }
 var CATN={supermercado:'Supermercado',restaurante:'Restaurante e delivery',transporte:'Transporte',lazer:'Lazer',educacao:'Educação',saude:'Saúde',compras_online:'Compras online',servicos:'Serviços',vestuario:'Vestuário',assinaturas:'Assinaturas',viagem:'Viagem',aluguel:'Aluguel',financiamento:'Financiamento',energia:'Energia',internet:'Internet',moradia:'Moradia',pix_pessoas:'Pix para pessoas',outros:'Outros'};

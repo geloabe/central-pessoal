@@ -433,7 +433,8 @@ let state = {
   budgetCapsSemana: {}, // {categoria: teto semanal (segunda a domingo)}
   filterCat: '',
   filterText: '',
-  filterMonth: ''
+  filterMonth: '',
+  filterDe: '', filterAte: ''
 };
 
 // ---------------- Derived data helpers ----------------
@@ -888,6 +889,7 @@ function renderGastos(){
         <select id="fCat"><option value="">Todas categorias</option>${cats.map(c=>`<option value="${c}" ${state.filterCat===c?'selected':''}>${catLabel(c)}</option>`).join('')}</select>
         <select id="fMonth"><option value="">Todos os meses</option>${MONTHS.concat(mesesExtra('month')).map(m=>`<option value="${m}" ${state.filterMonth===m?'selected':''}>${m}</option>`).join('')}</select>
       </div>
+      ${state.filterDe?`<p class="lead">Período: ${state.filterDe.slice(8)}/${state.filterDe.slice(5,7)} a ${state.filterAte.slice(8)}/${state.filterAte.slice(5,7)} · <a href="#" id="limpaPeriodo">ver todos os períodos</a></p>`:''}
       <div class="table-scroll"><table class="tx" id="gastosTable"></table></div>
     </section>
   `;
@@ -896,6 +898,8 @@ function renderGastos(){
   document.getElementById('fCat').addEventListener('change', e=>{ state.filterCat = e.target.value; state.gastosLim = 60; renderGastosTable(); });
   document.getElementById('fMonth').addEventListener('change', e=>{ state.filterMonth = e.target.value; state.gastosLim = 60; renderGastosTable(); });
 
+  const lp = document.getElementById('limpaPeriodo');
+  if(lp) lp.addEventListener('click', e=>{ e.preventDefault(); state.filterDe=''; state.filterAte=''; state.filterCat=''; renderGastos(); });
   renderGastosTable();
 }
 function renderGastosTable(){
@@ -905,6 +909,7 @@ function renderGastosTable(){
   if(state.filterText) txs = txs.filter(t=>t.desc.toLowerCase().includes(state.filterText.toLowerCase()));
   if(state.filterCat) txs = txs.filter(t=>txCategory(t)===state.filterCat);
   if(state.filterMonth) txs = txs.filter(t=>t.month===state.filterMonth);
+  if(state.filterDe) txs = txs.filter(t=>t.date>=state.filterDe && t.date<=state.filterAte);
   txs = txs.slice().sort((a,b)=> b.date.localeCompare(a.date));
   const total = txs.reduce((a,t)=>a+t.value,0);
 
@@ -1640,7 +1645,14 @@ async function init(){
   state.budgetCaps = await Store.get('budgetCaps', {restaurante: 150, transporte: 150});
   state.budgetCapsSemana = await Store.get('budgetCapsSemana', {});
   document.getElementById('lastUpdated').textContent = 'dados de: ' + new Date().toLocaleDateString('pt-BR');
-  showView('geral');
+  const q = new URLSearchParams(location.search);
+  if(q.get('v')==='gastos'){
+    state.filterDe = /^d{4}-d{2}-d{2}$/.test(q.get('de')||'') ? q.get('de') : '';
+    state.filterAte = /^d{4}-d{2}-d{2}$/.test(q.get('ate')||'') ? q.get('ate') : '';
+    if(!state.filterAte) state.filterDe = '';
+    state.filterCat = q.get('cat') || '';
+    showView('gastos');
+  } else showView('geral');
 }
 init();
 
