@@ -53,6 +53,19 @@ async function paginate(path, apiKey) {
   }
 }
 
+// /v2/transactions usa cursor (campo 'next') e o filtro dateFrom.
+async function transacoes(accountId, desde, apiKey) {
+  const out = [];
+  // 'next' já vem como a query da próxima página (ex.: "?accountId=...&dateFrom=...&after=...").
+  let q = `?accountId=${encodeURIComponent(accountId)}&dateFrom=${desde}`;
+  while (q) {
+    const j = await req('/v2/transactions' + q, apiKey);
+    out.push(...(j.results || []));
+    q = j.next || null;
+  }
+  return out;
+}
+
 async function main() {
   const root = join(dirname(fileURLToPath(import.meta.url)), '..');
   try { process.loadEnvFile(join(root, '.env')); } catch {}
@@ -75,7 +88,7 @@ async function main() {
   for (const itemId of items) {
     const accounts = await paginate(`/accounts?itemId=${encodeURIComponent(itemId)}`, apiKey);
     for (const acc of accounts) {
-      const lista = await paginate(`/transactions?accountId=${encodeURIComponent(acc.id)}&from=${desde}`, apiKey);
+      const lista = await transacoes(acc.id, desde, apiKey);
       console.log(`${acc.type} ${acc.name || acc.id}: ${lista.length} lançamentos desde ${desde}`);
       txs.push(...lista.map((t) => mapTx(t, acc)));
     }
