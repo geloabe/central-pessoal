@@ -556,10 +556,10 @@ const WORKOUTS = {
         {id:"A8", name:"Tríceps corda", target:"3×12"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
-        {id:"CORE1", name:"Abdominal remador", target:"3×12–15"},
-        {id:"CORE2", name:"Elevação de pernas (no fim, suba o quadril)", target:"3×12–15"},
-        {id:"CORE6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
-        {id:"CORE5", name:"Prancha (frontal)", target:"2×30–45s"},
+        {id:"CORE1", name:"Abdominal remador (com carga)", target:"3×10–15"},
+        {id:"CORE2", name:"Elevação de pernas com leve torção (no fim, suba o quadril)", target:"3×8–15"},
+        {id:"CORE7", name:"Abdominal inverso (leve o quadril para o peito, sem balançar)", target:"3×10–15"},
+        {id:"CORE6", name:"Prancha lateral com elevação de quadril (com carga quando ficar fácil)", target:"3×10–12/lado"},
       ]},
     ]
   },
@@ -572,6 +572,10 @@ const WORKOUTS = {
         {id:"B3", name:"Afundo caminhando com halteres", target:"3×10–12/perna"},
         {id:"B4", name:"Extensora", target:"4×12–15"},
         {id:"B5", name:"Panturrilha em pé", target:"4×10–15"},
+      ]},
+      { title: "Core / Abdômen (curto)", cls: "core", exercises: [
+        {id:"CORE2", name:"Elevação de pernas com leve torção (no fim, suba o quadril)", target:"3×8–15"},
+        {id:"CORE6", name:"Prancha lateral com elevação de quadril (com carga quando ficar fácil)", target:"3×10–12/lado"},
       ]},
     ]
   },
@@ -588,10 +592,10 @@ const WORKOUTS = {
         {id:"C7", name:"Rosca de punho inversa (extensores)", target:"2×15–20"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
-        {id:"CORE1", name:"Abdominal remador", target:"3×12–15"},
-        {id:"CORE2", name:"Elevação de pernas (no fim, suba o quadril)", target:"3×12–15"},
-        {id:"CORE6", name:"Prancha lateral com elevação de quadril", target:"3×10–12/lado"},
-        {id:"CORE5", name:"Prancha (frontal)", target:"2×30–45s"},
+        {id:"CORE1", name:"Abdominal remador (com carga)", target:"3×10–15"},
+        {id:"CORE2", name:"Elevação de pernas com leve torção (no fim, suba o quadril)", target:"3×8–15"},
+        {id:"CORE7", name:"Abdominal inverso (leve o quadril para o peito, sem balançar)", target:"3×10–15"},
+        {id:"CORE6", name:"Prancha lateral com elevação de quadril (com carga quando ficar fácil)", target:"3×10–12/lado"},
       ]},
     ]
   },
@@ -716,6 +720,7 @@ function buildExerciseIndex() {
   [['B6', 'Rosca direta (barra reta ou W)', '2×12–15', 'B'], ['B7', 'Tríceps testa com halter', '2×12–15', 'B'],
    ['C8', 'Crucifixo unilateral no cabo (crossover)', '2×15', 'C'], ['C9', 'Panturrilha em pé', '2×15–20', 'C'],
    ['D8', 'Elevação lateral', '3×15–20', 'D'], ['D9', 'Face pull / crucifixo invertido', '2×15–20', 'D'],
+   ['CORE5', 'Prancha (frontal)', '2×30–45s', 'A'],
    ['CORE3', 'Rotação de tronco (russian twist)', '3×12/lado', 'A'], ['CORE4', 'Prancha lateral', '3×20–30s/lado', 'A'],
    ['HK2', 'Rotação de tronco sentado (russian twist), sem peso', '3×12/lado', 'HA'], ['HK3', 'Prancha lateral', '3×20–30s/lado', 'HA'],
    // treinos em casa simplificados (nov/2026): ficam só no histórico
