@@ -852,19 +852,21 @@ function diasAtras(iso) {
 function quando(iso) { const n = diasAtras(iso); return n <= 0 ? 'hoje' : n === 1 ? 'ontem' : 'há ' + n + ' dias'; }
 
 // ---------- histórico: última vez e recorde ----------
+// peso do corpo: série só com reps (kg em branco) também conta como registro
+function temDado(s) { return !!(s && (s.weight || s.time || s.reps)); }
 function lastLog(exId) {
   let legacy = null;
   for (const sess of allSessions) {
     if (sessDate && sess.dateISO >= sessDate) continue;
     const log = sess.exercises && sess.exercises[exId];
     if (!log) continue;
-    if (log.some(s => s.done && (s.weight || s.time))) return { log, sess, legacy: false };
-    if (!legacy && log.some(s => s.weight || s.time)) legacy = { log, sess, legacy: true };
+    if (log.some(s => s.done && temDado(s))) return { log, sess, legacy: false };
+    if (!legacy && log.some(temDado)) legacy = { log, sess, legacy: true };
   }
   return legacy;
 }
 function prevOf(f, i) {
-  const ok = s => s && (s.weight || s.time) && (f.legacy || s.done);
+  const ok = s => temDado(s) && (f.legacy || s.done);
   if (ok(f.log[i])) return f.log[i];
   for (let j = f.log.length - 1; j >= 0; j--) if (ok(f.log[j])) return f.log[j];
   return null;
@@ -1112,7 +1114,7 @@ function cardHTML(sl, t, lastCache) {
   let ultima = '';
   if (f) {
     const p = prevOf(f, 999) || null;
-    if (p) ultima = `<div class="last-time">Última vez (${quando(f.sess.dateISO)}): <b>${timed ? H(p.time) + ' s' : H(p.weight) + ' kg × ' + H(p.reps || '?')}</b></div>`;
+    if (p) ultima = `<div class="last-time">Última vez (${quando(f.sess.dateISO)}): <b>${timed ? H(p.time) + ' s' : p.weight ? H(p.weight) + ' kg × ' + H(p.reps || '?') : H(p.reps) + ' reps'}</b></div>`;
   }
   const sg = sugestao(sl.id);
   if (sg) ultima += `<div class="last-time sugerido">Sugerido hoje: <b>${H(sg.txt)}</b></div>`;
@@ -1120,7 +1122,7 @@ function cardHTML(sl, t, lastCache) {
   let rows = `<div class="cols${timed ? ' timed' : ''}"><span>Série</span><span>Anterior</span>${timed ? '<span>Segundos</span>' : '<span>kg</span><span>Reps</span>'}<span>✓</span></div>`;
   sets.forEach((s, i) => {
     const p = f ? prevOf(f, i) : null;
-    const prevTxt = p ? (timed ? p.time + ' s' : (p.weight || '–') + '×' + (p.reps || '–')) : '–';
+    const prevTxt = p ? (timed ? p.time + ' s' : p.weight ? p.weight + '×' + (p.reps || '–') : (p.reps || '–') + ' reps') : '–';
     const pc = s.pre ? ' pre' : '';
     const campos = timed
       ? `<input class="set-input${pc}" type="text" inputmode="numeric" placeholder="seg" aria-label="Segundos da série ${i + 1}" value="${H(s.time)}" data-key="${sl.key}" data-i="${i}" data-field="time">`
@@ -1366,7 +1368,7 @@ contentEl0.addEventListener('click', e => {
     });
   } else if (act === 'add') {
     const sets = t.sets[key], l = sets[sets.length - 1] || { weight: '', reps: '', time: '' };
-    sets.push({ weight: l.weight, reps: l.reps, time: l.time, done: false, pre: !!(l.weight || l.time), pr: false });
+    sets.push({ weight: l.weight, reps: l.reps, time: l.time, done: false, pre: temDado(l), pr: false });
   } else if (act === 'rem') {
     if (t.sets[key].length > 1) t.sets[key].pop();
   } else if (act === 'skip') {
