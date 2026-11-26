@@ -619,8 +619,10 @@ const WORKOUTS = {
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HA1", name:"Flexão de braços (apoie os joelhos se precisar)", target:"4×8–15"},
         {id:"HA2", name:"Flexão com pés elevados (cadeira ou sofá)", target:"3×8–12"},
-        {id:"HA8", name:"Flexão com cotovelos colados no corpo (tríceps)", target:"3×8–12"},
         {id:"HA5", name:"Flexão pike (quadril alto, foco no ombro)", target:"3×8–12"},
+        {id:"HA9", name:"Elevação lateral com garrafas de água", target:"4×15–20"},
+        {id:"HA10", name:"Crucifixo invertido com garrafas (tronco inclinado)", target:"3×15–20"},
+        {id:"HA11", name:"Tríceps francês com mochila (acima da cabeça)", target:"3×10–15"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
         {id:"HK1", name:"Elevação de pernas deitado", target:"3×10–15"},
@@ -633,11 +635,11 @@ const WORKOUTS = {
     label: "Treino B em casa — Quadríceps",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HB1", name:"Agachamento livre", target:"4×12–20"},
-        {id:"HB7", name:"Afundo parado (pés fixos, só desce e sobe)", target:"3×10–12/perna"},
-        {id:"HB2", name:"Agachamento búlgaro (pé de trás no sofá)", target:"3×10–12/perna"},
+        {id:"HB2", name:"Agachamento búlgaro com mochila nas costas (pé de trás no sofá)", target:"3×8–12/perna"},
+        {id:"HB1", name:"Agachamento com mochila abraçada no peito (desce em 3 s)", target:"4×12–20"},
+        {id:"HB7", name:"Afundo parado com mochila (pés fixos, só desce e sobe)", target:"3×10–12/perna"},
         {id:"HB4", name:"Cadeira invisível na parede", target:"3×30–45s"},
-        {id:"HB6", name:"Panturrilha em pé (dois pés, no chão ou num degrau)", target:"4×15–25"},
+        {id:"HB6", name:"Panturrilha em pé com mochila (dois pés, no chão ou num degrau)", target:"4×15–25"},
       ]},
     ]
   },
@@ -645,8 +647,9 @@ const WORKOUTS = {
     label: "Treino C em casa — Costas, Bíceps & Antebraço",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HC6", name:"Remada curvada com mochila com livros", target:"4×10–15"},
-        {id:"HC2", name:"Superman (segure 2 s no topo)", target:"3×12–15"},
+        {id:"HC8", name:"Remada unilateral com mochila (mão e joelho no sofá)", target:"3×10–12/braço"},
+        {id:"HC6", name:"Remada curvada com mochila com livros", target:"3×10–15"},
+        {id:"HC9", name:"Pullover com mochila deitado (no lugar da puxada)", target:"3×12–15"},
         {id:"HC7", name:"Rosca de bíceps com mochila com livros", target:"3×10–15"},
         {id:"HC5", name:"Apertar e segurar a toalha (antebraço)", target:"3×20–30s"},
       ]},
@@ -661,10 +664,11 @@ const WORKOUTS = {
     label: "Treino D em casa — Posterior de Coxa & Glúteo",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HD7", name:"Ponte de glúteo no chão", target:"4×12–20"},
+        {id:"HD7", name:"Elevação pélvica no chão com mochila no quadril", target:"4×12–20"},
         {id:"HD1", name:"Ponte de glúteo unilateral", target:"3×10–12/perna"},
         {id:"HD8", name:"Stiff com mochila com livros", target:"3×12–15"},
-        {id:"HD5", name:"Agachamento sumô com pausa", target:"3×15–20"},
+        {id:"HD9", name:"Flexão nórdica (pés presos no sofá, só a descida)", target:"3×4–8"},
+        {id:"HD5", name:"Agachamento sumô com mochila e pausa", target:"3×12–20"},
         {id:"HD6", name:"Abdução de quadril deitado de lado", target:"3×15–20/lado"},
       ]},
     ]
@@ -728,6 +732,8 @@ function buildExerciseIndex() {
    ['HA6', 'Prancha com toque no ombro', '3×10/lado', 'HA'], ['HA7', 'Superman em Y-T-W no chão (ombro posterior)', '3×10–12', 'HA'],
    ['HK5', 'Dead bug (braço e perna opostos)', '3×10/lado', 'HA'], ['HK6', 'Prancha lateral com elevação de quadril', '3×10–12/lado', 'HA'],
    ['HB3', 'Afundo caminhando', '3×10–12/perna', 'HB'],
+   // treinos em casa com mochila e garrafas (nov/2026): ficam só no histórico
+   ['HA8', 'Flexão com cotovelos colados no corpo (tríceps)', '3×8–12', 'HA'], ['HC2', 'Superman (segure 2 s no topo)', '3×12–15', 'HC'],
    ['HB5', 'Panturrilha em pé unilateral num degrau', '4×12–20/perna', 'HB'],
    ['HC1', 'Remada invertida debaixo de uma mesa firme', '4×8–12', 'HC'], ['HC3', 'Rosca de bíceps com toalha', '3×10–12/braço', 'HC'],
    ['HC4', 'Remada unilateral apoiada na cadeira', '3×10–12/lado', 'HC'],
@@ -745,7 +751,7 @@ const EX_INDEX = buildExerciseIndex();
 
 // ===================== COMO FAZER (treinos em casa) =====================
 const COMO = {
-  HA1: { p: ['Mãos no chão, um pouco mais abertas que os ombros, dedos para a frente.', 'Corpo em linha reta da cabeça aos calcanhares: barriga e glúteo firmes, sem deixar o quadril cair.', 'Desça dobrando os cotovelos a uns 45° do corpo (não abertos para os lados) até o peito quase tocar o chão.', 'Empurre o chão e suba esticando os braços.'], e: 'Muito difícil? Apoie os joelhos no chão, mantendo a linha reta dos joelhos à cabeça.' },
+  HA1: { p: ['Mãos no chão, um pouco mais abertas que os ombros, dedos para a frente.', 'Corpo em linha reta da cabeça aos calcanhares: barriga e glúteo firmes, sem deixar o quadril cair.', 'Desça dobrando os cotovelos a uns 45° do corpo (não abertos para os lados) até o peito quase tocar o chão.', 'Empurre o chão e suba esticando os braços.'], e: 'Muito difícil? Apoie os joelhos no chão. Fácil demais? Faça com a mochila nas costas (alças bem presas).' },
   HA2: { p: ['Mesma posição da flexão normal, mas com os pés em cima de uma cadeira ou sofá firme.', 'Corpo em linha reta, barriga e glúteo firmes.', 'Desça até o peito quase tocar o chão, cotovelos a uns 45° do corpo.', 'Suba empurrando o chão.'], e: 'Quanto mais alto os pés, mais trabalha ombro e parte de cima do peito.' },
   HA3: { p: ['Mãos juntas embaixo do peito, com polegares e indicadores formando um triângulo (diamante).', 'Corpo reto, barriga e glúteo firmes.', 'Desça com os cotovelos colados no corpo até o peito quase tocar as mãos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Se ficar difícil, apoie os joelhos.' },
   HA4: { p: ['Coloque duas cadeiras firmes (encostadas na parede, para não escorregarem) uma de frente para a outra, com uns 60 a 80 cm entre elas.', 'Apoie uma mão em cada cadeira, com o corpo entre elas e as pernas esticadas ou dobradas.', 'Dobre os cotovelos para trás e desça até uns 90°, mantendo o corpo perto das cadeiras.', 'Empurre as mãos e suba esticando os braços.'], e: 'Teste a estabilidade das cadeiras antes. Se ficar pesado, dobre os joelhos e apoie os pés no chão.' },
@@ -758,8 +764,8 @@ const COMO = {
   HK4: { p: ['Apoie os antebraços no chão, cotovelos sob os ombros, e fique na ponta dos pés.', 'Corpo reto da cabeça aos calcanhares, barriga e glúteo firmes.', 'Olhe para o chão, pescoço neutro e respiração normal.', 'Segure o tempo indicado.'], e: 'Se o quadril subir ou cair, a prancha perde o efeito. Mais fácil: apoie os joelhos.' },
   HK5: { p: ['Deite de barriga para cima, braços esticados para o teto e joelhos dobrados a 90° no ar.', 'Pressione a lombar no chão.', 'Estique um braço para trás e a perna oposta para a frente, sem deixar a lombar descolar.', 'Volte ao centro e alterne os lados, devagar.'], e: 'Se a lombar descolar, faça só as pernas ou só os braços.' },
   HK6: { p: ['Deite de lado e apoie o antebraço no chão, cotovelo sob o ombro, pés empilhados.', 'Suba o quadril até formar uma linha reta.', 'Desça o quadril quase até o chão e suba de novo, com controle.'], e: 'Mais fácil: apoie o joelho de baixo no chão.' },
-  HB1: { p: ['Pés na largura dos ombros, pontas dos pés levemente para fora.', 'Desça empurrando o quadril para trás e dobrando os joelhos, em 3 segundos, mantendo o peito aberto.', 'Vá até as coxas ficarem paralelas ao chão, ou o quanto conseguir sem o calcanhar subir.', 'Suba empurrando o chão com o pé inteiro.'], e: 'Os joelhos seguem a direção dos pés, sem cair para dentro.' },
-  HB2: { p: ['De costas para um sofá ou cadeira, apoie o peito do pé de trás sobre ele.', 'Dê um passo à frente com a outra perna, para o joelho não passar muito da ponta do pé.', 'Desça dobrando o joelho da frente até a coxa ficar quase paralela ao chão.', 'Suba empurrando o pé da frente, com o tronco reto.'], e: 'Faça todas as repetições de um lado antes de trocar.' },
+  HB1: { p: ['Pés na largura dos ombros, pontas dos pés levemente para fora.', 'Abrace a mochila contra o peito. Desça empurrando o quadril para trás e dobrando os joelhos, em 3 segundos, mantendo o peito aberto.', 'Vá até as coxas ficarem paralelas ao chão, ou o quanto conseguir sem o calcanhar subir.', 'Suba empurrando o chão com o pé inteiro.'], e: 'Os joelhos seguem a direção dos pés, sem cair para dentro. Pare quando faltarem umas 2 reps para não conseguir mais.' },
+  HB2: { p: ['Mochila nas costas, alças presas. De costas para um sofá ou cadeira, apoie o peito do pé de trás sobre ele.', 'Dê um passo à frente com a outra perna, para o joelho não passar muito da ponta do pé.', 'Desça dobrando o joelho da frente até a coxa ficar quase paralela ao chão.', 'Suba empurrando o pé da frente, com o tronco reto.'], e: 'Faça todas as repetições de um lado antes de trocar.' },
   HB3: { p: ['Em pé, dê um passo grande à frente e desça até os dois joelhos formarem 90°.', 'O joelho de trás quase toca o chão.', 'Suba e leve a perna de trás à frente, no próximo passo.', 'Alterne as pernas andando.'], e: 'Tronco reto, e passo longo o bastante para o joelho da frente não passar da ponta do pé.' },
   HB4: { p: ['Encoste as costas na parede e deslize para baixo até as coxas ficarem paralelas ao chão, como se estivesse sentado numa cadeira.', 'Joelhos a 90° e acima dos tornozelos.', 'Pés na largura dos ombros e mãos fora das coxas.', 'Segure o tempo indicado.'], e: 'Se ficar pesado demais, suba um pouco; se ficar leve, desça mais.' },
   HB5: { p: ['Em pé na borda de um degrau, apoie a ponta de um pé e deixe o calcanhar fora, com a outra perna levantada.', 'Segure numa parede ou no corrimão para se equilibrar.', 'Desça o calcanhar o máximo que conseguir, alongando a panturrilha.', 'Suba na ponta do pé o mais alto que puder e segure 1 segundo no topo.'], e: 'Movimento lento e amplitude completa.' },
@@ -772,7 +778,7 @@ const COMO = {
   HD2: { p: ['Sentado no chão de costas para o sofá, apoie a parte de cima das costas (a base das escápulas) na borda dele.', 'Joelhos dobrados e pés no chão, na largura do quadril.', 'Empurre os calcanhares e suba o quadril até ficar alinhado com os joelhos e o tronco.', 'Aperte o glúteo no topo e desça devagar.'], e: 'Queixo levemente para o peito e sem arquear a lombar no topo.' },
   HD3: { p: ['Em pé numa perna só, com o joelho levemente dobrado e a outra perna solta.', 'Incline o tronco para a frente, levando a perna solta para trás, com as costas retas.', 'Desça até sentir o posterior da coxa alongar, ou até o tronco ficar paralelo ao chão.', 'Volte contraindo o glúteo e o posterior.'], e: 'Apoie uma mão numa parede para se equilibrar, se precisar.' },
   HD4: { p: ['Deite de barriga para cima, com os calcanhares sobre uma toalha ou meia no chão liso.', 'Suba o quadril, deixando o corpo em ponte.', 'Deslize os calcanhares para longe, esticando as pernas, e depois puxe-os de volta.', 'Mantenha o quadril alto o tempo todo.'], e: 'Funciona melhor em piso liso, e é mais difícil do que parece.' },
-  HD5: { p: ['Pés bem abertos, mais que os ombros, com as pontas para fora.', 'Desça dobrando os joelhos na direção dos pés, com o tronco reto.', 'Faça uma pausa de 1 a 2 segundos embaixo.', 'Suba empurrando o chão e aperte o glúteo no topo.'], e: 'Os joelhos seguem a direção dos pés.' },
+  HD5: { p: ['Segure a mochila na frente do corpo, braços esticados. Pés bem abertos, mais que os ombros, com as pontas para fora.', 'Desça dobrando os joelhos na direção dos pés, com o tronco reto.', 'Faça uma pausa de 1 a 2 segundos embaixo.', 'Suba empurrando o chão e aperte o glúteo no topo.'], e: 'Os joelhos seguem a direção dos pés.' },
   HD6: { p: ['Deite de lado, com a cabeça apoiada no braço e as pernas esticadas.', 'Dobre levemente a perna de baixo para ter estabilidade.', 'Suba a perna de cima até uns 45°, com o pé reto ou levemente voltado para o chão.', 'Desça devagar, sem encostar na outra perna.'], e: 'Quadril parado, sem rolar para trás.' },
   HR1: { p: ['Em pé, pés juntos e braços ao lado do corpo.', 'Salte abrindo as pernas e levando os braços acima da cabeça.', 'Salte de novo, voltando pés juntos e braços ao lado.', 'Mantenha o ritmo constante e aterrisse com os joelhos levemente dobrados.'], e: 'Baixo impacto: em vez de saltar, dê um passo para o lado com os braços subindo (polichinelo sem pulo).' },
   HR2: { p: ['Em pé, corra no lugar levando os joelhos até a altura do quadril.', 'Braços acompanham o movimento, como numa corrida.', 'Mantenha o tronco reto e a barriga firme.', 'Aterrisse na ponta do pé, de forma leve.'], e: 'Mais leve: marche no lugar com os joelhos altos, sem saltar.' },
@@ -787,12 +793,18 @@ const COMO = {
 };
 COMO.HA8 = { p: ['Posição de flexão normal, mas com as mãos na largura dos ombros e os cotovelos apontando para trás, colados nas costelas.', 'Corpo em linha reta, barriga e glúteo firmes.', 'Desça até o peito quase tocar o chão, sem abrir os cotovelos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Muito difícil? Apoie os joelhos no chão.' };
 COMO.HK7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão.', 'Mãos ao lado da cabeça ou cruzadas no peito (não puxe o pescoço).', 'Levante só os ombros e a parte de cima das costas do chão, contraindo a barriga.', 'Desça devagar, sem relaxar de vez.'], e: 'Movimento curto. Olhe para o teto e solte o ar ao subir.' };
-COMO.HB6 = { p: ['Em pé, pés na largura do quadril, no chão ou com a ponta dos pés na borda de um degrau.', 'Se precisar, apoie a mão numa parede.', 'Suba na ponta dos pés o mais alto que conseguir e segure 1 segundo.', 'Desça devagar, até o calcanhar chegar embaixo.'], e: 'Mais difícil: faça com uma perna só.' };
-COMO.HB7 = { p: ['Em pé, dê um passo grande à frente e deixe os pés ali, sem mexer: um à frente, o outro atrás, na ponta do pé.', 'Desça reto para baixo, dobrando os dois joelhos, até o joelho de trás quase tocar o chão.', 'Suba reto, empurrando o pé da frente. Os pés não saem do lugar.', 'Faça todas as repetições de uma perna e troque o pé da frente.'], e: 'Tronco reto. Se perder o equilíbrio, apoie a mão numa parede ou cadeira.' };
+COMO.HB6 = { p: ['Mochila nas costas. Em pé, pés na largura do quadril, no chão ou com a ponta dos pés na borda de um degrau.', 'Se precisar, apoie a mão numa parede.', 'Suba na ponta dos pés o mais alto que conseguir e segure 1 segundo.', 'Desça devagar, até o calcanhar chegar embaixo.'], e: 'Mais difícil: faça com uma perna só.' };
+COMO.HB7 = { p: ['Mochila nas costas. Em pé, dê um passo grande à frente e deixe os pés ali, sem mexer: um à frente, o outro atrás, na ponta do pé.', 'Desça reto para baixo, dobrando os dois joelhos, até o joelho de trás quase tocar o chão.', 'Suba reto, empurrando o pé da frente. Os pés não saem do lugar.', 'Faça todas as repetições de uma perna e troque o pé da frente.'], e: 'Tronco reto. Se perder o equilíbrio, apoie a mão numa parede ou cadeira.' };
 COMO.HC6 = { p: ['Coloque livros numa mochila e segure pela alça de cima (ou abrace a mochila contra a barriga).', 'Pés na largura dos ombros, joelhos levemente dobrados, tronco inclinado para a frente com as costas retas.', 'Puxe a mochila em direção à barriga, levando os cotovelos para trás e juntando as escápulas.', 'Desça devagar, esticando os braços.'], e: 'Ajuste o peso: mais livros deixam mais difícil. Não arredonde as costas.' };
 COMO.HC7 = { p: ['Mochila com livros segurada pela alça, braço esticado ao lado do corpo (ou segure com as duas mãos).', 'Cotovelo colado na costela.', 'Dobre o cotovelo subindo a mochila até perto do ombro.', 'Desça devagar, até esticar o braço.'], e: 'Sem balançar o corpo. Faça os dois braços, um de cada vez.' };
-COMO.HD7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão, na largura do quadril.', 'Braços ao lado do corpo.', 'Empurre os calcanhares e suba o quadril até o corpo ficar em linha reta, dos ombros aos joelhos.', 'Aperte o glúteo no topo e desça devagar.'], e: 'Se sentir mais a lombar que o glúteo, suba menos e aperte o glúteo com força.' };
-COMO.HD8 = { p: ['Segure a mochila com livros na frente das coxas, com as duas mãos.', 'Pés na largura do quadril e joelhos levemente dobrados.', 'Empurre o quadril para trás e incline o tronco, deixando a mochila deslizar perto das pernas, com as costas retas.', 'Volte contraindo o glúteo e o posterior da coxa.'], e: 'Desça só até sentir o posterior da coxa esticar. Sem arredondar as costas.' };
+COMO.HD7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão, na largura do quadril.', 'Apoie a mochila em cima do quadril e segure-a com as mãos.', 'Empurre os calcanhares e suba o quadril até o corpo ficar em linha reta, dos ombros aos joelhos.', 'Aperte o glúteo no topo e desça devagar.'], e: 'Se sentir mais a lombar que o glúteo, suba menos e aperte o glúteo com força.' };
+COMO.HD8 = { p: ['Segure a mochila com livros na frente das coxas, com as duas mãos.', 'Pés na largura do quadril e joelhos levemente dobrados.', 'Empurre o quadril para trás e incline o tronco, deixando a mochila deslizar perto das pernas, com as costas retas.', 'Volte contraindo o glúteo e o posterior da coxa.'], e: 'Desça só até sentir o posterior da coxa esticar. Para aprender a postura, faça umas reps com o cabo de vassoura encostado nas costas: ele deve tocar a cabeça, o meio das costas e o quadril o tempo todo.' };
+COMO.HA9 = { p: ['Em pé, uma garrafa cheia em cada mão (1,5 ou 2 L), braços ao lado do corpo e cotovelos levemente dobrados.', 'Suba os braços para os lados até a altura dos ombros, como se abrisse asas.', 'Pare na altura do ombro, sem encolher o pescoço.', 'Desça devagar, em 2 a 3 segundos.'], e: 'Uma garrafa de 2 L pesa uns 2 kg. Ficou fácil? Segure 1 s no topo ou desça mais devagar.' };
+COMO.HA10 = { p: ['Em pé, joelhos levemente dobrados, incline o tronco para a frente com as costas retas, quase paralelo ao chão.', 'Uma garrafa em cada mão, braços pendurados e cotovelos levemente dobrados.', 'Abra os braços para os lados até a altura do tronco, apertando a parte de trás dos ombros.', 'Desça devagar.'], e: 'O movimento sai do ombro, não das costas. Sem dar tranco.' };
+COMO.HA11 = { p: ['Em pé ou sentado, segure a mochila com as duas mãos acima da cabeça.', 'Cotovelos apontando para o teto, perto da cabeça.', 'Dobre os cotovelos e desça a mochila atrás da cabeça até sentir o tríceps alongar.', 'Estique os braços voltando para cima, sem abrir os cotovelos.'], e: 'Feche bem a mochila e confira as alças antes. Barriga firme para não arquear a lombar.' };
+COMO.HC8 = { p: ['Apoie a mão e o joelho do mesmo lado no sofá ou numa cadeira firme, com as costas retas e paralelas ao chão.', 'Segure a mochila na outra mão, com o braço esticado.', 'Puxe o cotovelo para trás, perto do corpo, até a mochila chegar na costela.', 'Desça devagar até esticar o braço e alongar as costas.'], e: 'Com um braço só, cada lado puxa a mochila inteira: é a remada mais pesada que dá para fazer em casa. Não gire o tronco.' };
+COMO.HC9 = { p: ['Deite de barriga para cima no chão, joelhos dobrados, segurando a mochila com as duas mãos acima do peito, braços quase esticados.', 'Leve a mochila para trás da cabeça num arco, até perto do chão, sem dobrar mais os cotovelos.', 'Sinta alongar a lateral das costas.', 'Volte puxando a mochila no mesmo arco até em cima do peito.'], e: 'Lombar colada no chão. Faz o papel da puxada alta: trabalha a largura das costas.' };
+COMO.HD9 = { p: ['Ajoelhe numa almofada ou toalha dobrada e prenda os calcanhares embaixo do sofá.', 'Corpo reto dos joelhos à cabeça, glúteo contraído, mãos na frente do peito.', 'Incline o corpo para a frente bem devagar, segurando com o posterior da coxa, o máximo que conseguir.', 'Quando não aguentar mais, apare com as mãos no chão e empurre para voltar.'], e: 'Confira se o sofá não levanta. Conte só a descida e tente levar 3 a 5 s. É difícil mesmo: com o tempo você desce mais antes de apoiar as mãos.' };
 COMO.HX3 = COMO.HA2; COMO.HX5 = COMO.HA5;
 COMO.HX7 = COMO.HA8; COMO.HX8 = COMO.HC7; COMO.HX9 = COMO.HB6;
 function comoHTML(id) {
@@ -1168,6 +1180,7 @@ function renderContent() {
       ${sessDate ? '<button class="mini-btn" data-act="hoje" type="button">Voltar para hoje</button>' : ''}</div>
     ${sessDate ? '<div class="retro-aviso">Preenchendo um treino de outro dia. Ele entra no histórico, nos recordes e nas sequências na data escolhida.</div>' : ''}
     <div class="dica-serie">A 1ª série preenche as outras. Mude qualquer uma se precisar.</div>
+    ${isCasa(currentTab) ? '<div class="dica-serie">Mochila: suba na balança com e sem ela e anote a diferença no kg. Sem peso: deixe o kg em branco e anote só as reps. Não pendure peso no cabo de vassoura, que ele pode quebrar.</div>' : ''}
     <div class="desc-linha"><span>Descanso</span>${[60, 90, 120, 180].map(s => `<button class="chip${restDefault === s ? ' on' : ''}" data-act="rest-set" data-s="${s}">${s < 120 ? s + ' s' : (s / 60) + ' min'}</button>`).join('')}</div>`;
   let sec = '';
   t.slots.forEach(sl => {
