@@ -645,7 +645,7 @@ const WORKOUTS = {
       { title: "Bônus · Ombro, costas e bíceps", cls: "bonus", exercises: [
         {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
         {id:"HC8", name:"Remada unilateral com mochila (mão e joelho no sofá)", target:"3×10–20/braço"},
-        {id:"HC7", name:"Rosca unilateral com mochila", target:"2×10–20/braço"},
+        {id:"HC11", name:"Rosca concentrada com mochila (sentado, cotovelo na coxa)", target:"2×10–20/braço"},
       ]},
     ]
   },
@@ -657,6 +657,7 @@ const WORKOUTS = {
         {id:"HC9", name:"Pullover com mochila deitado (no lugar da puxada)", target:"4×10–20"},
         {id:"HC6", name:"Remada curvada com mochila com livros", target:"3×15–30"},
         {id:"HC7", name:"Rosca unilateral com mochila", target:"3×10–20/braço"},
+        {id:"HC10", name:"Rosca martelo com mochila (palma virada para dentro)", target:"3×10–20/braço"},
         {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
         {id:"HC5", name:"Apertar e segurar a toalha (antebraço)", target:"2×30–45s"},
       ]},
@@ -818,6 +819,8 @@ COMO.HA11 = { p: ['Em pé ou sentado, segure a mochila com as duas mãos acima d
 COMO.HC8 = { p: ['Apoie a mão e o joelho do mesmo lado no sofá ou numa cadeira firme, com as costas retas e paralelas ao chão.', 'Segure a mochila na outra mão, com o braço esticado.', 'Puxe o cotovelo para trás, perto do corpo, até a mochila chegar na costela.', 'Desça devagar até esticar o braço e alongar as costas.'], e: 'Com um braço só, cada lado puxa a mochila inteira: é a remada mais pesada que dá para fazer em casa. Não gire o tronco.' };
 COMO.HC9 = { p: ['Deite de barriga para cima no chão, joelhos dobrados, segurando a mochila com as duas mãos acima do peito, braços quase esticados.', 'Leve a mochila para trás da cabeça num arco, até perto do chão, sem dobrar mais os cotovelos.', 'Sinta alongar a lateral das costas.', 'Volte puxando a mochila no mesmo arco até em cima do peito.'], e: 'Lombar colada no chão. Faz o papel da puxada alta: trabalha a largura das costas.' };
 COMO.HD9 = { p: ['Ajoelhe numa almofada ou toalha dobrada e prenda os calcanhares embaixo do sofá.', 'Corpo reto dos joelhos à cabeça, glúteo contraído, mãos na frente do peito.', 'Incline o corpo para a frente bem devagar, segurando com o posterior da coxa, o máximo que conseguir.', 'Quando não aguentar mais, apare com as mãos no chão e empurre para voltar.'], e: 'Confira se o sofá não levanta. Conte só a descida e tente levar 3 a 5 s. É difícil mesmo: com o tempo você desce mais antes de apoiar as mãos.' };
+COMO.HC10 = { p: ['Em pé, segure a mochila pela alça de cima com uma mão, braço esticado ao lado do corpo e a palma virada para a perna (como quem segura um martelo).', 'Cotovelo colado na costela.', 'Dobre o cotovelo subindo a mochila até perto do ombro, sem girar o punho.', 'Desça devagar até esticar o braço. Faça todas as reps e troque de braço.'], e: 'Trabalha o braquial (embaixo do bíceps) e o antebraço: é o que deixa o braço mais grosso visto de frente. Sem balançar o corpo.' };
+COMO.HC11 = { p: ['Sente na beira do sofá ou de uma cadeira, pernas abertas.', 'Segure a mochila pela alça de cima e apoie a parte de trás do braço (perto do cotovelo) na parte de dentro da coxa.', 'Com o braço esticado, dobre o cotovelo subindo a mochila até perto do ombro, apertando o bíceps no topo.', 'Desça devagar até esticar o braço todo. Faça todas as reps e troque de braço.'], e: 'Com o braço apoiado não tem como roubar: é o que mais se parece com a rosca Scott da academia.' };
 COMO.HK8 = { p: ['Deite de barriga para cima, braços ao lado do corpo e mãos espalmadas no chão.', 'Dobre os joelhos e tire os pés do chão, com as coxas apontando para o teto.', 'Leve o quadril em direção ao peito, descolando a lombar do chão, como se enrolasse a parte de baixo da barriga.', 'Desça devagar, sem balançar as pernas para pegar impulso.'], e: 'O movimento é pequeno: quem trabalha é a barriga, não as pernas. Solte o ar ao subir.' };
 COMO.HX3 = COMO.HA2; COMO.HX5 = COMO.HA5;
 COMO.HX7 = COMO.HA8; COMO.HX8 = COMO.HC7; COMO.HX9 = COMO.HB6;
@@ -838,6 +841,8 @@ const TEC = {
   HC9: 'Última série: até a falha (mochila bem fechada).',
   HC6: 'Última série: até a falha, sem arredondar as costas.',
   HC7: 'Última série: até a falha + 5 meias-reps na parte de baixo.',
+  HC10: 'Última série: até a falha + 5 meias-reps na parte de baixo.',
+  HC11: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
   HD9: 'Já é no máximo: só desça cada rep o mais devagar que conseguir.',
   HD8: 'Nada de falha aqui: pare a 1–2 reps, sempre com as costas retas.',
   HD1: 'Última série: até a falha + segure 10 s lá em cima.',
