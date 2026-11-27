@@ -618,10 +618,10 @@ const WORKOUTS = {
     label: "Treino A em casa — Peito, Tríceps & Ombro",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HA2", name:"Flexão declinada (pés na cadeira ou sofá)", target:"4×6–15"},
-        {id:"HA1", name:"Flexão de braços (mãos em livros para descer mais)", target:"4×8–20"},
+        {id:"HA16", name:"Flexão inclinada (mãos no sofá ou na bancada)", target:"4×8–20"},
+        {id:"HA1", name:"Flexão no chão (joelhos no chão se precisar)", target:"3×5–15"},
         {id:"HA4", name:"Mergulho entre duas cadeiras (tronco inclinado à frente)", target:"3×6–15"},
-        {id:"HA3", name:"Flexão diamante (mãos juntas)", target:"3×6–15"},
+        {id:"HA3", name:"Flexão diamante (mãos juntas no sofá até conseguir no chão)", target:"3×6–15"},
         {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
         {id:"HA10", name:"Crucifixo invertido unilateral com garrafa (mão livre no sofá)", target:"3×15–25/braço"},
         {id:"HA11", name:"Tríceps francês com mochila (acima da cabeça)", target:"3×10–20"},
@@ -637,7 +637,7 @@ const WORKOUTS = {
     label: "Treino B em casa — Quadríceps + peito, bíceps e antebraço",
     sections: [
       { title: "Prioridade · Peito, bíceps e antebraço", cls: "bonus", exercises: [
-        {id:"HA13", name:"Flexão arqueiro (o peso vai para um braço)", target:"3×4–12/lado"},
+        {id:"HA17", name:"Negativa da flexão (desce em 5 s, sobe de joelhos)", target:"3×3–8"},
         {id:"HC11", name:"Rosca concentrada com mochila (sentado, cotovelo na coxa)", target:"3×10–20/braço"},
         {id:"HC12", name:"Rolo de punho com cabo de vassoura (subir e descer = 1)", target:"3×2–4"},
       ]},
@@ -672,7 +672,7 @@ const WORKOUTS = {
     label: "Treino D em casa — Posterior & Glúteo + peito, tríceps e antebraço",
     sections: [
       { title: "Prioridade · Peito, tríceps e antebraço", cls: "bonus", exercises: [
-        {id:"HA2", name:"Flexão declinada (pés na cadeira ou sofá)", target:"3×6–15"},
+        {id:"HA16", name:"Flexão inclinada (mãos no sofá ou na bancada)", target:"3×8–20"},
         {id:"HA14", name:"Tríceps testa com peso do corpo (mãos no sofá)", target:"3×8–15"},
         {id:"HC13", name:"Rosca inversa com mochila (palma virada para baixo)", target:"3×10–20/braço"},
       ]},
@@ -742,6 +742,8 @@ function buildExerciseIndex() {
    ['HK2', 'Rotação de tronco sentado (russian twist), sem peso', '3×12/lado', 'HA'], ['HK3', 'Prancha lateral', '3×20–30s/lado', 'HA'],
    // treinos em casa simplificados (nov/2026): ficam só no histórico
    ['HA5', 'Flexão pike (quadril alto, foco no ombro)', '3×6–12', 'HA'],
+   // fase de base das flexões (nov/2026): voltam quando a flexão no chão estiver inteira
+   ['HA2', 'Flexão declinada (pés na cadeira ou sofá)', '4×6–15', 'HA'], ['HA13', 'Flexão arqueiro (o peso vai para um braço)', '3×4–12/lado', 'HB'],
    ['HA6', 'Prancha com toque no ombro', '3×10/lado', 'HA'], ['HA7', 'Superman em Y-T-W no chão (ombro posterior)', '3×10–12', 'HA'],
    ['HK5', 'Dead bug (braço e perna opostos)', '3×10/lado', 'HA'],
    ['HB3', 'Afundo caminhando', '3×10–12/perna', 'HB'],
@@ -768,9 +770,9 @@ const EX_INDEX = buildExerciseIndex();
 
 // ===================== COMO FAZER (treinos em casa) =====================
 const COMO = {
-  HA1: { p: ['Mãos no chão, um pouco mais abertas que os ombros, dedos para a frente.', 'Corpo em linha reta da cabeça aos calcanhares: barriga e glúteo firmes, sem deixar o quadril cair.', 'Desça dobrando os cotovelos a uns 45° do corpo (não abertos para os lados) até o peito quase tocar o chão.', 'Empurre o chão e suba esticando os braços.'], e: 'Com as mãos em cima de dois livros grossos, o peito desce mais fundo e o músculo trabalha mais alongado. Muito difícil? Apoie os joelhos. Fácil demais? Mochila nas costas (alças bem presas).' },
+  HA1: { p: ['Mãos no chão, um pouco mais abertas que os ombros, dedos para a frente.', 'Corpo em linha reta da cabeça aos calcanhares: barriga e glúteo firmes, sem deixar o quadril cair.', 'Desça dobrando os cotovelos a uns 45° do corpo (não abertos para os lados) até o peito quase tocar o chão.', 'Empurre o chão e suba esticando os braços.'], e: 'Ponha um livro ou uma toalha enrolada embaixo do peito e encoste nele a cada rep: assim você sabe que desceu tudo. Conte só as reps que encostarem. De joelhos vale, desde que desça inteiro. Quando fizer 15 inteiras em todas as séries, ponha as mãos em livros para descer ainda mais.' },
   HA2: { p: ['Mesma posição da flexão normal, mas com os pés em cima de uma cadeira ou sofá firme.', 'Corpo em linha reta, barriga e glúteo firmes.', 'Desça até o peito quase tocar o chão, cotovelos a uns 45° do corpo.', 'Suba empurrando o chão.'], e: 'Quanto mais alto os pés, mais trabalha ombro e parte de cima do peito.' },
-  HA3: { p: ['Mãos juntas embaixo do peito, com polegares e indicadores formando um triângulo (diamante).', 'Corpo reto, barriga e glúteo firmes.', 'Desça com os cotovelos colados no corpo até o peito quase tocar as mãos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Se ficar difícil, apoie os joelhos.' },
+  HA3: { p: ['Mãos juntas embaixo do peito, com polegares e indicadores formando um triângulo (diamante).', 'Corpo reto, barriga e glúteo firmes.', 'Desça com os cotovelos colados no corpo até o peito quase tocar as mãos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Comece com as mãos juntas na borda do sofá; vá para o chão (de joelhos, depois normal) quando fizer 15 em todas as séries.' },
   HA4: { p: ['Coloque duas cadeiras firmes (encostadas na parede, para não escorregarem) uma de frente para a outra, com uns 60 a 80 cm entre elas.', 'Apoie uma mão em cada cadeira, com o corpo entre elas e as pernas esticadas ou dobradas.', 'Incline um pouco o tronco para a frente e dobre os cotovelos para trás, descendo até uns 90°.', 'Empurre as mãos e suba esticando os braços.'], e: 'Teste as cadeiras antes: precisam ser pesadas e não podem escorregar. Tronco inclinado puxa mais o peito; tronco reto, mais o tríceps. Não desça além de 90° se o ombro reclamar. Pesado demais? Deixe os pés no chão e ajude com as pernas.' },
   HA5: { p: ['Mãos no chão e quadril bem alto, formando um V invertido, com as pernas quase esticadas.', 'Cabeça entre os braços, olhar para os pés.', 'Dobre os cotovelos e leve a cabeça em direção ao chão, entre as mãos.', 'Empurre o chão e volte ao V.'], e: 'Quanto mais vertical o tronco, mais o ombro trabalha.' },
   HA6: { p: ['Posição de prancha alta, mãos no chão sob os ombros, pés um pouco abertos.', 'Corpo reto, barriga firme.', 'Tire uma mão do chão e toque no ombro do lado oposto, sem girar o quadril.', 'Volte a mão e alterne os lados.'], e: 'Quanto mais abertos os pés, mais fácil de equilibrar.' },
@@ -830,14 +832,18 @@ COMO.HC12 = { p: ['Amarre um barbante ou corda de 1 m no meio do cabo de vassour
 COMO.HC13 = { p: ['Segure a mochila pela alça de cima com a palma virada para baixo, braço esticado ao lado do corpo.', 'Cotovelo colado na costela e punho reto.', 'Suba a mochila até perto do ombro sem girar nem dobrar o punho.', 'Desça devagar. Faça todas as reps e troque de braço.'], e: 'Trabalha a parte de cima do antebraço e o braquial. Use menos peso que na rosca normal: tire uns livros.' };
 COMO.HD10 = { p: ['Sente na beira de uma cadeira com a ponta dos pés num degrau ou num livro grosso e os calcanhares para fora.', 'Coloque a mochila em cima dos joelhos e segure com as mãos.', 'Desça os calcanhares o máximo que conseguir e segure 2 s lá embaixo.', 'Suba na ponta dos pés o mais alto possível e desça devagar.'], e: 'Com o joelho dobrado, trabalha o sóleo, a parte de baixo da panturrilha (o papel da panturrilha sentado da academia). Pode pôr mais peso por cima da mochila.' };
 COMO.HA14 = { p: ['De frente para o sofá, apoie as mãos na borda do assento, na largura dos ombros, e afaste os pés até o corpo ficar reto, inclinado como numa prancha.', 'Dobre só os cotovelos, levando a testa em direção às mãos até passar um pouco da borda, com os cotovelos apontando para a frente.', 'Estique os cotovelos e volte, sem dobrar o quadril.', 'Só o cotovelo se mexe, como na rosca testa da academia.'], e: 'Quanto mais baixo o apoio e mais longe os pés, mais pesado. Começando? Use um apoio mais alto (bancada da cozinha ou encosto do sofá) ou apoie os joelhos no chão. Dá para ir até a falha sem risco: no pior caso, você encosta no sofá.' };
+COMO.HA16 = { p: ['Apoie as mãos na borda do sofá (ou da bancada da cozinha, que é mais fácil), um pouco mais abertas que os ombros.', 'Afaste os pés até o corpo ficar reto da cabeça aos calcanhares, com barriga e glúteo firmes.', 'Desça até o peito encostar na borda, com os cotovelos a uns 45° do corpo.', 'Empurre e volte, esticando os braços.'], e: 'O segredo é descer tudo: amplitude completa num apoio alto vale mais que meia flexão no chão. Quando fizer 20 em todas as séries, use um apoio mais baixo (cadeira, degrau) até chegar no chão.' };
+COMO.HA17 = { p: ['Comece em posição de flexão no chão: braços esticados e corpo reto.', 'Desça o mais devagar que conseguir, contando 5 segundos, até o peito encostar no chão.', 'Apoie os joelhos e suba empurrando o chão.', 'Estique as pernas de novo e repita.'], e: 'Na descida você aguenta mais força que na subida: é assim que se ganha força lá embaixo. Em poucas semanas a flexão inteira no chão aparece.' };
 COMO.HK8 = { p: ['Deite de barriga para cima, braços ao lado do corpo e mãos espalmadas no chão.', 'Dobre os joelhos e tire os pés do chão, com as coxas apontando para o teto.', 'Leve o quadril em direção ao peito, descolando a lombar do chão, como se enrolasse a parte de baixo da barriga.', 'Desça devagar, sem balançar as pernas para pegar impulso.'], e: 'O movimento é pequeno: quem trabalha é a barriga, não as pernas. Solte o ar ao subir.' };
 COMO.HX3 = COMO.HA2; COMO.HX5 = COMO.HA5;
 COMO.HX7 = COMO.HA8; COMO.HX8 = COMO.HC7; COMO.HX9 = COMO.HB6;
 // técnica da ÚLTIMA série de cada exercício em casa (as anteriores param a 1–2 reps da falha)
 const TEC = {
   HA2: 'Última série: até a falha e, sem descansar, emende flexão normal até falhar de novo.',
-  HA1: 'Última série: até a falha + 5 meias-reps na parte de baixo.',
-  HA3: 'Última série: até a falha e continue com os joelhos no chão até falhar de novo.',
+  HA1: 'Última série: até a falha e continue com os joelhos no chão até falhar de novo.',
+  HA16: 'Última série: até a falha e continue num apoio mais alto (bancada) até falhar de novo.',
+  HA17: 'Cada descida é o exercício: o mais devagar que conseguir, até o peito encostar no chão.',
+  HA3: 'Última série: até a falha e continue num apoio mais alto até falhar de novo.',
   HA5: 'Última série: até a falha.',
   HA9: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
   HA10: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
