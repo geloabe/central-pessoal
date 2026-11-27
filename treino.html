@@ -633,13 +633,17 @@ const WORKOUTS = {
     ]
   },
   HB: {
-    label: "Treino B em casa — Quadríceps",
+    label: "Treino B em casa — Quadríceps + bônus de ombro e bíceps",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HB2", name:"Agachamento búlgaro com mochila nas costas (pé de trás no sofá)", target:"4×8–20/perna"},
         {id:"HB1", name:"Agachamento com mochila abraçada no peito", target:"3×15–30"},
         {id:"HB7", name:"Afundo parado com mochila (pés fixos, só desce e sobe)", target:"3×10–20/perna"},
         {id:"HB6", name:"Panturrilha em pé com mochila (num degrau, pausa embaixo)", target:"4×12–25"},
+      ]},
+      { title: "Bônus · Ombro e bíceps", cls: "bonus", exercises: [
+        {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
+        {id:"HC7", name:"Rosca unilateral com mochila", target:"2×10–20/braço"},
       ]},
     ]
   },
@@ -662,7 +666,7 @@ const WORKOUTS = {
     ]
   },
   HD: {
-    label: "Treino D em casa — Posterior de Coxa & Glúteo",
+    label: "Treino D em casa — Posterior de Coxa & Glúteo + bônus de ombro e peito",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HD9", name:"Flexão nórdica (pés presos no sofá, só a descida)", target:"3×4–8"},
@@ -671,6 +675,10 @@ const WORKOUTS = {
         {id:"HD7", name:"Elevação pélvica no chão com mochila no quadril", target:"3×15–30"},
         {id:"HD6", name:"Abdução de quadril deitado de lado", target:"3×15–30/lado"},
         {id:"HB6", name:"Panturrilha em pé com mochila (num degrau, pausa embaixo)", target:"3×12–25"},
+      ]},
+      { title: "Bônus · Ombro de trás e peito", cls: "bonus", exercises: [
+        {id:"HA10", name:"Crucifixo invertido unilateral com garrafa (mão livre no sofá)", target:"2×15–25/braço"},
+        {id:"HA2", name:"Flexão declinada (pés na cadeira ou sofá)", target:"2×6–15"},
       ]},
     ]
   },
@@ -1552,19 +1560,20 @@ function sugestao(exId) {
   const ex = EX_INDEX[exId]; if (!ex) return null;
   const a = parseAlvo(ex.target), f = lastLog(exId); if (!f) return null;
   const sets = doneSets(f.log); if (!sets.length) return null;
+  const need = f.log.length; // séries planejadas naquele dia (o mesmo exercício pode ter 3 séries num treino e 2 no bônus de outro)
   if (a.timed) {
     const tmin = Math.min(...sets.map(x => x.t));
-    if (sets.length >= a.sets && tmin >= a.max) return { kind: 'subir', txt: (a.max + 5) + ' s por série', why: 'Você segurou ' + a.max + ' s ou mais em todas as séries.' };
+    if (sets.length >= need && tmin >= a.max) return { kind: 'subir', txt: (a.max + 5) + ' s por série', why: 'Você segurou ' + a.max + ' s ou mais em todas as séries.' };
     return { kind: 'manter', txt: a.max + ' s por série', why: 'Meta: chegar a ' + a.max + ' s em todas as séries.' };
   }
   if (!a.min) return null;
   const W = Math.max(...sets.map(x => x.w)), at = sets.filter(x => x.w === W), minR = Math.min(...at.map(x => x.r));
   if (W <= 0) { // só peso do corpo: progride por repetições e por variação mais difícil
     const mr = Math.min(...sets.map(x => x.r));
-    if (sets.length >= a.sets && mr >= a.max) return { kind: 'subir', txt: a.max + '+ reps, com a variação mais difícil', why: 'Você chegou a ' + a.max + ' reps em todas as séries. Dificulte: descida mais lenta (3 s), pausa de 2 s embaixo, pés mais altos, ou +2 reps.' };
+    if (sets.length >= need && mr >= a.max) return { kind: 'subir', txt: a.max + '+ reps, com a variação mais difícil', why: 'Você chegou a ' + a.max + ' reps em todas as séries. Dificulte: descida mais lenta (3 s), pausa de 2 s embaixo, pés mais altos, ou +2 reps.' };
     return { kind: 'reps', txt: Math.min(a.max, mr + 1) + ' ou mais reps em cada série', why: 'Uma repetição a mais por série. Quando todas chegarem a ' + a.max + ', dificulte o movimento.' };
   }
-  if (at.length >= a.sets && minR >= a.max) {
+  if (at.length >= need && minR >= a.max) {
     const inc = W >= 20 ? 2.5 : 1;
     return { kind: 'subir', w: W + inc, txt: kg(W + inc) + ' kg × ' + a.min + '–' + a.max, why: 'Na última vez você fez ' + at.length + ' séries de ' + minR + ' ou mais com ' + kg(W) + ' kg: chegou ao topo da faixa. Hora de subir a carga.' };
   }
