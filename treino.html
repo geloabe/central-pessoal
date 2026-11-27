@@ -617,18 +617,18 @@ const WORKOUTS = {
     label: "Treino A em casa — Peito, Tríceps & Ombro",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HA1", name:"Flexão de braços (apoie os joelhos se precisar)", target:"4×8–15"},
-        {id:"HA2", name:"Flexão com pés elevados (cadeira ou sofá)", target:"3×8–12"},
-        {id:"HA5", name:"Flexão pike (quadril alto, foco no ombro)", target:"3×8–12"},
-        {id:"HA3", name:"Flexão diamante (mãos juntas)", target:"3×8–12"},
-        {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–20/braço"},
-        {id:"HA10", name:"Crucifixo invertido unilateral com garrafa (mão livre no sofá)", target:"3×15–20/braço"},
-        {id:"HA11", name:"Tríceps francês com mochila (acima da cabeça)", target:"3×10–15"},
+        {id:"HA2", name:"Flexão declinada (pés na cadeira ou sofá)", target:"3×6–15"},
+        {id:"HA1", name:"Flexão de braços (mãos em livros para descer mais)", target:"3×8–20"},
+        {id:"HA3", name:"Flexão diamante (mãos juntas)", target:"3×6–15"},
+        {id:"HA5", name:"Flexão pike (quadril alto, foco no ombro)", target:"3×6–12"},
+        {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
+        {id:"HA10", name:"Crucifixo invertido unilateral com garrafa (mão livre no sofá)", target:"3×15–25/braço"},
+        {id:"HA11", name:"Tríceps francês com mochila (acima da cabeça)", target:"3×10–20"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
-        {id:"HK1", name:"Elevação de pernas deitado", target:"3×10–15"},
-        {id:"HK7", name:"Abdominal curto (só levanta os ombros)", target:"3×15–20"},
-        {id:"HK4", name:"Prancha (frontal)", target:"3×30–45s"},
+        {id:"HK1", name:"Elevação de pernas deitado", target:"3×10–20"},
+        {id:"HK8", name:"Abdominal inverso (leve o quadril para o peito, sem balançar)", target:"3×10–20"},
+        {id:"HK7", name:"Abdominal curto (só levanta os ombros)", target:"3×15–25"},
       ]},
     ]
   },
@@ -636,11 +636,10 @@ const WORKOUTS = {
     label: "Treino B em casa — Quadríceps",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HB2", name:"Agachamento búlgaro com mochila nas costas (pé de trás no sofá)", target:"3×8–12/perna"},
-        {id:"HB1", name:"Agachamento com mochila abraçada no peito (desce em 3 s)", target:"4×12–20"},
-        {id:"HB7", name:"Afundo parado com mochila (pés fixos, só desce e sobe)", target:"3×10–12/perna"},
-        {id:"HB4", name:"Cadeira invisível na parede", target:"3×30–45s"},
-        {id:"HB6", name:"Panturrilha em pé com mochila (dois pés, no chão ou num degrau)", target:"4×15–25"},
+        {id:"HB2", name:"Agachamento búlgaro com mochila nas costas (pé de trás no sofá)", target:"4×8–20/perna"},
+        {id:"HB1", name:"Agachamento com mochila abraçada no peito", target:"3×15–30"},
+        {id:"HB7", name:"Afundo parado com mochila (pés fixos, só desce e sobe)", target:"3×10–20/perna"},
+        {id:"HB6", name:"Panturrilha em pé com mochila (num degrau, pausa embaixo)", target:"4×12–25"},
       ]},
     ]
   },
@@ -648,16 +647,17 @@ const WORKOUTS = {
     label: "Treino C em casa — Costas, Bíceps & Antebraço",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HC8", name:"Remada unilateral com mochila (mão e joelho no sofá)", target:"3×10–12/braço"},
-        {id:"HC6", name:"Remada curvada com mochila com livros", target:"3×10–15"},
-        {id:"HC9", name:"Pullover com mochila deitado (no lugar da puxada)", target:"3×12–15"},
-        {id:"HC7", name:"Rosca de bíceps com mochila com livros", target:"3×10–15"},
-        {id:"HC5", name:"Apertar e segurar a toalha (antebraço)", target:"3×20–30s"},
+        {id:"HC8", name:"Remada unilateral com mochila (mão e joelho no sofá)", target:"4×10–20/braço"},
+        {id:"HC9", name:"Pullover com mochila deitado (no lugar da puxada)", target:"3×10–20"},
+        {id:"HC6", name:"Remada curvada com mochila com livros", target:"3×15–30"},
+        {id:"HC7", name:"Rosca unilateral com mochila", target:"3×10–20/braço"},
+        {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
+        {id:"HC5", name:"Apertar e segurar a toalha (antebraço)", target:"2×30–45s"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
-        {id:"HK1", name:"Elevação de pernas deitado", target:"3×10–15"},
-        {id:"HK7", name:"Abdominal curto (só levanta os ombros)", target:"3×15–20"},
-        {id:"HK4", name:"Prancha (frontal)", target:"3×30–45s"},
+        {id:"HK1", name:"Elevação de pernas deitado", target:"3×10–20"},
+        {id:"HK8", name:"Abdominal inverso (leve o quadril para o peito, sem balançar)", target:"3×10–20"},
+        {id:"HK7", name:"Abdominal curto (só levanta os ombros)", target:"3×15–25"},
       ]},
     ]
   },
@@ -665,12 +665,12 @@ const WORKOUTS = {
     label: "Treino D em casa — Posterior de Coxa & Glúteo",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HD7", name:"Elevação pélvica no chão com mochila no quadril", target:"4×12–20"},
-        {id:"HD1", name:"Ponte de glúteo unilateral", target:"3×10–12/perna"},
-        {id:"HD8", name:"Stiff com mochila com livros", target:"3×12–15"},
         {id:"HD9", name:"Flexão nórdica (pés presos no sofá, só a descida)", target:"3×4–8"},
-        {id:"HD5", name:"Agachamento sumô com mochila e pausa", target:"3×12–20"},
-        {id:"HD6", name:"Abdução de quadril deitado de lado", target:"3×15–20/lado"},
+        {id:"HD8", name:"Stiff com mochila com livros", target:"3×12–25"},
+        {id:"HD1", name:"Ponte de glúteo unilateral", target:"3×10–20/perna"},
+        {id:"HD7", name:"Elevação pélvica no chão com mochila no quadril", target:"3×15–30"},
+        {id:"HD6", name:"Abdução de quadril deitado de lado", target:"3×15–30/lado"},
+        {id:"HB6", name:"Panturrilha em pé com mochila (num degrau, pausa embaixo)", target:"3×12–25"},
       ]},
     ]
   },
@@ -682,7 +682,7 @@ const WORKOUTS = {
         {id:"HX8", name:"Rosca de bíceps com mochila com livros", target:"2×12–15"},
       ]},
       { title: "Bônus Peito & Panturrilha", cls: "bonus", exercises: [
-        {id:"HX3", name:"Flexão declinada (pés no sofá)", target:"2×10–15"},
+        {id:"HX3", name:"Flexão declinada (pés na cadeira ou sofá)", target:"2×6–15"},
         {id:"HX9", name:"Panturrilha em pé (dois pés, no chão ou num degrau)", target:"2×20–25"},
       ]},
       { title: "Bônus Ombro", cls: "bonus", exercises: [
@@ -735,6 +735,8 @@ function buildExerciseIndex() {
    ['HB3', 'Afundo caminhando', '3×10–12/perna', 'HB'],
    // treinos em casa com mochila e garrafas (nov/2026): ficam só no histórico
    ['HA8', 'Flexão com cotovelos colados no corpo (tríceps)', '3×8–12', 'HA'], ['HC2', 'Superman (segure 2 s no topo)', '3×12–15', 'HC'],
+   // revisão por evidência (nov/2026): ficam só no histórico
+   ['HK4', 'Prancha (frontal)', '3×30–45s', 'HA'], ['HB4', 'Cadeira invisível na parede', '3×30–45s', 'HB'], ['HD5', 'Agachamento sumô com mochila e pausa', '3×12–20', 'HD'],
    ['HB5', 'Panturrilha em pé unilateral num degrau', '4×12–20/perna', 'HB'],
    ['HC1', 'Remada invertida debaixo de uma mesa firme', '4×8–12', 'HC'], ['HC3', 'Rosca de bíceps com toalha', '3×10–12/braço', 'HC'],
    ['HC4', 'Remada unilateral apoiada na cadeira', '3×10–12/lado', 'HC'],
@@ -752,7 +754,7 @@ const EX_INDEX = buildExerciseIndex();
 
 // ===================== COMO FAZER (treinos em casa) =====================
 const COMO = {
-  HA1: { p: ['Mãos no chão, um pouco mais abertas que os ombros, dedos para a frente.', 'Corpo em linha reta da cabeça aos calcanhares: barriga e glúteo firmes, sem deixar o quadril cair.', 'Desça dobrando os cotovelos a uns 45° do corpo (não abertos para os lados) até o peito quase tocar o chão.', 'Empurre o chão e suba esticando os braços.'], e: 'Muito difícil? Apoie os joelhos no chão. Fácil demais? Faça com a mochila nas costas (alças bem presas).' },
+  HA1: { p: ['Mãos no chão, um pouco mais abertas que os ombros, dedos para a frente.', 'Corpo em linha reta da cabeça aos calcanhares: barriga e glúteo firmes, sem deixar o quadril cair.', 'Desça dobrando os cotovelos a uns 45° do corpo (não abertos para os lados) até o peito quase tocar o chão.', 'Empurre o chão e suba esticando os braços.'], e: 'Com as mãos em cima de dois livros grossos, o peito desce mais fundo e o músculo trabalha mais alongado. Muito difícil? Apoie os joelhos. Fácil demais? Mochila nas costas (alças bem presas).' },
   HA2: { p: ['Mesma posição da flexão normal, mas com os pés em cima de uma cadeira ou sofá firme.', 'Corpo em linha reta, barriga e glúteo firmes.', 'Desça até o peito quase tocar o chão, cotovelos a uns 45° do corpo.', 'Suba empurrando o chão.'], e: 'Quanto mais alto os pés, mais trabalha ombro e parte de cima do peito.' },
   HA3: { p: ['Mãos juntas embaixo do peito, com polegares e indicadores formando um triângulo (diamante).', 'Corpo reto, barriga e glúteo firmes.', 'Desça com os cotovelos colados no corpo até o peito quase tocar as mãos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Se ficar difícil, apoie os joelhos.' },
   HA4: { p: ['Coloque duas cadeiras firmes (encostadas na parede, para não escorregarem) uma de frente para a outra, com uns 60 a 80 cm entre elas.', 'Apoie uma mão em cada cadeira, com o corpo entre elas e as pernas esticadas ou dobradas.', 'Dobre os cotovelos para trás e desça até uns 90°, mantendo o corpo perto das cadeiras.', 'Empurre as mãos e suba esticando os braços.'], e: 'Teste a estabilidade das cadeiras antes. Se ficar pesado, dobre os joelhos e apoie os pés no chão.' },
@@ -794,10 +796,10 @@ const COMO = {
 };
 COMO.HA8 = { p: ['Posição de flexão normal, mas com as mãos na largura dos ombros e os cotovelos apontando para trás, colados nas costelas.', 'Corpo em linha reta, barriga e glúteo firmes.', 'Desça até o peito quase tocar o chão, sem abrir os cotovelos.', 'Suba esticando os braços.'], e: 'Pesa mais no tríceps. Muito difícil? Apoie os joelhos no chão.' };
 COMO.HK7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão.', 'Mãos ao lado da cabeça ou cruzadas no peito (não puxe o pescoço).', 'Levante só os ombros e a parte de cima das costas do chão, contraindo a barriga.', 'Desça devagar, sem relaxar de vez.'], e: 'Movimento curto. Olhe para o teto e solte o ar ao subir.' };
-COMO.HB6 = { p: ['Mochila nas costas. Em pé, pés na largura do quadril, no chão ou com a ponta dos pés na borda de um degrau.', 'Se precisar, apoie a mão numa parede.', 'Suba na ponta dos pés o mais alto que conseguir e segure 1 segundo.', 'Desça devagar, até o calcanhar chegar embaixo.'], e: 'Mais difícil: faça com uma perna só.' };
+COMO.HB6 = { p: ['Mochila nas costas. Fique com a ponta dos pés na borda de um degrau e os calcanhares para fora.', 'Apoie a mão numa parede para o equilíbrio.', 'Desça o calcanhar o máximo que conseguir e segure 2 segundos lá embaixo, com a panturrilha esticada.', 'Suba na ponta dos pés o mais alto que conseguir e desça devagar.'], e: 'A pausa embaixo, com a panturrilha alongada, é o que mais faz crescer. Sem degrau, faça no chão. Mais difícil: uma perna só.' };
 COMO.HB7 = { p: ['Mochila nas costas. Em pé, dê um passo grande à frente e deixe os pés ali, sem mexer: um à frente, o outro atrás, na ponta do pé.', 'Desça reto para baixo, dobrando os dois joelhos, até o joelho de trás quase tocar o chão.', 'Suba reto, empurrando o pé da frente. Os pés não saem do lugar.', 'Faça todas as repetições de uma perna e troque o pé da frente.'], e: 'Tronco reto. Se perder o equilíbrio, apoie a mão numa parede ou cadeira.' };
 COMO.HC6 = { p: ['Coloque livros numa mochila e segure pela alça de cima (ou abrace a mochila contra a barriga).', 'Pés na largura dos ombros, joelhos levemente dobrados, tronco inclinado para a frente com as costas retas.', 'Puxe a mochila em direção à barriga, levando os cotovelos para trás e juntando as escápulas.', 'Desça devagar, esticando os braços.'], e: 'Ajuste o peso: mais livros deixam mais difícil. Não arredonde as costas.' };
-COMO.HC7 = { p: ['Mochila com livros segurada pela alça, braço esticado ao lado do corpo (ou segure com as duas mãos).', 'Cotovelo colado na costela.', 'Dobre o cotovelo subindo a mochila até perto do ombro.', 'Desça devagar, até esticar o braço.'], e: 'Sem balançar o corpo. Faça os dois braços, um de cada vez.' };
+COMO.HC7 = { p: ['Segure a mochila pela alça de cima com uma mão, braço esticado ao lado do corpo.', 'Cotovelo colado na costela.', 'Dobre o cotovelo subindo a mochila até perto do ombro.', 'Desça devagar até esticar o braço todo. Faça todas as reps e troque de braço.'], e: 'Com um braço só, cada lado levanta a mochila inteira. Sem balançar o corpo.' };
 COMO.HD7 = { p: ['Deite de barriga para cima, joelhos dobrados e pés no chão, na largura do quadril.', 'Apoie a mochila em cima do quadril e segure-a com as mãos.', 'Empurre os calcanhares e suba o quadril até o corpo ficar em linha reta, dos ombros aos joelhos.', 'Aperte o glúteo no topo e desça devagar.'], e: 'Se sentir mais a lombar que o glúteo, suba menos e aperte o glúteo com força.' };
 COMO.HD8 = { p: ['Segure a mochila com livros na frente das coxas, com as duas mãos.', 'Pés na largura do quadril e joelhos levemente dobrados.', 'Empurre o quadril para trás e incline o tronco, deixando a mochila deslizar perto das pernas, com as costas retas.', 'Volte contraindo o glúteo e o posterior da coxa.'], e: 'Desça só até sentir o posterior da coxa esticar. Para aprender a postura, faça umas reps com o cabo de vassoura encostado nas costas: ele deve tocar a cabeça, o meio das costas e o quadril o tempo todo.' };
 COMO.HA9 = { p: ['Em pé de lado para uma parede, apoie nela a mão mais próxima. A garrafa cheia (1,5 ou 2 L) fica na outra mão, braço ao lado do corpo e cotovelo levemente dobrado.', 'Suba o braço para o lado até a altura do ombro, como se abrisse uma asa.', 'Pare na altura do ombro, sem encolher o pescoço nem inclinar o tronco.', 'Desça devagar, em 2 a 3 segundos. Faça todas as reps e troque de braço.'], e: 'Uma garrafa de 2 L pesa uns 2 kg. Ficou fácil? Segure 1 s no topo ou desça mais devagar. Sem garrafa? Serve um pacote de 1 kg de arroz ou feijão, uma lata grande ou uma sacola com alguns itens da despensa.' };
@@ -806,6 +808,7 @@ COMO.HA11 = { p: ['Em pé ou sentado, segure a mochila com as duas mãos acima d
 COMO.HC8 = { p: ['Apoie a mão e o joelho do mesmo lado no sofá ou numa cadeira firme, com as costas retas e paralelas ao chão.', 'Segure a mochila na outra mão, com o braço esticado.', 'Puxe o cotovelo para trás, perto do corpo, até a mochila chegar na costela.', 'Desça devagar até esticar o braço e alongar as costas.'], e: 'Com um braço só, cada lado puxa a mochila inteira: é a remada mais pesada que dá para fazer em casa. Não gire o tronco.' };
 COMO.HC9 = { p: ['Deite de barriga para cima no chão, joelhos dobrados, segurando a mochila com as duas mãos acima do peito, braços quase esticados.', 'Leve a mochila para trás da cabeça num arco, até perto do chão, sem dobrar mais os cotovelos.', 'Sinta alongar a lateral das costas.', 'Volte puxando a mochila no mesmo arco até em cima do peito.'], e: 'Lombar colada no chão. Faz o papel da puxada alta: trabalha a largura das costas.' };
 COMO.HD9 = { p: ['Ajoelhe numa almofada ou toalha dobrada e prenda os calcanhares embaixo do sofá.', 'Corpo reto dos joelhos à cabeça, glúteo contraído, mãos na frente do peito.', 'Incline o corpo para a frente bem devagar, segurando com o posterior da coxa, o máximo que conseguir.', 'Quando não aguentar mais, apare com as mãos no chão e empurre para voltar.'], e: 'Confira se o sofá não levanta. Conte só a descida e tente levar 3 a 5 s. É difícil mesmo: com o tempo você desce mais antes de apoiar as mãos.' };
+COMO.HK8 = { p: ['Deite de barriga para cima, braços ao lado do corpo e mãos espalmadas no chão.', 'Dobre os joelhos e tire os pés do chão, com as coxas apontando para o teto.', 'Leve o quadril em direção ao peito, descolando a lombar do chão, como se enrolasse a parte de baixo da barriga.', 'Desça devagar, sem balançar as pernas para pegar impulso.'], e: 'O movimento é pequeno: quem trabalha é a barriga, não as pernas. Solte o ar ao subir.' };
 COMO.HX3 = COMO.HA2; COMO.HX5 = COMO.HA5;
 COMO.HX7 = COMO.HA8; COMO.HX8 = COMO.HC7; COMO.HX9 = COMO.HB6;
 function comoHTML(id) {
@@ -1181,7 +1184,7 @@ function renderContent() {
       ${sessDate ? '<button class="mini-btn" data-act="hoje" type="button">Voltar para hoje</button>' : ''}</div>
     ${sessDate ? '<div class="retro-aviso">Preenchendo um treino de outro dia. Ele entra no histórico, nos recordes e nas sequências na data escolhida.</div>' : ''}
     <div class="dica-serie">A 1ª série preenche as outras. Mude qualquer uma se precisar.</div>
-    ${isCasa(currentTab) ? '<div class="dica-serie">Mochila: suba na balança com e sem ela e anote a diferença no kg. Sem peso: deixe o kg em branco e anote só as reps. Não pendure peso no cabo de vassoura, que ele pode quebrar.</div>' : ''}
+    ${isCasa(currentTab) ? '<div class="dica-serie"><b>Regra de ouro:</b> termine cada série quando faltarem 1 ou 2 reps para não conseguir mais. Com carga leve, é isso que faz crescer. Descanse 1,5 a 2 min nos exercícios grandes.</div><div class="dica-serie">Mochila: suba na balança com e sem ela e anote a diferença no kg. Sem peso: deixe o kg em branco e anote só as reps. Não pendure peso no cabo de vassoura, que ele pode quebrar.</div>' : ''}
     <div class="desc-linha"><span>Descanso</span>${[60, 90, 120, 180].map(s => `<button class="chip${restDefault === s ? ' on' : ''}" data-act="rest-set" data-s="${s}">${s < 120 ? s + ' s' : (s / 60) + ' min'}</button>`).join('')}</div>`;
   let sec = '';
   t.slots.forEach(sl => {
