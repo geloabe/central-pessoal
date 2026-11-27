@@ -623,7 +623,7 @@ const WORKOUTS = {
         {id:"HA4", name:"Mergulho entre duas cadeiras (tronco inclinado à frente)", target:"3×6–15"},
         {id:"HA3", name:"Flexão diamante (mãos juntas)", target:"3×6–15"},
         {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
-        {id:"HA15", name:"Elevação posterior deitado de lado com garrafa (ombro de trás)", target:"3×15–25/braço"},
+        {id:"HA10", name:"Crucifixo invertido unilateral com garrafa (mão livre no sofá)", target:"3×15–25/braço"},
         {id:"HA11", name:"Tríceps francês com mochila (acima da cabeça)", target:"3×10–20"},
       ]},
       { title: "Core / Abdômen", cls: "core", exercises: [
@@ -741,7 +741,7 @@ function buildExerciseIndex() {
    ['CORE3', 'Rotação de tronco (russian twist)', '3×12/lado', 'A'], ['CORE4', 'Prancha lateral', '3×20–30s/lado', 'A'],
    ['HK2', 'Rotação de tronco sentado (russian twist), sem peso', '3×12/lado', 'HA'], ['HK3', 'Prancha lateral', '3×20–30s/lado', 'HA'],
    // treinos em casa simplificados (nov/2026): ficam só no histórico
-   ['HA5', 'Flexão pike (quadril alto, foco no ombro)', '3×6–12', 'HA'], ['HA10', 'Crucifixo invertido unilateral com garrafa (mão livre no sofá)', '3×15–25/braço', 'HA'],
+   ['HA5', 'Flexão pike (quadril alto, foco no ombro)', '3×6–12', 'HA'],
    ['HA6', 'Prancha com toque no ombro', '3×10/lado', 'HA'], ['HA7', 'Superman em Y-T-W no chão (ombro posterior)', '3×10–12', 'HA'],
    ['HK5', 'Dead bug (braço e perna opostos)', '3×10/lado', 'HA'],
    ['HB3', 'Afundo caminhando', '3×10–12/perna', 'HB'],
@@ -830,7 +830,6 @@ COMO.HC12 = { p: ['Amarre um barbante ou corda de 1 m no meio do cabo de vassour
 COMO.HC13 = { p: ['Segure a mochila pela alça de cima com a palma virada para baixo, braço esticado ao lado do corpo.', 'Cotovelo colado na costela e punho reto.', 'Suba a mochila até perto do ombro sem girar nem dobrar o punho.', 'Desça devagar. Faça todas as reps e troque de braço.'], e: 'Trabalha a parte de cima do antebraço e o braquial. Use menos peso que na rosca normal: tire uns livros.' };
 COMO.HD10 = { p: ['Sente na beira de uma cadeira com a ponta dos pés num degrau ou num livro grosso e os calcanhares para fora.', 'Coloque a mochila em cima dos joelhos e segure com as mãos.', 'Desça os calcanhares o máximo que conseguir e segure 2 s lá embaixo.', 'Suba na ponta dos pés o mais alto possível e desça devagar.'], e: 'Com o joelho dobrado, trabalha o sóleo, a parte de baixo da panturrilha (o papel da panturrilha sentado da academia). Pode pôr mais peso por cima da mochila.' };
 COMO.HA14 = { p: ['De frente para o sofá, apoie as mãos na borda do assento, na largura dos ombros, e afaste os pés até o corpo ficar reto, inclinado como numa prancha.', 'Dobre só os cotovelos, levando a testa em direção às mãos até passar um pouco da borda, com os cotovelos apontando para a frente.', 'Estique os cotovelos e volte, sem dobrar o quadril.', 'Só o cotovelo se mexe, como na rosca testa da academia.'], e: 'Quanto mais baixo o apoio e mais longe os pés, mais pesado. Começando? Use um apoio mais alto (bancada da cozinha ou encosto do sofá) ou apoie os joelhos no chão. Dá para ir até a falha sem risco: no pior caso, você encosta no sofá.' };
-COMO.HA15 = { p: ['Deite de lado no chão, cabeça apoiada no braço de baixo e joelhos levemente dobrados.', 'Garrafa na mão de cima, braço esticado na frente do peito, apontando para o chão, com o cotovelo levemente dobrado.', 'Suba o braço num arco para trás até apontar para o teto, apertando a parte de trás do ombro.', 'Desça devagar até a frente do peito. Faça todas as reps e troque de lado.'], e: 'Diferente da elevação lateral deitado: aqui o braço sai da frente do peito (não do quadril). Com o corpo apoiado, não tem equilíbrio nem lombar cansada. Ficou leve? Segure 2 s no topo.' };
 COMO.HK8 = { p: ['Deite de barriga para cima, braços ao lado do corpo e mãos espalmadas no chão.', 'Dobre os joelhos e tire os pés do chão, com as coxas apontando para o teto.', 'Leve o quadril em direção ao peito, descolando a lombar do chão, como se enrolasse a parte de baixo da barriga.', 'Desça devagar, sem balançar as pernas para pegar impulso.'], e: 'O movimento é pequeno: quem trabalha é a barriga, não as pernas. Solte o ar ao subir.' };
 COMO.HX3 = COMO.HA2; COMO.HX5 = COMO.HA5;
 COMO.HX7 = COMO.HA8; COMO.HX8 = COMO.HC7; COMO.HX9 = COMO.HB6;
@@ -855,7 +854,6 @@ const TEC = {
   HC11: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
   HA4: 'Última série: até a falha e continue com os pés no chão ajudando, até falhar de novo.',
   HA14: 'Última série: até a falha + 5 meias-reps na parte de baixo.',
-  HA15: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
   HA12: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
   HA13: 'Última série: até a falha e emende flexão normal até falhar de novo.',
   HC12: 'Última série: até o antebraço queimar e não conseguir mais girar.',
