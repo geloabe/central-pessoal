@@ -1052,9 +1052,10 @@ function loadDraft() {
 }
 
 // ===================== CARDIO =====================
-// Um documento por dia em "cardio": { date, corrida: minutos, caminhada: minutos }. Meta: 240 min por semana (segunda a domingo).
+// Um documento por dia em "cardio": { date, corrida, caminhada, casa } (minutos). "casa" é preenchido sozinho ao salvar o Cardio em casa. Meta: 240 min por semana (segunda a domingo).
 const CARD_META = 240;
-const CARD_TIPOS = { corrida: '🏃 Corrida alternada', caminhada: '🚶 Caminhada' };
+const CARD_TIPOS = { corrida: '🏃 Corrida alternada', caminhada: '🚶 Caminhada', casa: '🏠 Cardio em casa' };
+function cardDia(d) { return Object.keys(CARD_TIPOS).reduce((a, t) => a + cardMin(d, t), 0); }
 let cardio = {}, cardioDia = null, cardioTipo = 'corrida';
 function cardMin(d, t) { const v = d && d[t]; return v === true ? 30 : Math.max(0, Math.round(+v || 0)); }
 function cardSemana(iso) {
@@ -1062,7 +1063,7 @@ function cardSemana(iso) {
   for (let i = 0; i < 7; i++) { const x = new Date(p[0], p[1] - 1, p[2] - dow + i); out.push(x.getFullYear() + '-' + pad2(x.getMonth() + 1) + '-' + pad2(x.getDate())); }
   return out;
 }
-function cardTotal(iso) { return cardSemana(iso).reduce((a, k) => a + cardMin(cardio[k], 'corrida') + cardMin(cardio[k], 'caminhada'), 0); }
+function cardTotal(iso) { return cardSemana(iso).reduce((a, k) => a + cardDia(cardio[k]), 0); }
 function cardRotulo(iso) { const p = iso.split('-').map(Number), d = new Date(p[0], p[1] - 1, p[2]); return ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'][d.getDay()] + ' ' + pad2(p[2]) + '/' + pad2(p[1]); }
 function renderCardio() {
   const el = document.getElementById('cardioView');
@@ -1091,7 +1092,7 @@ function renderCardio() {
 function cardSalva(k) {
   const d = cardio[k];
   if (!db) return;
-  const p = (d && (cardMin(d, 'corrida') || cardMin(d, 'caminhada'))) ? db.doc('cardio/' + k).set(d) : db.doc('cardio/' + k).delete();
+  const p = (d && cardDia(d)) ? db.doc('cardio/' + k).set(d) : db.doc('cardio/' + k).delete();
   p.catch(e => console.error('cardio não salvou', e));
 }
 document.getElementById('cardioView').addEventListener('click', e => {
@@ -1102,7 +1103,7 @@ document.getElementById('cardioView').addEventListener('click', e => {
     const q = x.dataset.cdx.split('|'), d = cardio[q[0]];
     if (!d) return;
     delete d[q[1]];
-    if (!cardMin(d, 'corrida') && !cardMin(d, 'caminhada')) delete cardio[q[0]];
+    if (!cardDia(d)) delete cardio[q[0]];
     cardSalva(q[0]); renderCardio(); return;
   }
   const b = e.target.closest('[data-cd="add"]');
@@ -1242,7 +1243,8 @@ function renderContent() {
       ${sessDate ? '<button class="mini-btn" data-act="hoje" type="button">Voltar para hoje</button>' : ''}</div>
     ${sessDate ? '<div class="retro-aviso">Preenchendo um treino de outro dia. Ele entra no histórico, nos recordes e nas sequências na data escolhida.</div>' : ''}
     <div class="dica-serie">A 1ª série preenche as outras. Mude qualquer uma se precisar.</div>
-    ${isCasa(currentTab) ? '<div class="dica-serie"><b>Regra de ouro:</b> as primeiras séries param quando faltarem 1 ou 2 reps para não conseguir mais. A última vai até a falha, com a técnica 🔥 do exercício. Descanse 1,5 a 2 min nos exercícios grandes.</div><div class="dica-serie"><b>Carga:</b> encha a mochila com livros, garrafas cheias (1 L = 1 kg) e pacotes de arroz ou feijão. Confira alças e costuras antes. Suba na balança com e sem ela e anote a diferença no kg. Sem peso: deixe o kg em branco e anote só as reps. No cabo de vassoura, só o rolo de punho, com até uns 5 kg: mais que isso, ele pode quebrar.</div>' : ''}
+    ${currentTab === 'HR' ? '<div class="dica-serie">Ao salvar, os minutos entram sozinhos na meta de cardio da semana. Intervalado: no máximo 2 vezes por semana e não na véspera de treino de perna (B ou D). Caminhar ou correr na rua continua valendo e conta junto.</div>' : ''}
+    ${isCasa(currentTab) && currentTab !== 'HR' ? '<div class="dica-serie"><b>Regra de ouro:</b> as primeiras séries param quando faltarem 1 ou 2 reps para não conseguir mais. A última vai até a falha, com a técnica 🔥 do exercício. Descanse 1,5 a 2 min nos exercícios grandes.</div><div class="dica-serie"><b>Carga:</b> encha a mochila com livros, garrafas cheias (1 L = 1 kg) e pacotes de arroz ou feijão. Confira alças e costuras antes. Suba na balança com e sem ela e anote a diferença no kg. Sem peso: deixe o kg em branco e anote só as reps. No cabo de vassoura, só o rolo de punho, com até uns 5 kg: mais que isso, ele pode quebrar.</div>' : ''}
     <div class="desc-linha"><span>Descanso</span>${[60, 90, 120, 180].map(s => `<button class="chip${restDefault === s ? ' on' : ''}" data-act="rest-set" data-s="${s}">${s < 120 ? s + ' s' : (s / 60) + ' min'}</button>`).join('')}</div>`;
   let sec = '';
   t.slots.forEach(sl => {
@@ -1884,7 +1886,13 @@ async function saveSession() {
   try {
     if (!db) throw new Error('sem banco');
     await db.doc('sessions/sess_' + payload.dateISO + '_' + letter).set(payload);
-    statusEl.textContent = '✅ Salva: ' + feitas + ' séries · ' + exFeitos + ' exercícios' + (dur ? ' · ' + dur + ' min' : '') + (prs ? ' · ' + prs + (prs === 1 ? ' recorde 🏆' : ' recordes 🏆') : '');
+    let cdMin = 0;
+    if (letter === 'HR') { // minutos = o maior entre o relógio do treino e a soma dos blocos feitos (vale também para data retroativa)
+      const seg = Object.values(exercises).reduce((a, l) => a + (l || []).filter(x => x.done).reduce((b, x) => b + num(x.time), 0), 0);
+      cdMin = Math.min(300, Math.max(dur, Math.round(seg / 60)));
+      if (cdMin) { const k = payload.dateISO, d = cardio[k] || { date: k }; d.casa = cdMin; cardio[k] = d; cardSalva(k); }
+    }
+    statusEl.textContent = '✅ Salva: ' + feitas + ' séries · ' + exFeitos + ' exercícios' + (dur ? ' · ' + dur + ' min' : '') + (prs ? ' · ' + prs + (prs === 1 ? ' recorde 🏆' : ' recordes 🏆') : '') + (cdMin ? ' · ' + cdMin + ' min na meta de cardio' : '');
     t.touched = false; t.savedToday = true;
     workStart = null; rest = null; tick();
     saveDraft();
