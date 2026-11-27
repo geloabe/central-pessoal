@@ -442,6 +442,7 @@
   .como li { margin-bottom: 4px; }
   .como-dica { margin: 0 0 8px; font-size: 13px; color: var(--text-muted); }
   .troca-de { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+  .tec { font-size: 13px; line-height: 1.4; color: var(--text); margin-top: 6px; }
   .last-time { font-size: 13px; }
   .cols, .srow { display: grid; grid-template-columns: 28px 64px 1fr 1fr 52px; gap: 8px; align-items: center; }
   .cols.timed, .srow.timed { grid-template-columns: 28px 64px 1fr 52px; }
@@ -617,7 +618,7 @@ const WORKOUTS = {
     label: "Treino A em casa — Peito, Tríceps & Ombro",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
-        {id:"HA2", name:"Flexão declinada (pés na cadeira ou sofá)", target:"3×6–15"},
+        {id:"HA2", name:"Flexão declinada (pés na cadeira ou sofá)", target:"4×6–15"},
         {id:"HA1", name:"Flexão de braços (mãos em livros para descer mais)", target:"3×8–20"},
         {id:"HA3", name:"Flexão diamante (mãos juntas)", target:"3×6–15"},
         {id:"HA5", name:"Flexão pike (quadril alto, foco no ombro)", target:"3×6–12"},
@@ -633,16 +634,17 @@ const WORKOUTS = {
     ]
   },
   HB: {
-    label: "Treino B em casa — Quadríceps + bônus de ombro e bíceps",
+    label: "Treino B em casa — Quadríceps + bônus de ombro, costas e bíceps",
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HB2", name:"Agachamento búlgaro com mochila nas costas (pé de trás no sofá)", target:"4×8–20/perna"},
-        {id:"HB1", name:"Agachamento com mochila abraçada no peito", target:"3×15–30"},
+        {id:"HB1", name:"Agachamento com mochila abraçada no peito", target:"4×15–30"},
         {id:"HB7", name:"Afundo parado com mochila (pés fixos, só desce e sobe)", target:"3×10–20/perna"},
         {id:"HB6", name:"Panturrilha em pé com mochila (num degrau, pausa embaixo)", target:"4×12–25"},
       ]},
-      { title: "Bônus · Ombro e bíceps", cls: "bonus", exercises: [
+      { title: "Bônus · Ombro, costas e bíceps", cls: "bonus", exercises: [
         {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
+        {id:"HC8", name:"Remada unilateral com mochila (mão e joelho no sofá)", target:"3×10–20/braço"},
         {id:"HC7", name:"Rosca unilateral com mochila", target:"2×10–20/braço"},
       ]},
     ]
@@ -652,7 +654,7 @@ const WORKOUTS = {
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HC8", name:"Remada unilateral com mochila (mão e joelho no sofá)", target:"4×10–20/braço"},
-        {id:"HC9", name:"Pullover com mochila deitado (no lugar da puxada)", target:"3×10–20"},
+        {id:"HC9", name:"Pullover com mochila deitado (no lugar da puxada)", target:"4×10–20"},
         {id:"HC6", name:"Remada curvada com mochila com livros", target:"3×15–30"},
         {id:"HC7", name:"Rosca unilateral com mochila", target:"3×10–20/braço"},
         {id:"HA9", name:"Elevação lateral unilateral com garrafa (outra mão na parede)", target:"3×15–25/braço"},
@@ -670,7 +672,7 @@ const WORKOUTS = {
     sections: [
       { title: "Bloco principal", cls: "main", exercises: [
         {id:"HD9", name:"Flexão nórdica (pés presos no sofá, só a descida)", target:"3×4–8"},
-        {id:"HD8", name:"Stiff com mochila com livros", target:"3×12–25"},
+        {id:"HD8", name:"Stiff com mochila com livros", target:"4×12–25"},
         {id:"HD1", name:"Ponte de glúteo unilateral", target:"3×10–20/perna"},
         {id:"HD7", name:"Elevação pélvica no chão com mochila no quadril", target:"3×15–30"},
         {id:"HD6", name:"Abdução de quadril deitado de lado", target:"3×15–30/lado"},
@@ -819,6 +821,31 @@ COMO.HD9 = { p: ['Ajoelhe numa almofada ou toalha dobrada e prenda os calcanhare
 COMO.HK8 = { p: ['Deite de barriga para cima, braços ao lado do corpo e mãos espalmadas no chão.', 'Dobre os joelhos e tire os pés do chão, com as coxas apontando para o teto.', 'Leve o quadril em direção ao peito, descolando a lombar do chão, como se enrolasse a parte de baixo da barriga.', 'Desça devagar, sem balançar as pernas para pegar impulso.'], e: 'O movimento é pequeno: quem trabalha é a barriga, não as pernas. Solte o ar ao subir.' };
 COMO.HX3 = COMO.HA2; COMO.HX5 = COMO.HA5;
 COMO.HX7 = COMO.HA8; COMO.HX8 = COMO.HC7; COMO.HX9 = COMO.HB6;
+// técnica da ÚLTIMA série de cada exercício em casa (as anteriores param a 1–2 reps da falha)
+const TEC = {
+  HA2: 'Última série: até a falha e, sem descansar, emende flexão normal até falhar de novo.',
+  HA1: 'Última série: até a falha + 5 meias-reps na parte de baixo.',
+  HA3: 'Última série: até a falha e continue com os joelhos no chão até falhar de novo.',
+  HA5: 'Última série: até a falha.',
+  HA9: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
+  HA10: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
+  HA11: 'Pare a 1 rep da falha: a mochila está sobre a sua cabeça, não arrisque.',
+  HB2: 'Última série: a 1 rep da falha, faça 5 meias-reps na parte de baixo.',
+  HB1: 'Última série: até a falha. Passou de 30 reps? Faça em 1½: desce, sobe até a metade, desce de novo, sobe tudo (= 1 rep).',
+  HB7: 'Última série: até a falha + 5 meias-reps na parte de baixo.',
+  HB6: 'Última série: até a falha + 10 meias-reps com o calcanhar lá embaixo.',
+  HC8: 'Última série: até a falha + 5 meias-reps com o braço quase esticado.',
+  HC9: 'Última série: até a falha (mochila bem fechada).',
+  HC6: 'Última série: até a falha, sem arredondar as costas.',
+  HC7: 'Última série: até a falha + 5 meias-reps na parte de baixo.',
+  HD9: 'Já é no máximo: só desça cada rep o mais devagar que conseguir.',
+  HD8: 'Nada de falha aqui: pare a 1–2 reps, sempre com as costas retas.',
+  HD1: 'Última série: até a falha + segure 10 s lá em cima.',
+  HD7: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
+  HD6: 'Última série: até a falha, respire 15 s, mais reps até falhar. Repita 2 vezes.',
+  HK1: 'Última série: até a falha.', HK8: 'Última série: até a falha.', HK7: 'Última série: até a falha.',
+};
+function tecHTML(id) { return TEC[id] ? '<div class="tec">🔥 ' + H(TEC[id]) + '</div>' : ''; }
 function comoHTML(id) {
   const c = COMO[id];
   if (!c) return '';
@@ -1160,7 +1187,7 @@ function cardHTML(sl, t, lastCache) {
       ${s.pr ? '<div class="pr-badge">🏆 Recorde! Mais forte que qualquer treino anterior.</div>' : ''}
     </div>`;
   });
-  return `<div class="ex-card ${sl.cls}" data-key="${sl.key}">${head}${como}${ultima}
+  return `<div class="ex-card ${sl.cls}" data-key="${sl.key}">${head}${tecHTML(sl.id)}${como}${ultima}
     <div class="sets-wrap">${rows}</div>
     <div class="acoes">
       <button class="mini-btn" data-act="add" data-key="${sl.key}">＋ Série</button>
@@ -1192,7 +1219,7 @@ function renderContent() {
       ${sessDate ? '<button class="mini-btn" data-act="hoje" type="button">Voltar para hoje</button>' : ''}</div>
     ${sessDate ? '<div class="retro-aviso">Preenchendo um treino de outro dia. Ele entra no histórico, nos recordes e nas sequências na data escolhida.</div>' : ''}
     <div class="dica-serie">A 1ª série preenche as outras. Mude qualquer uma se precisar.</div>
-    ${isCasa(currentTab) ? '<div class="dica-serie"><b>Regra de ouro:</b> termine cada série quando faltarem 1 ou 2 reps para não conseguir mais. Com carga leve, é isso que faz crescer. Descanse 1,5 a 2 min nos exercícios grandes.</div><div class="dica-serie">Mochila: suba na balança com e sem ela e anote a diferença no kg. Sem peso: deixe o kg em branco e anote só as reps. Não pendure peso no cabo de vassoura, que ele pode quebrar.</div>' : ''}
+    ${isCasa(currentTab) ? '<div class="dica-serie"><b>Regra de ouro:</b> as primeiras séries param quando faltarem 1 ou 2 reps para não conseguir mais. A última vai até a falha, com a técnica 🔥 do exercício. Descanse 1,5 a 2 min nos exercícios grandes.</div><div class="dica-serie"><b>Carga:</b> encha a mochila com livros, garrafas cheias (1 L = 1 kg) e pacotes de arroz ou feijão. Confira alças e costuras antes. Suba na balança com e sem ela e anote a diferença no kg. Sem peso: deixe o kg em branco e anote só as reps. Não pendure peso no cabo de vassoura, que ele pode quebrar.</div>' : ''}
     <div class="desc-linha"><span>Descanso</span>${[60, 90, 120, 180].map(s => `<button class="chip${restDefault === s ? ' on' : ''}" data-act="rest-set" data-s="${s}">${s < 120 ? s + ' s' : (s / 60) + ' min'}</button>`).join('')}</div>`;
   let sec = '';
   t.slots.forEach(sl => {
